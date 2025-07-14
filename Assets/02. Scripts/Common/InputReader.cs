@@ -11,13 +11,23 @@ public class InputReader : MonoBehaviour
     {
         _inputActions = new PlayerInputActions();
 
-        _inputActions.Player.Move.performed += HandleMovePerformed;
-        _inputActions.Player.Move.canceled += HandleMoveCanceled;
     }
 
     private void OnEnable()
     {
         _inputActions.Player.Enable();
+
+        _inputActions.Player.Move.performed += HandleMovePerformed;
+        _inputActions.Player.Move.canceled += HandleMoveCanceled;
+        _inputActions.Player.Attack.performed += ctx => _attackPressed = true;
+    }
+    private bool _attackPressed;
+
+    public bool ConsumeAttackInput()
+    {
+        bool result = _attackPressed;
+        _attackPressed = false;
+        return result;
     }
 
     private void HandleMovePerformed(InputAction.CallbackContext context)
