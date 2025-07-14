@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 아이템 생성, 조회, 데이터 로딩
 public class ItemManager : MonoBehaviour
 {
     private const string DEFAULT_CSV_PATH = "/10. CSV";
-    // 아이템 생성, 조회, 데이터 로딩
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
     private Dictionary<string, UseItem> _useItemDict;
@@ -36,13 +36,23 @@ public class ItemManager : MonoBehaviour
     }
 
     // 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
-    public UseItem GetUseItem(string key)
+    public UseItem GetUseItem(string id)
     {
-        if (_useItemDict.TryGetValue(key, out UseItem item))
+        if (_useItemDict.TryGetValue(id, out UseItem item))
         {
             return item;
         }
         throw new Exception("존재하지 않는 사용 아이템입니다.");
         return null;
+    }
+
+    /// <summary>
+    /// 아이템 생성(드랍)
+    /// </summary>
+    /// <param name="id">아이템 ID</param>
+    /// <param name="amount">수량</param>
+    public void CreateItem(string id, int amount)
+    {
+        
     }
 }
