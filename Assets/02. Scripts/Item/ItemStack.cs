@@ -3,17 +3,16 @@
 // 갯수를 포함하는 아이템 정보
 public class ItemStack
 {
-    public readonly string ID;
-    public readonly EItemType Type;
+    public readonly int ID;
     private readonly int _maxQuantity;
     private int _quantity;
     public int Quantity => _quantity;
 
-    public ItemStack(string id, EItemType type, int maxQuantity, int initialQuantity = 0)
+    public ItemStack(int id, int maxQuantity, int initialQuantity = 0)
     {
-        if (string.IsNullOrEmpty(id))
+        if (id < 0)
         {
-            throw new Exception("아이템 ID 값이 존재하지 않습니다.");
+            throw new Exception("아이템 ID은 음수가 아닙니다.");
         }
 
         if (maxQuantity < 1)
@@ -27,7 +26,6 @@ public class ItemStack
         }
 
         ID = id;
-        Type = type;
         _maxQuantity = maxQuantity;
         _quantity = initialQuantity;
     }

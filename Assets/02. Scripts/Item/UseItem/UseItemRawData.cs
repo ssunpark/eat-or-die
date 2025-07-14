@@ -4,7 +4,7 @@
 public class UseItemRawData
 {
     [Name("ID")]
-    public string ID { get; set; }
+    public int ID { get; set; }
 
     [Name("Name")]
     public string Name { get; set; }
