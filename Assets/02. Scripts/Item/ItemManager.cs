@@ -51,7 +51,7 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     /// <param name="id">아이템 ID</param>
     /// <param name="quantity">수량</param>
-    public void CreateItemObject(int id, int quantity)
+    public void CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
         if (!_itemDict.TryGetValue(id, out AItem item))
         {
