@@ -33,7 +33,7 @@ public class ItemFactory
         return type switch
         {
             EUseItemEffectType.Empty => null,
-            EUseItemEffectType.Hungry => new UseItemEffect_Hungry(value, duration),
+            EUseItemEffectType.Hungry => new UseItemEffect_Hungry(value),
             _ => null
         };
     }
