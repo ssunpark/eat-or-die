@@ -30,6 +30,7 @@ public class InputReader : MonoBehaviour
         return result;
     }
 
+    public bool IsRunning => _inputActions.Player.Sprint.IsPressed();
     private void HandleMovePerformed(InputAction.CallbackContext context)
     {
         MoveInput = context.ReadValue<Vector2>();
