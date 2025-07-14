@@ -3,8 +3,7 @@ using UnityEngine;
 
 public class PlayerAnimator : NetworkBehaviour
 {
-    [Networked] private float Speed { get; set; }
-
+    [Networked] public float Speed { get; set; }
     private InputReader _inputReader;
 
     private Animator _anim;
@@ -22,14 +21,17 @@ public class PlayerAnimator : NetworkBehaviour
             Debug.LogError("InputReader not found in the scene.");
         }
     }
-
+    public void SetMoveSpeed(float value)
+    {
+        _anim.SetFloat("Speed", value);
+    }
     public override void FixedUpdateNetwork()
     {
-
         if (GetInput(out NetworkInputData inputData))
         {
             Vector3 moveDirection = inputData.direction;
-            _anim.SetFloat("Speed", moveDirection.magnitude);
+            Speed = moveDirection.magnitude;
+            _anim.SetFloat("Speed", Speed);
 
             if(inputData.isAttacking)
             {

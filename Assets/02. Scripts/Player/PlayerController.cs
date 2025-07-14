@@ -7,22 +7,18 @@ using Fusion;
 public class PlayerController : NetworkBehaviour
 {
     private NetworkCharacterController _characterController;
+
+    [HideInInspector] public PlayerAnimator PlayerAnimatorController;
     public float Speed = 5f;
 
-    private void Awake()
+    public override void Spawned()
     {
         _characterController = GetComponent<NetworkCharacterController>();
+        PlayerAnimatorController = GetComponent<PlayerAnimator>();
     }
-
-    public override void FixedUpdateNetwork()
+    public void Move(Vector3 direction, float speed)
     {
-        if(GetInput(out NetworkInputData inputData))
-        {
-            Vector3 moveDirection = inputData.direction;
-            if (moveDirection.sqrMagnitude > 0.01f)
-            {
-                _characterController.Move(moveDirection.normalized * Speed * Runner.DeltaTime);
-            }
-        }
+        _characterController.Move(direction.normalized * speed * Runner.DeltaTime);
     }
+    
 }
