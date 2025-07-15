@@ -4,17 +4,17 @@ using UnityEngine;
 public class UI_Inventory : MonoBehaviour
 {
     [SerializeField] private GameObject _uiSlotPrefab;
-    private List<UI_Slot> _uiSlotList = new List<UI_Slot>();
+    private List<UI_InventorySlot> _uiSlotList = new List<UI_InventorySlot>();
 
     private void Start()
     {
         for (int i = 0; i < InventoryManager.Instance.InventorySize; ++i)
         {
             GameObject slot = Instantiate(_uiSlotPrefab, transform);
-            UI_Slot slotComponent = slot.GetComponent<UI_Slot>();
+            UI_InventorySlot inventorySlotComponent = slot.GetComponent<UI_InventorySlot>();
             slot.transform.SetSiblingIndex(i);
-            slotComponent.Initialize(i);
-            _uiSlotList.Add(slotComponent);
+            inventorySlotComponent.Initialize(i);
+            _uiSlotList.Add(inventorySlotComponent);
         }
         gameObject.SetActive(false);
     }
