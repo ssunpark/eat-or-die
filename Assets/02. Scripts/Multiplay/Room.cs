@@ -5,9 +5,10 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Room : MonoBehaviour, INetworkRunnerCallbacks
+public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
+    public NetworkRunner Runner => _runner;
 
     public async void StartGame(GameMode mode)
     {
