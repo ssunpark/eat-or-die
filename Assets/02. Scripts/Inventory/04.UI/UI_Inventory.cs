@@ -6,7 +6,7 @@ public class UI_Inventory : MonoBehaviour
     [SerializeField] private GameObject _uiSlotPrefab;
     private List<UI_Slot> _uiSlotList = new List<UI_Slot>();
 
-    private void Awake()
+    private void Start()
     {
         for (int i = 0; i < InventoryManager.Instance.InventorySize; ++i)
         {
