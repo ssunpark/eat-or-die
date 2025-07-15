@@ -43,4 +43,10 @@ public class ItemFactory
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
         return new EquipmentItem(itemData);
     }
+    
+    public WeaponItem CreateWeaponItem(WeaponItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        return new WeaponItem(itemData, rawData.Type);
+    }
 }

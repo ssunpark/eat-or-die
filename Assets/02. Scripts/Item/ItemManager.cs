@@ -47,6 +47,14 @@ public class ItemManager : MonoBehaviour
             var useItem = _itemFactory.CreateEquipmentItem(data);
             _itemDict[data.ID] = useItem;
         }
+        
+        // 무기 아이템
+        // var weaponItemRawData = ItemDataLoader.LoadItemRawData<WeaponItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}");
+        // foreach (var data in equipmentItemRawData)
+        // {
+        //     var useItem = _itemFactory.CreateEquipmentItem(data);
+        //     _itemDict[data.ID] = useItem;
+        // }
     }
 
     // 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
