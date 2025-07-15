@@ -7,9 +7,4 @@ public abstract class AItem
     {
         ItemData = itemData;
     }
-    
-    // 동작에 따른 분리
-    // 다른 동작이 추가된다면 추가
-    public abstract void OnSlotEvent();
-    public abstract void OnUseEvent();
 }

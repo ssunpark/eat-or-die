@@ -6,13 +6,12 @@ using CsvHelper;
 
 public class ItemDataLoader
 {
-    public static List<UseItemRawData> LoadUseItemRawData(string path)
+    public static List<T> LoadItemRawData<T>(string path)
     {
-        // 파일 열고, CSV 파싱해서 UseItem_CSV 리스트 반환
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-        var records = csv.GetRecords<UseItemRawData>().ToList();
+        var records = csv.GetRecords<T>().ToList();
         return records;
     }
 }

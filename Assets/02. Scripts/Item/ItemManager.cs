@@ -6,6 +6,7 @@ using UnityEngine;
 // 아이템 생성, 조회, 데이터 로딩
 public class ItemManager : MonoBehaviour
 {
+    private const string ITEM_CSV_PATH = "/ItemCSV";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -30,15 +31,26 @@ public class ItemManager : MonoBehaviour
     {
         // 데이터 로드 후 생성
         _itemDict = new Dictionary<int, AItem>();
-        var useItemRawData = ItemDataLoader.LoadUseItemRawData($"{Application.streamingAssetsPath}/UseItemTestCSV.csv");
+        
+        // 사용 아이템
+        var useItemRawData = ItemDataLoader.LoadItemRawData<UseItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/UseItemTestCSV.csv");
         foreach (var data in useItemRawData)
         {
             var useItem = _itemFactory.CreateUseItem(data);
             _itemDict[data.ID] = useItem;
         }
+        
+        // 장비 아이템
+        var equipmentItemRawData = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
+        foreach (var data in equipmentItemRawData)
+        {
+            var useItem = _itemFactory.CreateEquipmentItem(data);
+            _itemDict[data.ID] = useItem;
+        }
     }
 
     // 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
+    // AItem을 동작에 맞는 인터페이스로 변경해서 사용 (InteractionInterface폴더 참고)
     public AItem GetItem(int id)
     {
         if (_itemDict.TryGetValue(id, out AItem item))

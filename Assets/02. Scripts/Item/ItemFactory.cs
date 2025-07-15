@@ -37,4 +37,10 @@ public class ItemFactory
             _ => null
         };
     }
+
+    public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        return new EquipmentItem(itemData);
+    }
 }
