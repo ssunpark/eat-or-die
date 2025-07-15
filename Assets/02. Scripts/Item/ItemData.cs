@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
-// using UnityEngine.AddressableAssets;
-// using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ItemData
 {
@@ -25,16 +25,16 @@ public class ItemData
         MaxQuantity = maxQuantity;
         IconAddressablePath = iconAddressablePath;
 
-        // Addressables.LoadAssetAsync<Sprite>("TestItemIcon").Completed += (handle) =>
-        // {
-        //     if (handle.Status == AsyncOperationStatus.Succeeded)
-        //     {
-        //         _icon = handle.Result;
-        //     }
-        //     else
-        //     {
-        //         throw new Exception("아이콘 로드에 실패했습니다.");
-        //     }
-        // };
+        Addressables.LoadAssetAsync<Sprite>("TestItemIcon").Completed += (handle) =>
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                _icon = handle.Result;
+            }
+            else
+            {
+                throw new Exception("아이콘 로드에 실패했습니다.");
+            }
+        };
     }
 }

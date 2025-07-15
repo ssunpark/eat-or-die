@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
 public class ItemObject : MonoBehaviour, IPickable
@@ -7,6 +8,11 @@ public class ItemObject : MonoBehaviour, IPickable
     public ItemStack ItemStack => _itemStack;
     
     private SpriteRenderer _spriteRenderer;
+
+    private void Awake()
+    {
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     public void Init(ItemStack itemStack)
     {

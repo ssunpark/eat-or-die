@@ -17,13 +17,14 @@ public class ItemManager : BehaviourSingleton<ItemManager>
     // 아이템 팩토리
     private ItemFactory _itemFactory;
 
-    private void Awake()
-    {
-        _itemFactory = new ItemFactory();
-    }
+    // private void Awake()
+    // {
+    //     
+    // }
 
     private void Start()
     {
+        _itemFactory = new ItemFactory();
         Init();
     }
 
