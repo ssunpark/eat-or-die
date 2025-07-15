@@ -3,7 +3,7 @@
 public class ItemFactory
 {
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public UseAItem CreateUseItem(UseItemRawData rawData)
+    public UseItem CreateUseItem(UseItemRawData rawData)
     {
         var effects = new List<IUseItemEffect>();
 
@@ -25,7 +25,7 @@ public class ItemFactory
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, "");
-        return new UseAItem(itemData, effects);
+        return new UseItem(itemData, effects);
     }
 
     private IUseItemEffect CreateUseItemEffect(EUseItemEffectType type, float value, float duration)
