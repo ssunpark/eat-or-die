@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-public class UseAItem : AItem
+public class UseItem : AItem
 {
     private readonly List<IUseItemEffect> _effects;
 
-    public UseAItem(ItemData itemData, List<IUseItemEffect> effects) : base(itemData)
+    public UseItem(ItemData itemData, List<IUseItemEffect> effects) : base(itemData)
     {
         _effects = new List<IUseItemEffect>(effects);
     }
