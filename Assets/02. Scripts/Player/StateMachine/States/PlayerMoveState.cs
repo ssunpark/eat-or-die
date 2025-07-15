@@ -2,12 +2,8 @@
 
 public class PlayerMoveState : PlayerStateBase
 {
-    private PlayerStats _stat;
-    private PlayerAnimator _animator;
     public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
-        _stat = controller.PlayerStats;
-        _animator = controller.PlayerAnimatorController;
     }
     public override void Enter()
     {
@@ -23,9 +19,13 @@ public class PlayerMoveState : PlayerStateBase
         if (dir.sqrMagnitude > 0.01f)
         {
             bool isRunning = inputData.isRunning;
-            float moveSpeed = isRunning ? _stat.RunSpeed : _stat.WalkSpeed;
+            float baseSpeed = _stat.GetStat(EStatType.MoveSpeed);
+            float sprintMultiplier = inputData.isRunning
+                ? _stat.GetStat(EStatType.SprintingMultiplier)
+                : 1f;
+
+            float moveSpeed = baseSpeed * sprintMultiplier;
             _controller.Move(dir, moveSpeed);
-            //_animator.SetMoveSpeed(isRunning ? 1f : 0.5f);
         }
         else
         {
