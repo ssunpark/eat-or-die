@@ -75,6 +75,7 @@ public class ItemManager : BehaviourSingleton<ItemManager>
     /// </summary>
     /// <param name="id">아이템 ID</param>
     /// <param name="quantity">수량</param>
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
         if (!Room.Instance.Runner.IsServer)
