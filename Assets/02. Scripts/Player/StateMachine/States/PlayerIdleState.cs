@@ -8,13 +8,13 @@ public class PlayerIdleState : PlayerStateBase
 
     public override void Tick()
     {
-        if (!controller.GetInput(out NetworkInputData inputData)) return;
-
+        if (!_controller.GetInput(out NetworkInputData inputData)) return;
+        TryJump(inputData);
         Vector3 dir = inputData.direction;
 
         if (dir.sqrMagnitude > 0.01f)
         {
-            fsm.ChangeState(EPlayerState.Move);
+            _fsm.ChangeState(EPlayerState.Move);
         }
     }
 }

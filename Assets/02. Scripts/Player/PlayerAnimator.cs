@@ -1,11 +1,31 @@
-﻿using Fusion;
+﻿using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
-
+public enum EAnimTrigger
+{
+    Attack,
+    Farming,
+    Cook,
+    CookDone,
+    Jump,
+    GiveFood,
+    Die
+}
 public class PlayerAnimator : NetworkBehaviour
 {
     [Networked] public float Speed { get; set; }
     private InputReader _inputReader;
     private Animator _anim;
+
+    private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new(){
+    { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
+    { EAnimTrigger.Farming, Animator.StringToHash("Farming") },
+    { EAnimTrigger.Cook, Animator.StringToHash("Cook") },
+    { EAnimTrigger.CookDone, Animator.StringToHash("CookDone") },
+    { EAnimTrigger.Jump, Animator.StringToHash("Jump") },
+    { EAnimTrigger.GiveFood, Animator.StringToHash("GiveFood") },
+    { EAnimTrigger.Die, Animator.StringToHash("Die") }
+    };
 
     private float _targetSpeed = 0f;
     private float _lerpSpeed = 10f;
@@ -43,6 +63,16 @@ public class PlayerAnimator : NetworkBehaviour
             // 보간 적용
             Speed = Mathf.Lerp(Speed, _targetSpeed, _lerpSpeed * Runner.DeltaTime);
             _anim.SetFloat("Speed", Speed);
+
         }
     }
+
+
+
+    public void PlayTrigger(EAnimTrigger trigger)
+    {
+        _anim.SetTrigger(_triggerHash[trigger]);
+    }
+
+
 }
