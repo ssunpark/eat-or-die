@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 public class ItemSpawnerEditorWindow : EditorWindow
@@ -51,3 +52,4 @@ public class ItemSpawnerEditorWindow : EditorWindow
         }
     }
 }
+#endif

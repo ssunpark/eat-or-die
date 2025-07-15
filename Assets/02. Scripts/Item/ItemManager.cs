@@ -6,8 +6,6 @@ using UnityEngine;
 // 아이템 생성, 조회, 데이터 로딩
 public class ItemManager : MonoBehaviour
 {
-    private const string DEFAULT_CSV_PATH = "/10. CSV";
-    
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -32,7 +30,7 @@ public class ItemManager : MonoBehaviour
     {
         // 데이터 로드 후 생성
         _itemDict = new Dictionary<int, AItem>();
-        var useItemRawData = ItemDataLoader.LoadUseItemRawData($"{Application.dataPath}{DEFAULT_CSV_PATH}/UseItemTestCSV.csv");
+        var useItemRawData = ItemDataLoader.LoadUseItemRawData($"{Application.streamingAssetsPath}/UseItemTestCSV.csv");
         foreach (var data in useItemRawData)
         {
             var useItem = _itemFactory.CreateUseItem(data);
@@ -58,19 +56,19 @@ public class ItemManager : MonoBehaviour
     /// <param name="quantity">수량</param>
     public void CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
-        // if (!_runner.IsServer)
-        // {
-        //     return;
-        // }
-        //
-        // if (!_itemDict.TryGetValue(id, out AItem item))
-        // {
-        //     throw new Exception("없는 아이템입니다.");
-        // }
-        //
-        // ItemStack itemStack = new ItemStack(id, item.ItemData.MaxQuantity, quantity);
-        // // 네트워크 아이템 오브젝트 생성
-        // var itemNetworkObject = _runner.Spawn(_itemObjectPrefab, position, rotation);
-        // itemNetworkObject.GetComponent<ItemObject>().Init(itemStack);
+        if (!Room.Instance.Runner.IsServer)
+        {
+            return;
+        }
+        
+        if (!_itemDict.TryGetValue(id, out AItem item))
+        {
+            throw new Exception("없는 아이템입니다.");
+        }
+        
+        ItemStack itemStack = new ItemStack(id, item.ItemData.MaxQuantity, quantity);
+        // 네트워크 아이템 오브젝트 생성
+        var itemNetworkObject = Room.Instance.Runner.Spawn(_itemObjectPrefab, position, rotation);
+        itemNetworkObject.GetComponent<ItemObject>().Init(itemStack);
     }
 }
