@@ -1,4 +1,6 @@
-﻿public class ToolItem : AItem, IUseable
+﻿using UnityEngine;
+
+public class ToolItem : AItem, IInteractable
 {
     private readonly IToolAction ToolAction;
     
@@ -7,7 +9,7 @@
         ToolAction = toolAction;
     }
 
-    public void Use()
+    public void Interact(GameObject target)
     {
         // 도구 사용
         ToolAction.UseTool();

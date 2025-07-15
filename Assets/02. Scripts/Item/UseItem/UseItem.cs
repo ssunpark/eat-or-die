@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class UseItem : AItem, IUseable
+public class UseItem : AItem, IUseable, IInteractable
 {
     private readonly List<IUseItemEffect> _effects;
 
@@ -11,6 +12,15 @@ public class UseItem : AItem, IUseable
 
     public void Use()
     {
+        foreach (var effect in _effects)
+        {
+            effect.UseEffect();
+        }
+    }
+
+    public void Interact(GameObject target)
+    {
+        // 타겟에게 효과 주도록 수정
         foreach (var effect in _effects)
         {
             effect.UseEffect();
