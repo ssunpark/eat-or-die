@@ -9,12 +9,14 @@ public class PlayerController : NetworkBehaviour
     private NetworkCharacterController _characterController;
 
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
+    [HideInInspector] public PlayerStats PlayerStats;
     public float Speed = 5f;
 
     public override void Spawned()
     {
         _characterController = GetComponent<NetworkCharacterController>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
+        PlayerStats = GetComponent<PlayerStats>();
     }
     public void Move(Vector3 direction, float speed)
     {

@@ -21,10 +21,10 @@ public class PlayerAnimator : NetworkBehaviour
             Debug.LogError("InputReader not found in the scene.");
         }
     }
-    public void SetMoveSpeed(float value)
-    {
-        _anim.SetFloat("Speed", value);
-    }
+    //public void SetMoveSpeed(float value)
+    //{
+    //    _anim.SetFloat("Speed", value);
+    //}
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData inputData))
@@ -33,10 +33,6 @@ public class PlayerAnimator : NetworkBehaviour
             Speed = moveDirection.magnitude;
             _anim.SetFloat("Speed", Speed);
 
-            if(inputData.isAttacking)
-            {
-                _anim.SetTrigger("Attack");
-            }
         }
     }
 

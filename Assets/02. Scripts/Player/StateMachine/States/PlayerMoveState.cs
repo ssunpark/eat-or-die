@@ -2,27 +2,30 @@
 
 public class PlayerMoveState : PlayerStateBase
 {
+    private PlayerStats _stat;
+    private PlayerAnimator _animator;
     public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
+        _stat = controller.PlayerStats;
+        _animator = controller.PlayerAnimatorController;
     }
     public override void Enter()
     {
-        //controller.PlayerAnimatorController.SetBool("IsMoving", true);
     }
 
     public override void Tick()
     {
-        if (!controller.GetInput(out var inputData)) return;
+        if (!controller.GetInput(out NetworkInputData inputData)) return;
 
         Vector3 dir = inputData.direction;
 
         if (dir.sqrMagnitude > 0.01f)
         {
             bool isRunning = inputData.isRunning;
-            float moveSpeed = isRunning ? controller.RunSpeed : controller.WalkSpeed;
+            float moveSpeed = isRunning ? _stat.RunSpeed : _stat.WalkSpeed;
 
             controller.Move(dir, moveSpeed);
-            controller.Animator.SetFloat("MoveSpeed", isRunning ? 1f : 0.5f);
+            //_animator.SetMoveSpeed(isRunning ? 1f : 0.5f);
         }
         else
         {
@@ -32,6 +35,6 @@ public class PlayerMoveState : PlayerStateBase
 
     public override void Exit()
     {
-        controller.Animator.SetBool("IsMoving", false);
+       // _animator.SetMoveSpeed(0);
     }
 }
