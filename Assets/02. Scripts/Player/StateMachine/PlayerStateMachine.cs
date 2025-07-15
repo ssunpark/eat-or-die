@@ -31,23 +31,27 @@ public class PlayerStateMachine : NetworkBehaviour
              */
         };
 
+        if (Object.HasStateAuthority)
+        {
+            CurrentState = EPlayerState.Idle;
+        }
+        _cachedState = CurrentState;
         _activeState = _states[CurrentState];
         _activeState.Enter();
     }
 
     public override void FixedUpdateNetwork()
     {
-        // 로컬 플레이어만 FSM 갱신
-        if (!Object.HasInputAuthority) return;
-
-        // 상태 변경 감지
         if (_cachedState != CurrentState)
         {
             OnStateChanged(_cachedState, CurrentState);
             _cachedState = CurrentState;
         }
 
-        _activeState?.Tick();
+        if (Object.HasInputAuthority)
+        {
+            _activeState?.Tick();
+        }
     }
 
     private void OnStateChanged(EPlayerState oldState, EPlayerState newState)
@@ -61,15 +65,6 @@ public class PlayerStateMachine : NetworkBehaviour
     {
         if (newState == CurrentState) return;
 
-        _activeState?.Exit();
         CurrentState = newState;
-        _activeState = _states[newState];
-        _activeState.Enter();
-    }
-    private void OnStateChanged_Internal(EPlayerState newState)
-    {
-        _activeState?.Exit();
-        _activeState = _states[newState];
-        _activeState.Enter();
     }
 }

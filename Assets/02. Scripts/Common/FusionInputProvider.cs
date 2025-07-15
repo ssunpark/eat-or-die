@@ -61,12 +61,14 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         var isAttacking = _inputReader.ConsumeAttackInput();
         var isRunning = _inputReader.IsRunning;
         var isJumping = _inputReader.ConsumeJumpInput();
+        var isInteracting = _inputReader.ConsumeInteractionInput();
         var data = new NetworkInputData
         {
             direction = new Vector3(move.x, 0, move.y),
             isAttacking = isAttacking,
             isRunning = isRunning,
-            isJumping = isJumping
+            isJumping = isJumping,
+            isInteracting = isInteracting
         };
 
         input.Set(data);
