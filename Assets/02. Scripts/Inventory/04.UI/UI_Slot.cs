@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class UI_Slot : MonoBehaviour,
     IPointerClickHandler, 
     IBeginDragHandler, 
-    IDragHandler, 
     IEndDragHandler
 {
     public int SlotIndex;
@@ -26,11 +25,6 @@ public class UI_Slot : MonoBehaviour,
     public void OnBeginDrag(PointerEventData eventData)
     {
         Debug.Log("OnBeginDrag");
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        Debug.Log("OnDrag");
     }
 
     public void OnEndDrag(PointerEventData eventData)
