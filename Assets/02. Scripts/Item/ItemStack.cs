@@ -20,7 +20,7 @@ public class ItemStack
             throw new Exception("아이템 최대 갯수는 1 이상입니다.");
         }
 
-        if (initialQuantity < 0 || initialQuantity > _maxQuantity)
+        if (initialQuantity < 0 || initialQuantity > maxQuantity)
         {
             throw new Exception("수량은 0 이상 최대 수량 이하여야 합니다.");
         }

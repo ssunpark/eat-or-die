@@ -7,14 +7,15 @@
     public readonly int MaxQuantity;
     // Addressable Path
     public readonly string IconAddressablePath;
-    public readonly string ObjectAddressablePath;
     // .. 등등 추가 예정
 
-    public ItemData(int id, string name, string description)
+    public ItemData(int id, string name, string description, int maxQuantity, string iconAddressablePath)
     {
         // TODO: 유효성 검사
         ID = id;
         Name = name;
         Description = description;
+        MaxQuantity = maxQuantity;
+        IconAddressablePath = iconAddressablePath;
     }
 }

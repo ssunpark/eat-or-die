@@ -11,6 +11,9 @@ public class UseItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
+    
+    [Name("MaxQuantity")]
+    public int MaxQuantity { get; set; }
 
     [Name("Addressable ID")]
     public string AddressableID { get; set; }

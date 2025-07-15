@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 // 아이템 생성, 조회, 데이터 로딩
 public class ItemManager : MonoBehaviour
 {
     private const string DEFAULT_CSV_PATH = "/10. CSV";
+    
+    [Header("아이템 오브젝트")]
+    [SerializeField]
+    private NetworkPrefabRef _itemObjectPrefab;
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
     private Dictionary<int, AItem> _itemDict;
@@ -53,12 +58,19 @@ public class ItemManager : MonoBehaviour
     /// <param name="quantity">수량</param>
     public void CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
-        if (!_itemDict.TryGetValue(id, out AItem item))
-        {
-            throw new Exception("없는 아이템입니다.");
-        }
-        
-        ItemStack itemStack = new ItemStack(id, item.ItemData.MaxQuantity, quantity);
-        // 네트워크 아이템 오브젝트 생성
+        // if (!_runner.IsServer)
+        // {
+        //     return;
+        // }
+        //
+        // if (!_itemDict.TryGetValue(id, out AItem item))
+        // {
+        //     throw new Exception("없는 아이템입니다.");
+        // }
+        //
+        // ItemStack itemStack = new ItemStack(id, item.ItemData.MaxQuantity, quantity);
+        // // 네트워크 아이템 오브젝트 생성
+        // var itemNetworkObject = _runner.Spawn(_itemObjectPrefab, position, rotation);
+        // itemNetworkObject.GetComponent<ItemObject>().Init(itemStack);
     }
 }

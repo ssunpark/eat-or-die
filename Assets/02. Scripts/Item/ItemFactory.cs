@@ -24,7 +24,7 @@ public class ItemFactory
                 effects.Add(effect);
         }
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description);
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, "");
         return new UseAItem(itemData, effects);
     }
 
