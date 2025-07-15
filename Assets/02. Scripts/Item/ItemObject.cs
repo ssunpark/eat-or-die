@@ -5,12 +5,15 @@ public class ItemObject : MonoBehaviour, IPickable
 {
     private ItemStack _itemStack;
     public ItemStack ItemStack => _itemStack;
+    
+    private SpriteRenderer _spriteRenderer;
 
     public void Init(ItemStack itemStack)
     {
         _itemStack = itemStack;
         // Stack에 있는 ID를 통해 외형 정보 가져오기
-        // ApplyVisual
+        var icon = ItemManager.Instance.GetItem(itemStack.ID).ItemData.Icon;
+        ApplyVisual(icon);
     }
 
     public ItemStack Pick()
@@ -21,8 +24,8 @@ public class ItemObject : MonoBehaviour, IPickable
     }
 
     // 외형 적용
-    // private void ApplyVisual()
-    // {
-    //     
-    // }
+    private void ApplyVisual(Sprite icon)
+    {
+        _spriteRenderer.sprite = icon;
+    }
 }

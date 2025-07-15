@@ -4,7 +4,7 @@ using Fusion;
 using UnityEngine;
 
 // 아이템 생성, 조회, 데이터 로딩
-public class ItemManager : MonoBehaviour
+public class ItemManager : BehaviourSingleton<ItemManager>
 {
     private const string ITEM_CSV_PATH = "/ItemCSV";
     [Header("아이템 오브젝트")]
