@@ -19,14 +19,21 @@ public class InputReader : MonoBehaviour
 
         _inputActions.Player.Move.performed += HandleMovePerformed;
         _inputActions.Player.Move.canceled += HandleMoveCanceled;
-        _inputActions.Player.Attack.performed += ctx => _attackPressed = true;
+        _inputActions.Player.Attack.performed += ctx => _attackPressed = true; 
+        _inputActions.Player.Jump.performed += ctx => _jumpPressed = true;
     }
     private bool _attackPressed;
-
+    private bool _jumpPressed;
     public bool ConsumeAttackInput()
     {
         bool result = _attackPressed;
         _attackPressed = false;
+        return result;
+    }
+    public bool ConsumeJumpInput()
+    {
+        bool result = _jumpPressed;
+        _jumpPressed = false;
         return result;
     }
 
