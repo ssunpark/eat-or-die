@@ -12,6 +12,17 @@ public class PlayerController : NetworkBehaviour
     [HideInInspector] public PlayerStats PlayerStats;
     public float Speed = 5f;
 
+    public void OnEnable()
+    {
+        if (PlayerAnimatorController == null)
+        {
+            PlayerAnimatorController = GetComponent<PlayerAnimator>();
+        }
+        if (PlayerStats == null)
+        {
+            PlayerStats = GetComponent<PlayerStats>();
+        }
+    }
     public override void Spawned()
     {
         _characterController = GetComponent<NetworkCharacterController>();
@@ -20,7 +31,12 @@ public class PlayerController : NetworkBehaviour
     }
     public void Move(Vector3 direction, float speed)
     {
-        _characterController.Move(direction.normalized * speed * Runner.DeltaTime);
+        if(_characterController.maxSpeed != speed)
+        {
+            _characterController.maxSpeed = speed;
+            Debug.Log($" {_characterController.maxSpeed}");
+        }
+        _characterController.Move(direction);
     }
     
 }

@@ -23,7 +23,7 @@ public class PlayerMoveState : PlayerStateBase
         {
             bool isRunning = inputData.isRunning;
             float moveSpeed = isRunning ? _stat.RunSpeed : _stat.WalkSpeed;
-
+            Debug.Log(isRunning);
             controller.Move(dir, moveSpeed);
             //_animator.SetMoveSpeed(isRunning ? 1f : 0.5f);
         }
