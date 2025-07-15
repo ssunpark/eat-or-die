@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Fusion; // Add Fusion for NetworkInputData
 
 public class PlayerMoveState : PlayerStateBase
 {
@@ -12,22 +13,10 @@ public class PlayerMoveState : PlayerStateBase
     public override void Tick()
     {
         if (!_controller.GetInput(out NetworkInputData inputData)) return;
-        TryJump(inputData);
+
         Vector3 dir = inputData.direction;
 
-        
-        if (dir.sqrMagnitude > 0.01f)
-        {
-            bool isRunning = inputData.isRunning;
-            float baseSpeed = _stat.GetStat(EStatType.MoveSpeed);
-            float sprintMultiplier = inputData.isRunning
-                ? _stat.GetStat(EStatType.SprintingMultiplier)
-                : 1f;
-
-            float moveSpeed = baseSpeed * sprintMultiplier;
-            _controller.Move(dir, moveSpeed);
-        }
-        else
+        if (dir.sqrMagnitude <= 0.01f)
         {
             _fsm.ChangeState(EPlayerState.Idle);
         }
