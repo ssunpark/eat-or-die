@@ -1,6 +1,5 @@
 public class Slot
 {
-    /*
     public ItemStack ItemStack { get; private set; }
     
     public void AddItem(ItemStack itemStack)
@@ -12,5 +11,4 @@ public class Slot
     {
         ItemStack = null;
     }
-    */
 }
