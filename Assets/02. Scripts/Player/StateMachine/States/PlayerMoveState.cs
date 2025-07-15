@@ -15,26 +15,26 @@ public class PlayerMoveState : PlayerStateBase
 
     public override void Tick()
     {
-        if (!controller.GetInput(out NetworkInputData inputData)) return;
-
+        if (!_controller.GetInput(out NetworkInputData inputData)) return;
+        TryJump(inputData);
         Vector3 dir = inputData.direction;
 
+        
         if (dir.sqrMagnitude > 0.01f)
         {
             bool isRunning = inputData.isRunning;
             float moveSpeed = isRunning ? _stat.RunSpeed : _stat.WalkSpeed;
-            Debug.Log(isRunning);
-            controller.Move(dir, moveSpeed);
+            _controller.Move(dir, moveSpeed);
             //_animator.SetMoveSpeed(isRunning ? 1f : 0.5f);
         }
         else
         {
-            fsm.ChangeState(EPlayerState.Idle);
+            _fsm.ChangeState(EPlayerState.Idle);
         }
     }
 
     public override void Exit()
     {
-       // _animator.SetMoveSpeed(0);
+        _controller.Stop();
     }
 }

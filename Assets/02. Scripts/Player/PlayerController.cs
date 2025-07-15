@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Fusion;
+using UnityEngine.InputSystem.XR;
 // 플레이어 이동 담당
 
 [RequireComponent(typeof(NetworkObject))]
@@ -10,7 +11,7 @@ public class PlayerController : NetworkBehaviour
 
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
     [HideInInspector] public PlayerStats PlayerStats;
-    public float Speed = 5f;
+    private Vector3 _direction;
 
     public void OnEnable()
     {
@@ -34,9 +35,31 @@ public class PlayerController : NetworkBehaviour
         if(_characterController.maxSpeed != speed)
         {
             _characterController.maxSpeed = speed;
-            Debug.Log($" {_characterController.maxSpeed}");
         }
-        _characterController.Move(direction);
+        _direction = direction;
     }
-    
+
+    public override void FixedUpdateNetwork()
+    {
+        if(!Object.HasInputAuthority) return;
+        
+        _characterController.Move(_direction);
+    }
+
+    public void Jump()
+    {
+        if (_characterController.Grounded)
+        {
+            _characterController.Jump();
+        }
+    }
+
+    public void Stop()
+    {
+        _direction = Vector3.zero;
+    }
+
+    public bool IsGrounded => _characterController.Grounded;
+
+
 }
