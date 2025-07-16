@@ -3,7 +3,7 @@
 public class ItemFactory
 {
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public EatItem CreateUseItem(EatItemRawData rawData)
+    public EatItem CreateEatItem(EatItemRawData rawData)
     {
         var effects = new List<IEatItemEffect>();
 
