@@ -11,6 +11,10 @@ public class Stat
 
     private readonly List<StatModifier> _modifiers = new();
 
+    public void SetBaseStat(float value)
+    {
+        BaseStat = value;
+    }
     public Stat(float baseStat)
     {
         Level = 0;
