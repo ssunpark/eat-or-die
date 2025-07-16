@@ -8,6 +8,8 @@ public class ItemObject : NetworkBehaviour, IPickable
     [Networked] public int ItemID { get; set; }
     [Networked] public int Quantity { get; set; }
     
+    public ItemStack ItemStack => new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
+    
     private SpriteRenderer _spriteRenderer;
 
     private void Awake()
@@ -21,11 +23,11 @@ public class ItemObject : NetworkBehaviour, IPickable
         ApplyVisual(icon);
     }
 
-    public ItemStack Pick()
+    public void Pick()
     {
         // 이 아이템을 주운 경우
+        // 아이템 흡수 연출
         Debug.Log($"주운 아이템: ID - {ItemID}, {Quantity}개");
-        return new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
     }
 
     // 외형 적용
