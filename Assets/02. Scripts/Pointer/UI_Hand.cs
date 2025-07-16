@@ -9,15 +9,12 @@ public class UI_Hand : MonoBehaviour
 
 	private void Awake()
 	{
-		IconImage = GetComponent<Image>();
-		QuantityText = GetComponentInChildren<TextMeshProUGUI>();
+		IconImage.gameObject.SetActive(false);
+		QuantityText.gameObject.SetActive(false);
 	}
 	
 	private void Start()
 	{
-		IconImage.gameObject.SetActive(false);
-		QuantityText.gameObject.SetActive(false);
-		
 		HandEntity.Instance.OnItemPickedUp += UpdateHandUI;
 		UpdateHandUI();
 	}
