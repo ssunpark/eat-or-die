@@ -12,6 +12,9 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
     public void Initialize(int slotIndex)
     {
         SlotIndex = slotIndex;
+        IconImage.gameObject.SetActive(false);
+        QuantityText.gameObject.SetActive(false);
+        InventoryManager.Instance.OnSlotUpdated[SlotIndex] += UpdateSlotUI;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -24,5 +27,21 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
         {
             InventoryManager.Instance.OnClickMouseRight(SlotIndex);
         }
+    }
+
+    public void UpdateSlotUI()
+    {
+        ItemStack itemInSlot = InventoryManager.Instance.Inventory.SlotList[SlotIndex].ItemStack;
+        if (itemInSlot == null)
+        {
+            IconImage.gameObject.SetActive(false);
+            QuantityText.gameObject.SetActive(false);
+            return;
+        }
+        
+        IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemData.Icon;
+        QuantityText.text = itemInSlot.Quantity.ToString();
+        IconImage.gameObject.SetActive(true);
+        QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
     }
 }

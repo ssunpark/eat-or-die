@@ -4,13 +4,16 @@ using UnityEngine;
 public class Inventory
 {
     private int _inventorySize;
-    
-    public List<Slot> SlotList { get; private set; }
+
+    public List<Slot> SlotList = new List<Slot>();
 
     public Inventory(int inventorySize)
     {
         _inventorySize = inventorySize;
-        SlotList = new List<Slot>(_inventorySize);
+        for (int i = 0; i < _inventorySize; i++)
+        {
+            SlotList.Add(new Slot());
+        }
     }
 
     public ItemStack PopItemInSlot(int slotIndex)
@@ -22,7 +25,7 @@ public class Inventory
         }
         
         ItemStack slotItem =  SlotList[slotIndex].ItemStack;
-        SlotList.RemoveAt(slotIndex);
+        SlotList[slotIndex].RemoveItem();
         return slotItem;
     }
     
@@ -69,6 +72,10 @@ public class Inventory
     {
         foreach (Slot slot in SlotList)
         {
+            if (slot.IsEmpty)
+            {
+                continue;
+            }
             if (slot.ItemStack.ID == itemStack.ID)
             {
                 if (slot.ItemStack.Quantity + itemStack.Quantity > slot.ItemStack.MaxQuantity)
