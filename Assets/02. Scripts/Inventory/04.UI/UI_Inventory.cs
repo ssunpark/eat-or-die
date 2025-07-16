@@ -16,6 +16,8 @@ public class UI_Inventory : MonoBehaviour
             inventorySlotComponent.Initialize(i);
             _uiSlotList.Add(inventorySlotComponent);
         }
+
+        InventoryManager.Instance.OnInventoryUpdated += UpdateInventoryUI;
         gameObject.SetActive(false);
     }
 
@@ -25,4 +27,11 @@ public class UI_Inventory : MonoBehaviour
         gameObject.SetActive(!isActive);
     }
     
+    private void UpdateInventoryUI()
+    {
+        foreach (UI_InventorySlot uiSlot in _uiSlotList)
+        {
+            uiSlot.UpdateSlotUI();
+        }
+    }
 }
