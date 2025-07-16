@@ -3,18 +3,21 @@ using System.Collections.Generic;
 
 public class BehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
-	private static T _instance;
-	public static T Instance => _instance;
+	private static T i = null;
 
-	private void Awake()
+	public static T Instance
 	{
-		if (_instance == null)
+		get
 		{
-			_instance = GetComponent<T>();
+			if (i == null)
+			{
+				i = FindFirstObjectByType(typeof(T)) as T;
+			}
+			return i;
 		}
-		else
+		set
 		{
-			Destroy(gameObject);
+			i = value;
 		}
 	}
 }
