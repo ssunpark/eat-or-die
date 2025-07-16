@@ -1,7 +1,7 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
 // 외부에서 읽어온 가공 전 데이터
-public class UseItemRawData
+public class EatItemRawData
 {
     [Name("ID")]
     public int ID { get; set; }

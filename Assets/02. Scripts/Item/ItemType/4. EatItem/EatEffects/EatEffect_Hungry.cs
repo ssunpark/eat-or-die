@@ -2,11 +2,11 @@
 using UnityEngine;
 
 // 사용 아이템 효과: 즉시 배고픔 회복
-public class UseItemEffect_Hungry : IUseItemEffect
+public class EatEffect_Hungry : IEatItemEffect
 {
     public float Value { get; set; }
 
-    public UseItemEffect_Hungry(float value)
+    public EatEffect_Hungry(float value)
     {
         if (value <= 0f)
         {

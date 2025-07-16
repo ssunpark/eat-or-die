@@ -49,7 +49,7 @@ public class ItemManager : NetworkBehaviour
         _itemDict = new Dictionary<int, AItem>();
         
         // 사용 아이템
-        var useItemRawData = ItemDataLoader.LoadItemRawData<UseItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/UseItemTestCSV.csv");
+        var useItemRawData = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/UseItemTestCSV.csv");
         foreach (var data in useItemRawData)
         {
             var useItem = _itemFactory.CreateUseItem(data);
