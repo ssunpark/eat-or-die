@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 3587386000174481778}
   - component: {fileID: 7732982908050804710}
   - component: {fileID: -7280987941852244416}
-  m_Layer: 0
+  - component: {fileID: 6069315248882281582}
+  m_Layer: 8
   m_Name: ItemObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,6 +47,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09c72218d0f4ff1a60d333c5a7282df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _ItemID: 0
+  _Quantity: 0
+  _HasOwner: 0
+  _absorbSpeed: 10
+  _absorbThreshold: 0.1
 --- !u!212 &7732982908050804710
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -117,5 +123,27 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 3587386000174481778}
   ForceRemoteRenderTimeframe: 0
+--- !u!65 &6069315248882281582
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4620512134403510822}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.56, y: 2.56, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}

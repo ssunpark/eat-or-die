@@ -4,7 +4,8 @@
 public class ItemStack
 {
     public readonly int ID;
-    private readonly int _maxQuantity;
+    public readonly int MaxQuantity;
+    
     private int _quantity;
     public int Quantity => _quantity;
 
@@ -26,7 +27,7 @@ public class ItemStack
         }
 
         ID = id;
-        _maxQuantity = maxQuantity;
+        MaxQuantity = maxQuantity;
         _quantity = initialQuantity;
     }
 
@@ -34,7 +35,7 @@ public class ItemStack
 
     public void SetQuantity(int quantity)
     {
-        if (quantity < 0 || quantity > _maxQuantity)
+        if (quantity < 0 || quantity > MaxQuantity)
         {
             throw new Exception("수량은 0 이상 최대 수량 이하여야 합니다.");
         }
@@ -49,7 +50,7 @@ public class ItemStack
             return false;
         }
 
-        if (_quantity + amount > _maxQuantity)
+        if (_quantity + amount > MaxQuantity)
         {
             return false;
         }
