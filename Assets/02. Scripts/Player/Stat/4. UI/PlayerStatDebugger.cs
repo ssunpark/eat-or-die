@@ -2,23 +2,23 @@
 
 public class PlayerStatDebugger : MonoBehaviour
 {
-    private PlayerStat _stat;
+    private PlayerStatManager _statManager;
 
-    private void Awake()
+    public void Bind(PlayerStatManager statManager)
     {
-        _stat = GetComponent<PlayerStat>();
+        _statManager = statManager;
     }
 
     private void OnGUI()
     {
-        if (_stat == null || _stat.StatDictionary == null) return;
+        if (_statManager == null) return;
 
         GUI.BeginGroup(new Rect(10, 10, 300, Screen.height));
         GUILayout.Label("<b><size=14>Player Stats</size></b>");
 
-        foreach (var entry in _stat.StatDictionary)
+        foreach (var kvp in _statManager.GetStatSnapshot())
         {
-            GUILayout.Label($"{entry.Key}: {entry.Value.TotalStat:F2}");
+            GUILayout.Label($"{kvp.Key}: {kvp.Value:F2}");
         }
 
         GUI.EndGroup();

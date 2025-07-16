@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Fusion; // Add Fusion for NetworkInputData
 
 public class PlayerMoveState : PlayerStateBase
 {
