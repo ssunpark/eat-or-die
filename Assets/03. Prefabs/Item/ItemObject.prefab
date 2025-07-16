@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09c72218d0f4ff1a60d333c5a7282df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _ItemID: 0
+  _Quantity: 0
 --- !u!212 &7732982908050804710
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -117,5 +119,6 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 3587386000174481778}
   ForceRemoteRenderTimeframe: 0

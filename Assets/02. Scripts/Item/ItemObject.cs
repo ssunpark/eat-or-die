@@ -3,10 +3,10 @@ using Fusion;
 using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
-public class ItemObject : MonoBehaviour, IPickable
+public class ItemObject : NetworkBehaviour, IPickable
 {
-    private ItemStack _itemStack;
-    public ItemStack ItemStack => _itemStack;
+    [Networked] public int ItemID { get; set; }
+    [Networked] public int Quantity { get; set; }
     
     private SpriteRenderer _spriteRenderer;
 
@@ -14,21 +14,18 @@ public class ItemObject : MonoBehaviour, IPickable
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void Init(ItemStack itemStack)
+    
+    public override void Spawned()
     {
-        _itemStack = itemStack;
-        // Stack에 있는 ID를 통해 외형 정보 가져오기
-        var icon = ItemManager.Instance.GetItem(itemStack.ID).ItemData.Icon;
+        var icon = ItemManager.Instance.GetItem(ItemID).ItemData.Icon;
         ApplyVisual(icon);
     }
 
     public ItemStack Pick()
     {
         // 이 아이템을 주운 경우
-        Debug.Log($"주운 아이템: ID - {_itemStack.ID}, {_itemStack.Quantity}개");
-        return _itemStack;
+        Debug.Log($"주운 아이템: ID - {ItemID}, {Quantity}개");
+        return new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
     }
 
     // 외형 적용
