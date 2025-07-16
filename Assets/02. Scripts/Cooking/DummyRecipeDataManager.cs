@@ -1,9 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 //수현
-public class DummyRecipeDataManager : BehaviourSingleton<DummyRecipeDataManager>
+public class DummyRecipeDataManager : MonoBehaviour
 {
+    public static DummyRecipeDataManager Instance { get; private set; }
+    
     public List<RecipeData> DummyRecipeDatas = new List<RecipeData>();
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
