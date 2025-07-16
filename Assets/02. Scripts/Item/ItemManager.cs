@@ -4,8 +4,22 @@ using Fusion;
 using UnityEngine;
 
 // 아이템 생성, 조회, 데이터 로딩
-public class ItemManager : BehaviourSingleton<ItemManager>
+public class ItemManager : NetworkBehaviour
 {
+    public static ItemManager Instance { get; private set; }
+
+    public override void Spawned()
+    {
+        if (Instance == null)
+        {
+            Instance = this; 
+        }
+        else
+        {
+            Runner.Despawn(Object); // 중복 방지
+        }
+    }
+    
     private const string ITEM_CSV_PATH = "/ItemCSV";
     [Header("아이템 오브젝트")]
     [SerializeField]
@@ -24,12 +38,13 @@ public class ItemManager : BehaviourSingleton<ItemManager>
 
     private void Start()
     {
-        _itemFactory = new ItemFactory();
         Init();
     }
 
     private void Init()
     {
+        _itemFactory = new ItemFactory();
+        
         // 데이터 로드 후 생성
         _itemDict = new Dictionary<int, AItem>();
         
@@ -75,8 +90,8 @@ public class ItemManager : BehaviourSingleton<ItemManager>
     /// </summary>
     /// <param name="id">아이템 ID</param>
     /// <param name="quantity">수량</param>
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
         if (!Room.Instance.Runner.IsServer)
         {

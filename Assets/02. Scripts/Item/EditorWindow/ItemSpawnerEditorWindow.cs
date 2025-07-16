@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ItemSpawnerEditorWindow : EditorWindow
 {
-    private ItemManager _itemManager;
-
     private int _itemId = 0;
     private int _quantity = 1;
     private Vector3 _spawnPosition = Vector3.zero;
@@ -23,8 +21,6 @@ public class ItemSpawnerEditorWindow : EditorWindow
     {
         GUILayout.Label("Item Drop Test Tool", EditorStyles.boldLabel);
 
-        _itemManager = (ItemManager)EditorGUILayout.ObjectField("Item Manager", _itemManager, typeof(ItemManager), true);
-
         _itemId = EditorGUILayout.IntField("Item ID", _itemId);
         _quantity = EditorGUILayout.IntField("Quantity", _quantity);
         _spawnPosition = EditorGUILayout.Vector3Field("Spawn Position", _spawnPosition);
@@ -32,9 +28,10 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
         if (GUILayout.Button("Spawn Item"))
         {
-            if (_itemManager == null)
+            var itemManager = ItemManager.Instance;
+            if (itemManager == null)
             {
-                Debug.LogError("ItemManager를 할당하세요.");
+                Debug.LogError("ItemManager.Instance 가 존재하지 않습니다. 씬에 ItemManager가 있어야 합니다.");
                 return;
             }
 
@@ -42,11 +39,10 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
             try
             {
-                _itemManager.CreateItemObject(_itemId, _quantity, _spawnPosition, rotation);
+                itemManager.RPC_CreateItemObject(_itemId, _quantity, _spawnPosition, rotation);
                 Debug.Log($"[EditorWindow] ID {_itemId} 아이템 생성 성공");
 
-                // 아이템 정보 저장
-                var item = _itemManager.GetItem(_itemId);
+                var item = itemManager.GetItem(_itemId);
                 _lastSpawnedItemData = item?.ItemData;
             }
             catch (System.Exception ex)
@@ -56,7 +52,6 @@ public class ItemSpawnerEditorWindow : EditorWindow
             }
         }
 
-        // 아이템 정보 출력
         if (_lastSpawnedItemData != null)
         {
             EditorGUILayout.Space(10);

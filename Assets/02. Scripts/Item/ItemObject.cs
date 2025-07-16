@@ -1,4 +1,5 @@
 ﻿using System;
+using Fusion;
 using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
@@ -14,6 +15,7 @@ public class ItemObject : MonoBehaviour, IPickable
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void Init(ItemStack itemStack)
     {
         _itemStack = itemStack;
