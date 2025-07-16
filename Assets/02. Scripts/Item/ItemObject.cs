@@ -7,6 +7,7 @@ public class ItemObject : NetworkBehaviour, IPickable
 {
     [Networked] public int ItemID { get; set; }
     [Networked] public int Quantity { get; set; }
+    [Networked] public bool HasOwner { get; set; }
     
     public ItemStack ItemStack => new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
     
