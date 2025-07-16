@@ -2,9 +2,9 @@
 
 public class PlayerStatDebugger : MonoBehaviour
 {
-    private PlayerStatManager _statManager;
+    private StatManager _statManager;
 
-    public void Bind(PlayerStatManager statManager)
+    public void Bind(StatManager statManager)
     {
         _statManager = statManager;
     }

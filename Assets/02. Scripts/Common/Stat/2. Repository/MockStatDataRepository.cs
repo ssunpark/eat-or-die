@@ -2,5 +2,5 @@
 
 public class MockStatDataRepository : IStatDataRepository
 {
-    public List<PlayerStatData> GetPlayerStatData() => MockStatDataTable.GetMockData();
+    public List<CharacterStatData> GetCharacterStatData() => MockStatDataTable.GetMockData();
 }

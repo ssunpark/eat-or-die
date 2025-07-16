@@ -2,13 +2,15 @@
 {
     protected PlayerStateMachine _fsm;
     protected PlayerController _controller;
-    protected PlayerStatManager _stat;
+    protected StatManager _stat;
+    protected ResourceManager _resource;
 
     public PlayerStateBase(PlayerStateMachine fsm, PlayerController controller)
     {
         _fsm = fsm;
         _controller = controller;
-        _stat = controller.PlayerStat;
+        _stat = controller.Stat;
+        _resource = controller.Resource;
     }
 
     public virtual void Enter() { }

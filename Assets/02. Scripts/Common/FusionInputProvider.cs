@@ -13,7 +13,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
 
     private string _nickname = "Player";
-    private CharacterClassType _selectedClass;
+    private ECharacterType _selectedClass;
     private Dictionary<EStatType, float> _statInputs = new();
     private Dictionary<string, int> _customizeSelections = new();
 
@@ -24,7 +24,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         _inputReader = FindAnyObjectByType<InputReader>();
 
         // 초기화
-        _selectedClass = CharacterClassType.Farmer;
+        _selectedClass = ECharacterType.Farmer;
 
         string[] categories = new string[] {
             "Axe", "Bag", "Bottom", "Bracelet", "Earring", "Eye", "Eyebrow", "Eyewear",
@@ -65,9 +65,9 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
 
         GUILayout.Space(10);
         GUILayout.Label("Class:");
-        _selectedClass = (CharacterClassType)GUILayout.SelectionGrid(
+        _selectedClass = (ECharacterType)GUILayout.SelectionGrid(
         (int)_selectedClass,
-        Enum.GetNames(typeof(CharacterClassType)),
+        Enum.GetNames(typeof(ECharacterType)),
         1
     );
         GUILayout.Space(10);
@@ -173,8 +173,10 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
                         spawnData.lips, spawnData.mask, spawnData.mustache, spawnData.shield,
                         spawnData.shoes, spawnData.spear, spawnData.sword, spawnData.top, spawnData.watch);
 
-                    var installer = obj.GetComponent<PlayerStatInstaller>();
-                    installer.StatManager.ApplyBaseStats(spawnData.baseStats);
+                    if (obj.TryGetComponent<CharacterBase>(out var character))
+                    {
+                        character.Stat.ApplyBaseStats(spawnData.baseStats);
+                    }
                 });
         }
     }

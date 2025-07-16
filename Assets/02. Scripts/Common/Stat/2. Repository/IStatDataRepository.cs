@@ -2,6 +2,6 @@
 
 public interface IStatDataRepository
 {
-    List<PlayerStatData> GetPlayerStatData();
+    List<CharacterStatData> GetCharacterStatData();
 }
 

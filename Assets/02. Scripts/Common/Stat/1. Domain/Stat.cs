@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 public class Stat
 {
     public int Level;
     public bool CanLevelUp;
     public float BaseStat { get; private set; }
+    public float CurrentValue { get; private set; }
 
     private float _increasePerGap;
     private int _increaseGap;
@@ -14,6 +16,7 @@ public class Stat
     public void SetBaseStat(float value)
     {
         BaseStat = value;
+        CurrentValue = TotalStat;
     }
     public Stat(float baseStat)
     {
@@ -33,6 +36,13 @@ public class Stat
         _increaseGap = increaseGap;
     }
 
+    public void SetCurrent(float value)
+    {
+        CurrentValue = Mathf.Clamp(value, 0f, TotalStat);
+    }
+
+    public void Restore(float amount) => SetCurrent(CurrentValue + amount);
+    public void Consume(float amount) => SetCurrent(CurrentValue - amount);
     public void LevelUp()
     {
         if (!CanLevelUp) return;

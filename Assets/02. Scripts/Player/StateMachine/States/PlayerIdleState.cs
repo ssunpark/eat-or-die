@@ -7,11 +7,13 @@ public class PlayerIdleState : PlayerStateBase
     {
     }
 
+
     public override void Tick()
     {
         if (!_controller.GetInput(out NetworkInputData inputData)) return;
 
         Vector3 dir = inputData.direction;
+
 
         if (dir.sqrMagnitude > 0.01f)
         {

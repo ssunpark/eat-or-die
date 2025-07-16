@@ -2,7 +2,7 @@
 using UnityEngine;
 public class StatDataRepository : IStatDataRepository
 {
-    public List<PlayerStatData> GetPlayerStatData()
+    public List<CharacterStatData> GetCharacterStatData()
     {
         throw new System.NotImplementedException();
     }
