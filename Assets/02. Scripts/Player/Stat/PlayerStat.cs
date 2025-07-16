@@ -30,7 +30,16 @@ public class PlayerStat : MonoBehaviour
         OnDictionaryLoaded?.Invoke();
        // UIEventManager.Instance.OnDisplayStatChanged?.Invoke(new StatSnapshot());
     }
-
+    public void ApplyBaseStats(Dictionary<EStatType, float> baseStats)
+    {
+        foreach (var kvp in baseStats)
+        {
+            if (StatDictionary.TryGetValue(kvp.Key, out var stat))
+            {
+                stat.SetBaseStat(kvp.Value);
+            }
+        }
+    }
     public float GetStat(EStatType type)
     {
         if (StatDictionary.TryGetValue(type, out var stat))
