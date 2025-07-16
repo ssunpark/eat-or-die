@@ -4,6 +4,10 @@ public class UseToAction_Hoe : IUseToAction
 {
     public void UseTool(GameObject target)
     {
-        // 밭 갈기
+        if (target.TryGetComponent(out FarmingGround farmingGround))
+        {
+            // 밭 갈기
+            // farmingGround.
+        }
     }
 }
