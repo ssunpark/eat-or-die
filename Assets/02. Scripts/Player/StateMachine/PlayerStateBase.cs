@@ -2,7 +2,7 @@
 {
     protected PlayerStateMachine _fsm;
     protected PlayerController _controller;
-    protected PlayerStat _stat;
+    protected PlayerStatManager _stat;
 
     public PlayerStateBase(PlayerStateMachine fsm, PlayerController controller)
     {
