@@ -22,6 +22,7 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
+            InventoryManager.Instance.OnClickMouseRight(SlotIndex);
         }
     }
 }
