@@ -13,4 +13,10 @@ public class HandEntity : BehaviourSingleton<HandEntity>
         ItemStack = itemStack;
         OnItemPickedUp?.Invoke();
     }
+    
+    public void DropItem()
+    {
+        ItemStack = null;
+        OnItemPickedUp?.Invoke();
+    }
 }
