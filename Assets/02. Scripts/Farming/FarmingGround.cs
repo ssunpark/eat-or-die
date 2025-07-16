@@ -3,8 +3,8 @@ using Fusion;
 public class FarmingGround : NetworkBehaviour
 {
     // 땅에 심어진 작물에 대한 ID
-    private int _plantedID;
-    
+    private int _seedID;
+
     private EFarmingGroundState _state;
 
     public override void Spawned()
@@ -29,9 +29,11 @@ public class FarmingGround : NetworkBehaviour
             Grow();
         }
     }
-    
-    public void Plant()
+
+    public void Plant(int seedID)
     {
+        _seedID = seedID;
+        
         if (_state == EFarmingGroundState.Plowed)
         {
             _state = EFarmingGroundState.Planted;
