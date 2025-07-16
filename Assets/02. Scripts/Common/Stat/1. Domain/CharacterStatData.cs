@@ -1,11 +1,11 @@
-﻿public class PlayerStatData
+﻿public class CharacterStatData
 {
     public EStatType StatType;
     public float BaseAmount;
     public bool CanLevelUp;
     public float IncreaseAmount;
 
-    public PlayerStatData(EStatType type, float baseAmount, bool canLevelUp, float increaseAmount)
+    public CharacterStatData(EStatType type, float baseAmount, bool canLevelUp, float increaseAmount)
     {
         StatType = type;
         BaseAmount = baseAmount;

@@ -1,12 +1,12 @@
 ﻿using Fusion;
 
-public class PlayerStatNetworkSync : NetworkBehaviour
+public class CharacterStatNetworkSync : NetworkBehaviour
 {
-    [Networked, Capacity(11)] public NetworkArray<float> NetStats => default;
+    [Networked, Capacity(12)] public NetworkArray<float> NetStats => default;
 
-    private PlayerStatManager _statManager;
+    private StatManager _statManager;
 
-    public void Initialize(PlayerStatManager manager)
+    public void Initialize(StatManager manager)
     {
         _statManager = manager;
         if (HasStateAuthority)
@@ -18,7 +18,8 @@ public class PlayerStatNetworkSync : NetworkBehaviour
         foreach (var kvp in _statManager.GetStatSnapshot())
         {
             int index = GetIndex(kvp.Key);
-            if (index >= 0) NetStats.Set(index, kvp.Value);
+            if (index >= 0)
+                NetStats.Set(index, kvp.Value);
         }
     }
 
@@ -36,7 +37,8 @@ public class PlayerStatNetworkSync : NetworkBehaviour
             EStatType.CritChance => 7,
             EStatType.Armor => 8,
             EStatType.SprintingMultiplier => 9,
-            EStatType.Satiety => 10,
+            EStatType.MaxSatiety => 10,
+            EStatType.MaxHealth => 11,
             _ => -1
         };
     }
