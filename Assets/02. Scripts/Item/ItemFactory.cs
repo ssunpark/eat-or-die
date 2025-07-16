@@ -3,7 +3,7 @@
 public class ItemFactory
 {
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public UseAItem CreateUseItem(UseItemRawData rawData)
+    public UseItem CreateUseItem(UseItemRawData rawData)
     {
         var effects = new List<IUseItemEffect>();
 
@@ -25,7 +25,7 @@ public class ItemFactory
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, "");
-        return new UseAItem(itemData, effects);
+        return new UseItem(itemData, effects);
     }
 
     private IUseItemEffect CreateUseItemEffect(EUseItemEffectType type, float value, float duration)
@@ -36,5 +36,17 @@ public class ItemFactory
             EUseItemEffectType.Hungry => new UseItemEffect_Hungry(value),
             _ => null
         };
+    }
+
+    public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        return new EquipmentItem(itemData);
+    }
+    
+    public WeaponItem CreateWeaponItem(WeaponItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        return new WeaponItem(itemData, rawData.Type);
     }
 }
