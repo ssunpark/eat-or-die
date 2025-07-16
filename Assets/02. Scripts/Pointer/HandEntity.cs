@@ -7,5 +7,6 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     
     public void PickUpItem(ItemStack itemStack)
     {
+        _itemStack = itemStack;
     }
 }
