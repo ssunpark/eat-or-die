@@ -7,7 +7,7 @@ public enum CharacterClassType
     Warrior, Mage, Farmer, Chef
 }
 
-public class PlayerClassHandler : NetworkBehaviour
+public class PlayerCustomizeHandler : NetworkBehaviour
 {
     [SerializeField] private CharacterClassType _classType;
     [SerializeField] private string _nickname;
@@ -41,40 +41,12 @@ public class PlayerClassHandler : NetworkBehaviour
         if (!Object.HasStateAuthority && !Object.HasInputAuthority)
             return;
 
-        ApplyInitialStatsByClass();
         ApplyCustomization();
     }
 
     private void Awake()
     {
-        ApplyInitialStatsByClass();
         ApplyCustomization();
-    }
-
-    private void ApplyInitialStatsByClass()
-    {
-        var stat = GetComponent<PlayerStat>();
-        if (stat == null) return;
-
-        switch (_classType)
-        {
-            case CharacterClassType.Warrior:
-                stat.ApplyModifier(EStatType.Armor, new StatModifier(StatModifierType.Add, 10, this));
-                stat.ApplyModifier(EStatType.Damage, new StatModifier(StatModifierType.Add, 5, this));
-                break;
-            case CharacterClassType.Mage:
-                stat.ApplyModifier(EStatType.Damage, new StatModifier(StatModifierType.Add, 15, this));
-                stat.ApplyModifier(EStatType.Armor, new StatModifier(StatModifierType.Add, -5, this));
-                break;
-            case CharacterClassType.Farmer:
-                stat.ApplyModifier(EStatType.ConsumptionRate, new StatModifier(StatModifierType.Multiply, 0.8f, this));
-                stat.ApplyModifier(EStatType.SprintingMultiplier, new StatModifier(StatModifierType.Add, 0.2f, this));
-                break;
-            case CharacterClassType.Chef:
-                stat.ApplyModifier(EStatType.AttackSpeed, new StatModifier(StatModifierType.Multiply, 1.3f, this));
-                stat.ApplyModifier(EStatType.Armor, new StatModifier(StatModifierType.Add, -3, this));
-                break;
-        }
     }
 
     private void ApplyCustomization()

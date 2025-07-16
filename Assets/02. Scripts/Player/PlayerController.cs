@@ -9,51 +9,27 @@ public class PlayerController : NetworkBehaviour
     private NetworkCharacterController _characterController;
 
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
-    [HideInInspector] public PlayerStat PlayerStat;
+
+    [HideInInspector] public PlayerStatManager PlayerStat;
     private Vector3 _direction;
     private bool _isSpawned = false;
-    private bool _isStatLoaded = false;
-
-    public void TestTest()
-    {
-        Debug.Log("Controller: TestTest called");
-        PlayerStat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(StatModifierType.Multiply, 5f, this));
-    }
 
 
-    public void OnEnable()
-    {
-        if (PlayerStat == null)
-        {
-            PlayerStat = GetComponent<PlayerStat>();
-            PlayerStat.OnDictionaryLoaded += OnStatLoaded;
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (PlayerStat != null)
-            PlayerStat.OnDictionaryLoaded -= OnStatLoaded;
-    }
     public override void Spawned()
     {
         _characterController = GetComponent<NetworkCharacterController>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
-        PlayerStat = GetComponent<PlayerStat>();
+
+        var installer = GetComponent<PlayerStatInstaller>();
+        PlayerStat = installer.StatManager;
 
         _isSpawned = true;
         TryInitialize();
     }
 
-    private void OnStatLoaded()
-    {
-        _isStatLoaded = true;
-        TryInitialize();
-    }
-
     private void TryInitialize()
     {
-        if (_isSpawned && _isStatLoaded)
+        if (_isSpawned)
         {
             _characterController.maxSpeed = PlayerStat.GetStat(EStatType.MoveSpeed);
             _characterController.jumpImpulse = PlayerStat.GetStat(EStatType.JumpPower);
@@ -111,12 +87,6 @@ public class PlayerController : NetworkBehaviour
                 Rpc_PlayAnimTrigger(EAnimTrigger.Jump);
             }
 
-            // Handle interaction (TestTest)
-            if (isInteracting)
-            {
-                Debug.Log("Controller: TestTest called from FixedUpdateNetwork");
-                PlayerStat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(StatModifierType.Multiply, 5f, this));
-            }
         }
         else
         {
