@@ -19,8 +19,6 @@ public class ItemObject : NetworkBehaviour, IPickable
     
     private Collider _collider;
     
-    public ItemStack ItemStack => new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
-    
     private SpriteRenderer _spriteRenderer;
 
     private void Awake()
@@ -46,6 +44,8 @@ public class ItemObject : NetworkBehaviour, IPickable
             {
                 _target = null;
                 // 인벤에 등록
+                ItemStack itemStack = new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
+                InventoryManager.Instance.PickItemFromGround(itemStack);
                 Runner.Despawn(Object);
             }
         }
