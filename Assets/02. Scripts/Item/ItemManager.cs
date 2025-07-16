@@ -93,7 +93,7 @@ public class ItemManager : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
-        if (!Room.Instance.Runner.IsServer)
+        if (!Runner.IsServer)
         {
             return;
         }
@@ -103,9 +103,16 @@ public class ItemManager : NetworkBehaviour
             throw new Exception("없는 아이템입니다.");
         }
         
-        ItemStack itemStack = new ItemStack(id, item.ItemData.MaxQuantity, quantity);
         // 네트워크 아이템 오브젝트 생성
-        var itemNetworkObject = Room.Instance.Runner.Spawn(_itemObjectPrefab, position, rotation);
-        itemNetworkObject.GetComponent<ItemObject>().Init(itemStack);
+        Runner.Spawn(_itemObjectPrefab,
+            position: position,
+            rotation: rotation,
+            inputAuthority: null,
+            onBeforeSpawned: (runner, obj) =>
+            {
+                var item = obj.GetComponent<ItemObject>();
+                item.ItemID = id;
+                item.Quantity = quantity;
+            });
     }
 }

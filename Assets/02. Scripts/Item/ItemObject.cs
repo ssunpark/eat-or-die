@@ -3,32 +3,63 @@ using Fusion;
 using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
-public class ItemObject : MonoBehaviour, IPickable
+public class ItemObject : NetworkBehaviour, IPickable
 {
-    private ItemStack _itemStack;
-    public ItemStack ItemStack => _itemStack;
+    [Networked] public int ItemID { get; set; }
+    [Networked] public int Quantity { get; set; }
+    [Networked] public bool HasOwner { get; set; }
+
+    [SerializeField]
+    private float _absorbSpeed = 10f;
+    [SerializeField]
+    private float _absorbThreshold = 0.1f;
+    
+    // 흡수 대상
+    private Transform _target;
+    
+    private Collider _collider;
+    
+    public ItemStack ItemStack => new ItemStack(ItemID, ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
     
     private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _collider = GetComponent<Collider>();
     }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void Init(ItemStack itemStack)
+    
+    public override void Spawned()
     {
-        _itemStack = itemStack;
-        // Stack에 있는 ID를 통해 외형 정보 가져오기
-        var icon = ItemManager.Instance.GetItem(itemStack.ID).ItemData.Icon;
+        var icon = ItemManager.Instance.GetItem(ItemID).ItemData.Icon;
         ApplyVisual(icon);
     }
 
-    public ItemStack Pick()
+    public override void FixedUpdateNetwork()
     {
-        // 이 아이템을 주운 경우
-        Debug.Log($"주운 아이템: ID - {_itemStack.ID}, {_itemStack.Quantity}개");
-        return _itemStack;
+        if (!IsProxy && _target != null)
+        {
+            // 서버 또는 InputAuthority 있는 클라이언트만 위치 갱신
+            transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Runner.DeltaTime);
+
+            if (Vector3.Distance(transform.position, _target.position) < _absorbThreshold)
+            {
+                _target = null;
+                // 인벤에 등록
+                Runner.Despawn(Object);
+            }
+        }
+    }
+
+    public void Pick(GameObject target)
+    {
+        // 이 아이템을 주운 경우 줍기 비활성화
+        _collider.enabled = false;
+        
+        // 아이템 흡수 연출 타겟 설정
+        _target = target.transform;
+        
+        Debug.Log($"주운 아이템: ID - {ItemID}, {Quantity}개");
     }
 
     // 외형 적용

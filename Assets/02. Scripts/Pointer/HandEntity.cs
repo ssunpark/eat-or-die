@@ -1,12 +1,15 @@
+using System;
 using UnityEngine;
 
 public class HandEntity : BehaviourSingleton<HandEntity>
 {
-    private ItemStack _itemStack;
-    public bool IsHandEmpty => _itemStack == null;
+    public ItemStack ItemStack;
+    public bool IsHandEmpty => ItemStack == null;
+    
+    public Action OnItemPickedUp;
     
     public void PickUpItem(ItemStack itemStack)
     {
-        _itemStack = itemStack;
+        ItemStack = itemStack;
     }
 }

@@ -13,19 +13,18 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
 
     private string _nickname = "Player";
+    private CharacterClassType _selectedClass;
     private Dictionary<EStatType, float> _statInputs = new();
     private Dictionary<string, int> _customizeSelections = new();
+
+    private GUIStyle _backgroundStyle;
 
     private void Awake()
     {
         _inputReader = FindAnyObjectByType<InputReader>();
 
         // 초기화
-        foreach (EStatType stat in Enum.GetValues(typeof(EStatType)))
-        {
-            if (stat != EStatType.MaxHealth)
-                _statInputs[stat] = 10f;
-        }
+        _selectedClass = CharacterClassType.Farmer;
 
         string[] categories = new string[] {
             "Axe", "Bag", "Bottom", "Bracelet", "Earring", "Eye", "Eyebrow", "Eyewear",
@@ -34,7 +33,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         };
 
         foreach (var category in categories)
-            _customizeSelections[category] = 1;
+            _customizeSelections[category] = 0;
     }
 
     async void StartGame(GameMode mode)
@@ -57,29 +56,23 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
     }
-
     private void OnGUI()
     {
+
         GUILayout.BeginArea(new Rect(10, 10, 300, Screen.height));
         GUILayout.Label("Nickname:");
         _nickname = GUILayout.TextField(_nickname);
 
         GUILayout.Space(10);
-        GUILayout.Label("Stats:");
-        foreach (EStatType stat in Enum.GetValues(typeof(EStatType)))
-        {
-            if (stat == EStatType.MaxHealth) continue;
-            GUILayout.BeginHorizontal();
-            GUILayout.Label(stat.ToString(), GUILayout.Width(140));
-            string input = GUILayout.TextField(_statInputs[stat].ToString("F2"), GUILayout.Width(60));
-            input = input.Replace(',', '.');
-            if (float.TryParse(input, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float val))
-                _statInputs[stat] = val;
-            GUILayout.EndHorizontal();
-        }
-
-
+        GUILayout.Label("Class:");
+        _selectedClass = (CharacterClassType)GUILayout.SelectionGrid(
+        (int)_selectedClass,
+        Enum.GetNames(typeof(CharacterClassType)),
+        1
+    );
         GUILayout.Space(10);
+
+
         GUILayout.Label("Customization:");
         Dictionary<string, int> maxCounts = new()
         {
@@ -111,13 +104,20 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(kvp.Key, GUILayout.Width(100));
-            string input = GUILayout.TextField(_customizeSelections[kvp.Key].ToString(), GUILayout.Width(50));
-            if (int.TryParse(input, out int val))
-                _customizeSelections[kvp.Key] = Mathf.Clamp(val, 0, kvp.Value); // 0 허용
+
+            // 감소 버튼
+            if (GUILayout.Button("-", GUILayout.Width(25)))
+                _customizeSelections[kvp.Key] = Mathf.Max(0, _customizeSelections[kvp.Key] - 1);
+
+            // 현재 값 표시
+            GUILayout.Label(_customizeSelections[kvp.Key].ToString(), GUILayout.Width(30));
+
+            // 증가 버튼
+            if (GUILayout.Button("+", GUILayout.Width(25)))
+                _customizeSelections[kvp.Key] = Mathf.Min(kvp.Value, _customizeSelections[kvp.Key] + 1);
+
             GUILayout.EndHorizontal();
         }
-
-        
 
         if (_runner == null)
         {
@@ -153,18 +153,18 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
             string GetName(string part) => _customizeSelections[part] > 0 ? part + "_" + _customizeSelections[part] : "";
 
             var spawnData = new PlayerSpawnData(
-                CharacterClassType.Farmer, // 직업은 임시로 Farmer
+                _selectedClass,
                 GetName("Axe"), GetName("Bag"), GetName("Bottom"), GetName("Bracelet"), GetName("Earring"),
                 GetName("Eye"), GetName("Eyebrow"), GetName("Eyewear"), GetName("Glove"), GetName("Hair"),
                 GetName("HairAcc"), GetName("HandAcc"), GetName("Headgear"), GetName("Lips"), GetName("Mask"),
                 GetName("Mustache"), GetName("Shield"), GetName("Shoes"), GetName("Spear"), GetName("Sword"),
-                GetName("Top"), GetName("Watch"), baseStats, _nickname);
+                GetName("Top"), GetName("Watch"), CharacterStatPreset.GetBaseStats(_selectedClass), _nickname);
 
             Vector3 spawnPos = new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player,
                 onBeforeSpawned: (runner, obj) =>
                 {
-                    var handler = obj.GetComponent<PlayerClassHandler>();
+                    var handler = obj.GetComponent<PlayerCustomizeHandler>();
                     handler.SetCharacterInfo(
                         spawnData.classType, spawnData.Nickname,
                         spawnData.axe, spawnData.bag, spawnData.bottom, spawnData.bracelet, spawnData.earring,
@@ -173,8 +173,8 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
                         spawnData.lips, spawnData.mask, spawnData.mustache, spawnData.shield,
                         spawnData.shoes, spawnData.spear, spawnData.sword, spawnData.top, spawnData.watch);
 
-                    var stat = obj.GetComponent<PlayerStat>();
-                    stat.ApplyBaseStats(spawnData.baseStats);
+                    var installer = obj.GetComponent<PlayerStatInstaller>();
+                    installer.StatManager.ApplyBaseStats(spawnData.baseStats);
                 });
         }
     }
