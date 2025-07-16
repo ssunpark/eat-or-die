@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ToolAction_Hoe : IToolAction
+public class InteractableAction_Hoe : IInteractableAction
 {
     public void UseTool()
     {
