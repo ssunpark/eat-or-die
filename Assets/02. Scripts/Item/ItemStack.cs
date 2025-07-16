@@ -9,9 +9,6 @@ public class ItemStack
     private int _quantity;
     public int Quantity => _quantity;
 
-    private bool _hasOwner; // true면 소유자가 있고, false면 필드, 솥, 상자 등등 소유자 없음
-    public bool HasOwner => _hasOwner;
-
     public ItemStack(int id, int maxQuantity, int initialQuantity = 0)
     {
         if (id < 0)
@@ -32,7 +29,6 @@ public class ItemStack
         ID = id;
         MaxQuantity = maxQuantity;
         _quantity = initialQuantity;
-        _hasOwner = false;
     }
 
     // 수량 제어 함수

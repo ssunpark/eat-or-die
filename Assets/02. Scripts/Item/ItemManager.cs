@@ -93,7 +93,7 @@ public class ItemManager : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
-        if (!Room.Instance.Runner.IsServer)
+        if (!Runner.IsServer)
         {
             return;
         }
@@ -104,7 +104,7 @@ public class ItemManager : NetworkBehaviour
         }
         
         // 네트워크 아이템 오브젝트 생성
-        Room.Instance.Runner.Spawn(_itemObjectPrefab,
+        Runner.Spawn(_itemObjectPrefab,
             position: position,
             rotation: rotation,
             inputAuthority: null,
