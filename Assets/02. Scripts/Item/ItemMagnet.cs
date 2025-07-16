@@ -22,18 +22,17 @@ public class ItemMagnet : NetworkBehaviour
             // 로컬 조건 체크 (인벤토리 매니저)
             // 서버 조건 체크 (인벤토리 매니저 RPC) => 아이템 스택의 오너가 설정됨
             var networkItem = item.GetComponent<NetworkObject>();
-            RPC_RequestPick(networkItem.Id, Room.Instance.Runner.LocalPlayer);
+            RPC_RequestPick(networkItem.Id, Runner.LocalPlayer);
             // 아이템 흡수 연출 시작
             var pickableItem = item.GetComponent<IPickable>();
-            pickableItem.Pick();
-            // 인벤토리 등록
+            pickableItem.Pick(gameObject);
         }
     }
     
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     public void RPC_RequestPick(NetworkId itemId, PlayerRef player)
     {
-        var itemObject = Room.Instance.Runner.FindObject(itemId)?.GetComponent<ItemObject>();
+        var itemObject = Runner.FindObject(itemId)?.GetComponent<ItemObject>();
 
         if (itemObject == null)
         {
