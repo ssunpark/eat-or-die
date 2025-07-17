@@ -16,7 +16,21 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	
 	public void OnClickMouseLeft(int slotIndex)
 	{
-		// 팝업 비활성화시 아이템을 선택하게 하는 로직 추가
+		if (!PopupManager.Instance.IsOpen(EPopupType.Inventory))
+		{
+			// 슬롯의 아이템 타입에 따라 적절한 메서드를 호출해야 합니다. 근데 지금은 연결할 로직이 없음
+			AItem itemInSlot = ItemManager.Instance.GetItem(QuickSlots.SlotList[slotIndex].ItemStack.ID);
+			if (itemInSlot is IEquipable equipItem)
+			{
+				Debug.Log("Equipping item: " + equipItem);
+			}
+			else
+			{
+				Debug.Log("Item is not equippable: " + itemInSlot.ItemData.Name);
+			}
+			return;
+		}
+		
 		if (HandEntity.Instance.IsHandEmpty)
 		{
 			ItemStack itemInSlot = QuickSlots.PopItemInSlot(slotIndex);

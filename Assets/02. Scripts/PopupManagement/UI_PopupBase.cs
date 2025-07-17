@@ -9,13 +9,13 @@ public abstract class UI_PopupBase : MonoBehaviour
 
 	protected virtual void OnEnable()
 	{
-		Debug.Log("OnEnable");
-		PopupManager.Instance.Register(this);
+		Debug.Log($"{Type}: OnEnable");
+		PopupManager.Instance?.Register(this);
 	}
 
 	protected virtual void OnDisable()
 	{
-		Debug.Log("OnDisable");
-		PopupManager.Instance.Unregister(this);
+		Debug.Log($"{Type}: OnDisable");
+		PopupManager.Instance?.Unregister(this);
 	}
 }
