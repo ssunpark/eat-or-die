@@ -44,4 +44,24 @@ public class ResourceManager
         CurrentSatiety = Mathf.Min(CurrentSatiety + amount, max);
         OnSatietyChanged?.Invoke(CurrentSatiety, max);
     }
+
+    public void ResetAll()
+    {
+        SetHealth(_stat.GetStat(EStatType.MaxHealth));
+        SetSatiety(_stat.GetStat(EStatType.MaxSatiety));
+    }
+
+    public void SetHealth(float value)
+    {
+        float max = _stat.GetStat(EStatType.MaxHealth);
+        CurrentHealth = Mathf.Clamp(value, 0f, max);
+        OnHealthChanged?.Invoke(CurrentHealth, max);
+    }
+
+    public void SetSatiety(float value)
+    {
+        float max = _stat.GetStat(EStatType.MaxSatiety);
+        CurrentSatiety = Mathf.Clamp(value, 0f, max);
+        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+    }
 }
