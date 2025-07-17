@@ -4,7 +4,7 @@ using UnityEngine;
 public class FoodItemManager : MonoBehaviour
 {
     public static FoodItemManager Instance { get; private set; }
-    
+
     private Dictionary<int, AItem> _foodItemDict = new Dictionary<int, AItem>();
     private FoodItemFactory _factory = new FoodItemFactory();
 

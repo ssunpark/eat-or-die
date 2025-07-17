@@ -4,7 +4,7 @@ public class FoodCSVDataManager : MonoBehaviour
 {
     public static FoodCSVDataManager Instance { get; private set; }
 
-    private const string FOOD_CSV_PATH = "/FoodCSV/FoodCSV2.csv";
+    private const string FOOD_CSV_PATH = "/FoodCSV/FoodCSV3.csv";
 
     public List<FoodCSVData> AllDataList { get; private set; } = new List<FoodCSVData>();
     public List<FoodCSVData> HarvestDataList { get; private set; } = new List<FoodCSVData>();
