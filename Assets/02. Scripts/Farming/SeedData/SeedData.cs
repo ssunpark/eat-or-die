@@ -14,17 +14,18 @@ public class SeedData
     private Dictionary<int, GameObject> _plantPrefabDictionary;
     public IReadOnlyDictionary<int, GameObject> PlantPrefabDictionary => _plantPrefabDictionary;
 
-    public SeedData(ItemData itemData, int harvestID, float growthTime)
+    public SeedData(ItemData itemData, int? harvestID, float growthTime)
     {
         ItemData = itemData;
-        HarvestID = harvestID;
+        HarvestID = harvestID ?? 0;
         GrowthTime = growthTime;
 
         _plantPrefabDictionary = new Dictionary<int, GameObject>();
         for (int level = 1; level <= GrowthMaxLevel; level++)
         {
             int levelID = level;
-            Addressables.LoadAssetAsync<GameObject>($"SFF_Potato_Crop_{level} Variant").Completed += (handle) =>
+            string addressableAssetName = level != GrowthMaxLevel ? $"SFF_Potato_Crop_{level} Variant" : "SFF_Potato_Crop_Dried Variant";
+            Addressables.LoadAssetAsync<GameObject>(addressableAssetName).Completed += (handle) =>
             {
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {

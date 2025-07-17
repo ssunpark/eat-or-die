@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 
@@ -26,7 +27,10 @@ public class FarmingManager : NetworkBehaviour
         {
             Runner.Despawn(Object); // 중복 방지
         }
+    }
 
+    private void Start()
+    {
         Init();
     }
 
@@ -34,7 +38,7 @@ public class FarmingManager : NetworkBehaviour
     {
         _seedDictionary = new Dictionary<int, SeedData>();
         var plantRawDataList =
-            ItemDataLoader.LoadItemRawData<SeedRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/SeedTestData.csv");
+            ItemDataLoader.LoadItemRawData<SeedRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/SeedTestCSV.csv");
         foreach (var rawData in plantRawDataList)
         {
             var plantItemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxStack,

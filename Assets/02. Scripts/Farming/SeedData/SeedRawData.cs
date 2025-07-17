@@ -18,7 +18,7 @@ public class SeedRawData
     public float GrowthTime { get; set; }
 
     [Name("HarvestID(Item)")]
-    public int HarvestItemID { get; set; }
+    public int? HarvestItemID { get; set; }
 
     [Name("IconPath(Addressable)")]
     public string IconPath { get; set; }
