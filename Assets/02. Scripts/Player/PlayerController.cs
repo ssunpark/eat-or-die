@@ -9,12 +9,13 @@ public class PlayerController : CharacterBase
 
     private NetworkCharacterController _characterController;
     private bool _isSpawned = false;
-
+    private SatietyEffectHandler _satietyEffectHandler;
+    public SatietyEffectHandler SatietyEffectHandler => _satietyEffectHandler;
     public override void Spawned()
     {
         _characterController = GetComponent<NetworkCharacterController>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
-
+        _satietyEffectHandler = new SatietyEffectHandler(Resource, Stat);
         _isSpawned = true;
         TryInitialize();
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 // 현재 플레이어 상태 전환 관리
 public class PlayerStateMachine : NetworkBehaviour
@@ -43,6 +44,22 @@ public class PlayerStateMachine : NetworkBehaviour
         _cachedState = CurrentState;
         _activeState = _states[CurrentState];
         _activeState.Enter();
+
+        _controller.Resource.OnSatietyChanged += Resource_OnSatietyChanged;
+    }
+
+    public override void Despawned(NetworkRunner runner, bool hasState)
+    {
+        _controller.Resource.OnSatietyChanged -= Resource_OnSatietyChanged;
+        _activeState?.Exit();
+        _activeState = null;
+        _states.Clear();
+        _states = null;
+    }
+
+    private void Resource_OnSatietyChanged(float arg1, float arg2)
+    {
+        Debug.Log($"Satiety changed: {arg1}/{arg2}");
     }
 
     public override void FixedUpdateNetwork()
