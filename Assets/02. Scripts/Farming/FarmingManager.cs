@@ -21,13 +21,17 @@ public class FarmingManager : NetworkBehaviour
     // 작물 데이터 관리
     public static FarmingManager Instance { get; private set; }
 
+    [Header("성장 배속")]
+    [SerializeField]
+    private float _growthTimeScale = 1f;
+    public float GrowthTimeScale => _growthTimeScale;
+
     [SerializeField]
     private NetworkPrefabRef _plantObjectPrefab;
 
     public NetworkPrefabRef PlantObjectPrefab => _plantObjectPrefab;
 
     private Dictionary<int, SeedData> _seedDictionary;
-    public IReadOnlyDictionary<int, SeedData> SeedDictionary => _seedDictionary;
 
     private Dictionary<PlantPoolKey, Pool<Transform>> _plantPoolDictionary;
 
@@ -57,16 +61,14 @@ public class FarmingManager : NetworkBehaviour
                 $"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/SeedTestCSV.csv");
         foreach (var rawData in seedRawDataList)
         {
-            var seedItemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxStack,
-                rawData.IconPath);
-            var seedData = new SeedData(seedItemData, rawData.HarvestItemID, rawData.GrowthTime);
+            var seedData = new SeedData(rawData);
 
             _seedDictionary.Add(rawData.ID, seedData);
 
             // 풀링
             GameObject poolContainer = new GameObject($"{rawData.ID}_Pool");
             poolContainer.transform.SetParent(transform);
-            for (int level = 1; level <= seedData.GrowthMaxLevel; level++)
+            for (int level = 1; level <= seedData.MaxGrowthLevel; level++)
             {
                 _plantPoolDictionary.Add(new PlantPoolKey(rawData.ID, level),
                     Pool.Create(seedData.PlantPrefabDictionary[level].transform, 10, poolContainer.transform));
@@ -77,5 +79,16 @@ public class FarmingManager : NetworkBehaviour
     public GameObject GetPlant(PlantPoolKey plantPoolKey)
     {
         return _plantPoolDictionary[plantPoolKey].Get().gameObject;
+    }
+
+    public void ReturnPlant(PlantPoolKey plantPoolKey, GameObject plant)
+    {
+        _plantPoolDictionary[plantPoolKey].Take(plant.transform);
+    }
+
+    public bool TryGetSeedData(int plantId, out SeedData seedData)
+    {
+        seedData = _seedDictionary[plantId];
+        return _seedDictionary.ContainsKey(plantId);
     }
 }

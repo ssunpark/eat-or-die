@@ -37,7 +37,7 @@ public class SeedGround : NetworkBehaviour
             return;
         }
 
-        if (!FarmingManager.Instance.SeedDictionary.TryGetValue(seedID, out SeedData plant))
+        if (!FarmingManager.Instance.TryGetSeedData(seedID, out SeedData seedData))
         {
             throw new Exception("없는 작물입니다.");
         }
