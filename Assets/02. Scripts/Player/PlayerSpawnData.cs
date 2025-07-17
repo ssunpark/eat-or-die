@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public struct PlayerSpawnData
 {
-    public CharacterClassType classType;
+    public ECharacterType classType;
 
     // Customization
     public string axe, bag, bottom, bracelet, earring;
@@ -19,7 +19,7 @@ public struct PlayerSpawnData
     public string Nickname;
 
     public PlayerSpawnData(
-        CharacterClassType classType,
+        ECharacterType classType,
         string axe, string bag, string bottom, string bracelet, string earring,
         string eye, string eyebrow, string eyewear, string glove,
         string hair, string hairAcc, string handAcc, string headgear,

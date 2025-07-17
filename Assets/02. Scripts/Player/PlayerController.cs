@@ -1,27 +1,19 @@
 ﻿using UnityEngine;
 using Fusion;
-// 플레이어 이동 담당
 
 [RequireComponent(typeof(NetworkObject))]
 [RequireComponent(typeof(NetworkCharacterController))]
-public class PlayerController : NetworkBehaviour
+public class PlayerController : CharacterBase
 {
-    private NetworkCharacterController _characterController;
-
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
 
-    [HideInInspector] public PlayerStatManager PlayerStat;
-    private Vector3 _direction;
+    private NetworkCharacterController _characterController;
     private bool _isSpawned = false;
-
 
     public override void Spawned()
     {
         _characterController = GetComponent<NetworkCharacterController>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
-
-        var installer = GetComponent<PlayerStatInstaller>();
-        PlayerStat = installer.StatManager;
 
         _isSpawned = true;
         TryInitialize();
@@ -31,26 +23,16 @@ public class PlayerController : NetworkBehaviour
     {
         if (_isSpawned)
         {
-            _characterController.maxSpeed = PlayerStat.GetStat(EStatType.MoveSpeed);
-            _characterController.jumpImpulse = PlayerStat.GetStat(EStatType.JumpPower);
-            _characterController.acceleration = PlayerStat.GetStat(EStatType.Acceleration);
+            _characterController.maxSpeed = Stat.GetStat(EStatType.MoveSpeed);
+            _characterController.jumpImpulse = Stat.GetStat(EStatType.JumpPower);
+            _characterController.acceleration = Stat.GetStat(EStatType.Acceleration);
         }
-    }
-
-    public void Move(Vector3 direction, float speed)
-    {
-        if (_characterController.maxSpeed != speed)
-        {
-            _characterController.maxSpeed = speed;
-        }
-        _direction = direction;
     }
 
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData inputData))
         {
-
             Vector3 moveDirection = inputData.direction;
             bool isInteracting = inputData.isInteracting;
             bool isJumping = inputData.isJumping;
@@ -58,9 +40,9 @@ public class PlayerController : NetworkBehaviour
 
             if (moveDirection.sqrMagnitude > 0.01f)
             {
-                float baseSpeed = PlayerStat.GetStat(EStatType.MoveSpeed);
+                float baseSpeed = Stat.GetStat(EStatType.MoveSpeed);
                 float sprintMultiplier = isRunning
-                    ? PlayerStat.GetStat(EStatType.SprintingMultiplier)
+                    ? Stat.GetStat(EStatType.SprintingMultiplier)
                     : 1f;
                 float moveSpeed = baseSpeed * sprintMultiplier;
 
@@ -69,16 +51,17 @@ public class PlayerController : NetworkBehaviour
                     _characterController.maxSpeed = moveSpeed;
                 }
                 _characterController.Move(moveDirection);
+
+                Resource.ConsumeSatiety(Time.deltaTime * Stat.GetStat(EStatType.ConsumptionRate));
             }
             else
             {
                 _characterController.Move(Vector3.zero);
             }
 
-            // Handle jumping
             if (isJumping && _characterController.Grounded)
             {
-                float jumpPower = PlayerStat.GetStat(EStatType.JumpPower);
+                float jumpPower = Stat.GetStat(EStatType.JumpPower);
                 if (_characterController.jumpImpulse != jumpPower)
                 {
                     _characterController.jumpImpulse = jumpPower;
@@ -86,14 +69,12 @@ public class PlayerController : NetworkBehaviour
                 _characterController.Jump();
                 Rpc_PlayAnimTrigger(EAnimTrigger.Jump);
             }
-
         }
         else
         {
             _characterController.Move(Vector3.zero);
         }
     }
-
 
     public void Jump(float jumpPower)
     {
@@ -105,7 +86,7 @@ public class PlayerController : NetworkBehaviour
 
     public void Stop()
     {
-        _direction = Vector3.zero;
+        // 이동 중지 처리
     }
 
     public bool IsGrounded => _characterController.Grounded;

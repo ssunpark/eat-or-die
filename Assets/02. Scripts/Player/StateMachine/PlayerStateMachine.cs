@@ -14,6 +14,11 @@ public class PlayerStateMachine : NetworkBehaviour
 
     private PlayerController _controller;
 
+    //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
+    [HideInInspector]
+    public float MoveSatietyTimer;
+    // 몇초 이동했을 때 배고픔 감소가 일어날지
+    public float MoveStatietyInterval = 3f;
 
     public override void Spawned()
     {

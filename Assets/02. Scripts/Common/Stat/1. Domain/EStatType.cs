@@ -11,5 +11,5 @@
     CritChance,            // 치명타 확률
     Armor,                 // 방어력
     SprintingMultiplier,   // 대시 속도 배율
-    Satiety                // 포만도 (배고픔 수치)
+    MaxSatiety                // 포만도 (배고픔 수치)
 }

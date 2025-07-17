@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-public class PlayerStatManager
+public class StatManager
 {
     private Dictionary<EStatType, Stat> _statDict;
 
-    public PlayerStatManager(IStatDataRepository repo)
+    public StatManager(IStatDataRepository repo)
     {
-        _statDict = repo.GetPlayerStatData().ToDictionary(
+        _statDict = repo.GetCharacterStatData().ToDictionary(
             data => data.StatType,
             data => new Stat(data.BaseAmount, data.CanLevelUp, data.IncreaseAmount)
         );
@@ -16,8 +16,14 @@ public class PlayerStatManager
     public float GetStat(EStatType type) =>
         _statDict.TryGetValue(type, out var stat) ? stat.TotalStat : 0f;
 
-    public void ApplyModifier(EStatType type, StatModifier mod) =>
-        _statDict[type].AddModifier(mod);
+    public Stat GetRawStat(EStatType type) =>
+        _statDict.TryGetValue(type, out var stat) ? stat : null;
+
+    public void ApplyModifier(EStatType type, StatModifier mod)
+    {
+        if (_statDict.TryGetValue(type, out var stat))
+            stat.AddModifier(mod);
+    }
 
     public void RemoveModifiersFrom(object source)
     {
@@ -27,7 +33,6 @@ public class PlayerStatManager
 
     public Dictionary<EStatType, float> GetStatSnapshot() =>
         _statDict.ToDictionary(x => x.Key, x => x.Value.TotalStat);
-
 
     public void ApplyBaseStats(Dictionary<EStatType, float> baseStats)
     {

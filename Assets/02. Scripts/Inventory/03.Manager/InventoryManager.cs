@@ -34,25 +34,39 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     
     public void OnClickMouseRight(int slotIndex)
     {
+        if (Inventory.SlotList[slotIndex].IsEmpty) return;
+        
         if (HandEntity.Instance.IsHandEmpty)
         {
-            // 손이 비어있을 때 아이템 스택 한개를 전달하는 로직
+            HandEntity.Instance.PickUpItem(Inventory.PopSingleItemInSlot(slotIndex));
         }
         else
         {
-            // 1. 슬롯이 비어있을 때는 한개씩 내려놓기
-            // 2. 슬롯에 아이템이 있는데 손에 있는 아이템과 종류가 같을 때는 한개씩 더 집기
-            // 3. 슬롯에 아이템이 있는데 손에 있는 아이템과 종류가 다를 때는 슬롯의 아이템 전체와 손의 아이템 전체를 스왑
+            if (HandEntity.Instance.ItemStack.ID == Inventory.SlotList[slotIndex].ItemStack.ID)
+            {
+                ItemStack itemInSlot = Inventory.PopSingleItemInSlot(slotIndex);
+                if (!HandEntity.Instance.TryAddItem(itemInSlot))
+                {
+                    Inventory.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
+                }
+            }
+            else
+            {
+                ItemStack temp = Inventory.PopItemInSlot(slotIndex);
+                Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
+                HandEntity.Instance.PickUpItem(temp);
+            }
         }
-        // UI Refresh 이벤트 발생시켜보자고요
+
+        OnSlotUpdated[slotIndex]?.Invoke();
     }
 
-    public ItemStack PickItemFromGround(ItemStack itemStack)
+    public void PickItemFromGround(ItemStack itemStack)
     {
         ItemStack remain = Inventory.PickItemFromGround(itemStack);
 
         OnInventoryUpdated?.Invoke();
-        
-        return remain;
+     
+        ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, Vector3.zero, Quaternion.identity);
     }
 }
