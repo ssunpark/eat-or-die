@@ -2,13 +2,13 @@
 
 public static class CharacterStatPreset
 {
-    public static Dictionary<EStatType, float> GetBaseStats(CharacterClassType type)
+    public static Dictionary<EStatType, float> GetBaseStats(ECharacterType type)
     {
         return type switch
         {
-            CharacterClassType.Farmer => new()
+            ECharacterType.Farmer => new()
             {
-                { EStatType.Satiety, 120f },
+                { EStatType.MaxSatiety, 120f },
                 { EStatType.Damage, 5f },
                 { EStatType.MoveSpeed, 3.5f },
                 { EStatType.Armor, 0f },
@@ -19,9 +19,9 @@ public static class CharacterStatPreset
                 {EStatType.SprintingMultiplier,1.5f }
 
             },
-            CharacterClassType.Warrior => new()
+            ECharacterType.Warrior => new()
             {
-                { EStatType.Satiety, 100f },
+                { EStatType.MaxSatiety, 100f },
                 { EStatType.Damage, 10f },
                 { EStatType.MoveSpeed, 3f },
                 { EStatType.Armor, 0f },
@@ -31,9 +31,9 @@ public static class CharacterStatPreset
                 { EStatType.CritChance, 0.01f },
                 {EStatType.SprintingMultiplier,1.5f }
             },
-            CharacterClassType.Mage => new()
+            ECharacterType.Mage => new()
             {
-                { EStatType.Satiety, 80f },
+                { EStatType.MaxSatiety, 80f },
                 { EStatType.Damage, 15f },
                 { EStatType.Armor, -5f },
                 { EStatType.MoveSpeed, 3.2f },
@@ -43,9 +43,9 @@ public static class CharacterStatPreset
                 { EStatType.CritChance, 0.01f },
                 {EStatType.SprintingMultiplier,1.4f }
             },
-            CharacterClassType.Chef => new()
+            ECharacterType.Chef => new()
             {
-                { EStatType.Satiety, 150f },
+                { EStatType.MaxSatiety, 150f },
                 { EStatType.Damage, 5f },
                 { EStatType.MoveSpeed, 3.5f },
                 { EStatType.Armor, 0f },

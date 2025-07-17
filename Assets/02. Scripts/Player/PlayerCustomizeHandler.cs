@@ -2,14 +2,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public enum CharacterClassType
-{
-    Warrior, Mage, Farmer, Chef
-}
 
 public class PlayerCustomizeHandler : NetworkBehaviour
 {
-    [SerializeField] private CharacterClassType _classType;
+    [SerializeField] private ECharacterType _classType;
     [SerializeField] private string _nickname;
 
     [Header("Customization Options")]
@@ -94,7 +90,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     }
 
     public void SetCharacterInfo(
-        CharacterClassType classType, string nickname,
+        ECharacterType classType, string nickname,
         string axe, string bag, string bottom, string bracelet, string earring,
         string eye, string eyebrow, string eyewear, string glove,
         string hair, string hairAcc, string handAcc, string headgear,

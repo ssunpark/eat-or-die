@@ -9,25 +9,20 @@ public class UI_Hand : MonoBehaviour
 
 	private void Awake()
 	{
-		IconImage = GetComponent<Image>();
-		QuantityText = GetComponentInChildren<TextMeshProUGUI>();
+		IconImage.gameObject.SetActive(false);
+		QuantityText.gameObject.SetActive(false);
 	}
 	
 	private void Start()
 	{
-		IconImage.gameObject.SetActive(false);
-		QuantityText.gameObject.SetActive(false);
-		
 		HandEntity.Instance.OnItemPickedUp += UpdateHandUI;
 		UpdateHandUI();
 	}
 
 	private void Update()
 	{
-		// 캔버스 위에 존재하는 UI_Hand는 마우스 포지션을 따라다님
 		Vector2 mousePosition = Input.mousePosition;
 		transform.position = mousePosition;
-		
 	}
 	
 	public void UpdateHandUI()

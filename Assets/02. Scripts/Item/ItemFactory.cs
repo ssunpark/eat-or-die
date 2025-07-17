@@ -3,9 +3,9 @@
 public class ItemFactory
 {
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public UseItem CreateUseItem(UseItemRawData rawData)
+    public EatItem CreateUseItem(EatItemRawData rawData)
     {
-        var effects = new List<IUseItemEffect>();
+        var effects = new List<IEatItemEffect>();
 
         var rawEffects = new (EUseItemEffectType type, float? value, float? duration)[]
         {
@@ -25,15 +25,15 @@ public class ItemFactory
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, "");
-        return new UseItem(itemData, effects);
+        return new EatItem(itemData, effects);
     }
 
-    private IUseItemEffect CreateUseItemEffect(EUseItemEffectType type, float value, float duration)
+    private IEatItemEffect CreateUseItemEffect(EUseItemEffectType type, float value, float duration)
     {
         return type switch
         {
             EUseItemEffectType.Empty => null,
-            EUseItemEffectType.Hungry => new UseItemEffect_Hungry(value),
+            EUseItemEffectType.Hungry => new EatEffect_Hungry(value),
             _ => null
         };
     }
