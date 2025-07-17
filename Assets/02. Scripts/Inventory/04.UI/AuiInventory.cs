@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_Inventory : UI_PopupBase
+public class AuiInventory : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.Inventory;
     

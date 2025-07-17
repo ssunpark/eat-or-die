@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class UI_PopupBase : MonoBehaviour
+public abstract class AUI_PopupBase : MonoBehaviour
 {
 	public abstract EPopupType Type { get; }
 
