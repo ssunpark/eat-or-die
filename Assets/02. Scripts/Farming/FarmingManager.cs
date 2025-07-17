@@ -84,6 +84,7 @@ public class FarmingManager : NetworkBehaviour
     public void ReturnPlant(PlantPoolKey plantPoolKey, GameObject plant)
     {
         _plantPoolDictionary[plantPoolKey].Take(plant.transform);
+        plant.transform.SetParent(_plantPoolDictionary[plantPoolKey].Container);
     }
 
     public bool TryGetSeedData(int plantId, out SeedData seedData)

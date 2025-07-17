@@ -1,3 +1,4 @@
+using System;
 using Fusion;
 using UnityEngine;
 
@@ -14,15 +15,19 @@ public class FarmingGround : NetworkBehaviour
 
     public override void Spawned()
     {
-        State = EFarmingGroundState.None;
-        _baseGround.SetActive(true);
-        _plowedGround.SetActive(false);
+        _baseGround.SetActive(State == EFarmingGroundState.None);
+        _plowedGround.SetActive(State != EFarmingGroundState.None);
     }
 
-    public void Plow()
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_Plow()
     {
         // 밭 갈기
-        State = EFarmingGroundState.Plowed;
+        if (Runner.IsServer)
+        {
+            State = EFarmingGroundState.Plowed;
+        }
+        
         _baseGround.SetActive(false);
         _plowedGround.SetActive(true);
     }

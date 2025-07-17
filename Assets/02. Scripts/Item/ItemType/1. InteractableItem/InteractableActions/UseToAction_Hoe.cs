@@ -7,7 +7,7 @@ public class UseToAction_Hoe : IUseToAction
         if (target.TryGetComponent(out FarmingGround farmingGround))
         {
             // 밭 갈기
-            farmingGround.Plow();
+            farmingGround.RPC_Plow();
         }
     }
 }

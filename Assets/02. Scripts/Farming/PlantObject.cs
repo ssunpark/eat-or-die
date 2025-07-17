@@ -28,7 +28,7 @@ public class PlantObject : NetworkBehaviour
     private void ApplyVisual()
     {
         // 이전 레벨에 반환
-        if (GrowthLevel > 1)
+        if (GrowthLevel > 1 && _plantObject != null)
         {
             FarmingManager.Instance.ReturnPlant(new PlantPoolKey(PlantID, GrowthLevel - 1), _plantObject);
         }
