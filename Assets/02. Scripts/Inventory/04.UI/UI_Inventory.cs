@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UI_Inventory : MonoBehaviour
+public class UI_Inventory : UI_PopupBase
 {
+    public override EPopupType Type => EPopupType.Inventory;
+    
     [SerializeField] private GameObject _uiSlotPrefab;
     private List<UI_InventorySlot> _uiSlotList = new List<UI_InventorySlot>();
 
@@ -34,4 +36,5 @@ public class UI_Inventory : MonoBehaviour
             uiSlot.UpdateSlotUI();
         }
     }
+
 }
