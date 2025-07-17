@@ -1,30 +1,33 @@
+using System;
 using Fusion;
+using UnityEngine;
 
 public class FarmingGround : NetworkBehaviour
 {
     // 땅에 심어진 작물에 대한 ID
     private int _seedID;
 
-    private EFarmingGroundState _state;
+    [Networked]
+    public EFarmingGroundState State { get; set; }
 
     public override void Spawned()
     {
-        _state = EFarmingGroundState.None;
+        State = EFarmingGroundState.None;
     }
 
     public void Plow()
     {
         // 밭 갈기
-        _state = EFarmingGroundState.Plowed;
+        State = EFarmingGroundState.Plowed;
     }
 
     public void Water()
     {
-        if (_state == EFarmingGroundState.Plowed)
+        if (State == EFarmingGroundState.Plowed)
         {
-            _state = EFarmingGroundState.Watered;
+            State = EFarmingGroundState.Watered;
         }
-        else if (_state == EFarmingGroundState.Planted)
+        else if (State == EFarmingGroundState.Planted)
         {
             Grow();
         }
@@ -34,11 +37,11 @@ public class FarmingGround : NetworkBehaviour
     {
         _seedID = seedID;
         
-        if (_state == EFarmingGroundState.Plowed)
+        if (State == EFarmingGroundState.Plowed)
         {
-            _state = EFarmingGroundState.Planted;
+            State = EFarmingGroundState.Planted;
         }
-        else if (_state == EFarmingGroundState.Watered)
+        else if (State == EFarmingGroundState.Watered)
         {
             Grow();
         }
@@ -46,7 +49,32 @@ public class FarmingGround : NetworkBehaviour
 
     private void Grow()
     {
-        _state = EFarmingGroundState.Growing;
+        State = EFarmingGroundState.Growing;
         // 식물 자라남
+        RPC_CreatePlantObject(_seedID);
+    }
+    
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_CreatePlantObject(int seedID)
+    {
+        if (!Runner.IsServer)
+        {
+            return;
+        }
+
+        if (!FarmingManager.Instance.SeedDictionary.TryGetValue(seedID, out PlantData plant))
+        {
+            throw new Exception("없는 아이템입니다.");
+        }
+
+        var plantObject = Runner.Spawn(FarmingManager.Instance.PlantObjectPrefab,
+            inputAuthority: null,
+            onBeforeSpawned: (runner, obj) =>
+            {
+                var plant = obj.GetComponent<PlantObject>();
+                plant.PlantID = seedID;
+                plant.GrowthLevel = 1;
+            });
+        plantObject.transform.SetParent(transform);
     }
 }
