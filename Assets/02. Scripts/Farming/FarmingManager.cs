@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class FarmingManager : NetworkBehaviour
 {
+    private const string ITEM_CSV_PATH = "/ItemCSV";
     // 작물 데이터 관리
     public static FarmingManager Instance { get; private set; }
     
@@ -12,8 +13,8 @@ public class FarmingManager : NetworkBehaviour
     
     public NetworkPrefabRef PlantObjectPrefab => _plantObjectPrefab;
 
-    private Dictionary<int, PlantData> _seedDictionary;
-    public IReadOnlyDictionary<int, PlantData> SeedDictionary => _seedDictionary;
+    private Dictionary<int, SeedData> _seedDictionary;
+    public IReadOnlyDictionary<int, SeedData> SeedDictionary => _seedDictionary;
 
     public override void Spawned()
     {
@@ -31,14 +32,14 @@ public class FarmingManager : NetworkBehaviour
 
     private void Init()
     {
-        _seedDictionary = new Dictionary<int, PlantData>();
+        _seedDictionary = new Dictionary<int, SeedData>();
         var plantRawDataList =
-            ItemDataLoader.LoadItemRawData<PlantRawData>($"{Application.streamingAssetsPath}/SeedTestData.csv");
+            ItemDataLoader.LoadItemRawData<SeedRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/SeedTestData.csv");
         foreach (var rawData in plantRawDataList)
         {
             var plantItemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxStack,
                 rawData.IconPath);
-            var plantData = new PlantData(plantItemData, rawData.HarvestItemID, rawData.GrowthTime);
+            var plantData = new SeedData(plantItemData, rawData.HarvestItemID, rawData.GrowthTime);
             _seedDictionary.Add(rawData.ID, plantData);
         }
     }

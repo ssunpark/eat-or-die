@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-public class PlantRawData
+public class SeedRawData
 {
     [Name("ID")]
     public int ID { get; set; }

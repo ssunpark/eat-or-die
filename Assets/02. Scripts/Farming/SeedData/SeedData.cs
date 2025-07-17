@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class PlantData
+public class SeedData
 {
     private const int GrowthMaxLevel = 6;
     public readonly ItemData ItemData;
@@ -14,7 +14,7 @@ public class PlantData
     private Dictionary<int, GameObject> _plantPrefabDictionary;
     public IReadOnlyDictionary<int, GameObject> PlantPrefabDictionary => _plantPrefabDictionary;
 
-    public PlantData(ItemData itemData, int harvestID, float growthTime)
+    public SeedData(ItemData itemData, int harvestID, float growthTime)
     {
         ItemData = itemData;
         HarvestID = harvestID;
