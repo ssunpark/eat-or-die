@@ -29,6 +29,32 @@ public class Inventory
         return slotItem;
     }
     
+    public ItemStack PopSingleItemInSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= SlotList.Count)
+        {
+            Debug.LogError("Invalid slot index: " + slotIndex);
+            return null;
+        }
+
+        Slot targetSlot = SlotList[slotIndex];
+        
+        if (targetSlot.IsEmpty) return null;
+        
+        ItemStack itemStack = targetSlot.ItemStack;
+        
+        if (itemStack.Quantity > 1)
+        {
+            itemStack.SetQuantity(itemStack.Quantity - 1);
+            return new ItemStack(itemStack.ID, itemStack.MaxQuantity, 1);
+        }
+        else
+        {
+            targetSlot.RemoveItem();
+            return itemStack;
+        }
+    }
+    
     public ItemStack PutItemInSlot(int slotIndex, ItemStack itemStack)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
