@@ -67,7 +67,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         ActivatePart(partRoot, "HairAcc", _hairAcc);
         ActivatePart(partRoot, "HandAcc", _handAcc);
         ActivatePart(partRoot, "Headgear", _headgear);
-        ActivatePart(partRoot, "lips", _lips);
+        ActivatePart(partRoot, "Lips", _lips);
         ActivatePart(partRoot, "Mask", _mask);
         ActivatePart(partRoot, "Mustache", _mustache);
         ActivatePart(partRoot, "Shield", _shield);
