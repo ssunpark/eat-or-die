@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_Quickslot : MonoBehaviour
+public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 {
 	public int SlotIndex;
 	public Image IconImage;
@@ -14,24 +14,24 @@ public class UI_Quickslot : MonoBehaviour
 		SlotIndex = slotIndex;
 		IconImage.gameObject.SetActive(false);
 		QuantityText.gameObject.SetActive(false);
-		InventoryManager.Instance.OnSlotUpdated[SlotIndex] += UpdateSlotUI;
+		QuickSlotManager.Instance.OnQuickSlotUpdated[SlotIndex] += UpdateSlotUI;
 	}
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
-			InventoryManager.Instance.OnClickMouseLeft(SlotIndex);   
+			QuickSlotManager.Instance.OnClickMouseLeft(SlotIndex);   
 		}
 		else if (eventData.button == PointerEventData.InputButton.Right)
 		{
-			InventoryManager.Instance.OnClickMouseRight(SlotIndex);
+			QuickSlotManager.Instance.OnClickMouseRight(SlotIndex);
 		}
 	}
 
 	public void UpdateSlotUI()
 	{
-		ItemStack itemInSlot = InventoryManager.Instance.Inventory.SlotList[SlotIndex].ItemStack;
+		ItemStack itemInSlot = QuickSlotManager.Instance.QuickSlots.SlotList[SlotIndex].ItemStack;
 		if (itemInSlot == null)
 		{
 			IconImage.gameObject.SetActive(false);

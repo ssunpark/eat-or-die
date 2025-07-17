@@ -64,9 +64,11 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public void PickItemFromGround(ItemStack itemStack)
     {
         ItemStack remain = Inventory.PickItemFromGround(itemStack);
-
+        
         OnInventoryUpdated?.Invoke();
      
+        if (remain == null) return;
+        
         ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, Vector3.zero, Quaternion.identity);
     }
 }
