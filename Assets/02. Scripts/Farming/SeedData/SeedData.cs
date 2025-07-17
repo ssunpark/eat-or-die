@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Redcode.Pools;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class SeedData
 {
-    private const int GrowthMaxLevel = 6;
+    public readonly int GrowthMaxLevel = 6;
     public readonly ItemData ItemData;
     public readonly int HarvestID;
     public readonly float GrowthTime;
@@ -25,17 +26,9 @@ public class SeedData
         {
             int levelID = level;
             string addressableAssetName = level != GrowthMaxLevel ? $"SFF_Potato_Crop_{level} Variant" : "SFF_Potato_Crop_Dried Variant";
-            Addressables.LoadAssetAsync<GameObject>(addressableAssetName).Completed += (handle) =>
-            {
-                if (handle.Status == AsyncOperationStatus.Succeeded)
-                {
-                    _plantPrefabDictionary.Add(levelID, handle.Result);
-                }
-                else
-                {
-                    throw new Exception("작물 로드에 실패했습니다.");
-                }
-            };
+            // 풀링을 위해 동기로 다 로드
+            GameObject plantPrefab = Addressables.LoadAssetAsync<GameObject>(addressableAssetName).WaitForCompletion();
+            _plantPrefabDictionary.Add(levelID, plantPrefab);
         }
     }
 }
