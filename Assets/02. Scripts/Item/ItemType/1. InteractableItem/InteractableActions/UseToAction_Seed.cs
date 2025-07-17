@@ -11,10 +11,10 @@ public class UseToAction_Seed : IUseToAction
     
     public void UseTool(GameObject target)
     {
-        if (target.TryGetComponent(out FarmingGround farmingGround))
+        if (target.TryGetComponent(out SeedGround seedGround))
         {
             // 씨앗 심기
-            farmingGround.Plant(_seedID);
+            seedGround.Plant(_seedID);
         }
     }
 }
