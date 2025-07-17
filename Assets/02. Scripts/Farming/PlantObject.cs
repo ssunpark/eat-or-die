@@ -12,8 +12,8 @@ public class PlantObject : NetworkBehaviour
 
     public override void Spawned()
     {
-        transform.localPosition = Vector3.zero;
         // 기본 외형 적용
+        ApplyVisual(FarmingManager.Instance.SeedDictionary[PlantID].PlantPrefabDictionary[GrowthLevel]);
     }
 
     // 외형 적용
@@ -22,10 +22,9 @@ public class PlantObject : NetworkBehaviour
         // 자식에 생성
         var plantObject = Instantiate(plantPrefab, transform);
     }
-    
+
     // 단계 변화 감지
     private void OnGrowthLevelChanged()
     {
-        
     }
 }

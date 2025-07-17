@@ -1,5 +1,6 @@
 ﻿using System;
 using Fusion;
+using UnityEngine;
 
 public class SeedGround : NetworkBehaviour
 {
@@ -50,6 +51,7 @@ public class SeedGround : NetworkBehaviour
                 plant.GrowthLevel = 1;
             });
         plantObject.transform.SetParent(transform);
+        plantObject.transform.localPosition = Vector3.zero;
 
         IsPlanted = true;
     }
