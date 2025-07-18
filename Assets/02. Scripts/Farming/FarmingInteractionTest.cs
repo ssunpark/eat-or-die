@@ -9,6 +9,11 @@ public class FarmingInteractionTest : NetworkBehaviour
 
     public GameObject InteractionObject;
 
+    private void Start()
+    {
+        TagName = "FarmingGround";
+    }
+
     private void Update()
     {
         var colliderArray = Physics.OverlapSphere(transform.position, 10, InteractionLayer);
@@ -33,7 +38,7 @@ public class FarmingInteractionTest : NetworkBehaviour
 
         InteractionObject = closestCollider?.gameObject;
 
-        if (Input.GetKey(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Hoe());
             if (item is IUsableOnTarget usable)
@@ -44,7 +49,7 @@ public class FarmingInteractionTest : NetworkBehaviour
             // 테스트 태그 바꾸기 (아이템에 상호작용해야하는 태그를 분리할 예정)
             TagName = "PlantGround";
         }
-        else if (Input.GetKey(KeyCode.Alpha2))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Seed(100005));
             if (item is IUsableOnTarget usable)
@@ -52,7 +57,7 @@ public class FarmingInteractionTest : NetworkBehaviour
                 usable.UseOn(InteractionObject);
             }
         }
-        else if (Input.GetKey(KeyCode.Alpha3))
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_WateringCan());
             if (item is IUsableOnTarget usable)
@@ -60,7 +65,7 @@ public class FarmingInteractionTest : NetworkBehaviour
                 usable.UseOn(InteractionObject);
             }
         }
-        else if (Input.GetKey(KeyCode.E))
+        else if (Input.GetKeyDown(KeyCode.E))
         {
             // 인터페이스로 수정
             if (InteractionObject?.TryGetComponent(out PlantObject plant) ?? false)
