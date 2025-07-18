@@ -81,7 +81,7 @@ public class PlantObject : NetworkBehaviour
             // 썩은 작물
         }
         // 풀 반환
-        FarmingManager.Instance.ReturnPlant(new PlantPoolKey(PlantID, GrowthLevel - 1), _plantObject);
+        FarmingManager.Instance.ReturnPlant(new PlantPoolKey(PlantID, GrowthLevel), _plantObject);
         // 삭제
         FarmingManager.Instance.RPC_Despawn(GetComponent<NetworkObject>());
     }

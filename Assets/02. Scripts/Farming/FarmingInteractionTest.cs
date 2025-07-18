@@ -16,6 +16,11 @@ public class FarmingInteractionTest : NetworkBehaviour
 
     private void Update()
     {
+        if (!GetComponent<NetworkObject>().HasInputAuthority)
+        {
+            return;
+        }
+        
         var colliderArray = Physics.OverlapSphere(transform.position, 10, InteractionLayer);
 
         Collider closestCollider = null;
