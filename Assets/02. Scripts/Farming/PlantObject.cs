@@ -10,6 +10,10 @@ public class PlantObject : NetworkBehaviour
     public int PlantID { get; set; }
     [Networked, OnChangedRender(nameof(OnGrowthLevelChanged))]
     public int GrowthLevel { get; set; }
+    [Networked]
+    public NetworkId GroundNetworkId { get; set; } // 부모 객체 네트워크 ID
+    [Networked, Capacity(24)]
+    public string ParentPath { get; set; }
 
     private GameObject _plantObject;
     private SeedData _seedData;
@@ -20,6 +24,16 @@ public class PlantObject : NetworkBehaviour
 
     public override void Spawned()
     {
+        if (Runner.TryFindObject(GroundNetworkId, out var netParentObj))
+        {
+            var target = netParentObj.GetComponent<FarmingGround>().PlowedGround.transform.Find(ParentPath);
+            if (target != null)
+            {
+                transform.SetParent(target);
+                transform.localPosition = Vector3.zero;
+            }
+        }
+        
         OnGrowthLevelChanged();
         _growthTime = _seedData.GrowthTime;
     }
@@ -58,6 +72,21 @@ public class PlantObject : NetworkBehaviour
             _timer = 0;
             GrowthLevel += 1;
             _growthTime = GrowthLevel == _seedData.MaxGrowthLevel - 1 ? _seedData.DriedTime : _seedData.GrowthTime;
+        }
+    }
+
+    public void Interact()
+    {
+        // 상호 작용
+        if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
+        {
+            // 작물 수확
+            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position, Quaternion.identity);
+            FarmingManager.Instance.ReturnPlant(new PlantPoolKey(PlantID, GrowthLevel - 1), _plantObject);
+        }
+        else if (GrowthLevel >= _seedData.MaxGrowthLevel)
+        {
+            // 썩은 작물
         }
     }
 

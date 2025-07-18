@@ -5,13 +5,13 @@ using UnityEngine;
 public class FarmingInteractionTest : NetworkBehaviour
 {
     public LayerMask InteractionLayer;
-    
+
     public GameObject InteractionObject;
-    
+
     private void Update()
     {
         var colliderArray = Physics.OverlapSphere(transform.position, 10, InteractionLayer);
-    
+
         Collider closestCollider = null;
         float closestDistance = float.MaxValue;
 
@@ -24,28 +24,32 @@ public class FarmingInteractionTest : NetworkBehaviour
                 closestCollider = collider;
             }
         }
-        
-        InteractionObject = closestCollider?.gameObject;
-    }
 
-    [ContextMenu("Plow")]
-    public void Plow()
-    {
-        var item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Hoe());
-        item.UseOn(InteractionObject);
-    }
-    
-    [ContextMenu("Water")]
-    public void Water()
-    {
-        var item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_WateringCan());
-        item.UseOn(InteractionObject);
-    }
-    
-    [ContextMenu("Seed")]
-    public void Seed()
-    {
-        var item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Seed(100005));
-        item.UseOn(InteractionObject);
+        InteractionObject = closestCollider?.gameObject;
+
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Hoe());
+            if (item is IUsableOnTarget usable)
+            {
+                usable.UseOn(InteractionObject);
+            }
+        }
+        else if (Input.GetKey(KeyCode.Alpha2))
+        {
+            AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Seed(100005));
+            if (item is IUsableOnTarget usable)
+            {
+                usable.UseOn(InteractionObject);
+            }
+        }
+        else if (Input.GetKey(KeyCode.Alpha3))
+        {
+            AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_WateringCan());
+            if (item is IUsableOnTarget usable)
+            {
+                usable.UseOn(InteractionObject);
+            }
+        }
     }
 }

@@ -49,9 +49,9 @@ public class SeedGround : NetworkBehaviour
                 var plant = obj.GetComponent<PlantObject>();
                 plant.PlantID = seedID;
                 plant.GrowthLevel = 1;
+                plant.GroundNetworkId = _parentFarmingGround.GetComponent<NetworkObject>().Id;
+                plant.ParentPath = name;
             });
-        plantObject.transform.SetParent(transform);
-        plantObject.transform.localPosition = Vector3.zero;
 
         IsPlanted = true;
     }

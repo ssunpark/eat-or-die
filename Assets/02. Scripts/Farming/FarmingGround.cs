@@ -12,6 +12,7 @@ public class FarmingGround : NetworkBehaviour
     
     [SerializeField]
     private GameObject _plowedGround;
+    public GameObject PlowedGround => _plowedGround;
 
     public override void Spawned()
     {

@@ -92,4 +92,15 @@ public class FarmingManager : NetworkBehaviour
         seedData = _seedDictionary[plantId];
         return _seedDictionary.ContainsKey(plantId);
     }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_Despawn(NetworkObject target)
+    {
+        if (!Runner.IsServer)
+        {
+            return;
+        }
+        
+        Runner.Despawn(target);
+    }
 }
