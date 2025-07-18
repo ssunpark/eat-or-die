@@ -5,6 +5,7 @@ using UnityEngine;
 public class FarmingInteractionTest : NetworkBehaviour
 {
     public LayerMask InteractionLayer;
+    public string TagName;
 
     public GameObject InteractionObject;
 
@@ -17,6 +18,11 @@ public class FarmingInteractionTest : NetworkBehaviour
 
         foreach (var collider in colliderArray)
         {
+            if (!collider.CompareTag(TagName))
+            {
+                continue;
+            }
+
             float distance = Vector3.Distance(transform.position, collider.transform.position);
             if (distance < closestDistance)
             {
@@ -34,6 +40,9 @@ public class FarmingInteractionTest : NetworkBehaviour
             {
                 usable.UseOn(InteractionObject);
             }
+            InteractionObject = null;
+            // 테스트 태그 바꾸기 (아이템에 상호작용해야하는 태그를 분리할 예정)
+            TagName = "PlantGround";
         }
         else if (Input.GetKey(KeyCode.Alpha2))
         {
@@ -49,6 +58,19 @@ public class FarmingInteractionTest : NetworkBehaviour
             if (item is IUsableOnTarget usable)
             {
                 usable.UseOn(InteractionObject);
+            }
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            // 인터페이스로 수정
+            if (InteractionObject?.TryGetComponent(out PlantObject plant) ?? false)
+            {
+                plant.Interact();
+            }
+            else
+            {
+                TagName = "Untagged";
+                InteractionObject = null;
             }
         }
     }
