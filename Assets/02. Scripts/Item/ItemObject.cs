@@ -42,43 +42,49 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     public override void FixedUpdateNetwork()
     {
-        Debug.Log("업데이트");
-        if (_target != null)
+        if (Runner.IsServer && _target != null)
         {
-            Debug.Log("이동");
-            if (Runner.IsServer)
-            {
-                transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Runner.DeltaTime);
-            }
+            transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Runner.DeltaTime);
 
             if (Vector3.Distance(transform.position, _target.position) < _absorbThreshold)
             {
-                // 인벤에 등록
-                Debug.Log(_target.GetComponent<NetworkObject>().HasInputAuthority);
-                if (_target.GetComponent<NetworkObject>().HasInputAuthority)
-                {
-                    Debug.Log("등록");
-                    ItemStack itemStack = new ItemStack(ItemID,
-                        ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
-                    InventoryManager.Instance.PickItemFromGround(itemStack);
-                    // RPC로 요청
-                    RPC_Despawn();
-                }
-
+                // 인벤에 등록 요청
+                RPC_AddInventory(_target.GetComponent<NetworkObject>().InputAuthority);
                 _target = null;
             }
         }
     }
 
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_Despawn()
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_AddInventory(PlayerRef targetPlayerRef)
     {
-        if (!Runner.IsServer)
+        if (Runner.LocalPlayer != targetPlayerRef)
         {
             return;
         }
+        
+        ItemStack itemStack = new ItemStack(ItemID,
+            ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
+        InventoryManager.Instance.PickItemFromGround(itemStack);
+        
+        RPC_RequestDespawn(Object.Id);
+    }
 
-        Runner.Despawn(Object);
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_RequestDespawn(NetworkId targetId, RpcInfo info = default)
+    {
+        Debug.Log($"[Server] Despawn 요청 from: {info.Source}");
+
+        var obj = Runner.FindObject(targetId);
+        if (obj != null && obj.HasStateAuthority)
+        {
+            Runner.Despawn(obj);
+            Debug.Log("[Server] Despawn 성공");
+        }
+        else
+        {
+            Debug.LogWarning("[Server] Despawn 실패 - 대상 없음 or 권한 없음");
+        }
     }
 
     [Rpc(RpcSources.All, RpcTargets.All)]
@@ -92,8 +98,6 @@ public class ItemObject : NetworkBehaviour, IPickable
         // 아이템 흡수 연출 타겟 설정
         _targetID = targetNetworkId;
         _target = Runner.FindObject(targetNetworkId).gameObject.transform;
-
-        Debug.Log(_target.name);
 
         Debug.Log($"주운 아이템: ID - {ItemID}, {Quantity}개");
     }
