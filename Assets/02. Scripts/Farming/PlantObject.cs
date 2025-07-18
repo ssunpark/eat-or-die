@@ -73,7 +73,8 @@ public class PlantObject : NetworkBehaviour
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
             // 작물 수확
-            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position, Quaternion.identity);
+            // ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position, Quaternion.identity);
+            ItemManager.Instance.RPC_CreateItemObject(0, 1, transform.position, Quaternion.identity);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
