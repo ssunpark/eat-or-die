@@ -1,6 +1,6 @@
 using UnityEngine;
 //수현
-public class UI_Cooking : MonoBehaviour
+public class UI_CookingPanel : MonoBehaviour
 {
     public GameObject CookingPanel;
     public GameObject RecipePanel;
@@ -20,8 +20,14 @@ public class UI_Cooking : MonoBehaviour
 
     public void OnClickCookingButton()
     {
+        CloseTab();
+        // 레시피 조합에 따른 결과 출력 명령 메서드 호출
+        CookingPanelManager.Instance.TryGetRecipeResult();
+    }
+
+    private void CloseTab()
+    {
         isOpen = false;
-        Debug.Log($"{isOpen}");
         CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
