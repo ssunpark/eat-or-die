@@ -18,7 +18,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
 
     public void OnClickMouseLeft(int slotIndex)
     {
-        Debug.Log("ClickMouseLeft on slot: " + slotIndex);
         if (HandEntity.Instance.IsHandEmpty)
         {
             ItemStack itemInSlot = Inventory.PopItemInSlot(slotIndex);
@@ -35,7 +34,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     
     public void OnClickMouseRight(int slotIndex)
     {
-        Debug.Log("ClickMouseRight on slot: " + slotIndex);
         if (Inventory.SlotList[slotIndex].IsEmpty) return;
         
         if (HandEntity.Instance.IsHandEmpty)
@@ -63,12 +61,14 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         OnSlotUpdated[slotIndex]?.Invoke();
     }
 
-    public ItemStack PickItemFromGround(ItemStack itemStack)
+    public void PickItemFromGround(ItemStack itemStack)
     {
         ItemStack remain = Inventory.PickItemFromGround(itemStack);
-
-        OnInventoryUpdated?.Invoke();
         
-        return remain;
+        OnInventoryUpdated?.Invoke();
+     
+        if (remain == null) return;
+        
+        ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, Vector3.zero, Quaternion.identity);
     }
 }

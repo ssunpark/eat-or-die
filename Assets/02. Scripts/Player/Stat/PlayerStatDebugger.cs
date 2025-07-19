@@ -13,7 +13,7 @@ public class PlayerStatDebugger : MonoBehaviour
     {
         if (_statManager == null) return;
 
-        GUI.BeginGroup(new Rect(10, 10, 300, Screen.height));
+        GUI.BeginGroup(new Rect(400, 10, 300, Screen.height));
         GUILayout.Label("<b><size=14>Player Stats</size></b>");
 
         foreach (var kvp in _statManager.GetStatSnapshot())
