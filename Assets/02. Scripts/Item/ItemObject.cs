@@ -9,6 +9,8 @@ public class ItemObject : NetworkBehaviour, IPickable
     public int ItemID { get; set; }
     [Networked]
     public int Quantity { get; set; }
+
+    private bool _isDespawn;
     private NetworkId _targetID;
     private bool _hasOwner;
     public bool HasOwner { get => _hasOwner; set => _hasOwner = value; }
@@ -33,9 +35,6 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     public override void Spawned()
     {
-        Debug.Log("Spawned");
-        // Debug.Log($"[Spawned] {name}, Object.IsValid: {Object.IsValid}, Behaviour Count: {Object.Behaviours?.Length}");
-        Debug.Log($"[Spawned] {name}, Active: {gameObject.activeInHierarchy}, Enabled: {enabled}");
         var icon = ItemManager.Instance.GetItem(ItemID).ItemData.Icon;
         ApplyVisual(icon);
     }
@@ -51,7 +50,14 @@ public class ItemObject : NetworkBehaviour, IPickable
                 // 인벤에 등록 요청
                 RPC_AddInventory(_target.GetComponent<NetworkObject>().InputAuthority);
                 _target = null;
+                _isDespawn = true;
+                return;
             }
+        }
+
+        if (Runner.IsServer && _isDespawn)
+        {
+            Runner.Despawn(Object);
         }
     }
 
@@ -66,25 +72,6 @@ public class ItemObject : NetworkBehaviour, IPickable
         ItemStack itemStack = new ItemStack(ItemID,
             ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
         InventoryManager.Instance.PickItemFromGround(itemStack);
-        
-        RPC_RequestDespawn(Object.Id);
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    private void RPC_RequestDespawn(NetworkId targetId, RpcInfo info = default)
-    {
-        Debug.Log($"[Server] Despawn 요청 from: {info.Source}");
-
-        var obj = Runner.FindObject(targetId);
-        if (obj != null && obj.HasStateAuthority)
-        {
-            Runner.Despawn(obj);
-            Debug.Log("[Server] Despawn 성공");
-        }
-        else
-        {
-            Debug.LogWarning("[Server] Despawn 실패 - 대상 없음 or 권한 없음");
-        }
     }
 
     [Rpc(RpcSources.All, RpcTargets.All)]
@@ -98,8 +85,6 @@ public class ItemObject : NetworkBehaviour, IPickable
         // 아이템 흡수 연출 타겟 설정
         _targetID = targetNetworkId;
         _target = Runner.FindObject(targetNetworkId).gameObject.transform;
-
-        Debug.Log($"주운 아이템: ID - {ItemID}, {Quantity}개");
     }
 
     // 외형 적용
