@@ -64,6 +64,12 @@ public class FarmingManager : NetworkBehaviour
             var seedData = new SeedData(rawData);
 
             _seedDictionary.Add(rawData.ID, seedData);
+            
+            // 랜덤 씨드 풀링 제외
+            if (seedData.IsRandomSeed)
+            {
+                continue;
+            }
 
             // 풀링
             GameObject poolContainer = new GameObject($"{rawData.ID}_Pool");

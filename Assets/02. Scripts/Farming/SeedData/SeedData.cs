@@ -16,6 +16,7 @@ public class SeedData
     public readonly string AddressablePath;
     public readonly int HarvestItemID;
     public readonly float GrowthTime;
+    public readonly bool IsRandomSeed;
 
     private Dictionary<int, GameObject> _plantPrefabDictionary;
     public IReadOnlyDictionary<int, GameObject> PlantPrefabDictionary => _plantPrefabDictionary;
@@ -24,7 +25,11 @@ public class SeedData
     {
         ID = rawData.ID;
         AddressablePath = rawData.AddressablePath;
-        // TODO: 랜덤 수확물 처리 필요
+        if (rawData.HarvestItemID == null)
+        {
+            IsRandomSeed = true;
+            return;
+        }
         HarvestItemID = rawData.HarvestItemID ?? 0;
         GrowthTime = rawData.GrowthTime;
         
@@ -37,8 +42,8 @@ public class SeedData
         {
             int levelID = level;
             string addressableAssetName = level != MaxGrowthLevel
-                ? $"SFF_Potato_Crop_{level} Variant"
-                : "SFF_Potato_Crop_Dried Variant";
+                ? $"{rawData.AddressablePath}{level} Variant"
+                : $"{rawData.AddressablePath}Dried Variant";
             // 풀링을 위해 동기로 다 로드
             GameObject plantPrefab = Addressables.LoadAssetAsync<GameObject>(addressableAssetName).WaitForCompletion();
             _plantPrefabDictionary.Add(levelID, plantPrefab);
