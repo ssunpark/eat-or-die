@@ -1,20 +1,20 @@
 ﻿using UnityEngine;
 
-public class UseToItem : AItem, IUseTo, IEquipable
+public class UsableItem : AItem, IUsable, IEquipable
 {
-    private readonly IUseToAction _useToAction;
+    private readonly IUseAction _useAction;
     public readonly string _interactionTag;
     
-    public UseToItem(ItemData itemData, string interactionTag, IUseToAction useToAction) : base(itemData)
+    public UsableItem(ItemData itemData, string interactionTag, IUseAction useAction) : base(itemData)
     {
         _interactionTag = interactionTag;
-        _useToAction = useToAction;
+        _useAction = useAction;
     }
 
-    public void UseTo(GameObject target)
+    public void Use(GameObject target)
     {
         // target에 도구 사용
-        _useToAction.UseTool(target);
+        _useAction.UseTool(target);
     }
 
     public void Equip()

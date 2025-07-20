@@ -50,15 +50,15 @@ public class ItemFactory
         return new WeaponItem(itemData, rawData.Type);
     }
 
-    public UseToItem CreateUseToItem(UseToItemRawData rawData)
+    public UsableItem CreateUseToItem(UsableItemRawData rawData)
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
-        IUseToAction useToAction = rawData.UseToAction switch
+        IUseAction useAction = rawData.UseAction switch
         {
-            EUseToAction.Plow => new UseToAction_Hoe(),
-            EUseToAction.Water => new UseToAction_WateringCan(),
-            EUseToAction.Plant => new UseToAction_Seed(rawData.ID),
+            EUseAction.Plow => new UseActionHoe(),
+            EUseAction.Water => new UseActionWateringCan(),
+            EUseAction.Plant => new UseActionSeed(rawData.ID),
         };
-        return new UseToItem(itemData, rawData.InteractionTag, useToAction);
+        return new UsableItem(itemData, rawData.InteractionTag, useAction);
     }
 }

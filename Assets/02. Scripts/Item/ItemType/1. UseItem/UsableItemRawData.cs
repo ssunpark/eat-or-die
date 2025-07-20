@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-public class UseToItemRawData
+public class UsableItemRawData
 {
     [Name("ID")]
     public int ID { get; set; }
@@ -15,5 +15,5 @@ public class UseToItemRawData
     public string InteractionTag { get; set; }
 
     [Name("Action")]
-    public EUseToAction UseToAction { get; set; }
+    public EUseAction UseAction { get; set; }
 }

@@ -48,15 +48,15 @@ public class FarmingInteractionTest : NetworkBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             var Handitem = ItemManager.Instance.GetItem(HoldItemID);
-            if (Handitem is IUseTo useToItem)
+            if (Handitem is IUsable useToItem)
             {
-                useToItem.UseTo(InteractionObject);
+                useToItem.Use(InteractionObject);
             }
         }
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             // 장착 대신 일단 클래스로 형변환
-            if (ItemManager.Instance.GetItem(HoldItemID) is UseToItem useToItem)
+            if (ItemManager.Instance.GetItem(HoldItemID) is UsableItem useToItem)
             {
                 TagName = useToItem._interactionTag;
                 ItemName = useToItem.ItemData.Name;

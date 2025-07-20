@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class UseToAction_WateringCan : IUseToAction
+public class UseActionWateringCan : IUseAction
 {
     public void UseTool(GameObject target)
     {

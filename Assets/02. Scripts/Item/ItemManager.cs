@@ -49,7 +49,7 @@ public class ItemManager : NetworkBehaviour
         _itemDict = new Dictionary<int, AItem>();
         
         // 사용 아이템
-        var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/UseItemTestCSV.csv");
+        var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EatItemTestCSV.csv");
         foreach (var data in eatItemRawDataList)
         {
             var useItem = _itemFactory.CreateEatItem(data);
@@ -73,7 +73,7 @@ public class ItemManager : NetworkBehaviour
         // }
         
         // 도구 아이템
-        var UseToRawDataList = ItemDataLoader.LoadItemRawData<UseToItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/ToolItemTestCSV.csv");
+        var UseToRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/ToolItemTestCSV.csv");
         foreach (var data in UseToRawDataList)
         {
             var useItem = _itemFactory.CreateUseToItem(data);
@@ -82,7 +82,7 @@ public class ItemManager : NetworkBehaviour
     }
 
     // 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
-    // AItem을 동작에 맞는 인터페이스로 변경해서 사용 (InteractionInterface폴더 참고)
+    // AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
     public AItem GetItem(int id)
     {
         if (_itemDict.TryGetValue(id, out AItem item))

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public interface IUseToAction
+public interface IUseAction
 {
     public void UseTool(GameObject target);
 }

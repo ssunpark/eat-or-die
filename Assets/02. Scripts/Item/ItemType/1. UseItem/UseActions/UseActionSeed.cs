@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class UseToAction_Seed : IUseToAction
+public class UseActionSeed : IUseAction
 {
     private readonly int _seedID;
 
-    public UseToAction_Seed(int seedID)
+    public UseActionSeed(int seedID)
     {
         _seedID = seedID;
     }

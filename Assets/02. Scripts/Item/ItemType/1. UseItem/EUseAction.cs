@@ -1,4 +1,4 @@
-﻿public enum EUseToAction
+﻿public enum EUseAction
 {
     Plow,
     Water,

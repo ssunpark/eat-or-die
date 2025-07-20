@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class UseToAction_Hoe : IUseToAction
+public class UseActionHoe : IUseAction
 {
     public void UseTool(GameObject target)
     {
