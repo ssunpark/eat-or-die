@@ -6,7 +6,7 @@ public class FoodItemManager : MonoBehaviour
     public static FoodItemManager Instance { get; private set; }
 
     private Dictionary<int, AItem> _foodItemDict = new Dictionary<int, AItem>();
-    private FoodItemFactory _factory = new FoodItemFactory();
+    // private FoodItemFactory _factory = new FoodItemFactory();
 
     private void Awake()
     {
@@ -21,11 +21,11 @@ public class FoodItemManager : MonoBehaviour
 
     private void Init()
     {
-        foreach (FoodCSVData data in FoodCSVDataManager.Instance.AllDataList)
-        {
-            AItem foodItem = _factory.CreateFoodItem(data);
-            _foodItemDict[data.ID] = foodItem;
-        }
+        // foreach (FoodCSVData data in FoodCSVDataManager.Instance.AllDataList)
+        // {
+        //     AItem foodItem = _factory.CreateFoodItem(data);
+        //     _foodItemDict[data.ID] = foodItem;
+        // }
         Debug.Log($"FoodItemManager : {_foodItemDict.Count}개 등록됨");
     }
 

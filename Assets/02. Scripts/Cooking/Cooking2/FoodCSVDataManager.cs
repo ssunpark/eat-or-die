@@ -4,12 +4,14 @@ public class FoodCSVDataManager : MonoBehaviour
 {
     public static FoodCSVDataManager Instance { get; private set; }
 
-    private const string FOOD_CSV_PATH = "/FoodCSV/FoodCSV3.csv";
-
-    public List<FoodCSVData> AllDataList { get; private set; } = new List<FoodCSVData>();
-    public List<FoodCSVData> HarvestDataList { get; private set; } = new List<FoodCSVData>();
-    public List<FoodCSVData> BuffDataList { get; private set; } = new List<FoodCSVData>();
-
+    private const string RECIPE_CSV_PATH = "/FoodCSV/FoodCSV.csv";
+    private const string INGREDIENT_CSV_PATH = "/FoodCSV/IngredientCSV.csv";
+    // public List<FoodCSVData> AllDataList { get; private set; } = new List<FoodCSVData>();
+    // public List<FoodCSVData> HarvestDataList { get; private set; } = new List<FoodCSVData>();
+    // public List<FoodCSVData> BuffDataList { get; private set; } = new List<FoodCSVData>();
+    
+    public List<RecipeCSVData> RecipeCSVDataList { get; private set; }
+    public List<IngredientCSVData> IngredientCsvDataList { get; private set; }
     private void Awake()
     {
         if (Instance == null)
@@ -29,15 +31,16 @@ public class FoodCSVDataManager : MonoBehaviour
 
     private void InitFoodData()
     {
-        AllDataList = FoodCSVLoader.LoadFoodCSV(Application.streamingAssetsPath + FOOD_CSV_PATH);
-        HarvestDataList = AllDataList.FindAll(x => x.ERecipeType == "Harvest");
-        BuffDataList = AllDataList.FindAll(x => x.ERecipeType == "Buff");
+        RecipeCSVDataList = CSVLoader<RecipeCSVData>.LoadFoodCSV(Application.streamingAssetsPath + RECIPE_CSV_PATH);
+        IngredientCsvDataList = CSVLoader<IngredientCSVData>.LoadFoodCSV(Application.streamingAssetsPath + INGREDIENT_CSV_PATH);
+        // HarvestDataList = AllDataList.FindAll(x => x.ERecipeType == "Harvest");
+        // BuffDataList = AllDataList.FindAll(x => x.ERecipeType == "Buff");
 
-        Debug.Log($"로드 완료 - 전체: {AllDataList.Count}, Harvest: {HarvestDataList.Count}, Buff: {BuffDataList.Count}");
+        Debug.Log($"로드 완료 - RecipeCSVDataList: {RecipeCSVDataList.Count}, IngredientCsvDataList: {IngredientCsvDataList.Count}");
     }
 
-    public FoodCSVData GetFoodDataByID(int id)
-    {
-        return AllDataList.Find(x => x.ID == id);
-    }
+    // public FoodCSVData GetFoodDataByID(int id)
+    // {
+    //     return AllDataList.Find(x => x.ID == id);
+    // }
 }

@@ -1,38 +1,58 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 //수현
-public class CookInputSlotUI : MonoBehaviour, IPointerClickHandler
+public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
 {
     // 인벤토리 -> 요리 제작 슬롯으로 이동
     // 슬롯에 클릭 이벤트가 발생하면 CookingPanelManager에서 데이터를 저장해주는 메서드 호출
     // 요리 제작 슬롯 -> 인벤토리로 이동
     public int SlotIndex;
+    public Image IconImage;
+    public TextMeshProUGUI QuantityText;
     
-    public void OnPointerClick(PointerEventData eventData)
+    public void Start()
     {
-        Debug.Log("클릭되는 중");
-        if (eventData.button != PointerEventData.InputButton.Left) return;
-
-        if (HandEntity.Instance.IsHandEmpty)
+        IconImage.gameObject.SetActive(false);
+        QuantityText.gameObject.SetActive(false);
+        CookingPanelManager.Instance.OnCookingSlotUpdated[SlotIndex] += UpdateSlotUI;
+    }
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            var item = CookingPanelManager.Instance.GetItem(SlotIndex);
-            if (item != null)
-            {
-                CookingPanelManager.Instance.RemoveItem(SlotIndex);
-                HandEntity.Instance.PickUpItem(item);
-                Debug.Log("아이템 줍기");
-            }
+            // InventoryManager.Instance.OnClickMouseLeft(SlotIndex);   
+            CookingPanelManager.Instance.OnClickMouseLeft(SlotIndex);
+            CookingPanelManager.Instance.TryCookAndCreateItem();
         }
-        else
+        else if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (CookingPanelManager.Instance.CanPlaceItem(SlotIndex, HandEntity.Instance.ItemStack))
+            if (eventData.pointerEnter.GetComponent<UI_InventorySlot>() != null)
             {
-                CookingPanelManager.Instance.PlaceItem(SlotIndex, HandEntity.Instance.ItemStack);
-                HandEntity.Instance.DropItem();
-                Debug.Log("아이템 드롭하기");
+                InventoryManager.Instance.OnClickMouseRight(SlotIndex);
+            }else if (eventData.pointerEnter.GetComponent<CookInputSlotUI>() != null)
+            {
+                CookingPanelManager.Instance.OnClickMouseRight(SlotIndex);
+                CookingPanelManager.Instance.TryCookAndCreateItem();
             }
         }
     }
+    public void UpdateSlotUI()
+    {
+        ItemStack itemInSlot = CookingPanelManager.Instance.Inventory.SlotList[SlotIndex].ItemStack;
+        if (itemInSlot == null)
+        {
+            IconImage.gameObject.SetActive(false);
+            QuantityText.gameObject.SetActive(false);
+            return;
+        }
+        
+        IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemData.Icon;
+        QuantityText.text = itemInSlot.Quantity.ToString();
+        IconImage.gameObject.SetActive(true);
+        QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
+    }
+    
 }

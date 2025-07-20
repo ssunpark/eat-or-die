@@ -1,50 +1,125 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+
 public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
 {
     // 드래그앤드랍, 클릭
-    private ItemStack[] _inputSlots = new ItemStack[2];
+    public Inventory Inventory = new Inventory(2);
+    public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
 
-    public event Action OnCookingSlotUpdated;
+    public CookOutputSlotUI CookOutputSlotUI;
+    public Inventory FoodInventory = new Inventory(1);
     
-    // 슬롯에 들어 있는 아이템 조회
-    public ItemStack GetItem(int slotIndex)
+    public Action OnCookOutputUpdated; // ✅ 결과 슬롯 전용 이벤트
+    
+    public void OnClickMouseLeft(int slotIndex)
     {
-        if (slotIndex < 0 || slotIndex >= _inputSlots.Length) return null;
-        return _inputSlots[slotIndex];
+        if (HandEntity.Instance.IsHandEmpty)
+        {
+            ItemStack itemInSlot = Inventory.PopItemInSlot(slotIndex);
+            if (itemInSlot == null) return;
+            
+            HandEntity.Instance.PickUpItem(itemInSlot);
+        }
+        else
+        {
+            HandEntity.Instance.PickUpItem(Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
+        }
+        OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
-
-    // 슬롯에서 아이템 제거
-    public void RemoveItem(int slotIndex)
+    
+    public void OnClickMouseRight(int slotIndex)
     {
-        if (slotIndex < 0 || slotIndex >= _inputSlots.Length) return;
-        _inputSlots[slotIndex] = null;
-        OnCookingSlotUpdated?.Invoke();
-    }
+        if (Inventory.SlotList[slotIndex].IsEmpty) return;
+        
+        if (HandEntity.Instance.IsHandEmpty)
+        {
+            HandEntity.Instance.PickUpItem(Inventory.PopSingleItemInSlot(slotIndex));
+        }
+        else
+        {
+            if (HandEntity.Instance.ItemStack.ID == Inventory.SlotList[slotIndex].ItemStack.ID)
+            {
+                ItemStack itemInSlot = Inventory.PopSingleItemInSlot(slotIndex);
+                if (!HandEntity.Instance.TryAddItem(itemInSlot))
+                {
+                    Inventory.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
+                }
+            }
+            else
+            {
+                ItemStack temp = Inventory.PopItemInSlot(slotIndex);
+                Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
+                HandEntity.Instance.PickUpItem(temp);
+            }
+        }
 
-    // 슬롯 비었는지 확인
-    public bool CanPlaceItem(int slotIndex, ItemStack itemStack)
-    {
-        if (slotIndex < 0 || slotIndex >= _inputSlots.Length) return false;
-        return _inputSlots[slotIndex] == null;
-    }
-
-    // 슬롯에 아이템 넣고 이벤트 호출
-    public void PlaceItem(int slotIndex, ItemStack itemStack)
-    {
-        if (slotIndex < 0 || slotIndex >= _inputSlots.Length) return;
-        _inputSlots[slotIndex] = itemStack;
-        OnCookingSlotUpdated?.Invoke();
-    }
-
-    // 요리 조합 확인용
-    public ItemStack[] GetAllInputItems()
-    {
-        return _inputSlots;
+        OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
 
     public bool TryGetRecipeResult()
     {
         return false;
+    }
+    private bool HasEmptySlot()
+    {
+        foreach (var slot in Inventory.SlotList)
+        {
+            if (slot.IsEmpty)
+            {
+                return true; // 비어있는 슬롯이 있다
+            }
+        }
+        return false; // 모두 차 있음
+    }
+    public int TryCook()
+    {
+        if (HasEmptySlot())
+        {
+            return -1;
+        }
+
+        int id1 = Inventory.SlotList[0].ItemStack.ID;
+        int id2 = Inventory.SlotList[1].ItemStack.ID;
+
+        foreach (RecipeCSVData recipe in FoodCSVDataManager.Instance.RecipeCSVDataList)
+        {
+            bool isMatch = (recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
+                           (recipe.Ingredient1ID == id2 && recipe.Ingredient2ID == id1);
+
+            if (isMatch)
+            {
+                return recipe.ID;
+            }
+        }
+
+        // 일치하는 레시피가 없는 경우
+        return -1;
+    }
+
+    public void TryCookAndCreateItem()
+    {
+        int resultItemId = TryCook();
+        if (resultItemId == -1)
+        {
+            Debug.Log("조합 실패");
+            return;
+        }
+
+        foreach (var slot in Inventory.SlotList)
+        {
+            slot.UseItem();
+        }
+
+        for (int i = 0; i < OnCookingSlotUpdated.Count; i++)
+        {
+            OnCookingSlotUpdated[i]?.Invoke();
+        }
+
+        AItem resultItem = ItemManager.Instance.GetItem(resultItemId);
+        FoodInventory.SlotList[0].AddItem(new ItemStack(resultItemId, 1));
+
+        OnCookOutputUpdated?.Invoke(); // ✅ 결과 슬롯 UI 갱신
     }
 }

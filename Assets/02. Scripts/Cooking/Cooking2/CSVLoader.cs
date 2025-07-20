@@ -5,20 +5,26 @@ using System.Linq;
 using CsvHelper;
 using UnityEngine;
 
-public class FoodCSVLoader
+public class CSVLoader<T>
 {
-    public static List<FoodCSVData> LoadFoodCSV(string path)
+    public static List<T> LoadFoodCSV(string path)
     {
         if (!File.Exists(path))
         {
             UnityEngine.Debug.LogError($"CSV 파일 없음: {path}");
-            return new List<FoodCSVData>();
+            return new List<T>();
         }
 
         using var reader = new StreamReader(path);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
-        var records = csv.GetRecords<FoodCSVData>().ToList();
+        var records = csv.GetRecords<T>().ToList();
+        
+        foreach (var record in records)
+        {
+            Debug.Log(JsonUtility.ToJson(record));
+        }
+
         return records;
     }
 }

@@ -1,8 +1,72 @@
+using TMPro;
 using UnityEngine;
-//수현
-public class CookOutputSlotUI : MonoBehaviour
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
 {
-    // 합 연산과 곱 연산을 이용해서 조합 결과를 알아낸다. ID로 추적.
-    // ID의 어드레서블 이미지를 슬롯에 보여준다.
-    
+    public int SlotIndex;
+    public Image IconImage;
+    public TextMeshProUGUI QuantityText;
+
+    private void Start()
+    {
+        IconImage.gameObject.SetActive(false);
+        QuantityText.gameObject.SetActive(false);
+
+        CookingPanelManager.Instance.OnCookOutputUpdated += UpdateSlotUI;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            TakeOutItem();
+        }
+    }
+
+    private void TakeOutItem()
+    {
+        var foodInventory = CookingPanelManager.Instance.FoodInventory;
+        var slot = foodInventory.SlotList[SlotIndex];
+        if (slot.IsEmpty) return;
+
+        if (HandEntity.Instance.IsHandEmpty)
+        {
+            // 한 개만 손으로 집기
+            HandEntity.Instance.PickUpItem(foodInventory.PopSingleItemInSlot(SlotIndex));
+        }
+        else
+        {
+            if (HandEntity.Instance.ItemStack.ID == slot.ItemStack.ID)
+            {
+                // 스택 합치기
+                ItemStack popped = foodInventory.PopSingleItemInSlot(SlotIndex);
+                if (!HandEntity.Instance.TryAddItem(popped))
+                {
+                    // 손에 더 못 넣으면 다시 인벤토리에 넣기
+                    slot.AddItem(popped);
+                }
+            }
+        }
+
+        UpdateSlotUI();
+    }
+
+
+    public void UpdateSlotUI()
+    {
+        var itemInSlot = CookingPanelManager.Instance.FoodInventory.SlotList[SlotIndex].ItemStack;
+        if (itemInSlot == null)
+        {
+            IconImage.gameObject.SetActive(false);
+            QuantityText.gameObject.SetActive(false);
+            return;
+        }
+
+        IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemData.Icon;
+        QuantityText.text = itemInSlot.Quantity.ToString();
+        IconImage.gameObject.SetActive(true);
+        QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
+    }
 }

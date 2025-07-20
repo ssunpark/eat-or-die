@@ -1,7 +1,7 @@
 using CsvHelper.Configuration.Attributes;
 
 [System.Serializable]
-public class FoodCSVData
+public class IngredientCSVData
 {
     [Name("ID")]
     public int ID { get; set; }
@@ -11,25 +11,22 @@ public class FoodCSVData
 
     [Name("Description")]
     public string Description { get; set; }
-
-    [Name("ERecipeType")]
-    public string ERecipeType { get; set; }
-
+    
     [Name("MaxStack")]
     public int MaxStack { get; set; }
-
-    [Name("Eatable")]
-    public bool Eatable { get; set; }
-
+    
     [Name("HungerRestore")]
     public int HungerRestore { get; set; }
 
-    [Name("Ingredient1ID")]
-    public string Ingredient1ID { get; set; }
+    [Name("EEffectType1")]
+    public string EEffectType1 { get; set; }
 
-    [Name("Ingredient2ID")]
-    public string Ingredient2ID { get; set; }
+    [Name("EffectValue1")]
+    public float EffectValue1 { get; set; }
 
-    [Name("IconPath(Addressable Key)")]
+    [Name("Duration1")]
+    public float Duration1 { get; set; }
+
+    [Name("IconPath")]
     public string IconPath { get; set; }
 }
