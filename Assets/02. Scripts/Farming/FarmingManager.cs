@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Redcode.Pools;
 using UnityEngine;
@@ -97,6 +98,15 @@ public class FarmingManager : NetworkBehaviour
     {
         seedData = _seedDictionary[plantId];
         return _seedDictionary.ContainsKey(plantId);
+    }
+
+    public int GetRandomSeedID(int randomSeedID)
+    {
+        var keyList = _seedDictionary.Keys.ToList();
+        keyList.Remove(randomSeedID);   // 랜덤 ID는 제거
+        
+       int randomIndex = Random.Range(0, keyList.Count);
+       return keyList[randomIndex];
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
