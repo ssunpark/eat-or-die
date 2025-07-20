@@ -19,7 +19,7 @@ public class ItemFactory
             if (type == EUseItemEffectType.Empty)
                 continue;
 
-            var effect = CreateUseItemEffect(type, value ?? 0f, duration ?? 0f);
+            var effect = CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
             if (effect != null)
                 effects.Add(effect);
         }
@@ -28,7 +28,7 @@ public class ItemFactory
         return new EatItem(itemData, effects);
     }
 
-    private IEatItemEffect CreateUseItemEffect(EUseItemEffectType type, float value, float duration)
+    private IEatItemEffect CreateEatItemEffect(EUseItemEffectType type, float value, float duration)
     {
         return type switch
         {
@@ -48,5 +48,17 @@ public class ItemFactory
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
         return new WeaponItem(itemData, rawData.Type);
+    }
+
+    public UseToItem CreateUseToItem(UseToItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        IUseToAction useToAction = rawData.UseToAction switch
+        {
+            EUseToAction.Plow => new UseToAction_Hoe(),
+            EUseToAction.Water => new UseToAction_WateringCan(),
+            EUseToAction.Plant => new UseToAction_Seed(rawData.ID),
+        };
+        return new UseToItem(itemData, rawData.InteractionTag, useToAction);
     }
 }

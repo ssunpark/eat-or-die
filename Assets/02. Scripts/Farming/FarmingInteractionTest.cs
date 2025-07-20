@@ -6,12 +6,14 @@ public class FarmingInteractionTest : NetworkBehaviour
 {
     public LayerMask InteractionLayer;
     public string TagName;
+    public int HoldItemID;
+    public string ItemName;
 
     public GameObject InteractionObject;
 
     private void Start()
     {
-        TagName = "FarmingGround";
+        TagName = "Untagged";
     }
 
     private void Update()
@@ -43,31 +45,21 @@ public class FarmingInteractionTest : NetworkBehaviour
 
         InteractionObject = closestCollider?.gameObject;
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetMouseButtonDown(1))
         {
-            AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Hoe());
-            if (item is IUsableOnTarget usable)
+            var Handitem = ItemManager.Instance.GetItem(HoldItemID);
+            if (Handitem is IUseTo useToItem)
             {
-                usable.UseOn(InteractionObject);
-            }
-            InteractionObject = null;
-            // 테스트 태그 바꾸기 (아이템에 상호작용해야하는 태그를 분리할 예정)
-            TagName = "PlantGround";
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_Seed(100005));
-            if (item is IUsableOnTarget usable)
-            {
-                usable.UseOn(InteractionObject);
+                useToItem.UseTo(InteractionObject);
             }
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            AItem item = new UsableOnTargetItem(new ItemData(0, "Farming", "", 1, ""), new UseToAction_WateringCan());
-            if (item is IUsableOnTarget usable)
+            // 장착 대신 일단 클래스로 형변환
+            if (ItemManager.Instance.GetItem(HoldItemID) is UseToItem useToItem)
             {
-                usable.UseOn(InteractionObject);
+                TagName = useToItem._interactionTag;
+                ItemName = useToItem.ItemData.Name;
             }
         }
         else if (Input.GetKeyDown(KeyCode.E))
