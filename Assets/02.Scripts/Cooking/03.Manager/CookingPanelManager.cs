@@ -124,7 +124,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
 
         AItem resultItem = ItemManager.Instance.GetItem(resultItemId);
-        FoodInventory.SlotList[0].AddItem(new ItemStack(resultItemId, 1));
+        FoodInventory.SlotList[0].AddItem(new ItemStack(resultItemId, resultItem.ItemData.MaxQuantity,1));
         
         OnCookOutputUpdated?.Invoke(); // 결과 슬롯 UI 갱신
     }
