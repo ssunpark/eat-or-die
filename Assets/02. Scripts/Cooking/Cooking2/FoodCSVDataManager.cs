@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 public class FoodCSVDataManager : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class FoodCSVDataManager : MonoBehaviour
     
     public List<RecipeCSVData> RecipeCSVDataList { get; private set; }
     public List<IngredientCSVData> IngredientCsvDataList { get; private set; }
+    
+    public event Action OnDataLoaded;
     private void Awake()
     {
         if (Instance == null)
@@ -37,6 +40,7 @@ public class FoodCSVDataManager : MonoBehaviour
         // BuffDataList = AllDataList.FindAll(x => x.ERecipeType == "Buff");
 
         Debug.Log($"로드 완료 - RecipeCSVDataList: {RecipeCSVDataList.Count}, IngredientCsvDataList: {IngredientCsvDataList.Count}");
+        OnDataLoaded?.Invoke();
     }
 
     // public FoodCSVData GetFoodDataByID(int id)

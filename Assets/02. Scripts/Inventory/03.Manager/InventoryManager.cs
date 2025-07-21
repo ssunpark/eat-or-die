@@ -30,6 +30,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
             HandEntity.Instance.PickUpItem(Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
         }
         OnSlotUpdated[slotIndex]?.Invoke();
+        OnInventoryUpdated?.Invoke();
     }
     
     public void OnClickMouseRight(int slotIndex)
@@ -59,6 +60,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         }
 
         OnSlotUpdated[slotIndex]?.Invoke();
+        OnInventoryUpdated?.Invoke();
     }
 
     public void PickItemFromGround(ItemStack itemStack)

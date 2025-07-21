@@ -19,11 +19,6 @@ public class CSVLoader<T>
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
         var records = csv.GetRecords<T>().ToList();
-        
-        foreach (var record in records)
-        {
-            Debug.Log(JsonUtility.ToJson(record));
-        }
 
         return records;
     }

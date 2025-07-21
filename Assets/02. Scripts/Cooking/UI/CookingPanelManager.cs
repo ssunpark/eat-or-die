@@ -11,7 +11,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     public CookOutputSlotUI CookOutputSlotUI;
     public Inventory FoodInventory = new Inventory(1);
     
-    public Action OnCookOutputUpdated; // ✅ 결과 슬롯 전용 이벤트
+    public Action OnCookOutputUpdated; // 결과 슬롯 전용 이벤트
     
     public void OnClickMouseLeft(int slotIndex)
     {
@@ -120,6 +120,6 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         AItem resultItem = ItemManager.Instance.GetItem(resultItemId);
         FoodInventory.SlotList[0].AddItem(new ItemStack(resultItemId, 1));
 
-        OnCookOutputUpdated?.Invoke(); // ✅ 결과 슬롯 UI 갱신
+        OnCookOutputUpdated?.Invoke(); // 결과 슬롯 UI 갱신
     }
 }

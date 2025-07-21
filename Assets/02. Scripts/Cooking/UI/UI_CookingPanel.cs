@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+
 //수현
 public class UI_CookingPanel : MonoBehaviour
 {
