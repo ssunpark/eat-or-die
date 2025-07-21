@@ -14,22 +14,21 @@ public class UI_HUDPlayerHP : MonoBehaviour
     {
         if (_resourceManager != null)
         {
-            _resourceManager.OnHealthChanged -= _resourceManager_OnSatietyChanged;
+            _resourceManager.OnSatietyChanged -= _resourceManager_OnSatietyChanged;
         }
 
         _resourceManager = resourceManager;
 
         if (_resourceManager != null && statManager != null)
         {
-            _resourceManager_OnSatietyChanged(_resourceManager.CurrentHealth, statManager.GetStat(EStatType.MaxHealth));
             // 이벤트 구독
-            _resourceManager.OnHealthChanged += _resourceManager_OnSatietyChanged;
+            _resourceManager.OnSatietyChanged += _resourceManager_OnSatietyChanged;
+            _resourceManager_OnSatietyChanged(statManager.GetStat(EStatType.MaxHealth), statManager.GetStat(EStatType.MaxHealth));
         }
         else
         {
             Debug.LogError("ResourceManager 또는 StatManager가 초기화되지 않았습니다.");
         }
-        _resourceManager.OnSatietyChanged += _resourceManager_OnSatietyChanged;
     }
 
     private void _resourceManager_OnSatietyChanged(float currentHealth, float maxHealth)
@@ -37,12 +36,22 @@ public class UI_HUDPlayerHP : MonoBehaviour
         // 배고픔 UI 업데이트
         if (_hpSlider != null)
         {
-            _hpSlider.value = currentHealth / maxHealth; // 슬라이더 값 업데이트
+            if (maxHealth <= 0)
+            {
+                Debug.LogWarning("Max health is zero or negative, setting slider value to 0.");
+                _hpSlider.value = 1; // MaxHealth가 0 이하인 경우 슬라이더 값을 0으로 설정
+            }
+            else
+            {
+                // 슬라이더 값 업데이트
+                _hpSlider.value = currentHealth / maxHealth;
+            } 
         }
         if (_hpText != null)
         {
             _hpText.text = $"{Mathf.CeilToInt(currentHealth)} / {Mathf.CeilToInt(maxHealth)}";
         }
+        Debug.Log($"Health updated: {currentHealth} / {maxHealth}");
     }
 
     private void OnDestroy()
