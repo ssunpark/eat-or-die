@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Redcode.Pools;
 using UnityEngine;
@@ -17,7 +18,7 @@ public struct PlantPoolKey
 
 public class FarmingManager : NetworkBehaviour
 {
-    private const string ITEM_CSV_PATH = "/ItemCSV";
+    private const string PLANT_CSV_PATH = "/ItemCSV/Plant.csv";
     // 작물 데이터 관리
     public static FarmingManager Instance { get; private set; }
 
@@ -58,12 +59,18 @@ public class FarmingManager : NetworkBehaviour
         _plantPoolDictionary = new Dictionary<PlantPoolKey, Pool<Transform>>();
         var seedRawDataList =
             ItemDataLoader.LoadItemRawData<SeedRawData>(
-                $"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/SeedTestCSV.csv");
+                $"{Application.streamingAssetsPath}{PLANT_CSV_PATH}");
         foreach (var rawData in seedRawDataList)
         {
             var seedData = new SeedData(rawData);
 
             _seedDictionary.Add(rawData.ID, seedData);
+            
+            // 랜덤 씨드 풀링 제외
+            if (seedData.IsRandomSeed)
+            {
+                continue;
+            }
 
             // 풀링
             GameObject poolContainer = new GameObject($"{rawData.ID}_Pool");
@@ -91,6 +98,15 @@ public class FarmingManager : NetworkBehaviour
     {
         seedData = _seedDictionary[plantId];
         return _seedDictionary.ContainsKey(plantId);
+    }
+
+    public int GetRandomSeedID(int randomSeedID)
+    {
+        var keyList = _seedDictionary.Keys.ToList();
+        keyList.Remove(randomSeedID);   // 랜덤 ID는 제거
+        
+       int randomIndex = Random.Range(0, keyList.Count);
+       return keyList[randomIndex];
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
