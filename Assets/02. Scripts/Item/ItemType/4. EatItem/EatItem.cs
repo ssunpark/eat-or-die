@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class EatItem : AItem, IUseable, IInteractable
+public class EatItem : AItem, IEatable, IUsable
 {
     private readonly List<IEatItemEffect> _effects;
 
@@ -10,7 +10,7 @@ public class EatItem : AItem, IUseable, IInteractable
         _effects = new List<IEatItemEffect>(effects);
     }
 
-    public void Use()
+    public void Eat()
     {
         foreach (var effect in _effects)
         {
@@ -18,7 +18,7 @@ public class EatItem : AItem, IUseable, IInteractable
         }
     }
 
-    public void Interact(GameObject target)
+    public void Use(GameObject target)
     {
         // 타겟에게 효과 주도록 수정
         foreach (var effect in _effects)

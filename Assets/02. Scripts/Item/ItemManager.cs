@@ -49,16 +49,16 @@ public class ItemManager : NetworkBehaviour
         _itemDict = new Dictionary<int, AItem>();
         
         // 사용 아이템
-        var useItemRawData = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/UseItemTestCSV.csv");
-        foreach (var data in useItemRawData)
+        var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EatItemTestCSV.csv");
+        foreach (var data in eatItemRawDataList)
         {
-            var useItem = _itemFactory.CreateUseItem(data);
+            var useItem = _itemFactory.CreateEatItem(data);
             _itemDict[data.ID] = useItem;
         }
         
         // 장비 아이템
-        var equipmentItemRawData = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
-        foreach (var data in equipmentItemRawData)
+        var equipmentItemRawDataList = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
+        foreach (var data in equipmentItemRawDataList)
         {
             var useItem = _itemFactory.CreateEquipmentItem(data);
             _itemDict[data.ID] = useItem;
@@ -71,10 +71,18 @@ public class ItemManager : NetworkBehaviour
         //     var useItem = _itemFactory.CreateEquipmentItem(data);
         //     _itemDict[data.ID] = useItem;
         // }
+        
+        // 도구 아이템
+        var UseToRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/ToolItemTestCSV.csv");
+        foreach (var data in UseToRawDataList)
+        {
+            var useItem = _itemFactory.CreateUseToItem(data);
+            _itemDict[data.ID] = useItem;
+        }
     }
 
     // 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
-    // AItem을 동작에 맞는 인터페이스로 변경해서 사용 (InteractionInterface폴더 참고)
+    // AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
     public AItem GetItem(int id)
     {
         if (_itemDict.TryGetValue(id, out AItem item))
