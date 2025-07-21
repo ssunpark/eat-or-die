@@ -5,11 +5,8 @@ public class FoodCSVDataManager : MonoBehaviour
 {
     public static FoodCSVDataManager Instance { get; private set; }
 
-    private const string RECIPE_CSV_PATH = "/FoodCSV/FoodCSV.csv";
+    private const string RECIPE_CSV_PATH = "/FoodCSV/RecipeCSV.csv";
     private const string INGREDIENT_CSV_PATH = "/FoodCSV/IngredientCSV.csv";
-    // public List<FoodCSVData> AllDataList { get; private set; } = new List<FoodCSVData>();
-    // public List<FoodCSVData> HarvestDataList { get; private set; } = new List<FoodCSVData>();
-    // public List<FoodCSVData> BuffDataList { get; private set; } = new List<FoodCSVData>();
     
     public List<RecipeCSVData> RecipeCSVDataList { get; private set; }
     public List<IngredientCSVData> IngredientCsvDataList { get; private set; }
