@@ -1,5 +1,4 @@
-﻿using Mono.Cecil;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerHitState : PlayerStateBase
 {
@@ -14,8 +13,10 @@ public class PlayerHitState : PlayerStateBase
     {
         _elapsed = 0f;
         _hitStunDuration = 0.5f; // 경직 시간 (애니메이션 길이에 맞춰 조정)
-
-        _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Hit);
+        if (_controller.Object.HasInputAuthority)
+        {
+            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Hit);
+        }
 
     }
 

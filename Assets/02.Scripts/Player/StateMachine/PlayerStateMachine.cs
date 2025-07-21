@@ -13,7 +13,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     private PlayerStateBase _activeState;
 
     private PlayerController _controller;
-    
+
 
     //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
     [HideInInspector]
@@ -38,10 +38,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
              */
         };
 
-        if (Object.HasStateAuthority)
-        {
-            CurrentState = EPlayerState.Idle;
-        }
+        CurrentState = EPlayerState.Idle;
         _cachedState = CurrentState;
         _activeState = _states[CurrentState];
         _activeState.Enter();
