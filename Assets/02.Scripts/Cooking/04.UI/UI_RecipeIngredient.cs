@@ -19,15 +19,19 @@ public class UI_RecipeIngredient : MonoBehaviour
 
     public void Init()
     {
+        Debug.Log("ITITITITITITI");
         if (_isInitialized) return;
+        Debug.Log("aeiuas;ofieua;oru");
         _isInitialized = true;
 
         _ingredientCsvDataList = FoodCSVDataManager.Instance.IngredientCsvDataList;
         _ingredientButtonDict.Clear();
-
+        
+        Debug.Log("UI_recipeIngredient.Init");
         foreach (var ingredientData in _ingredientCsvDataList)
         {
             GameObject buttonObj = Instantiate(ButtonPrefab, Container.transform);
+            Debug.Log("버튼 생성!!!!!!");
             var button = buttonObj.GetComponent<UI_IngredientButton>();
             button.Refresh(ingredientData);
             buttonObj.SetActive(false); // 처음엔 다 꺼두기
