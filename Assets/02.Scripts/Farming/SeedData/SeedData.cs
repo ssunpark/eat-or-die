@@ -13,7 +13,6 @@ public class SeedData
     public readonly int MaxGrowthLevel;
     public readonly int DriedTime;
     public readonly int ID;
-    public readonly string AddressablePath;
     public readonly int HarvestItemID;
     public readonly float GrowthTime;
     public readonly bool IsRandomSeed;
@@ -24,26 +23,28 @@ public class SeedData
     public SeedData(SeedRawData rawData)
     {
         ID = rawData.ID;
-        AddressablePath = rawData.AddressablePath;
+
+        // 랜덤 씨드
         if (rawData.HarvestItemID == null)
         {
             IsRandomSeed = true;
             return;
         }
+        
         HarvestItemID = rawData.HarvestItemID ?? 0;
         GrowthTime = rawData.GrowthTime;
         
         MaxGrowthLevel = MAX_GROWTHLEVEL;
         DriedTime = DRIEDTIME;
-
-        // TODO: 정식 경로로 수정 필요
+        
+        string addressablePath = rawData.AddressablePath;
         _plantPrefabDictionary = new Dictionary<int, GameObject>();
         for (int level = 1; level <= MaxGrowthLevel; level++)
         {
             int levelID = level;
             string addressableAssetName = level != MaxGrowthLevel
-                ? $"{rawData.AddressablePath}{level} Variant"
-                : $"{rawData.AddressablePath}Dried Variant";
+                ? $"{addressablePath}{level} Variant"
+                : $"{addressablePath}Dried Variant";
             // 풀링을 위해 동기로 다 로드
             GameObject plantPrefab = Addressables.LoadAssetAsync<GameObject>(addressableAssetName).WaitForCompletion();
             _plantPrefabDictionary.Add(levelID, plantPrefab);
