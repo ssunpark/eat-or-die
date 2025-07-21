@@ -14,7 +14,7 @@ public static class CharacterStatPreset
                 { EStatType.Armor, 0f },
                 { EStatType.Acceleration, 80f},
                 { EStatType.JumpPower, 3f },
-                { EStatType.AttackSpeed, 1.2f },
+                { EStatType.AttackSpeed, 1.5f },
                 { EStatType.CritChance, 0.01f },
                 {EStatType.SprintingMultiplier,1.5f }
 

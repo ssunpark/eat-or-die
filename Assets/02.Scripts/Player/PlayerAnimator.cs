@@ -9,7 +9,8 @@ public enum EAnimTrigger
     CookDone,
     Jump,
     GiveFood,
-    Die
+    Die,
+    Hit,
 }
 public class PlayerAnimator : NetworkBehaviour
 {
@@ -28,7 +29,6 @@ public class PlayerAnimator : NetworkBehaviour
     { EAnimTrigger.Die, Animator.StringToHash("Die") }
     };
 
-    private float _targetSpeed = 0f;
     private float _lerpSpeed = 10f;
 
     private void Awake()

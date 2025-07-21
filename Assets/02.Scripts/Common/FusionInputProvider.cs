@@ -17,8 +17,6 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<EStatType, float> _statInputs = new();
     private Dictionary<string, int> _customizeSelections = new();
 
-    private GUIStyle _backgroundStyle;
-
     private void Awake()
     {
         _inputReader = FindAnyObjectByType<InputReader>();
@@ -176,6 +174,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
                     if (obj.TryGetComponent<CharacterBase>(out var character))
                     {
                         character.Stat.ApplyBaseStats(spawnData.baseStats);
+                        character.Resource.ResetAll();
                     }
                 });
         }
