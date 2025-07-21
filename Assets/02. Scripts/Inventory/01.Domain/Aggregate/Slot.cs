@@ -12,4 +12,9 @@ public class Slot
     {
         ItemStack = null;
     }
+
+    public void UseItem()
+    {
+        ItemStack.TryRemove(1);
+    }
 }
