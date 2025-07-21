@@ -19,6 +19,7 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
         QuantityText.gameObject.SetActive(false);
         CookingPanelManager.Instance.OnCookingSlotUpdated[SlotIndex] += UpdateSlotUI;
     }
+    
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
@@ -39,6 +40,8 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
             }
         }
     }
+    
+    // 슬롯에 있는 아이콘과 수량 표시 갱신
     public void UpdateSlotUI()
     {
         ItemStack itemInSlot = CookingPanelManager.Instance.Inventory.SlotList[SlotIndex].ItemStack;

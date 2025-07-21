@@ -13,6 +13,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     
     public Action OnCookOutputUpdated; // 결과 슬롯 전용 이벤트
     
+    // 좌클릭으로 아이템 드래그 처리
     public void OnClickMouseLeft(int slotIndex)
     {
         if (HandEntity.Instance.IsHandEmpty)
@@ -29,6 +30,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
     
+    // 우클릭으로 아이템 한 개만 꺼내기 / 교환
     public void OnClickMouseRight(int slotIndex)
     {
         if (Inventory.SlotList[slotIndex].IsEmpty) return;
@@ -62,6 +64,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     {
         return false;
     }
+    
     private bool HasEmptySlot()
     {
         foreach (var slot in Inventory.SlotList)
@@ -73,6 +76,8 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         return false; // 모두 차 있음
     }
+    
+    // 슬롯 2개가 비었는지 확인 후 레시피 매칭
     public int TryCook()
     {
         if (HasEmptySlot())
@@ -98,6 +103,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         return -1;
     }
 
+    // 조합 성공 시 재료 차감 + 결과 아이템 생성
     public void TryCookAndCreateItem()
     {
         int resultItemId = TryCook();

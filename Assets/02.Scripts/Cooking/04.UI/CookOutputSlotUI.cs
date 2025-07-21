@@ -25,6 +25,7 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
         }
     }
 
+    // 결과 슬롯의 아이콘과 수량 갱신
     private void TakeOutItem()
     {
         var foodInventory = CookingPanelManager.Instance.FoodInventory;
