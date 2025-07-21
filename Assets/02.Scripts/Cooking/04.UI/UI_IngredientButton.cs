@@ -1,6 +1,6 @@
 using TMPro;
 using UnityEngine;
-// 뿡
+// 수현
 public class UI_IngredientButton : MonoBehaviour
 {
     public TextMeshProUGUI IngredientNameTextUI; 
