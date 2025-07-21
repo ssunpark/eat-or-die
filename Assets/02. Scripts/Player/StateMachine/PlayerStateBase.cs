@@ -4,7 +4,7 @@
     protected PlayerController _controller;
     protected StatManager _stat;
     protected ResourceManager _resource;
-
+    public virtual bool CanMove => false;
     public PlayerStateBase(PlayerStateMachine fsm, PlayerController controller)
     {
         _fsm = fsm;

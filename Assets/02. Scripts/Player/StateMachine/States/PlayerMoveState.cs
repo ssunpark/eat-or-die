@@ -10,13 +10,19 @@ public class PlayerMoveState : PlayerStateBase
         _moveSatietyTimer = _fsm.MoveSatietyTimer;
         _moveStatietyInterval = _fsm.MoveStatietyInterval;
     }
-
+    public override bool CanMove => true;
     private float _moveSatietyTimer;
     private float _moveStatietyInterval;
 
     public override void Tick()
     {
         if (!_controller.GetInput(out NetworkInputData inputData)) return;
+
+        if (inputData.isAttacking)
+        {
+            _fsm.ChangeState(EPlayerState.Attack);
+            return;
+        }
 
         Vector3 dir = inputData.direction;
 
@@ -37,6 +43,5 @@ public class PlayerMoveState : PlayerStateBase
     public override void Exit()
     {
         _fsm.MoveSatietyTimer = _moveSatietyTimer;
-        _controller.Stop();
     }
 }

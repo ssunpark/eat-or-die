@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 // 현재 플레이어 상태 전환 관리
-public class PlayerStateMachine : NetworkBehaviour
+public class PlayerStateMachine : NetworkBehaviour, IDamageable
 {
     [Networked] public EPlayerState CurrentState { get; set; }
 
@@ -14,6 +13,7 @@ public class PlayerStateMachine : NetworkBehaviour
     private PlayerStateBase _activeState;
 
     private PlayerController _controller;
+    
 
     //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
     [HideInInspector]
@@ -28,8 +28,9 @@ public class PlayerStateMachine : NetworkBehaviour
         {
             { EPlayerState.Idle, new PlayerIdleState(this, _controller) },
             { EPlayerState.Move, new PlayerMoveState(this, _controller) },
-            /*
             { EPlayerState.Attack, new PlayerAttackState(this, _controller) },
+            { EPlayerState.Hit, new PlayerHitState(this, _controller) },
+            /*
             { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
             { EPlayerState.Cooking, new PlayerCookingState(this, _controller) },
             { EPlayerState.Down, new PlayerDownState(this, _controller) },
@@ -88,5 +89,28 @@ public class PlayerStateMachine : NetworkBehaviour
         if (newState == CurrentState) return;
 
         CurrentState = newState;
+    }
+
+    public void TakeDamage(int amount, PlayerRef attacker)
+    {
+        if (!HasStateAuthority) return;
+
+
+        var dmg = amount * (100 / (100 + _controller.Stat.GetStat(EStatType.Armor)));
+
+        _controller.Resource.ConsumeSatiety(dmg);
+        ChangeState(EPlayerState.Hit);
+    }
+
+    public bool CanMove
+    {
+        get
+        {
+            if (_states.TryGetValue(CurrentState, out var state))
+            {
+                return state.CanMove;
+            }
+            return false;
+        }
     }
 }
