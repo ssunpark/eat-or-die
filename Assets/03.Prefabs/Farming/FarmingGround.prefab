@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2888450456470858546}
   m_Layer: 9
   m_Name: PlantPosition (5)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80,7 +80,7 @@ GameObject:
   - component: {fileID: 121127858506650606}
   m_Layer: 9
   m_Name: PlantPosition (4)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 2815911910775286324}
   m_Layer: 9
   m_Name: PlantPosition (2)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 5508108191999693488}
   m_Layer: 9
   m_Name: PlantPosition (7)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 7940383164891240568}
   m_Layer: 9
   m_Name: PlantPosition
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 6620771946441734909}
   m_Layer: 9
   m_Name: PlantPosition (1)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -415,7 +415,7 @@ GameObject:
   - component: {fileID: 195571519606276825}
   m_Layer: 9
   m_Name: PlantPosition (6)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -483,7 +483,7 @@ GameObject:
   - component: {fileID: 6984013218265742038}
   m_Layer: 9
   m_Name: FarmingGround
-  m_TagString: Untagged
+  m_TagString: FarmingGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -520,6 +520,8 @@ MonoBehaviour:
   _State: 0
   _baseGround: {fileID: 7067993316104088599}
   _plowedGround: {fileID: 8246270725945386202}
+  _plowedSubGround: {fileID: 2874508963867025241}
+  _waterMaterial: {fileID: 2100000, guid: 73d0f88be2623674ebe1d39ee20e2021, type: 2}
 --- !u!114 &7737619349676468171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -582,7 +584,7 @@ GameObject:
   - component: {fileID: 9120505684746294948}
   m_Layer: 9
   m_Name: PlantPosition (3)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -649,7 +651,7 @@ GameObject:
   - component: {fileID: 2087299939087276913}
   m_Layer: 9
   m_Name: PlantPosition (8)
-  m_TagString: Untagged
+  m_TagString: PlantGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -832,7 +834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3446102453058064517, guid: abbcb0e4de2aeba4a804fc530ca6c089, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3446102453058064517, guid: abbcb0e4de2aeba4a804fc530ca6c089, type: 3}
       propertyPath: m_IsActive
@@ -844,7 +846,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8811273742450027270, guid: abbcb0e4de2aeba4a804fc530ca6c089, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -878,6 +880,11 @@ PrefabInstance:
       addedObject: {fileID: 4542346847507109279}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abbcb0e4de2aeba4a804fc530ca6c089, type: 3}
+--- !u!1 &2874508963867025241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8811273742450027270, guid: abbcb0e4de2aeba4a804fc530ca6c089, type: 3}
+  m_PrefabInstance: {fileID: 6747413021906023519}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8246270725945386202 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3446102453058064517, guid: abbcb0e4de2aeba4a804fc530ca6c089, type: 3}

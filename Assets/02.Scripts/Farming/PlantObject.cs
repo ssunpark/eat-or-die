@@ -17,9 +17,12 @@ public class PlantObject : NetworkBehaviour
     private float _growthTime;
 
     private float _timer;
+    
+    private FarmingGround _farmingGround;
 
     public override void Spawned()
     {
+        _farmingGround = GetComponentInParent<FarmingGround>();
         OnGrowthLevelChanged();
         _growthTime = _seedData.GrowthTime;
     }
@@ -41,7 +44,7 @@ public class PlantObject : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (!Runner.IsServer)
+        if (!Runner.IsServer || _farmingGround.State != EFarmingGroundState.Watered)
         {
             return;
         }
@@ -73,8 +76,7 @@ public class PlantObject : NetworkBehaviour
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
             // 작물 수확
-            // ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position, Quaternion.identity);
-            ItemManager.Instance.RPC_CreateItemObject(0, 1, transform.position, Quaternion.identity);
+            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position, Quaternion.identity);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {

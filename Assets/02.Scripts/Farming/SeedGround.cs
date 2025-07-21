@@ -1,6 +1,7 @@
 ﻿using System;
 using Fusion;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SeedGround : NetworkBehaviour
 {
@@ -8,8 +9,6 @@ public class SeedGround : NetworkBehaviour
     public bool IsPlanted { get; set; }
     
     private FarmingGround _parentFarmingGround;
-
-    public NetworkPrefabRef testPrefab;
 
     public override void Spawned()
     {
@@ -43,26 +42,20 @@ public class SeedGround : NetworkBehaviour
         {
             throw new Exception("없는 작물입니다.");
         }
+        
+        int finalSeedID = seedData.IsRandomSeed ? FarmingManager.Instance.GetRandomSeedID(seedID) : seedID;
 
         var plantObject = Runner.Spawn(FarmingManager.Instance.PlantObjectPrefab,
             inputAuthority: null,
             onBeforeSpawned: (runner, obj) =>
             {
                 var plant = obj.GetComponent<PlantObject>();
-                plant.PlantID = seedID;
+                plant.PlantID = finalSeedID;
                 plant.GrowthLevel = 1;
                 plant.transform.SetParent(transform);
                 plant.transform.localPosition = Vector3.zero;
             });
 
         IsPlanted = true;
-    }
-
-    [ContextMenu("생성")]
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    private void RPC_TEST()
-    {
-        var plantObject = Runner.Spawn(testPrefab,
-            inputAuthority: null);
     }
 }
