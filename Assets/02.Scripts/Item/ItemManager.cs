@@ -20,7 +20,8 @@ public class ItemManager : NetworkBehaviour
         }
     }
     
-    private const string ITEM_CSV_PATH = "/ItemCSV";
+    private const string FOOD_CSV_PATH = "/ItemCSV/FOOD.csv";
+    private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -48,8 +49,8 @@ public class ItemManager : NetworkBehaviour
         // 데이터 로드 후 생성
         _itemDict = new Dictionary<int, AItem>();
         
-        // 사용 아이템
-        var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EatItemTestCSV.csv");
+        // 음식 아이템
+        var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
         foreach (var data in eatItemRawDataList)
         {
             var useItem = _itemFactory.CreateEatItem(data);
@@ -57,12 +58,12 @@ public class ItemManager : NetworkBehaviour
         }
         
         // 장비 아이템
-        var equipmentItemRawDataList = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
-        foreach (var data in equipmentItemRawDataList)
-        {
-            var useItem = _itemFactory.CreateEquipmentItem(data);
-            _itemDict[data.ID] = useItem;
-        }
+        // var equipmentItemRawDataList = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
+        // foreach (var data in equipmentItemRawDataList)
+        // {
+        //     var useItem = _itemFactory.CreateEquipmentItem(data);
+        //     _itemDict[data.ID] = useItem;
+        // }
         
         // 무기 아이템
         // var weaponItemRawData = ItemDataLoader.LoadItemRawData<WeaponItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}");
@@ -73,8 +74,8 @@ public class ItemManager : NetworkBehaviour
         // }
         
         // 도구 아이템
-        var UsableRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/ToolItemTestCSV.csv");
-        foreach (var data in UsableRawDataList)
+        var usableRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
+        foreach (var data in usableRawDataList)
         {
             var useItem = _itemFactory.CreateUsableItem(data);
             _itemDict[data.ID] = useItem;

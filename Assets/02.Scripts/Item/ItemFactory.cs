@@ -16,7 +16,7 @@ public class ItemFactory
 
         foreach (var (type, value, duration) in rawEffects)
         {
-            if (type == EUseItemEffectType.Empty)
+            if (type == EUseItemEffectType.None)
                 continue;
 
             var effect = CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
@@ -24,7 +24,7 @@ public class ItemFactory
                 effects.Add(effect);
         }
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, "");
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, rawData.MaxQuantity, rawData.IconPath);
         return new EatItem(itemData, effects);
     }
 
@@ -32,27 +32,27 @@ public class ItemFactory
     {
         return type switch
         {
-            EUseItemEffectType.Empty => null,
-            EUseItemEffectType.Hungry => new EatEffect_Hungry(value),
+            EUseItemEffectType.None => null,
+            // EUseItemEffectType.Hungry => new EatEffect_Hungry(value),
             _ => null
         };
     }
 
-    public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
-    {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
-        return new EquipmentItem(itemData);
-    }
-    
-    public WeaponItem CreateWeaponItem(WeaponItemRawData rawData)
-    {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
-        return new WeaponItem(itemData, rawData.Type);
-    }
+    // public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
+    // {
+    //     var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+    //     return new EquipmentItem(itemData);
+    // }
+    //
+    // public WeaponItem CreateWeaponItem(WeaponItemRawData rawData)
+    // {
+    //     var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+    //     return new WeaponItem(itemData, rawData.Type);
+    // }
 
     public UsableItem CreateUsableItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, rawData.AddressablePath);
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.MaxQuantity, rawData.AddressablePath);
         IUseAction useAction = rawData.UseAction switch
         {
             EUseAction.Plow => new UseActionHoe(),
