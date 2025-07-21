@@ -10,8 +10,6 @@ public class SeedGround : NetworkBehaviour
     
     private FarmingGround _parentFarmingGround;
 
-    public NetworkPrefabRef testPrefab;
-
     public override void Spawned()
     {
         _parentFarmingGround = GetComponentInParent<FarmingGround>();
@@ -59,13 +57,5 @@ public class SeedGround : NetworkBehaviour
             });
 
         IsPlanted = true;
-    }
-
-    [ContextMenu("생성")]
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    private void RPC_TEST()
-    {
-        var plantObject = Runner.Spawn(testPrefab,
-            inputAuthority: null);
     }
 }

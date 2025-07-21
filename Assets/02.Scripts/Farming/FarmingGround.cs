@@ -12,6 +12,21 @@ public class FarmingGround : NetworkBehaviour
     
     [SerializeField]
     private GameObject _plowedGround;
+    
+    [SerializeField]
+    private GameObject _plowedSubGround;
+    
+    [SerializeField]
+    private Material _waterMaterial;
+    
+    private MeshRenderer _plowedGroundRenderer;
+    private MeshRenderer _plowedSubGroundRenderer;
+
+    private void Awake()
+    {
+        _plowedGroundRenderer = _plowedGround.GetComponent<MeshRenderer>();
+        _plowedSubGroundRenderer = _plowedSubGround.GetComponent<MeshRenderer>();
+    }
 
     public override void Spawned()
     {
@@ -22,6 +37,11 @@ public class FarmingGround : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_Plow()
     {
+        if (State != EFarmingGroundState.None)
+        {
+            return;
+        }
+        
         // 밭 갈기
         if (Runner.IsServer)
         {
@@ -40,5 +60,7 @@ public class FarmingGround : NetworkBehaviour
         }
         State = EFarmingGroundState.Watered;
         // 머티리얼 변경
+        _plowedGroundRenderer.material = _waterMaterial;
+        _plowedSubGroundRenderer.material = _waterMaterial;
     }
 }
