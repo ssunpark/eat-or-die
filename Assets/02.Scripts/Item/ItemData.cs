@@ -11,8 +11,6 @@ public class ItemData
     public readonly string Description;
     public readonly int MaxQuantity;
     public readonly bool Cookable;
-    // Addressable Path
-    public readonly string IconAddressablePath;
     private Sprite _icon;
     public Sprite Icon => _icon;
     // .. 등등 추가 예정
@@ -25,9 +23,9 @@ public class ItemData
         Description = description;
         Cookable = cookable;
         MaxQuantity = maxQuantity;
-        IconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
+        var finalIconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
 
-        Addressables.LoadAssetAsync<Sprite>(IconAddressablePath).Completed += (handle) =>
+        Addressables.LoadAssetAsync<Sprite>(finalIconAddressablePath).Completed += (handle) =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
