@@ -3,7 +3,7 @@
 public class ItemFactory
 {
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public EatItem CreateUseItem(EatItemRawData rawData)
+    public EatItem CreateEatItem(EatItemRawData rawData)
     {
         var effects = new List<IEatItemEffect>();
 
@@ -19,7 +19,7 @@ public class ItemFactory
             if (type == EUseItemEffectType.Empty)
                 continue;
 
-            var effect = CreateUseItemEffect(type, value ?? 0f, duration ?? 0f);
+            var effect = CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
             if (effect != null)
                 effects.Add(effect);
         }
@@ -28,7 +28,7 @@ public class ItemFactory
         return new EatItem(itemData, effects);
     }
 
-    private IEatItemEffect CreateUseItemEffect(EUseItemEffectType type, float value, float duration)
+    private IEatItemEffect CreateEatItemEffect(EUseItemEffectType type, float value, float duration)
     {
         return type switch
         {
@@ -48,5 +48,17 @@ public class ItemFactory
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
         return new WeaponItem(itemData, rawData.Type);
+    }
+
+    public UsableItem CreateUseToItem(UsableItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        IUseAction useAction = rawData.UseAction switch
+        {
+            EUseAction.Plow => new UseActionHoe(),
+            EUseAction.Water => new UseActionWateringCan(),
+            EUseAction.Plant => new UseActionSeed(rawData.ID),
+        };
+        return new UsableItem(itemData, rawData.InteractionTag, useAction);
     }
 }

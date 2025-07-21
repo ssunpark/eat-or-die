@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3722447035028648030}
   - component: {fileID: 4834432075243729252}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: RecipeText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65,10 +65,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: "\uC560\uD638\uBC15\uCC0C\uAC1C"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 1b5739a1d4c17bc43aa0612a4d37fdd0, type: 2}
+  m_sharedMaterial: {fileID: 4306650224639316281, guid: 1b5739a1d4c17bc43aa0612a4d37fdd0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 2873239171784584736}
   - component: {fileID: 3815889316054512308}
   - component: {fileID: 5222771417814839791}
+  - component: {fileID: 4754168655940068090}
   m_Layer: 5
   m_Name: RecipeItem
   m_TagString: Untagged
@@ -257,3 +258,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4754168655940068090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8774406115824201942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ed6dfc7a0e03ae4497e26b7d5af179e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RecipeNameTextUI: {fileID: 4834432075243729252}

@@ -13,4 +13,20 @@ public class HandEntity : BehaviourSingleton<HandEntity>
         ItemStack = itemStack;
         OnItemPickedUp?.Invoke();
     }
+
+    public bool TryAddItem(ItemStack itemStack)
+    {
+        if (itemStack.ID != ItemStack.ID) return false;
+
+        if (!ItemStack.TryAdd(itemStack.Quantity)) return false;
+        
+        OnItemPickedUp?.Invoke();
+        return true;
+    }
+    
+    public void DropItem()
+    {
+        ItemStack = null;
+        OnItemPickedUp?.Invoke();
+    }
 }

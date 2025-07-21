@@ -16,16 +16,22 @@ public class ItemMagnet : NetworkBehaviour
 
     private void Pick()
     {
+        if (!GetComponent<NetworkObject>().HasInputAuthority)
+        {
+            return;
+        }
+        
         var items = DetectPickableItems();
         foreach (var item in items)
         {
             // 로컬 조건 체크 (인벤토리 매니저)
+            if (item.GetComponent<ItemObject>().HasOwner)
+            {
+                continue;
+            }
             // 서버 조건 체크 (인벤토리 매니저 RPC) => 아이템 스택의 오너가 설정됨
             var networkItem = item.GetComponent<NetworkObject>();
             RPC_RequestPick(networkItem.Id, Runner.LocalPlayer);
-            // 아이템 흡수 연출 시작
-            var pickableItem = item.GetComponent<IPickable>();
-            pickableItem.Pick(gameObject);
         }
     }
     
@@ -45,8 +51,11 @@ public class ItemMagnet : NetworkBehaviour
             Debug.Log("이미 다른 플레이어가 주움");
             return;
         }
-
+        
         itemObject.HasOwner = true;
+        
+        // 아이템 흡수 연출 시작
+        itemObject.RPC_Pick(GetComponent<NetworkObject>().Id);
 
         // 인벤토리 추가 등 서버 로직
         Debug.Log($"서버: {player} 가 아이템 {itemObject.ItemID} {itemObject.Quantity}개 주움");
