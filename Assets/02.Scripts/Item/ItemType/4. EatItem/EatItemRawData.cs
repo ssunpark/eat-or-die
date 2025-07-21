@@ -1,6 +1,5 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-// 외부에서 읽어온 가공 전 데이터
 public class EatItemRawData
 {
     [Name("ID")]
@@ -11,40 +10,43 @@ public class EatItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
-    
-    [Name("MaxQuantity")]
+
+    [Name("Cookable")]
+    public bool Cookable { get; set; }
+
+    [Name("MaxStack")]
     public int MaxQuantity { get; set; }
 
-    [Name("Addressable ID")]
-    public string AddressableID { get; set; }
+    [Name("HungerRestore")]
+    public int HungerRestore { get; set; }
 
-    [Name("EffectCount")]
-    public int EffectCount { get; set; }
-
-    [Name("EffectType1")]
+    [Name("EEffectType1")]
     public EUseItemEffectType EffectType1 { get; set; }
 
-    [Name("Value1")]
+    [Name("EffectValue1")]
     public float? Value1 { get; set; }
 
     [Name("Duration1")]
     public float? Duration1 { get; set; }
 
-    [Name("EffectType2")]
+    [Name("EEffectType2")]
     public EUseItemEffectType EffectType2 { get; set; }
 
-    [Name("Value2")]
+    [Name("EffectValue2")]
     public float? Value2 { get; set; }
 
     [Name("Duration2")]
     public float? Duration2 { get; set; }
 
-    [Name("EffectType3")]
+    [Name("EEffectType3")]
     public EUseItemEffectType EffectType3 { get; set; }
 
-    [Name("Value3")]
+    [Name("EffectValue3")]
     public float? Value3 { get; set; }
 
     [Name("Duration3")]
     public float? Duration3 { get; set; }
+
+    [Name("IconPath(Addressable Key)")]
+    public string IconPath { get; set; }
 }
