@@ -17,7 +17,15 @@ public class UI_CookingPanel : MonoBehaviour
     public void OnClickRecipeButton()
     {
         isOpen = !isOpen;
-        RecipePanel.SetActive(isOpen);
+
+        if (isOpen)
+        {
+            RecipePanel.GetComponent<UI_RecipePanel>().Open();
+        }
+        else
+        {
+            RecipePanel.GetComponent<UI_RecipePanel>().Close();
+        }
     }
 
     public void OnClickCookingButton()

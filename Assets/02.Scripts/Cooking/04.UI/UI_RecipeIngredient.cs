@@ -24,6 +24,7 @@ public class UI_RecipeIngredient : MonoBehaviour
 
         _ingredientCsvDataList = FoodCSVDataManager.Instance.IngredientCsvDataList;
         _ingredientButtonDict.Clear();
+        
 
         foreach (var ingredientData in _ingredientCsvDataList)
         {
