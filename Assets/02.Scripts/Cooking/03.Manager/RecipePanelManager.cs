@@ -12,6 +12,8 @@ public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
         InventoryManager.Instance.OnInventoryUpdated += UpdateIngredients;
     }
 
+    // InventoryManager에 등록된 재료를 조건(ID)으로 필터
+    // 디버그로 확인하고 이벤트 호출
     public void UpdateIngredients()
     {
         _ingredients = InventoryManager.Instance.Inventory.SlotList
