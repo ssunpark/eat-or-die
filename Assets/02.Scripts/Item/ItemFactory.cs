@@ -50,9 +50,9 @@ public class ItemFactory
         return new WeaponItem(itemData, rawData.Type);
     }
 
-    public UsableItem CreateUseToItem(UsableItemRawData rawData)
+    public UsableItem CreateUsableItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.MaxQuantity, rawData.AddressablePath);
         IUseAction useAction = rawData.UseAction switch
         {
             EUseAction.Plow => new UseActionHoe(),

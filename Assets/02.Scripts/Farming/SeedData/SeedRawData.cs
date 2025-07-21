@@ -11,6 +11,6 @@ public class SeedRawData
     [Name("HarvestID(Item)")]
     public int? HarvestItemID { get; set; }
 
-    [Name("IconPath(Addressable)")]
+    [Name("PrefabPath(Addressable)")]
     public string AddressablePath { get; set; }
 }

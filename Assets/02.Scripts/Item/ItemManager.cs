@@ -73,10 +73,10 @@ public class ItemManager : NetworkBehaviour
         // }
         
         // 도구 아이템
-        var UseToRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/ToolItemTestCSV.csv");
-        foreach (var data in UseToRawDataList)
+        var UsableRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/ToolItemTestCSV.csv");
+        foreach (var data in UsableRawDataList)
         {
-            var useItem = _itemFactory.CreateUseToItem(data);
+            var useItem = _itemFactory.CreateUsableItem(data);
             _itemDict[data.ID] = useItem;
         }
     }

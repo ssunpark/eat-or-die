@@ -23,9 +23,9 @@ public class ItemData
         Name = name;
         Description = description;
         MaxQuantity = maxQuantity;
-        IconAddressablePath = iconAddressablePath;
+        IconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
 
-        Addressables.LoadAssetAsync<Sprite>("TestItemIcon").Completed += (handle) =>
+        Addressables.LoadAssetAsync<Sprite>(IconAddressablePath).Completed += (handle) =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
