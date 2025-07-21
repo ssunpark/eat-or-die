@@ -45,19 +45,9 @@ public class SeedData
             string addressableAssetName = level != MaxGrowthLevel
                 ? $"{addressablePath}{level} Variant"
                 : $"{addressablePath}Dried Variant";
-            Addressables.LoadAssetAsync<GameObject>(addressableAssetName).Completed +=
-                (handle) =>
-                {
-                    if (handle.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        _plantPrefabDictionary.Add(levelID, handle.Result);
-                    }
-                    else
-                    {
-                        throw new Exception("프리팹 로드에 실패했습니다.");
-                    }
-                };
-            
+            // 생성 하고 바로 풀링하기 위해 동기 생성
+            GameObject plantPrefab = Addressables.LoadAssetAsync<GameObject>(addressableAssetName).WaitForCompletion();
+            _plantPrefabDictionary.Add(levelID, plantPrefab);
         }
     }
 }
