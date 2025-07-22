@@ -20,22 +20,18 @@ public class ItemManager : NetworkBehaviour
         }
     }
     
-    private const string FOOD_CSV_PATH = "/ItemCSV/FOOD.csv";
+    private const string FOOD_CSV_PATH = "/ItemCSV/Food.csv";
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
+    private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
-    private Dictionary<int, AItem> _itemDict;
+    private Dictionary<int, AItem> _itemDictionary;
     
     // 아이템 팩토리
     private ItemFactory _itemFactory;
-
-    // private void Awake()
-    // {
-    //     
-    // }
 
     private void Start()
     {
@@ -47,14 +43,14 @@ public class ItemManager : NetworkBehaviour
         _itemFactory = new ItemFactory();
         
         // 데이터 로드 후 생성
-        _itemDict = new Dictionary<int, AItem>();
+        _itemDictionary = new Dictionary<int, AItem>();
         
         // 음식 아이템
         var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
         foreach (var data in eatItemRawDataList)
         {
             var useItem = _itemFactory.CreateEatItem(data);
-            _itemDict[data.ID] = useItem;
+            _itemDictionary[data.ID] = useItem;
         }
         
         // 장비 아이템
@@ -75,23 +71,22 @@ public class ItemManager : NetworkBehaviour
         
         // 도구 아이템
         var usableRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
+        usableRawDataList.AddRange(ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
         foreach (var data in usableRawDataList)
         {
             var useItem = _itemFactory.CreateUsableItem(data);
-            _itemDict[data.ID] = useItem;
+            _itemDictionary[data.ID] = useItem;
         }
     }
 
-    // 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
-    // AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
+    /// <summary>
+    /// 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
+    /// AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
+    /// </summary>
+    /// <param name="id">아이템 ID</param>
     public AItem GetItem(int id)
     {
-        if (_itemDict.TryGetValue(id, out AItem item))
-        {
-            return item;
-        }
-        throw new Exception("존재하지 않는 사용 아이템입니다.");
-        return null;
+        return _itemDictionary.GetValueOrDefault(id);
     }
 
     /// <summary>
@@ -99,6 +94,8 @@ public class ItemManager : NetworkBehaviour
     /// </summary>
     /// <param name="id">아이템 ID</param>
     /// <param name="quantity">수량</param>
+    /// <param name="position">생성 위치</param>
+    /// <param name="rotation">생성 시 각도</param>
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
     {
@@ -107,9 +104,10 @@ public class ItemManager : NetworkBehaviour
             return;
         }
         
-        if (!_itemDict.TryGetValue(id, out AItem item))
+        if (!_itemDictionary.TryGetValue(id, out AItem item))
         {
-            throw new Exception("없는 아이템입니다.");
+            Debug.LogWarning($"없는 아이템입니다. ID: {id}");
+            return;
         }
         
         // 네트워크 아이템 오브젝트 생성

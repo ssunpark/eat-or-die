@@ -3,16 +3,20 @@ using UnityEngine;
 
 public class EatItem : AItem, IEatable, IUsable
 {
-    private readonly List<IEatItemEffect> _effects;
+    private readonly List<IEatItemEffect> _effectList;
 
-    public EatItem(ItemData itemData, List<IEatItemEffect> effects) : base(itemData)
+    public EatItem(ItemData itemData, List<IEatItemEffect> effectList) : base(itemData)
     {
-        _effects = new List<IEatItemEffect>(effects);
+        _effectList = effectList;
+        foreach (var effect in effectList)
+        {
+            ItemData.AddDescription(effect.Description);
+        }
     }
 
     public void Eat()
     {
-        foreach (var effect in _effects)
+        foreach (var effect in _effectList)
         {
             effect.UseEffect();
         }
@@ -21,7 +25,7 @@ public class EatItem : AItem, IEatable, IUsable
     public void Use(GameObject target)
     {
         // 타겟에게 효과 주도록 수정
-        foreach (var effect in _effects)
+        foreach (var effect in _effectList)
         {
             effect.UseEffect();
         }

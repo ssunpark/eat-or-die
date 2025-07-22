@@ -25,6 +25,30 @@ public class ItemSpawnerEditorWindow : EditorWindow
         _quantity = EditorGUILayout.IntField("Quantity", _quantity);
         _spawnPosition = EditorGUILayout.Vector3Field("Spawn Position", _spawnPosition);
         _spawnRotationEuler = EditorGUILayout.Vector3Field("Rotation (Euler)", _spawnRotationEuler);
+        
+        if (GUILayout.Button("Find Item"))
+        {
+            var itemManager = ItemManager.Instance;
+            if (itemManager == null)
+            {
+                Debug.LogError("ItemManager.Instance 가 존재하지 않습니다. 씬에 ItemManager가 있어야 합니다.");
+                return;
+            }
+
+            Quaternion rotation = Quaternion.Euler(_spawnRotationEuler);
+
+            try
+            {
+                var item = itemManager.GetItem(_itemId);
+                Debug.Log($"[EditorWindow] ID {_itemId} 아이템 조회 성공");
+                _lastSpawnedItemData = item?.ItemData;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"아이템 조회 중 예외 발생: {ex.Message}");
+                _lastSpawnedItemData = null;
+            }
+        }
 
         if (GUILayout.Button("Spawn Item"))
         {
@@ -59,7 +83,8 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
             EditorGUILayout.LabelField("ID", _lastSpawnedItemData.ID.ToString());
             EditorGUILayout.LabelField("Name", _lastSpawnedItemData.Name);
-            EditorGUILayout.LabelField("Description", _lastSpawnedItemData.Description);
+            EditorGUILayout.LabelField("Description");
+            EditorGUILayout.TextArea(_lastSpawnedItemData.Description, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
             EditorGUILayout.LabelField("Max Quantity", _lastSpawnedItemData.MaxQuantity.ToString());
 
             if (_lastSpawnedItemData.Icon != null)

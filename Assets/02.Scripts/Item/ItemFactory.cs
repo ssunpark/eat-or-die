@@ -2,13 +2,17 @@
 
 public class ItemFactory
 {
+    // 음식 아이템 효과 factory
+    private EatEffectFactory _eatEffectFactory = new();
+
     // 주어진 데이터에 맞게 아이템 생성 후 반환
     public EatItem CreateEatItem(EatItemRawData rawData)
     {
-        var effects = new List<IEatItemEffect>();
+        var effectList = new List<IEatItemEffect>();
 
-        var rawEffects = new (EUseItemEffectType type, float? value, float? duration)[]
+        var rawEffects = new (EEatItemEffectType type, float? value, float? duration)[]
         {
+            (EEatItemEffectType.HungerInstantRecovery, rawData.HungerRestore, null),    // 기본적인 배고픔 증가
             (rawData.EffectType1, rawData.Value1, rawData.Duration1),
             (rawData.EffectType2, rawData.Value2, rawData.Duration2),
             (rawData.EffectType3, rawData.Value3, rawData.Duration3),
@@ -16,26 +20,16 @@ public class ItemFactory
 
         foreach (var (type, value, duration) in rawEffects)
         {
-            if (type == EUseItemEffectType.None)
+            if (type == EEatItemEffectType.None)
                 continue;
 
-            var effect = CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
-            if (effect != null)
-                effects.Add(effect);
+            var effect = _eatEffectFactory.CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
+            effectList.Add(effect);
         }
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, rawData.MaxQuantity, rawData.IconPath);
-        return new EatItem(itemData, effects);
-    }
-
-    private IEatItemEffect CreateEatItemEffect(EUseItemEffectType type, float value, float duration)
-    {
-        return type switch
-        {
-            EUseItemEffectType.None => null,
-            // EUseItemEffectType.Hungry => new EatEffect_Hungry(value),
-            _ => null
-        };
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable,
+            rawData.MaxQuantity, rawData.IconPath);
+        return new EatItem(itemData, effectList);
     }
 
     // public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
@@ -52,7 +46,8 @@ public class ItemFactory
 
     public UsableItem CreateUsableItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.MaxQuantity, rawData.AddressablePath);
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.MaxQuantity,
+            rawData.AddressablePath);
         IUseAction useAction = rawData.UseAction switch
         {
             EUseAction.Plow => new UseActionHoe(),

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 1441634403729200998}
   - component: {fileID: 9075220696021084764}
   - component: {fileID: 1508319554009502233}
+  - component: {fileID: 4804922771819791935}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -58,28 +59,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _classType: 0
   _nickname: 
-  _axe: 
-  _bag: 
-  _bottom: 
-  _bracelet: 
-  _earring: 
-  _eye: 
-  _eyebrow: 
-  _eyewear: 
-  _glove: 
-  _hair: 
-  _hairAcc: 
-  _handAcc: 
-  _headgear: 
-  _lips: 
-  _mask: 
-  _mustache: 
-  _shield: 
-  _shoes: 
-  _spear: 
-  _sword: 
-  _top: 
-  _watch: 
 --- !u!114 &2340262810978986176
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,6 +96,7 @@ MonoBehaviour:
   - {fileID: 1441634403729200998}
   - {fileID: 9075220696021084764}
   - {fileID: 1508319554009502233}
+  - {fileID: 4804922771819791935}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8446609235003013225
 CharacterController:
@@ -229,7 +209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 461bb6dd59ec8cb429e71d818b754b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _CurrentState: 0
   MoveSatietyTimer: 0
   MoveStatietyInterval: 3
 --- !u!114 &9075220696021084764
@@ -245,6 +224,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerAnimatorController: {fileID: 0}
+  _IsAttacking: 0
+  AttackCooldown: 1
+  _playerHUDTagName: PlayerHUD
 --- !u!114 &1508319554009502233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,6 +243,25 @@ MonoBehaviour:
   _itemLayerMask:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &4804922771819791935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4656477318081228857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4ab85e5c1e542dc96207306e30d671d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InteractionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  TagName: 
+  HoldItemID: 0
+  ItemName: 
+  InteractionObject: {fileID: 0}
 --- !u!1001 &5655635364309781370
 PrefabInstance:
   m_ObjectHideFlags: 0

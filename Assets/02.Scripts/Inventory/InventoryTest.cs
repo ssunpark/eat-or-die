@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class InventoryTest : MonoBehaviour
 {
-	public void OnClickTestButton()
+	public void OnClickGenerateItemButton(int itemID)
 	{
-		InventoryManager.Instance.PickItemFromGround(new ItemStack(0, 99, 1));
+		InventoryManager.Instance.PickItemFromGround(new ItemStack(itemID, 99, 1));
 	}
 }

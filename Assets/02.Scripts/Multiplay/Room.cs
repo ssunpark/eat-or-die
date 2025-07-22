@@ -8,7 +8,11 @@ using UnityEngine.SceneManagement;
 public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
-    public NetworkRunner Runner => _runner;
+    
+    private GameObject _localPlayer;
+    public GameObject LocalPlayer => _localPlayer;
+
+    public void SetLocalPlayer(GameObject player) => _localPlayer = player;
 
     private FusionInputProvider _inputProvider;
     public async void StartGame(GameMode mode)
