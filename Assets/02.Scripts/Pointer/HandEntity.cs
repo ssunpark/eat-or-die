@@ -10,6 +10,10 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     
     public void PickUpItem(ItemStack itemStack)
     {
+        if (itemStack != null)
+        {
+            Debug.Log($"Item picked up: {itemStack.ID}");
+        }
         ItemStack = itemStack;
         OnItemPickedUp?.Invoke();
     }
