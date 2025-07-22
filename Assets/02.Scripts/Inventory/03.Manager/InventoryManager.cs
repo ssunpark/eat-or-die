@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class InventoryManager : BehaviourSingleton<InventoryManager>
 {
-    public Inventory Inventory;
+    private Inventory _inventory;
+    public Inventory Inventory => _inventory;
     public int InventorySize;
     
     public List<Action> OnSlotUpdated;
@@ -12,7 +13,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
 
     private void Awake()
     {
-        Inventory = new Inventory(InventorySize);
+        _inventory = new Inventory(InventorySize);
         OnSlotUpdated = new List<Action>(new Action[InventorySize]);
     }
 
@@ -20,14 +21,14 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     {
         if (HandEntity.Instance.IsHandEmpty)
         {
-            ItemStack itemInSlot = Inventory.PopItemInSlot(slotIndex);
+            ItemStack itemInSlot = _inventory.PopItemInSlot(slotIndex);
             if (itemInSlot == null) return;
             
             HandEntity.Instance.PickUpItem(itemInSlot);
         }
         else
         {
-            HandEntity.Instance.PickUpItem(Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
+            HandEntity.Instance.PickUpItem(_inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
         }
         OnSlotUpdated[slotIndex]?.Invoke();
         OnInventoryUpdated?.Invoke();
@@ -35,26 +36,26 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     
     public void OnClickMouseRight(int slotIndex)
     {
-        if (Inventory.SlotList[slotIndex].IsEmpty) return;
+        if (_inventory.SlotList[slotIndex].IsEmpty) return;
         
         if (HandEntity.Instance.IsHandEmpty)
         {
-            HandEntity.Instance.PickUpItem(Inventory.PopSingleItemInSlot(slotIndex));
+            HandEntity.Instance.PickUpItem(_inventory.PopSingleItemInSlot(slotIndex));
         }
         else
         {
-            if (HandEntity.Instance.ItemStack.ID == Inventory.SlotList[slotIndex].ItemStack.ID)
+            if (HandEntity.Instance.ItemStack.ID == _inventory.SlotList[slotIndex].ItemStack.ID)
             {
-                ItemStack itemInSlot = Inventory.PopSingleItemInSlot(slotIndex);
+                ItemStack itemInSlot = _inventory.PopSingleItemInSlot(slotIndex);
                 if (!HandEntity.Instance.TryAddItem(itemInSlot))
                 {
-                    Inventory.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
+                    _inventory.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
                 }
             }
             else
             {
-                ItemStack temp = Inventory.PopItemInSlot(slotIndex);
-                Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
+                ItemStack temp = _inventory.PopItemInSlot(slotIndex);
+                _inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
                 HandEntity.Instance.PickUpItem(temp);
             }
         }
@@ -65,7 +66,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
 
     public void PickItemFromGround(ItemStack itemStack)
     {
-        ItemStack remain = Inventory.PickItemFromGround(itemStack);
+        ItemStack remain = _inventory.PickItemFromGround(itemStack);
         
         OnInventoryUpdated?.Invoke();
      

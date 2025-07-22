@@ -28,11 +28,19 @@ public class UI_CookingPanel : MonoBehaviour
         }
     }
 
+    public void OpenCookingPanel()
+    {
+        CookingPanel.SetActive(true);
+    }
+
     public void OnClickCookingButton()
     {
+        // 플레이어 Cooking FSM 호출!
+        
+        // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
+        CookingPanelManager.Instance.OnCookingCompleted(true);
+        
         CloseTab();
-        // 레시피 조합에 따른 결과 출력 명령 메서드 호출
-        CookingPanelManager.Instance.TryGetRecipeResult();
     }
 
     private void CloseTab()
