@@ -29,8 +29,8 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
             { EPlayerState.Move, new PlayerMoveState(this, _controller) },
             { EPlayerState.Attack, new PlayerAttackState(this, _controller) },
             { EPlayerState.Hit, new PlayerHitState(this, _controller) },
-            /*
             { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
+        /*
             { EPlayerState.Cooking, new PlayerCookingState(this, _controller) },
             { EPlayerState.Down, new PlayerDownState(this, _controller) },
             { EPlayerState.Dead, new PlayerDeadState(this, _controller) },
