@@ -9,7 +9,7 @@ public class EatEffect_BossDefense : IEatItemEffect
     public EatEffect_BossDefense(float value, string description)
     {
         _value = value;
-        _description = string.Format(description, _value);
+        _description = string.Format(description, _value * 100);
     }
 
     public void UseEffect()

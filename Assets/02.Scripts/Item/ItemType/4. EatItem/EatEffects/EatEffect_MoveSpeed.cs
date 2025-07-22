@@ -9,7 +9,7 @@ public class EatEffect_MoveSpeed : IEatItemEffect
     public EatEffect_MoveSpeed(float value, string description)
     {
         _value = value;
-        _description = string.Format(description, _value);
+        _description = string.Format(description, _value * 100);
     }
     
     public void UseEffect()
