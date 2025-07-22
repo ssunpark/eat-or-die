@@ -8,11 +8,11 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     public Inventory Inventory = new Inventory(2);
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
 
+    [SerializeField]private UI_RecipeList _uiRecipeList;
     public CookOutputSlotUI CookOutputSlotUI;
     public Inventory FoodInventory = new Inventory(1);
     
     public Action OnCookOutputUpdated; // 결과 슬롯 전용 이벤트
-    
     // 좌클릭으로 아이템 드래그 처리
     public void OnClickMouseLeft(int slotIndex)
     {
@@ -140,5 +140,6 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         FoodInventory.SlotList[0].AddItem(new ItemStack(resultItemId, resultItem.ItemData.MaxQuantity,1));
         
         OnCookOutputUpdated?.Invoke(); // 결과 슬롯 UI 갱신
+        _uiRecipeList.UnlockRecipe(resultItemId);
     }
 }

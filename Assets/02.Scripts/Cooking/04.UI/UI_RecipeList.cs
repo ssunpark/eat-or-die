@@ -59,4 +59,16 @@ public class UI_RecipeList : MonoBehaviour
             button.gameObject.SetActive(false);
         }
     }
+    
+    // 해금 메서드
+    public void UnlockRecipe(int resultItemId)
+    {
+        Debug.Log("UI_RecipeList::UnlockRecipe");
+        var recipe = _recipeButtonList.Find(btn => btn.ResultItemID == resultItemId);
+        if (recipe != null)
+        {
+            Debug.Log("UI_RecipeList recipe 널 체크");
+            recipe.UnlockButton();
+        }
+    }
 }
