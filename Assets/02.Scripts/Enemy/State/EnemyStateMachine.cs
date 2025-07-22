@@ -14,9 +14,6 @@ public class EnemyStateMachine : NetworkBehaviour
 	private Animator _animator;
 	public Animator Animator => _animator;
 	
-	private CharacterController _characterController;
-	public CharacterController CharacterController => _characterController;
-	
 	private NavMeshAgent _navMeshAgent;
 	public NavMeshAgent NavMeshAgent => _navMeshAgent;
 	
@@ -29,7 +26,6 @@ public class EnemyStateMachine : NetworkBehaviour
 	{
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		_animator = GetComponent<Animator>();
-		_characterController = GetComponent<CharacterController>();
 		_navMeshAgent = GetComponent<NavMeshAgent>();
 		// Stat = GetComponent<EnemyStat>();
 		
@@ -41,8 +37,9 @@ public class EnemyStateMachine : NetworkBehaviour
 			// { EEnemyState.Attack, new EnemyAttackState() },
 			// { EEnemyState.Die, new EnemyDieState() }
 		};
-		
-		_currentState = _stateDictionary[EEnemyState.Idle];
+
+		NetworkedState = EEnemyState.Idle;
+		_currentState = _stateDictionary[NetworkedState];
 	}
 
 	public void SetTarget(GameObject target)
@@ -56,16 +53,13 @@ public class EnemyStateMachine : NetworkBehaviour
 		{
 			_currentState?.Update(this, Time.deltaTime);
 		}
-		else
-		{
-			foreach (string change in _changeDetector.DetectChanges(this))
+		foreach (string change in _changeDetector.DetectChanges(this))
+		{ 
+			if (change == nameof(NetworkedState)) 
 			{
-				if (change == nameof(NetworkedState))
-				{
-					_currentState?.Exit(this);
-					_currentState = _stateDictionary[NetworkedState];
-					_currentState?.Enter(this);
-				}
+				_currentState?.Exit(this);
+				_currentState = _stateDictionary[NetworkedState];
+				_currentState?.Enter(this);
 			}
 		}
 	}

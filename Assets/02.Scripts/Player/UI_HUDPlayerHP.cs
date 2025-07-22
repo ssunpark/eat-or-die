@@ -51,7 +51,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
         {
             _hpText.text = $"{Mathf.CeilToInt(currentHealth)} / {Mathf.CeilToInt(maxHealth)}";
         }
-        Debug.Log($"Health updated: {currentHealth} / {maxHealth}");
+        //Debug.Log($"Health updated: {currentHealth} / {maxHealth}");
     }
 
     private void OnDestroy()

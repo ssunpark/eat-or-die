@@ -22,6 +22,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        Room.Instance.Runner.Spawn(_enemyPrefab, transform.position, Quaternion.identity);
+        Room.Instance.Runner.Spawn(_enemyPrefab, gameObject.transform.position, Quaternion.identity);
     }
 }
