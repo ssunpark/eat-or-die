@@ -80,6 +80,7 @@ public class FarmingInteractionTest : NetworkBehaviour
 
     public void OnEquipped(int holdItemID, string interactionTag)
     {
+        // 여기서 장착 해제
         HoldItemID = holdItemID;
         ItemName = ItemManager.Instance.GetItem(HoldItemID).ItemData.Name;
         TagName = interactionTag;
