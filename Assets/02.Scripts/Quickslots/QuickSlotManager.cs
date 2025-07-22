@@ -21,6 +21,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 			if (QuickSlots.SlotList[slotIndex].IsEmpty)
 			{
 				Room.Instance.LocalPlayer.GetComponent<FarmingInteractionTest>().OnUnequipped();
+				return;
 			}
 			
 			// 슬롯의 아이템 타입에 따라 적절한 메서드를 호출해야 합니다. 근데 지금은 연결할 로직이 없음
