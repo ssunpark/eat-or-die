@@ -23,10 +23,8 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
-        {
-            // InventoryManager.Instance.OnClickMouseLeft(SlotIndex);   
+        { 
             CookingPanelManager.Instance.OnClickMouseLeft(SlotIndex);
-            CookingPanelManager.Instance.TryCookAndCreateItem();
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -36,7 +34,6 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
             }else if (eventData.pointerEnter.GetComponent<CookInputSlotUI>() != null)
             {
                 CookingPanelManager.Instance.OnClickMouseRight(SlotIndex);
-                CookingPanelManager.Instance.TryCookAndCreateItem();
             }
         }
     }
