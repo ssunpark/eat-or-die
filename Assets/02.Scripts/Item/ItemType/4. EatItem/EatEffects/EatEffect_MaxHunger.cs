@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 
-// 사용 아이템 효과: {_duration}분동안 최대 배고픔 +{_value}
 public class EatEffect_MaxHunger : IEatItemEffect
 {
     private readonly float _value;
-    private readonly float _duration;
+    private string _description;
+    public string Description => _description;
 
-    public EatEffect_MaxHunger(float value, float duration)
+    public EatEffect_MaxHunger(float value, string description)
     {
         _value = value;
-        _duration = duration;
+        _description = EatEffectUtils.FormatSmart(description, value);
     }
-    
+
     public void UseEffect()
     {
-        Debug.Log($"{_duration}분동안 최대 배고픔 +{_value}");
+        Debug.Log(Description);
     }
 }

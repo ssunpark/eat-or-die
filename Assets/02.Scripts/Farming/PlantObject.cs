@@ -2,8 +2,9 @@
 using Redcode.Pools;
 using UnityEngine;
 
-public class PlantObject : NetworkBehaviour
+public class PlantObject : NetworkBehaviour, IInteractable
 {
+    private const int ROTTEN_CROP_ID = 200012;
     // 작물의 성장과 결과물을 관리
     // 외형은 자식 오브젝트 생성해서 관리
     [Networked]
@@ -17,12 +18,14 @@ public class PlantObject : NetworkBehaviour
     private float _growthTime;
 
     private float _timer;
-    
+
     private FarmingGround _farmingGround;
+    private SeedGround _seedGround;
 
     public override void Spawned()
     {
         _farmingGround = GetComponentInParent<FarmingGround>();
+        _seedGround = GetComponentInParent<SeedGround>();
         OnGrowthLevelChanged();
         _growthTime = _seedData.GrowthTime;
     }
@@ -70,22 +73,37 @@ public class PlantObject : NetworkBehaviour
         {
             return;
         }
-        
+
         // 상호 작용
         // 작물 생성
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
             // 작물 수확
-            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position, Quaternion.identity);
+            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position,
+                Quaternion.identity);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
             // 썩은 작물
+            ItemManager.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, transform.position, Quaternion.identity);
         }
+        
         // 풀 반환
         FarmingManager.Instance.ReturnPlant(new PlantPoolKey(PlantID, GrowthLevel), _plantObject);
         // 삭제
-        FarmingManager.Instance.RPC_Despawn(GetComponent<NetworkObject>());
+        RPC_Despawn();
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_Despawn()
+    {
+        if (!Runner.IsServer)
+        {
+            return;
+        }
+        
+        _seedGround.IsPlanted = false;
+        Runner.Despawn(Object);
     }
 
     // 단계 변화 감지

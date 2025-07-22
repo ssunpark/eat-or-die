@@ -18,7 +18,7 @@ public struct PlantPoolKey
 
 public class FarmingManager : NetworkBehaviour
 {
-    private const string PLANT_CSV_PATH = "/ItemCSV/Plant.csv";
+    private const string PLANT_CSV_PATH = "/PlantCSV/Plant.csv";
     // 작물 데이터 관리
     public static FarmingManager Instance { get; private set; }
 
@@ -107,16 +107,5 @@ public class FarmingManager : NetworkBehaviour
         
        int randomIndex = Random.Range(0, keyList.Count);
        return keyList[randomIndex];
-    }
-
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_Despawn(NetworkObject target)
-    {
-        if (!Runner.IsServer)
-        {
-            return;
-        }
-        
-        Runner.Despawn(target);
     }
 }

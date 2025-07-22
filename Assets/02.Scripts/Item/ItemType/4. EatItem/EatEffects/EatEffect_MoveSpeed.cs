@@ -1,0 +1,19 @@
+﻿using UnityEngine;
+
+public class EatEffect_MoveSpeed : IEatItemEffect
+{
+    private readonly float _value;
+    private string _description;
+    public string Description => _description;
+
+    public EatEffect_MoveSpeed(float value, string description)
+    {
+        _value = value;
+        _description = EatEffectUtils.FormatSmart(description, value);
+    }
+    
+    public void UseEffect()
+    {
+        Debug.Log(Description);
+    }
+}

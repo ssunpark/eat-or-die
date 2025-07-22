@@ -8,13 +8,13 @@ public class EquipmentItem : AItem, IEquipable
     {
     }
 
-    public void Equip()
+    public void Equip(GameObject player)
     {
         Debug.Log($"장착 : {ItemData.Name}");
         // 장비 스텟 수치만큼 증가
     }
 
-    public void Unequip()
+    public void Unequip(GameObject player)
     {
         Debug.Log($"해제 : {ItemData.Name}");
         // 장비 스텟 수치만큼 감소

@@ -41,6 +41,10 @@ public class PlayerController : CharacterBase
 
     public override void Spawned()
     {
+        if (Object.HasInputAuthority)
+        {
+            Room.Instance.SetLocalPlayer(gameObject);
+        }
         _fsm = GetComponent<PlayerStateMachine>();
         _characterController = GetComponent<NetworkCharacterController>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
