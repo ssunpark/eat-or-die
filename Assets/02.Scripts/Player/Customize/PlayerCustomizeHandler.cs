@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 
-public enum CustomizationPart
+public enum ECustomizationPart
 {
     Axe, Bag, Bottom, Bracelet, Earring,
     Eye, Eyebrow, Eyewear, Glove, Hair,
@@ -20,7 +20,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     
 
 
-    private Dictionary<CustomizationPart, int> _customizeSelections = new();
+    private Dictionary<ECustomizationPart, int> _customizeSelections = new();
     public override void Spawned()
     {
         ApplyCustomization();
@@ -36,7 +36,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
             //=========================================================
 
 
-            foreach (CustomizationPart part in Enum.GetValues(typeof(CustomizationPart)))
+            foreach (ECustomizationPart part in Enum.GetValues(typeof(ECustomizationPart)))
             {
                 _customizeSelections[part] = 0;
             }
@@ -96,7 +96,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
             ["Watch"] = 5
         };
 
-        foreach (CustomizationPart part in Enum.GetValues(typeof(CustomizationPart)))
+        foreach (ECustomizationPart part in Enum.GetValues(typeof(ECustomizationPart)))
         {
             string name = part.ToString();
             int max = maxCounts[name];

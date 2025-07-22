@@ -9,8 +9,8 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
 
     private EPlayerState _cachedState;
 
-    private Dictionary<EPlayerState, PlayerStateBase> _states;
-    private PlayerStateBase _activeState;
+    private Dictionary<EPlayerState, APlayerState> _states;
+    private APlayerState _activeState;
 
     private PlayerController _controller;
 
@@ -24,7 +24,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     public override void Spawned()
     {
         _controller = GetComponent<PlayerController>();
-        _states = new Dictionary<EPlayerState, PlayerStateBase>
+        _states = new Dictionary<EPlayerState, APlayerState>
         {
             { EPlayerState.Idle, new PlayerIdleState(this, _controller) },
             { EPlayerState.Move, new PlayerMoveState(this, _controller) },

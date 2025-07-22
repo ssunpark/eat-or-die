@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerHitState : PlayerStateBase
+public class PlayerHitState : APlayerState
 {
     private float _hitStunDuration;
     private float _elapsed;

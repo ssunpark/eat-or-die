@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerMoveState : PlayerStateBase
+public class PlayerMoveState : APlayerState
 {
     public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {

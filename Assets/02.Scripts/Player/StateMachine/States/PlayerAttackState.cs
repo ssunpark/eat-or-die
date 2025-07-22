@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Fusion;
 
-public class PlayerAttackState : PlayerStateBase
+public class PlayerAttackState : APlayerState
 {
     public PlayerAttackState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller) { }
 

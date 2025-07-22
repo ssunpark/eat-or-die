@@ -35,12 +35,12 @@ public static class CustomizationDataExtensions
 public static class CustomizationDataMapper
 {
     // Dictionary<string, int> → CustomizationData
-    public static CustomizationData FromDictionary(Dictionary<CustomizationPart, int> selections)
+    public static CustomizationData FromDictionary(Dictionary<ECustomizationPart, int> selections)
     {
         CustomizationData data = new();
         foreach (var field in typeof(CustomizationData).GetFields())
         {
-            if (Enum.TryParse<CustomizationPart>(field.Name, out var part) &&
+            if (Enum.TryParse<ECustomizationPart>(field.Name, out var part) &&
                 selections.TryGetValue(part, out int value))
             {
                 field.SetValueDirect(__makeref(data), (short)value);
@@ -49,12 +49,12 @@ public static class CustomizationDataMapper
         return data;
     }
 
-    public static Dictionary<CustomizationPart, int> ToDictionary(CustomizationData data)
+    public static Dictionary<ECustomizationPart, int> ToDictionary(CustomizationData data)
     {
-        var dict = new Dictionary<CustomizationPart, int>();
+        var dict = new Dictionary<ECustomizationPart, int>();
         foreach (var field in typeof(CustomizationData).GetFields())
         {
-            if (Enum.TryParse<CustomizationPart>(field.Name, out var part))
+            if (Enum.TryParse<ECustomizationPart>(field.Name, out var part))
             {
                 dict[part] = (short)field.GetValue(data);
             }

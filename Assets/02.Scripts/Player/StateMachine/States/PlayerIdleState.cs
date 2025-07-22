@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Fusion; // Add Fusion for NetworkInputData
 
-public class PlayerIdleState : PlayerStateBase
+public class PlayerIdleState : APlayerState
 {
     public PlayerIdleState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
