@@ -16,5 +16,10 @@ public class Slot
     public void UseItem()
     {
         ItemStack.TryRemove(1);
+        if (ItemStack.Quantity == 0)
+        {
+            RemoveItem();
+        }
     }
+    
 }
