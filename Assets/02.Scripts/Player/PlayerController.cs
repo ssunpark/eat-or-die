@@ -14,7 +14,30 @@ public class PlayerController : CharacterBase
 
     private PlayerStateMachine _fsm;
 
+    [Networked]public bool IsAttacking { get; set; }
+    //private bool _isAttacking = false;
+    private float _lastAttackTime;
+    public float AttackCooldown = 1f;
+
     [SerializeField] private string _playerHUDTagName = "PlayerHUD";
+
+
+    public void SetAttackingLocal(bool isAttacking)
+    {
+        //_isAttacking = isAttacking;
+        RPC_SetAttacking(isAttacking);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_SetAttacking(bool attacking)
+    {
+        IsAttacking = attacking;
+    }
+
+    public void OnChangedAttacking()
+    {
+        //_isAttacking = IsAttacking;
+    }
 
     public override void Spawned()
     {
@@ -24,10 +47,6 @@ public class PlayerController : CharacterBase
         _satietyEffectHandler = new SatietyEffectHandler(Resource, Stat);
         _isSpawned = true;
         TryInitialize();
-        if (Object.HasInputAuthority)
-        {
-            InitializePlayerHUD();
-        }
     }
 
     private void InitializePlayerHUD()
@@ -54,65 +73,83 @@ public class PlayerController : CharacterBase
 
     private void TryInitialize()
     {
-
         if (_isSpawned)
         {
             _characterController.maxSpeed = Stat.GetStat(EStatType.MoveSpeed);
             _characterController.jumpImpulse = Stat.GetStat(EStatType.JumpPower);
             _characterController.acceleration = Stat.GetStat(EStatType.Acceleration);
+
+
+            if (Object.HasInputAuthority)
+            {
+                InitializePlayerHUD();
+            }
         }
     }
 
     public override void FixedUpdateNetwork()
     {
-        if(_fsm == null)
+        if (_fsm == null)
         {
             return;
         }
-        
+
         if (GetInput(out NetworkInputData inputData))
         {
-            Vector3 moveDirection = inputData.direction;
+            HandleMove(inputData);
 
-            if ( moveDirection.sqrMagnitude > 0.01f)
+            HandleJump(inputData);
+        }
+    }
+
+    private void HandleMove(NetworkInputData inputData)
+    {
+        Vector3 moveDirection = inputData.direction;
+
+        if (moveDirection.sqrMagnitude > 0.01f)
+        {
+
+            float baseSpeed = Stat.GetStat(EStatType.MoveSpeed);
+            float sprintMultiplier = inputData.isRunning
+                ? Stat.GetStat(EStatType.SprintingMultiplier)
+                : 1f;
+
+
+            float moveSpeed = IsAttacking
+                ? 0f
+                : (baseSpeed * sprintMultiplier);
+            if (_characterController.maxSpeed != moveSpeed)
             {
-                
-                float baseSpeed = Stat.GetStat(EStatType.MoveSpeed);
-                float sprintMultiplier = inputData.isRunning
-                    ? Stat.GetStat(EStatType.SprintingMultiplier)
-                    : 1f;
-
-                
-                float moveSpeed = _fsm.CanMove ? (baseSpeed * sprintMultiplier) : 0f;
-                if (moveSpeed > 0f)
-                {
-                    Resource.ConsumeSatiety(Time.deltaTime * Stat.GetStat(EStatType.ConsumptionRate));
-                }
-                if (_characterController.maxSpeed != moveSpeed)
-                {
-                    _characterController.maxSpeed = moveSpeed;
-                }
-                _characterController.Move(moveDirection);
-
-                
+                _characterController.maxSpeed = moveSpeed;
             }
-            else
+            if (moveSpeed > 0f)
             {
-                _characterController.Move(Vector3.zero);
+                Resource.ConsumeSatiety(Time.deltaTime * Stat.GetStat(EStatType.ConsumptionRate));
             }
+            
+            _characterController.Move(moveDirection);
 
-            if (inputData.isJumping && _characterController.Grounded)
+
+        }
+        else
+        {
+            _characterController.Move(Vector3.zero);
+        }
+    }
+
+    private void HandleJump(NetworkInputData inputData)
+    {
+        if (inputData.isJumping && _characterController.Grounded)
+        {
+            float jumpPower = Stat.GetStat(EStatType.JumpPower);
+            _characterController.jumpImpulse = jumpPower;
+            _characterController.Jump();
+            if (Object.HasInputAuthority)
             {
-                float jumpPower = Stat.GetStat(EStatType.JumpPower);
-                _characterController.jumpImpulse = jumpPower;
-                _characterController.Jump();
                 Rpc_PlayAnimTrigger(EAnimTrigger.Jump);
             }
         }
-
     }
-
-
 
     public bool IsGrounded => _characterController.Grounded;
 

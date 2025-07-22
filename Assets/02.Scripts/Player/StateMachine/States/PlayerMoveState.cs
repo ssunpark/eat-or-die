@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerMoveState : PlayerStateBase
+public class PlayerMoveState : APlayerState
 {
     public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
@@ -11,12 +11,17 @@ public class PlayerMoveState : PlayerStateBase
         _moveStatietyInterval = _fsm.MoveStatietyInterval;
     }
     public override bool CanMove => true;
+    public override bool CanAct => true;
     private float _moveSatietyTimer;
     private float _moveStatietyInterval;
 
     public override void Tick()
     {
-        if (!_controller.GetInput(out NetworkInputData inputData)) return;
+        if (!_controller.GetInput(out NetworkInputData inputData))
+        {
+            _fsm.ChangeState(EPlayerState.Idle);
+            return;
+        }
 
         if (inputData.isAttacking)
         {

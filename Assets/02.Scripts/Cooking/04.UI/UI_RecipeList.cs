@@ -6,23 +6,69 @@ public class UI_RecipeList : MonoBehaviour
     public GameObject Container;
     public GameObject ButtonPrefab;
 
-    private List<RecipeCSVData> _recipeCsvDataList;
-
-    // CSV 불러와서 버튼 생성 - 초기화
+    private List<RecipeCSVData> _recipeCsvDataList = new List<RecipeCSVData>();
+    private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
+    
+    // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {
         _recipeCsvDataList = FoodCSVDataManager.Instance.RecipeCSVDataList;
 
-        foreach (Transform child in Container.transform)
+        foreach (var recipe in _recipeCsvDataList)
         {
-            Destroy(child.gameObject); // 기존 버튼들 제거 (선택 사항)
+            var buttonObj = Instantiate(ButtonPrefab, Container.transform);
+            var recipeButton = buttonObj.GetComponent<UI_RecipeButton>();
+            recipeButton.Refresh(recipe);
+            buttonObj.SetActive(false); // 처음엔 꺼둠
+            _recipeButtonList.Add(recipeButton);
+        }
+    }
+
+    public void ShowAllRecipes()
+    {
+        foreach (var button in _recipeButtonList)
+        {
+            button.gameObject.SetActive(true);
+        }
+    }
+
+    public void ShowFilteredRecipes(List<RecipeCSVData> recipes)
+    {
+        // 전부 비활성화
+        foreach (var button in _recipeButtonList)
+        {
+            button.gameObject.SetActive(false);
         }
 
-        foreach (var recipeData in _recipeCsvDataList)
+        // 조건에 맞는 것만 활성화
+        foreach (var recipe in recipes)
         {
-            GameObject buttonObj = Instantiate(ButtonPrefab, Container.transform);
-            // 필요하다면 버튼에 데이터 바인딩 처리
-            예: buttonObj.GetComponent<UI_RecipeButton>().Refresh(recipeData);
+            var match = _recipeButtonList.Find(btn => btn.RecipeID == recipe.ID);
+            if (match != null)
+            {
+                match.gameObject.SetActive(true);
+            }
+        }
+    }
+
+    // 전체 숨기기
+    public void HideAll()
+    {
+        foreach (var button in _recipeButtonList)
+        {
+            button.gameObject.SetActive(false);
+        }
+    }
+    
+    // 해금 메서드
+    public void UnlockRecipe(int resultItemId)
+    {
+        Debug.Log("UI_RecipeList::UnlockRecipe");
+        var recipe = _recipeButtonList.Find(btn => btn.ResultItemID == resultItemId);
+        if (recipe != null)
+        {
+            Debug.Log("UI_RecipeList recipe 널 체크");
+            recipe.UnlockButton();
         }
     }
 }

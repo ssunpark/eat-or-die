@@ -5,7 +5,7 @@ public class ItemFactory
     // 주어진 데이터에 맞게 아이템 생성 후 반환
     public EatItem CreateEatItem(EatItemRawData rawData)
     {
-        var effects = new List<IEatItemEffect>();
+        var effectList = new List<EatItemEffectData>();
 
         var rawEffects = new (EUseItemEffectType type, float? value, float? duration)[]
         {
@@ -19,23 +19,12 @@ public class ItemFactory
             if (type == EUseItemEffectType.None)
                 continue;
 
-            var effect = CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
-            if (effect != null)
-                effects.Add(effect);
+            var effect = new EatItemEffectData(type, value ?? 0f, duration ?? 0f);
+            effectList.Add(effect);
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, rawData.MaxQuantity, rawData.IconPath);
-        return new EatItem(itemData, effects);
-    }
-
-    private IEatItemEffect CreateEatItemEffect(EUseItemEffectType type, float value, float duration)
-    {
-        return type switch
-        {
-            EUseItemEffectType.None => null,
-            // EUseItemEffectType.Hungry => new EatEffect_Hungry(value),
-            _ => null
-        };
+        return new EatItem(itemData, effectList);
     }
 
     // public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)

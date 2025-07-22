@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using Fusion; // Add Fusion for NetworkInputData
 
-public class PlayerIdleState : PlayerStateBase
+public class PlayerIdleState : APlayerState
 {
     public PlayerIdleState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
     }
 
     public override bool CanMove => true;
+
+    public override bool CanAct => true;
     public override void Tick()
     {
         if (!_controller.GetInput(out NetworkInputData inputData)) return;

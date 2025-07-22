@@ -5,15 +5,14 @@ using UnityEngine;
 // 현재 플레이어 상태 전환 관리
 public class PlayerStateMachine : NetworkBehaviour, IDamageable
 {
-    [Networked] public EPlayerState CurrentState { get; set; }
+    //[Networked, OnChangedRender(nameof(OnStateChanged))] 
+    public EPlayerState CurrentState { get; set; }
 
-    private EPlayerState _cachedState;
-
-    private Dictionary<EPlayerState, PlayerStateBase> _states;
-    private PlayerStateBase _activeState;
+    private Dictionary<EPlayerState, APlayerState> _states;
+    private APlayerState _activeState;
 
     private PlayerController _controller;
-    
+
 
     //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
     [HideInInspector]
@@ -24,7 +23,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     public override void Spawned()
     {
         _controller = GetComponent<PlayerController>();
-        _states = new Dictionary<EPlayerState, PlayerStateBase>
+        _states = new Dictionary<EPlayerState, APlayerState>
         {
             { EPlayerState.Idle, new PlayerIdleState(this, _controller) },
             { EPlayerState.Move, new PlayerMoveState(this, _controller) },
@@ -38,11 +37,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
              */
         };
 
-        if (Object.HasStateAuthority)
-        {
-            CurrentState = EPlayerState.Idle;
-        }
-        _cachedState = CurrentState;
+        CurrentState = EPlayerState.Idle;
         _activeState = _states[CurrentState];
         _activeState.Enter();
 
@@ -60,46 +55,56 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
 
     private void Resource_OnSatietyChanged(float arg1, float arg2)
     {
-        Debug.Log($"Satiety changed: {arg1}/{arg2}");
+        // 배고픔이 감소할 때마다 상태를 업데이트
+        // 배고픔이 30% 이하가 되면 플레이어 상태를 광폭화 상태로 변경
+        if (arg1 <= _controller.Stat.GetStat(EStatType.MaxSatiety) * 0.3f)
+        {
+            //ChangeState(EPlayerState.rhkdvhrghk);
+            //return;
+        }
+        // 배고픔이 0 이하가 되면 플레이어 상태를 죽음으로 변경
+        if (arg1 <= 0)
+        {
+            // ChangeState(EPlayerState.Dead);
+        }
     }
 
     public override void FixedUpdateNetwork()
     {
-        if (_cachedState != CurrentState)
-        {
-            OnStateChanged(_cachedState, CurrentState);
-            _cachedState = CurrentState;
-        }
-
-        if (Object.HasInputAuthority)
-        {
-            _activeState?.Tick();
-        }
+        if(HasInputAuthority) _activeState?.Tick();
     }
 
-    private void OnStateChanged(EPlayerState oldState, EPlayerState newState)
-    {
-        _activeState?.Exit();
-        _activeState = _states[newState];
-        _activeState.Enter();
-    }
+    //private void OnStateChanged()
+    //{
+    //    _activeState?.Exit();
+    //    _activeState = _states[CurrentState];
+    //    _activeState.Enter();
+    //}
 
     public void ChangeState(EPlayerState newState)
     {
         if (newState == CurrentState) return;
 
         CurrentState = newState;
+        _activeState?.Exit();
+        _activeState = _states[CurrentState];
+        _activeState.Enter();
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    public void RPC_OrderChangeState(EPlayerState newState)
+    {
+        ChangeState(newState);
     }
 
     public void TakeDamage(int amount, PlayerRef attacker)
     {
         if (!HasStateAuthority) return;
 
-
         var dmg = amount * (100 / (100 + _controller.Stat.GetStat(EStatType.Armor)));
 
         _controller.Resource.ConsumeSatiety(dmg);
-        ChangeState(EPlayerState.Hit);
+        RPC_OrderChangeState(EPlayerState.Hit);
     }
 
     public bool CanMove
