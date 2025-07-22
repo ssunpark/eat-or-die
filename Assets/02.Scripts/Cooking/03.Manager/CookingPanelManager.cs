@@ -100,7 +100,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
 
         // 일치하는 레시피가 없는 경우
-        return -1;
+        return 200044;
     }
 
     // 조합 성공 시 재료 차감 + 결과 아이템 생성
@@ -124,6 +124,19 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
 
         AItem resultItem = ItemManager.Instance.GetItem(resultItemId);
+        
+        if (resultItem == null)
+        {
+            Debug.LogError($"[CookingPanelManager] 결과 아이템 데이터가 없습니다. ID: {resultItemId}");
+            return;
+        }
+
+        if (FoodInventory.SlotList == null || FoodInventory.SlotList.Count == 0)
+        {
+            Debug.LogError("[CookingPanelManager] FoodInventory가 올바르게 초기화되지 않았습니다.");
+            return;
+        }
+        
         FoodInventory.SlotList[0].AddItem(new ItemStack(resultItemId, resultItem.ItemData.MaxQuantity,1));
         
         OnCookOutputUpdated?.Invoke(); // 결과 슬롯 UI 갱신
