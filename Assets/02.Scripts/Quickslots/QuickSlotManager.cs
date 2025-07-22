@@ -23,6 +23,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 			if (itemInSlot is IEquipable equipItem)
 			{
 				Debug.Log("Equipping item: " + equipItem);
+                equipItem.Equip(Room.Instance.LocalPlayer);
 			}
 			else
 			{

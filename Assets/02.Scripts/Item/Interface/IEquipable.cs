@@ -1,5 +1,7 @@
-﻿public interface IEquipable
+﻿using UnityEngine;
+
+public interface IEquipable
 {
-    public void Equip();
-    public void Unequip();
+    public void Equip(GameObject player);
+    public void Unequip(GameObject player);
 }

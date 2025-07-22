@@ -1,4 +1,4 @@
-﻿public enum EUseItemEffectType
+﻿public enum EEatItemEffectType
 {
     // 사용 아이템 효과에 대한 Enum
     // 임시 값

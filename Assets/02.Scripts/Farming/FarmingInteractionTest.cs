@@ -9,71 +9,86 @@ public class FarmingInteractionTest : NetworkBehaviour
     public int HoldItemID;
     public string ItemName;
 
-    public GameObject InteractionObject;
+    public GameObject InteractionObject;       // 태그 일치용
+    public GameObject UntaggedObject;          // 태그 없는 객체용
 
     private void Start()
     {
+        InteractionLayer = LayerMask.GetMask("Interactable");
         TagName = "Untagged";
     }
 
     private void Update()
     {
         if (!GetComponent<NetworkObject>().HasInputAuthority)
-        {
             return;
-        }
-        
+
         var colliderArray = Physics.OverlapSphere(transform.position, 10, InteractionLayer);
 
-        Collider closestCollider = null;
-        float closestDistance = float.MaxValue;
+        Collider taggedClosest = null;
+        float taggedClosestDist = float.MaxValue;
+
+        Collider untaggedClosest = null;
+        float untaggedClosestDist = float.MaxValue;
 
         foreach (var collider in colliderArray)
         {
-            if (!collider.CompareTag(TagName))
+            float dist = Vector3.Distance(transform.position, collider.transform.position);
+
+            // 1. 태그 일치하는 객체 찾기
+            if (!string.IsNullOrEmpty(TagName) && collider.CompareTag(TagName))
             {
-                continue;
+                if (dist < taggedClosestDist)
+                {
+                    taggedClosestDist = dist;
+                    taggedClosest = collider;
+                }
             }
 
-            float distance = Vector3.Distance(transform.position, collider.transform.position);
-            if (distance < closestDistance)
+            // 2. 태그 없는 객체("Untagged") 찾기
+            if (collider.CompareTag("Untagged"))
             {
-                closestDistance = distance;
-                closestCollider = collider;
+                if (dist < untaggedClosestDist)
+                {
+                    untaggedClosestDist = dist;
+                    untaggedClosest = collider;
+                }
             }
         }
 
-        InteractionObject = closestCollider?.gameObject;
+        InteractionObject = taggedClosest?.gameObject;
+        UntaggedObject = untaggedClosest?.gameObject;
 
+        // 우클릭: 사용 (예: 괭이질, 물주기 등)
         if (Input.GetMouseButtonDown(1))
         {
-            var Handitem = ItemManager.Instance.GetItem(HoldItemID);
-            if (Handitem is IUsable useToItem)
+            var handitem = ItemManager.Instance.GetItem(HoldItemID);
+            if (handitem is IUsable useToItem)
             {
-                useToItem.Use(InteractionObject);
+                useToItem.Use(InteractionObject); // 태그 있는 객체 대상
             }
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            // 장착 대신 일단 클래스로 형변환
-            if (ItemManager.Instance.GetItem(HoldItemID) is UsableItem useToItem)
-            {
-                TagName = useToItem._interactionTag;
-                ItemName = useToItem.ItemData.Name;
-            }
-        }
+        // E키: 상호작용 (예: 작물 수확 등)
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            // 인터페이스로 수정
-            if (InteractionObject?.TryGetComponent(out PlantObject plant) ?? false)
+            if (UntaggedObject?.TryGetComponent(out PlantObject plant) ?? false)
             {
-                plant.Interact();
-            }
-            else
-            {
-                TagName = "Untagged";
-                InteractionObject = null;
+                plant.Interact(); // 태그 없는 객체 대상
             }
         }
+    }
+
+    public void OnEquipped(int holdItemID, string interactionTag)
+    {
+        HoldItemID = holdItemID;
+        ItemName = ItemManager.Instance.GetItem(HoldItemID).ItemData.Name;
+        TagName = interactionTag;
+    }
+
+    public void OnUnequipped()
+    {
+        HoldItemID = 0;
+        ItemName = "빈손";
+        TagName = string.Empty;
     }
 }
