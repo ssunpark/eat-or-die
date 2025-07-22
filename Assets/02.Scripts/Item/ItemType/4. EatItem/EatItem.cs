@@ -17,15 +17,15 @@ public struct EatItemEffectData
 
 public class EatItem : AItem, IEatable, IUsable
 {
-    private readonly List<IEatItemEffect> _effects;
+    private readonly List<IEatItemEffect> _effectList;
 
     public EatItem(ItemData itemData, List<EatItemEffectData> effectDataList) : base(itemData)
     {
-        _effects = new List<IEatItemEffect>();
+        _effectList = new List<IEatItemEffect>();
         foreach (var effectData in effectDataList)
         {
             var effect = CreateEatItemEffect(effectData.Type, effectData.Value,  effectData.Duration);
-            _effects.Add(effect);
+            _effectList.Add(effect);
         }
     }
     
@@ -46,7 +46,7 @@ public class EatItem : AItem, IEatable, IUsable
 
     public void Eat()
     {
-        foreach (var effect in _effects)
+        foreach (var effect in _effectList)
         {
             effect.UseEffect();
         }
@@ -55,7 +55,7 @@ public class EatItem : AItem, IEatable, IUsable
     public void Use(GameObject target)
     {
         // 타겟에게 효과 주도록 수정
-        foreach (var effect in _effects)
+        foreach (var effect in _effectList)
         {
             effect.UseEffect();
         }
