@@ -18,6 +18,12 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	{
 		if (!PopupManager.Instance.IsOpen(EPopupType.Inventory))
 		{
+			if (QuickSlots.SlotList[slotIndex].IsEmpty)
+			{
+				Room.Instance.LocalPlayer.GetComponent<FarmingInteractionTest>().OnUnequipped();
+				return;
+			}
+			
 			// 슬롯의 아이템 타입에 따라 적절한 메서드를 호출해야 합니다. 근데 지금은 연결할 로직이 없음
 			AItem itemInSlot = ItemManager.Instance.GetItem(QuickSlots.SlotList[slotIndex].ItemStack.ID);
 			if (itemInSlot is IEquipable equipItem)
