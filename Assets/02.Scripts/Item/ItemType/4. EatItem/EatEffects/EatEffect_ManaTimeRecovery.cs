@@ -11,7 +11,7 @@ public class EatEffect_ManaTimeRecovery : IEatItemEffect
     {
         _value = value;
         _duration = duration;
-        _description = EatEffectUtils.FormatSmart(description, _value, _duration);
+        _description = description;
     }
 
     public void UseEffect()

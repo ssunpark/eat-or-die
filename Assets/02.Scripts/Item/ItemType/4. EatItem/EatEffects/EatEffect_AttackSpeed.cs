@@ -9,7 +9,7 @@ public class EatEffect_AttackSpeed : IEatItemEffect
     public EatEffect_AttackSpeed(float value, string description)
     {
         _value = value;
-        _description = EatEffectUtils.FormatSmart(description, value);
+        _description = description;
     }
     
     public void UseEffect()

@@ -9,7 +9,7 @@ public class EatEffect_MagicDefense : IEatItemEffect
     public EatEffect_MagicDefense(float value, string description)
     {
         _value = value;
-        _description = EatEffectUtils.FormatSmart(description, value);
+        _description = description;
     }
 
     public void UseEffect()
