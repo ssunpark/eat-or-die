@@ -9,7 +9,7 @@ public class EatEffect_HungerInstantRecovery : IEatItemEffect
     public EatEffect_HungerInstantRecovery(float value, string description)
     {
         _value = value;
-        _description = string.Format(description, _value);
+        _description = EatEffectUtils.FormatSmart(description, value);
     }
 
     public void UseEffect()

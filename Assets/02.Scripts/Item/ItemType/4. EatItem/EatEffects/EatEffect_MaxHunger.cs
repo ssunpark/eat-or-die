@@ -9,7 +9,7 @@ public class EatEffect_MaxHunger : IEatItemEffect
     public EatEffect_MaxHunger(float value, string description)
     {
         _value = value;
-        _description = string.Format(description, _value);
+        _description = EatEffectUtils.FormatSmart(description, value);
     }
 
     public void UseEffect()

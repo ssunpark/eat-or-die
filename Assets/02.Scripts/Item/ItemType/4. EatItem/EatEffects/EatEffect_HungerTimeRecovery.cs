@@ -11,7 +11,7 @@ public class EatEffect_HungerTimeRecovery : IEatItemEffect
     {
         _value = value;
         _duration = duration;
-        _description = string.Format(description, _value, _duration);
+        _description = EatEffectUtils.FormatSmart(description, _value, _duration);
     }
     
     public void UseEffect()

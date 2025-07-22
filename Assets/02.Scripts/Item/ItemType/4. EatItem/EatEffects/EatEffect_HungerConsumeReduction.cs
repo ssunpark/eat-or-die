@@ -9,7 +9,7 @@ public class EatEffect_HungerConsumeReduction : IEatItemEffect
     public EatEffect_HungerConsumeReduction(float value, string description)
     {
         _value = value;
-        _description = string.Format(description, _value * 100);
+        _description = EatEffectUtils.FormatSmart(description, value);
     }
 
     public void UseEffect()
