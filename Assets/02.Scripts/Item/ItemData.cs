@@ -33,7 +33,7 @@ public class ItemData
             }
             else
             {
-                throw new Exception("아이콘 로드에 실패했습니다.");
+                throw new Exception($"아이콘 로드에 실패했습니다. 아이콘 경로: {finalIconAddressablePath}");
             }
         };
     }
