@@ -8,6 +8,9 @@ public class EnemyStateMachine : NetworkBehaviour
 	// private EnemyStat _stat;
 	private ChangeDetector _changeDetector;
 
+	private GameObject _target;
+	public GameObject Target => _target;
+
 	private Animator _animator;
 	public Animator Animator => _animator;
 	
@@ -33,13 +36,18 @@ public class EnemyStateMachine : NetworkBehaviour
 		_stateDictionary = new Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>>
 		{
 			{ EEnemyState.Idle, new EnemyIdleState() },
+			{ EEnemyState.Trace, new EnemyTraceState() },
 			// { EEnemyState.Patrol, new EnemyPatrolState() },
-			// { EEnemyState.Trace, new EnemyTraceState() },
 			// { EEnemyState.Attack, new EnemyAttackState() },
 			// { EEnemyState.Die, new EnemyDieState() }
 		};
 		
 		_currentState = _stateDictionary[EEnemyState.Idle];
+	}
+
+	public void SetTarget(GameObject target)
+	{
+		_target = target;
 	}
 	
 	public override void FixedUpdateNetwork()
