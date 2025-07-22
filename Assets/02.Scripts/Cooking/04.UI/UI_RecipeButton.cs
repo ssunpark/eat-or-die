@@ -8,6 +8,8 @@ public class UI_RecipeButton : MonoBehaviour
     // public TextMeshProUGUI RecipeNameTextUI;
     public Image IconImage;
     private RecipeCSVData _data;
+    public int RecipeID => _data.ID;
+    
     public void Refresh(RecipeCSVData Data)
     {
         _data = Data;

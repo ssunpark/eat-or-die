@@ -7,50 +7,56 @@ public class UI_RecipeList : MonoBehaviour
     public GameObject ButtonPrefab;
 
     private List<RecipeCSVData> _recipeCsvDataList = new List<RecipeCSVData>();
-    private List<GameObject> _recipeButtonList =  new List<GameObject>();
-
-    // CSV 불러와서 버튼 생성 - 초기화
+    private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
+    
+    // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {
         _recipeCsvDataList = FoodCSVDataManager.Instance.RecipeCSVDataList;
-        ShowAllRecipes();
+
+        foreach (var recipe in _recipeCsvDataList)
+        {
+            var buttonObj = Instantiate(ButtonPrefab, Container.transform);
+            var recipeButton = buttonObj.GetComponent<UI_RecipeButton>();
+            recipeButton.Refresh(recipe);
+            buttonObj.SetActive(false); // 처음엔 꺼둠
+            _recipeButtonList.Add(recipeButton);
+        }
     }
 
     public void ShowAllRecipes()
     {
-        ClearAllButtons();
-
-        foreach (var recipe in _recipeCsvDataList)
+        foreach (var button in _recipeButtonList)
         {
-            CreateRecipeButton(recipe);
+            button.gameObject.SetActive(true);
         }
     }
-    
+
     public void ShowFilteredRecipes(List<RecipeCSVData> recipes)
     {
-        ClearAllButtons();
+        // 전부 비활성화
+        foreach (var button in _recipeButtonList)
+        {
+            button.gameObject.SetActive(false);
+        }
 
+        // 조건에 맞는 것만 활성화
         foreach (var recipe in recipes)
         {
-            CreateRecipeButton(recipe);
+            var match = _recipeButtonList.Find(btn => btn.RecipeID == recipe.ID);
+            if (match != null)
+            {
+                match.gameObject.SetActive(true);
+            }
         }
     }
 
-    private void CreateRecipeButton(RecipeCSVData recipe)
-    {
-        var buttonObj = Instantiate(ButtonPrefab, Container.transform);
-        var recipeButton = buttonObj.GetComponent<UI_RecipeButton>();
-        recipeButton.Refresh(recipe);
-        _recipeButtonList.Add(buttonObj);
-        buttonObj.SetActive(true);
-    }
-
-    private void ClearAllButtons()
+    // 전체 숨기기
+    public void HideAll()
     {
         foreach (var button in _recipeButtonList)
         {
-            button.SetActive(false);
+            button.gameObject.SetActive(false);
         }
-        _recipeButtonList.Clear();
     }
 }
