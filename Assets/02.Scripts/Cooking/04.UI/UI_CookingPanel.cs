@@ -35,12 +35,9 @@ public class UI_CookingPanel : MonoBehaviour
 
     public void OnClickCookingButton()
     {
-        CookingPanelManager.Instance.ProcessCookingResult();
-        CloseTab();
         // 플레이어 Cooking FSM 호출!
         
-        // 레시피 조합에 따른 결과 출력 명령 메서드 호출
-        // CookingPanelManager.Instance.TryGetRecipeResult();
+        CloseTab();
     }
 
     private void CloseTab()
