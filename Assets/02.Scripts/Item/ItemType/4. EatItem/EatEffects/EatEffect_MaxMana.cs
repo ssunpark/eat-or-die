@@ -5,6 +5,7 @@ public class EatEffect_MaxMana : IEatItemEffect
 {
     private readonly float _value;
     private readonly float _duration;
+    public string Description => $"{_duration}분 동안 최대 마나 +{_value}";
 
     public EatEffect_MaxMana(float value, float duration)
     {

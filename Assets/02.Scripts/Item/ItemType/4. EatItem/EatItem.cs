@@ -25,7 +25,12 @@ public class EatItem : AItem, IEatable, IUsable
         foreach (var effectData in effectDataList)
         {
             var effect = CreateEatItemEffect(effectData.Type, effectData.Value,  effectData.Duration);
+            if (effect == null)
+            {
+                continue;
+            }
             _effectList.Add(effect);
+            ItemData.AddDescription(effect.Description);
         }
     }
     

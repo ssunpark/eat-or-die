@@ -5,6 +5,7 @@ using UnityEngine;
 public class EatEffect_HungerInstantRecovery : IEatItemEffect
 {
     private readonly float _value;
+    public string Description => $"배고픔이 {_value} 증가 합니다.";
 
     public EatEffect_HungerInstantRecovery(float value)
     {
