@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -21,34 +20,13 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
 
     }
 
-    async void StartGame(GameMode mode)
+    public void SetRunner(NetworkRunner runner)
     {
-        _runner = gameObject.AddComponent<NetworkRunner>();
+        _runner = runner;
         _runner.ProvideInput = true;
-
-        var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
-        var sceneInfo = new NetworkSceneInfo();
-        if (scene.IsValid)
-        {
-            sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
-        }
-
-        await _runner.StartGame(new StartGameArgs()
-        {
-            GameMode = mode,
-            SessionName = "asdadasdas",
-            Scene = scene,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-        });
+        _runner.AddCallbacks(this);
     }
-    private void OnGUI()
-    {
-        if (_runner == null)
-        {
-            if (GUILayout.Button("Host")) StartGame(GameMode.Host);
-            if (GUILayout.Button("Join")) StartGame(GameMode.Client);
-        }
-    }
+
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
@@ -66,28 +44,23 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         input.Set(data);
     }
 
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    public void SpawnPlayer(NetworkRunner runner, PlayerRef player)
     {
         if (runner.IsServer)
         {
             var baseStats = new Dictionary<EStatType, float>(_statInputs);
 
-            
             Vector3 spawnPos = new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
         }
-
-
-
+    }
+    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+    {
+        
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        if (_spawnedCharacters.TryGetValue(player, out var networkObject))
-        {
-            runner.Despawn(networkObject);
-            _spawnedCharacters.Remove(player);
-        }
     }
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
@@ -107,11 +80,9 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
-        Debug.Log($"Object {obj} exited AOI for player {player}");
     }
 
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
     {
-        Debug.Log($"Object {obj} entered AOI for player {player}");
     }
 }

@@ -8,9 +8,10 @@ public class PlayerIdleState : APlayerState
     }
 
     public override bool CanMove => true;
+
+    public override bool CanAct => true;
     public override void Tick()
     {
-        if (_controller.IsLocalAttackLocked) return;
         if (!_controller.GetInput(out NetworkInputData inputData)) return;
         
         if (inputData.isAttacking)

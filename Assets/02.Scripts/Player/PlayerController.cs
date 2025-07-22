@@ -14,13 +14,30 @@ public class PlayerController : CharacterBase
 
     private PlayerStateMachine _fsm;
 
-    private bool _isAttackingLocally = false;
-    public bool IsLocalAttackLocked => _isAttackingLocally;
-
+    [Networked]public bool IsAttacking { get; set; }
+    //private bool _isAttacking = false;
     private float _lastAttackTime;
     public float AttackCooldown = 1f;
 
     [SerializeField] private string _playerHUDTagName = "PlayerHUD";
+
+
+    public void SetAttackingLocal(bool isAttacking)
+    {
+        //_isAttacking = isAttacking;
+        RPC_SetAttacking(isAttacking);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_SetAttacking(bool attacking)
+    {
+        IsAttacking = attacking;
+    }
+
+    public void OnChangedAttacking()
+    {
+        //_isAttacking = IsAttacking;
+    }
 
     public override void Spawned()
     {
@@ -32,10 +49,6 @@ public class PlayerController : CharacterBase
         TryInitialize();
     }
 
-    public void SetLocalAttackLock(bool p)
-    {
-        _isAttackingLocally = p;
-    }
     private void InitializePlayerHUD()
     {
         // 나중에 UIManager를 통해 HUD를 관리할 예정
@@ -102,15 +115,18 @@ public class PlayerController : CharacterBase
                 : 1f;
 
 
-            float moveSpeed = _fsm.CanMove && !_isAttackingLocally ? (baseSpeed * sprintMultiplier) : 0f;
-            if (moveSpeed > 0f)
-            {
-                Resource.ConsumeSatiety(Time.deltaTime * Stat.GetStat(EStatType.ConsumptionRate));
-            }
+            float moveSpeed = IsAttacking
+                ? 0f
+                : (baseSpeed * sprintMultiplier);
             if (_characterController.maxSpeed != moveSpeed)
             {
                 _characterController.maxSpeed = moveSpeed;
             }
+            if (moveSpeed > 0f)
+            {
+                Resource.ConsumeSatiety(Time.deltaTime * Stat.GetStat(EStatType.ConsumptionRate));
+            }
+            
             _characterController.Move(moveDirection);
 
 
