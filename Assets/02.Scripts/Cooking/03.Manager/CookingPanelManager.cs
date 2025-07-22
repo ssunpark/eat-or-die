@@ -95,7 +95,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
 
             if (isMatch)
             {
-                return recipe.ID;
+                return recipe.ResultID; //recipe.ID
             }
         }
 
