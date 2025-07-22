@@ -5,6 +5,7 @@
     protected StatManager _stat;
     protected ResourceManager _resource;
     public virtual bool CanMove => false;
+    public virtual bool CanAct => false;
     public APlayerState(PlayerStateMachine fsm, PlayerController controller)
     {
         _fsm = fsm;

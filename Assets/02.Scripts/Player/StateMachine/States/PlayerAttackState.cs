@@ -13,9 +13,9 @@ public class PlayerAttackState : APlayerState
             // 애니메이션 트리거
             _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Attack);
 
-            // 공격 잠금 설정
-            _controller.SetLocalAttackLock(true);
+            _controller.SetAttackingLocal(true);
         }
+
     }
 
     private System.Collections.IEnumerator AttackCoroutine()
@@ -39,9 +39,9 @@ public class PlayerAttackState : APlayerState
                 Debug.Log($"Attacked {target.name} for {damage} damage.");
             }
         }
-
+        Debug.Log(attackDelay);
         yield return new WaitForSeconds(attackDelay);
-
+        Debug.Log("gogo");
         _fsm.ChangeState(EPlayerState.Idle);
     }
 
@@ -50,8 +50,6 @@ public class PlayerAttackState : APlayerState
     public override void Exit()
     {
         if (_controller.Object.HasInputAuthority)
-        {
-            _controller.SetLocalAttackLock(false);
-        }
+            _controller.SetAttackingLocal(false);
     }
 }

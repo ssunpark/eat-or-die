@@ -12,10 +12,10 @@ public class PlayerHitState : APlayerState
     public override void Enter()
     {
         _elapsed = 0f;
-        _hitStunDuration = 0.5f; // 경직 시간 (애니메이션 길이에 맞춰 조정)
+        _hitStunDuration = 0.5f; // 경직 시간
         if (_controller.Object.HasInputAuthority)
         {
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Hit);
+            //_controller.Rpc_PlayAnimTrigger(EAnimTrigger.Hit);
         }
 
     }
