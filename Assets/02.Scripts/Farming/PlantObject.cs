@@ -2,8 +2,9 @@
 using Redcode.Pools;
 using UnityEngine;
 
-public class PlantObject : NetworkBehaviour
+public class PlantObject : NetworkBehaviour, IInteractable
 {
+    private const int ROTTEN_CROP_ID = 200012;
     // 작물의 성장과 결과물을 관리
     // 외형은 자식 오브젝트 생성해서 관리
     [Networked]
@@ -81,6 +82,7 @@ public class PlantObject : NetworkBehaviour
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
             // 썩은 작물
+            ItemManager.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, transform.position, Quaternion.identity);
         }
         // 풀 반환
         FarmingManager.Instance.ReturnPlant(new PlantPoolKey(PlantID, GrowthLevel), _plantObject);
