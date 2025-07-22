@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerMoveState : PlayerStateBase
+public class PlayerMoveState : APlayerState
 {
     public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
@@ -16,6 +16,7 @@ public class PlayerMoveState : PlayerStateBase
 
     public override void Tick()
     {
+        if (_controller.IsLocalAttackLocked) return;
         if (!_controller.GetInput(out NetworkInputData inputData)) return;
 
         if (inputData.isAttacking)

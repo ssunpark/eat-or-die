@@ -1,11 +1,11 @@
-﻿public abstract class PlayerStateBase
+﻿public abstract class APlayerState
 {
     protected PlayerStateMachine _fsm;
     protected PlayerController _controller;
     protected StatManager _stat;
     protected ResourceManager _resource;
     public virtual bool CanMove => false;
-    public PlayerStateBase(PlayerStateMachine fsm, PlayerController controller)
+    public APlayerState(PlayerStateMachine fsm, PlayerController controller)
     {
         _fsm = fsm;
         _controller = controller;
