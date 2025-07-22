@@ -9,8 +9,10 @@ public class ItemObject : NetworkBehaviour, IPickable
     public int ItemID { get; set; }
     [Networked]
     public int Quantity { get; set; }
-
-    private bool _isDespawn;
+    [Networked]
+    public Vector3 SpawnPosition { get; set; }
+    
+    // private bool _isDespawn;
     private NetworkId _targetID;
     private bool _hasOwner;
     public bool HasOwner { get => _hasOwner; set => _hasOwner = value; }
@@ -35,43 +37,41 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     public override void Spawned()
     {
+        transform.position = SpawnPosition;
         var icon = ItemManager.Instance.GetItem(ItemID).ItemData.Icon;
         ApplyVisual(icon);
     }
 
-    public override void FixedUpdateNetwork()
+    private void Update()
     {
-        if (Runner.IsServer && _target != null)
+        if (_target != null)
         {
-            transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Runner.DeltaTime);
-
+            transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Time.deltaTime);
+            
             if (Vector3.Distance(transform.position, _target.position) < _absorbThreshold)
             {
                 // 인벤에 등록 요청
-                RPC_AddInventory(_target.GetComponent<NetworkObject>().InputAuthority);
+                if (_target.GetComponent<NetworkObject>().HasInputAuthority)
+                {
+                    ItemStack itemStack = new ItemStack(ItemID,
+                        ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
+                    InventoryManager.Instance.PickItemFromGround(itemStack);
+                    RPC_Despawn();
+                }
                 _target = null;
-                _isDespawn = true;
-                return;
             }
-        }
-
-        if (Runner.IsServer && _isDespawn)
-        {
-            Runner.Despawn(Object);
         }
     }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_AddInventory(PlayerRef targetPlayerRef)
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void RPC_Despawn()
     {
-        if (Runner.LocalPlayer != targetPlayerRef)
+        if (!Runner.IsServer)
         {
             return;
         }
         
-        ItemStack itemStack = new ItemStack(ItemID,
-            ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
-        InventoryManager.Instance.PickItemFromGround(itemStack);
+        Runner.Despawn(Object);
     }
 
     [Rpc(RpcSources.All, RpcTargets.All)]

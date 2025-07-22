@@ -120,6 +120,7 @@ public class ItemManager : NetworkBehaviour
                 var item = obj.GetComponent<ItemObject>();
                 item.ItemID = id;
                 item.Quantity = quantity;
+                item.SpawnPosition = position;
             });
     }
 }
