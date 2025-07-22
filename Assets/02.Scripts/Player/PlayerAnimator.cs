@@ -4,7 +4,7 @@ using UnityEngine;
 public enum EAnimTrigger
 {
     Attack,
-    Farming,
+    Interact,
     Cook,
     CookDone,
     Jump,
@@ -21,7 +21,7 @@ public class PlayerAnimator : NetworkBehaviour
 
     private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new(){
     { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
-    { EAnimTrigger.Farming, Animator.StringToHash("Farming") },
+    { EAnimTrigger.Interact, Animator.StringToHash("Interact") },
     { EAnimTrigger.Cook, Animator.StringToHash("Cook") },
     { EAnimTrigger.CookDone, Animator.StringToHash("CookDone") },
     { EAnimTrigger.Jump, Animator.StringToHash("Jump") },
