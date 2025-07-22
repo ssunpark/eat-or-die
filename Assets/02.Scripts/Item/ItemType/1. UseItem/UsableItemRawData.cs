@@ -11,6 +11,9 @@ public class UsableItemRawData
     [Name("Description")]
     public string Description { get; set; }
     
+    [Name("Cookable")]
+    public bool Cookable { get; set; }
+    
     [Name("MaxStack")]
     public int MaxQuantity { get; set; }
 

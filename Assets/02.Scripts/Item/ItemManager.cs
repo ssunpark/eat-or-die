@@ -20,8 +20,9 @@ public class ItemManager : NetworkBehaviour
         }
     }
     
-    private const string FOOD_CSV_PATH = "/ItemCSV/FOOD.csv";
+    private const string FOOD_CSV_PATH = "/ItemCSV/Food.csv";
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
+    private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -70,6 +71,7 @@ public class ItemManager : NetworkBehaviour
         
         // 도구 아이템
         var usableRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
+        usableRawDataList.AddRange(ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
         foreach (var data in usableRawDataList)
         {
             var useItem = _itemFactory.CreateUsableItem(data);
