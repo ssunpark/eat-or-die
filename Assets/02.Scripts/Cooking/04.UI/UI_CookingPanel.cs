@@ -37,6 +37,9 @@ public class UI_CookingPanel : MonoBehaviour
     {
         // 플레이어 Cooking FSM 호출!
         
+        // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
+        CookingPanelManager.Instance.OnCookingCompleted(true);
+        
         CloseTab();
     }
 

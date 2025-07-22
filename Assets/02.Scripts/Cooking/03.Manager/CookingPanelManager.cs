@@ -145,12 +145,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
 
     private void TransferItemToInventory(ItemStack item)
     {
-        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(item);
+        InventoryManager.Instance.PickItemFromGround(item);
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-
-        if (remain != null)
-        {
-            ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, Vector3.zero, Quaternion.identity);
-        }
     }
 }
