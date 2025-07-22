@@ -11,13 +11,17 @@ public class PlayerMoveState : APlayerState
         _moveStatietyInterval = _fsm.MoveStatietyInterval;
     }
     public override bool CanMove => true;
+    public override bool CanAct => true;
     private float _moveSatietyTimer;
     private float _moveStatietyInterval;
 
     public override void Tick()
     {
-        if (_controller.IsLocalAttackLocked) return;
-        if (!_controller.GetInput(out NetworkInputData inputData)) return;
+        if (!_controller.GetInput(out NetworkInputData inputData))
+        {
+            _fsm.ChangeState(EPlayerState.Idle);
+            return;
+        }
 
         if (inputData.isAttacking)
         {
