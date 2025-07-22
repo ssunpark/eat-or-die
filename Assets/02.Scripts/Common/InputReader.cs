@@ -18,7 +18,7 @@ public class InputReader : MonoBehaviour
     private PlayerInputActions _inputActions;
 
     [HideInInspector]
-    public bool playerControllerInputBlocked;
+    public static bool playerControllerInputBlocked;
     protected bool _externalInputBlocked;
     private bool _paused;
 
@@ -55,6 +55,10 @@ public class InputReader : MonoBehaviour
 
     public bool ConsumeInteractionInput()
     {
+        if (playerControllerInputBlocked || _externalInputBlocked)
+        {
+            return false;
+        }
         bool result = _interactPressed;
         _interactPressed = false;
         return result;
@@ -62,12 +66,20 @@ public class InputReader : MonoBehaviour
 
     public bool ConsumeAttackInput()
     {
+        if (playerControllerInputBlocked || _externalInputBlocked)
+        {
+            return false;
+        }
         bool result = AttackInput;
         _attackPressed = false;
         return result;
     }
     public bool ConsumeJumpInput()
     {
+        if (playerControllerInputBlocked || _externalInputBlocked)
+        {
+            return false;
+        }
         bool result = JumpInput;
         _jumpPressed = false;
         return result;
