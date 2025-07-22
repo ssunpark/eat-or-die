@@ -5,12 +5,15 @@ public class PlayerInteractState : APlayerState
 {
     public PlayerInteractState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
+
     }
 
     public override void Enter()
     {
-        // Logic to handle entering the interact state
-        Debug.Log("Entering Player Interact State");
+        if (_controller.Object.HasInputAuthority)
+        {
+            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Interact);
+        }
     }
 
     public override void Tick()
