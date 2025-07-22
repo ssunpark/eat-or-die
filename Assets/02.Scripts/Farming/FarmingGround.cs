@@ -52,13 +52,19 @@ public class FarmingGround : NetworkBehaviour
         _plowedGround.SetActive(true);
     }
 
-    public void Water()
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_Water()
     {
         if (State != EFarmingGroundState.Plowed)
         {
             return;
         }
-        State = EFarmingGroundState.Watered;
+        
+        if (Runner.IsServer)
+        {
+            State = EFarmingGroundState.Watered;
+        }
+        
         // 머티리얼 변경
         _plowedGroundRenderer.material = _waterMaterial;
         _plowedSubGroundRenderer.material = _waterMaterial;

@@ -71,7 +71,7 @@ public class FarmingInteractionTest : NetworkBehaviour
         // E키: 상호작용 (예: 작물 수확 등)
         else if (Input.GetKeyDown(KeyCode.E))
         {
-            if (UntaggedObject?.TryGetComponent(out PlantObject plant) ?? false)
+            if (UntaggedObject?.TryGetComponent(out IInteractable plant) ?? false)
             {
                 plant.Interact(); // 태그 없는 객체 대상
             }
