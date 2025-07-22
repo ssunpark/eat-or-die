@@ -12,6 +12,7 @@ public class ItemFactory
 
         var rawEffects = new (EEatItemEffectType type, float? value, float? duration)[]
         {
+            (EEatItemEffectType.HungerInstantRecovery, rawData.HungerRestore, null),    // 기본적인 배고픔 증가
             (rawData.EffectType1, rawData.Value1, rawData.Duration1),
             (rawData.EffectType2, rawData.Value2, rawData.Duration2),
             (rawData.EffectType3, rawData.Value3, rawData.Duration3),
