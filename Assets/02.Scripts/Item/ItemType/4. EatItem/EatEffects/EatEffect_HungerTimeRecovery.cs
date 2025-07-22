@@ -1,20 +1,21 @@
 ﻿using UnityEngine;
 
-// 사용 아이템 효과: {1}초 동안 1초마다 배고픔이 {0} 증가 합니다.
 public class EatEffect_HungerTimeRecovery : IEatItemEffect
 {
     private readonly float _value;
     private readonly float _duration;
-    public string Description => $"{_duration}초 동안 1초마다 배고픔이 {_value} 증가 합니다.";
+    private string _description;
+    public string Description => _description;
 
-    public EatEffect_HungerTimeRecovery(float value, float duration)
+    public EatEffect_HungerTimeRecovery(float value, float duration, string description)
     {
         _value = value;
         _duration = duration;
+        _description = string.Format(description, _value, _duration);
     }
     
     public void UseEffect()
     {
-        Debug.Log($"{_duration}초 동안 1초마다 배고픔이 {_value} 증가 합니다.");
+        Debug.Log(Description);
     }
 }

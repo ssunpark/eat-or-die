@@ -1,20 +1,19 @@
 ﻿using UnityEngine;
 
-// 사용 아이템 효과: {_duration}분 동안 최대 마나 +{_value}
 public class EatEffect_MaxMana : IEatItemEffect
 {
     private readonly float _value;
-    private readonly float _duration;
-    public string Description => $"{_duration}분 동안 최대 마나 +{_value}";
+    private string _description;
+    public string Description => _description;
 
-    public EatEffect_MaxMana(float value, float duration)
+    public EatEffect_MaxMana(float value, string description)
     {
         _value = value;
-        _duration = duration;
+        _description = string.Format(description, _value);
     }
     
     public void UseEffect()
     {
-        Debug.Log($"{_duration}분 동안 최대 마나 +{_value}");
+        Debug.Log(Description);
     }
 }

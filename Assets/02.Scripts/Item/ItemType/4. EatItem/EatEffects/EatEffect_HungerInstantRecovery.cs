@@ -1,20 +1,20 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-// 사용 아이템 효과: 배고픔이 Value 증가 합니다.
 public class EatEffect_HungerInstantRecovery : IEatItemEffect
 {
     private readonly float _value;
-    public string Description => $"배고픔이 {_value} 증가 합니다.";
+    private string _description;
+    public string Description => _description;
 
-    public EatEffect_HungerInstantRecovery(float value)
+    public EatEffect_HungerInstantRecovery(float value, string description)
     {
         _value = value;
+        _description = string.Format(description, _value);
     }
 
     public void UseEffect()
     {
         // 매개 변수로 받은 특정 타겟에 대해 효과 적용
-        Debug.Log($"배고픔이 {_value} 증가 합니다.");
+        Debug.Log(Description);
     }
 }
