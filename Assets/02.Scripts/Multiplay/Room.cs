@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
@@ -10,6 +10,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     private NetworkRunner _runner;
     public NetworkRunner Runner => _runner;
 
+    private FusionInputProvider _inputProvider;
     public async void StartGame(GameMode mode)
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
@@ -20,6 +21,15 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         if (scene.IsValid) {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
+        _inputProvider = FindAnyObjectByType<FusionInputProvider>();
+        if (_inputProvider != null)
+        {
+            _inputProvider.SetRunner(_runner);
+        }
+        else
+        {
+            Debug.LogError("FusionInputProvider not found in the scene.");
+        }
 
         await _runner.StartGame(new StartGameArgs()
         {
@@ -28,11 +38,13 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
+        
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("Player joined");
+        _inputProvider.SpawnPlayer(runner, player);
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
