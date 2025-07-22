@@ -35,7 +35,7 @@ public class UI_RecipeButton : MonoBehaviour
             }
         }
 
-        LockButton();
+        // LockButton();
     }
 
     public void UnlockButton()
