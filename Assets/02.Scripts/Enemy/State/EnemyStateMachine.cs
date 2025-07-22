@@ -32,7 +32,7 @@ public class EnemyStateMachine : NetworkBehaviour
 		
 		_stateDictionary = new Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>>
 		{
-			// { EEnemyState.Idle, new EnemyIdleState() },
+			{ EEnemyState.Idle, new EnemyIdleState() },
 			// { EEnemyState.Patrol, new EnemyPatrolState() },
 			// { EEnemyState.Trace, new EnemyTraceState() },
 			// { EEnemyState.Attack, new EnemyAttackState() },
