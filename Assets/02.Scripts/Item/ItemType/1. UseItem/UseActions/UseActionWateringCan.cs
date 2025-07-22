@@ -7,7 +7,7 @@ public class UseActionWateringCan : IUseAction
         if (target.TryGetComponent(out FarmingGround farmingGround))
         {
             // 물 주기
-            farmingGround.Water();
+            farmingGround.RPC_Water();
         }
     }
 }

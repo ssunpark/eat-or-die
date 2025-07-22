@@ -108,15 +108,4 @@ public class FarmingManager : NetworkBehaviour
        int randomIndex = Random.Range(0, keyList.Count);
        return keyList[randomIndex];
     }
-
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_Despawn(NetworkObject target)
-    {
-        if (!Runner.IsServer)
-        {
-            return;
-        }
-        
-        Runner.Despawn(target);
-    }
 }
