@@ -13,24 +13,31 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
 
     private PlayerController _controller;
 
+    public EPlayerState CurrentStateForDebug;
+    [HideInInspector] public PlayerInteractions Interact;
+
     //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
     [HideInInspector]
     public float MoveSatietyTimer;
     // 몇초 이동했을 때 배고픔 감소가 일어날지
     public float MoveStatietyInterval = 3f;
 
+    public IInteractable Interactable;
+    public IUsable Usable;
+
     public override void Spawned()
     {
         _controller = GetComponent<PlayerController>();
+        Interact = GetComponent<PlayerInteractions>();
         _states = new Dictionary<EPlayerState, APlayerState>
         {
             { EPlayerState.Idle, new PlayerIdleState(this, _controller) },
             { EPlayerState.Move, new PlayerMoveState(this, _controller) },
             { EPlayerState.Attack, new PlayerAttackState(this, _controller) },
             { EPlayerState.Hit, new PlayerHitState(this, _controller) },
-            { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
-        
+            { EPlayerState.UsingTool, new PlayerUsingItemState(this, _controller) },
             { EPlayerState.Cooking, new PlayerCookingState(this, _controller) },
+            { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
             /*{ EPlayerState.Down, new PlayerDownState(this, _controller) },
             { EPlayerState.Dead, new PlayerDeadState(this, _controller) },
              */
@@ -73,13 +80,6 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         if(HasInputAuthority) _activeState?.Tick();
     }
 
-    //private void OnStateChanged()
-    //{
-    //    _activeState?.Exit();
-    //    _activeState = _states[CurrentState];
-    //    _activeState.Enter();
-    //}
-
     public void ChangeState(EPlayerState newState)
     {
         if (newState == CurrentState) return;
@@ -88,6 +88,8 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         _activeState?.Exit();
         _activeState = _states[CurrentState];
         _activeState.Enter();
+
+        CurrentStateForDebug = CurrentState; // 디버그용
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
@@ -118,14 +120,9 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         }
     }
 
-    public void StartCooking()
+    public void RequestChangeState(EPlayerState newState)
     {
-        ChangeState(EPlayerState.Cooking);
-    }
-
-    public void FinishCooking()
-    {
-        ChangeState(EPlayerState.Idle);
+        ChangeState(newState);
     }
 
 }

@@ -5,8 +5,6 @@
         // 나중엔 CSV에서 가지고 오기
         switch (itemID)
         {
-            //임시!!!!!
-            case 500001:
             case 600001:
             case 600004:
                 type = EWeaponType.Sword; return true;

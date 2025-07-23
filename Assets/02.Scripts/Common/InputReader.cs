@@ -35,14 +35,19 @@ public class InputReader : MonoBehaviour
         _inputActions.Player.Move.canceled += HandleMoveCanceled;
         _inputActions.Player.Attack.performed += ctx => _attackPressed = true; 
         _inputActions.Player.Jump.performed += ctx => _jumpPressed = true;
-        _inputActions.Player.Interact.performed += ctx => _interactPressed = true; // This is a placeholder for interaction input, can be replaced with actual logic
+        _inputActions.Player.Interact.performed += ctx => _interactPressed = true;
+        _inputActions.Player.UseItem.performed += ctx => _useItemPressed = true;
     }
     private bool _attackPressed;
     private bool _jumpPressed;
 
-    private bool _interactPressed;
+    private bool _interactPressed; 
+    private bool _useItemPressed;
 
-
+    public bool UseItemInput
+    {
+        get { return _useItemPressed && !playerControllerInputBlocked && !_externalInputBlocked; }
+    }
     public bool JumpInput
     {
         get { return _jumpPressed && !playerControllerInputBlocked && !_externalInputBlocked; }
@@ -53,13 +58,27 @@ public class InputReader : MonoBehaviour
         get { return _attackPressed && !playerControllerInputBlocked && !_externalInputBlocked; }
     }
 
+    public bool InteractInput
+    {
+        get { return _interactPressed && !playerControllerInputBlocked && !_externalInputBlocked; }
+    }
+    public bool ConsumeUseItemInput()
+    {
+        if (playerControllerInputBlocked || _externalInputBlocked)
+        {
+            return false;
+        }
+        bool result = UseItemInput;
+        _useItemPressed = false;
+        return result;
+    }
     public bool ConsumeInteractionInput()
     {
         if (playerControllerInputBlocked || _externalInputBlocked)
         {
             return false;
         }
-        bool result = _interactPressed;
+        bool result = InteractInput;
         _interactPressed = false;
         return result;
     }

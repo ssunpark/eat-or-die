@@ -21,8 +21,8 @@ GameObject:
   - component: {fileID: 1441634403729200998}
   - component: {fileID: 9075220696021084764}
   - component: {fileID: 1508319554009502233}
-  - component: {fileID: 4804922771819791935}
   - component: {fileID: 1970227623655097793}
+  - component: {fileID: -7732792288924044988}
   m_Layer: 10
   m_Name: Character
   m_TagString: Player
@@ -97,7 +97,6 @@ MonoBehaviour:
   - {fileID: 1441634403729200998}
   - {fileID: 9075220696021084764}
   - {fileID: 1508319554009502233}
-  - {fileID: 4804922771819791935}
   - {fileID: 1970227623655097793}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &8446609235003013225
@@ -211,6 +210,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 461bb6dd59ec8cb429e71d818b754b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CurrentStateForDebug: 0
+  Interact: {fileID: 0}
   MoveSatietyTimer: 0
   MoveStatietyInterval: 3
 --- !u!114 &9075220696021084764
@@ -227,7 +228,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerAnimatorController: {fileID: 0}
   _IsAttacking: 0
-  AttackCooldown: 1
   _playerHUDTagName: PlayerHUD
 --- !u!114 &1508319554009502233
 MonoBehaviour:
@@ -245,26 +245,6 @@ MonoBehaviour:
   _itemLayerMask:
     serializedVersion: 2
     m_Bits: 256
---- !u!114 &4804922771819791935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4656477318081228857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4ab85e5c1e542dc96207306e30d671d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  InteractionLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  TagName: 
-  HoldItemID: 0
-  ItemName: 
-  InteractionObject: {fileID: 0}
-  UntaggedObject: {fileID: 0}
 --- !u!114 &1970227623655097793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,7 +266,7 @@ MonoBehaviour:
   - key: Staff
     controller: {fileID: 22100000, guid: c35e8c7140bbd824291e2fa14ea83c4d, type: 2}
   - key: Hoe
-    controller: {fileID: 22100000, guid: 7fbfb5b6b9ad11345ac36411415c5329, type: 2}
+    controller: {fileID: 22100000, guid: 65189dee060c2d840bba9f034bc5f3d6, type: 2}
   - key: WateringCan
     controller: {fileID: 22100000, guid: f8357a0dd51636c4ca37c1a6006cc73b, type: 2}
   - key: Seed
@@ -294,6 +274,26 @@ MonoBehaviour:
   - key: Unarmed
     controller: {fileID: 22100000, guid: 352cbfaeede517f4aa29b300329de502, type: 2}
   _HoldItemID: 0
+--- !u!114 &-7732792288924044988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4656477318081228857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f4ba1c719e6ed64c8d55b466316ea68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InteractionLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  TagName: 
+  HoldItemID: 0
+  ItemName: 
+  InteractionObject: {fileID: 0}
+  UntaggedObject: {fileID: 0}
 --- !u!1001 &5655635364309781370
 PrefabInstance:
   m_ObjectHideFlags: 0
