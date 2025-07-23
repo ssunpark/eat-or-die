@@ -13,7 +13,7 @@ public class PlayerAttackState : APlayerState
             // 애니메이션 트리거
             _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Attack);
 
-            _controller.SetAttackingLocal(true);
+            _controller.RPC_SetIsAttacking(true);
         }
 
     }
@@ -43,11 +43,11 @@ public class PlayerAttackState : APlayerState
         _fsm.ChangeState(EPlayerState.Idle);
     }
 
-    public override void Tick() { } // 무시
+    public override void Tick() { }
 
     public override void Exit()
     {
         if (_controller.Object.HasInputAuthority)
-            _controller.SetAttackingLocal(false);
+            _controller.RPC_SetIsAttacking(false);
     }
 }

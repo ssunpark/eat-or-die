@@ -6,37 +6,18 @@ using Fusion;
 public class PlayerController : CharacterBase
 {
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
-
     private NetworkCharacterController _characterController;
     private bool _isSpawned = false;
     private SatietyEffectHandler _satietyEffectHandler;
     public SatietyEffectHandler SatietyEffectHandler => _satietyEffectHandler;
-
     private PlayerStateMachine _fsm;
-
     [Networked]public bool IsAttacking { get; set; }
-    //private bool _isAttacking = false;
-    private float _lastAttackTime;
-    public float AttackCooldown = 1f;
-
     [SerializeField] private string _playerHUDTagName = "PlayerHUD";
 
-
-    public void SetAttackingLocal(bool isAttacking)
-    {
-        //_isAttacking = isAttacking;
-        RPC_SetAttacking(isAttacking);
-    }
-
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_SetAttacking(bool attacking)
+    public void RPC_SetIsAttacking(bool attacking)
     {
         IsAttacking = attacking;
-    }
-
-    public void OnChangedAttacking()
-    {
-        //_isAttacking = IsAttacking;
     }
 
     public override void Spawned()
@@ -82,7 +63,6 @@ public class PlayerController : CharacterBase
             _characterController.maxSpeed = Stat.GetStat(EStatType.MoveSpeed);
             _characterController.jumpImpulse = Stat.GetStat(EStatType.JumpPower);
             _characterController.acceleration = Stat.GetStat(EStatType.Acceleration);
-
 
             if (Object.HasInputAuthority)
             {

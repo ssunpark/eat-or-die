@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 
 public class PlayerMoveState : APlayerState
 {
@@ -30,8 +31,23 @@ public class PlayerMoveState : APlayerState
         }
         if (inputData.isInteracting)
         {
-            _fsm.ChangeState(EPlayerState.Interact);
-            return;
+            IInteractable interactable;
+            if (_fsm.Interact.TryInteract(out interactable))
+            {
+                _fsm.Interactable = interactable;
+                _fsm.ChangeState(EPlayerState.Interact);
+                return;
+            }
+        }
+        if (inputData.isUsing)
+        {
+            IUsable usable;
+            if(_fsm.Interact.TryUseItem(out usable))
+            {
+                _fsm.Usable = usable;
+                _fsm.ChangeState(EPlayerState.UsingTool);
+                return;
+            }
         }
 
         Vector3 dir = inputData.direction;
