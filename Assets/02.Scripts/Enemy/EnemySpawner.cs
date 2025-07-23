@@ -7,15 +7,17 @@ public class EnemySpawner : MonoBehaviour
     
     public float SpawnDuration = 5f; // Spawn 간격
     private float _spawnTimer = 0f;
+    private int n = 0;
 
     private void Update()
     {
         if (Room.Instance == null || !Room.Instance.Runner.IsServer) return;
         
-        if (_spawnTimer >= SpawnDuration)
+        if (_spawnTimer >= SpawnDuration && n < 2)
         {
             SpawnEnemy();
             _spawnTimer = 0f;
+            n++;
         }
         _spawnTimer += Time.deltaTime;
     }

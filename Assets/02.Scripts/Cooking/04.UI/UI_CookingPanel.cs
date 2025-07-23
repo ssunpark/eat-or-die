@@ -11,6 +11,7 @@ public class UI_CookingPanel : MonoBehaviour
 
     private void Start()
     {
+        CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
 
