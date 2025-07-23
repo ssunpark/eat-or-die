@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using Fusion; // Add Fusion for NetworkInputData
 
-public class PlayerInteractState : APlayerState
+public class PlayerUsingItemState : APlayerState
 {
-    public PlayerInteractState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
+    public PlayerUsingItemState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
     {
-    }
 
+    }
     public override bool CanMove => base.CanMove;
     public override bool CanAct => false;
 
@@ -17,10 +17,9 @@ public class PlayerInteractState : APlayerState
             _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Interact);
 
             // 애니메이션 이벤트?로 할 예정
-            _fsm.Interact.UseOrInteract(usable: null, interactable: _fsm.Interactable);
+            _fsm.Interact.UseOrInteract(usable: _fsm.Usable);
         }
     }
-
     private float _time = 0f;
     public override void Tick()
     {

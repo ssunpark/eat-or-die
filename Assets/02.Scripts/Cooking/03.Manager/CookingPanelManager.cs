@@ -172,7 +172,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     private bool _isCooking;
     internal void StartCook()
     {
-        Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().StartCooking();
+        Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
         _t = 0;
         _isCooking = true;
     }
@@ -183,7 +183,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         _t += Time.deltaTime;
         if (_t >= _cookTime)
         {
-            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().FinishCooking();
+            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
         }
     }
 }
