@@ -11,7 +11,6 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
 
-    private string _nickname = "Player";
     private Dictionary<EStatType, float> _statInputs = new();
 
     private void Awake()
@@ -50,7 +49,8 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         {
             var baseStats = new Dictionary<EStatType, float>(_statInputs);
 
-            Vector3 spawnPos = new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
+            // Vector3 spawnPos = new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
+            Vector3 spawnPos = new Vector3(30, 0, 171); // DemoScene Spawn Position
             runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
         }
     }

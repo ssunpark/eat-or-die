@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 //수현
@@ -11,6 +11,7 @@ public class UI_CookingPanel : MonoBehaviour
 
     private void Start()
     {
+        CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
 
@@ -31,20 +32,23 @@ public class UI_CookingPanel : MonoBehaviour
     public void OpenCookingPanel()
     {
         CookingPanel.SetActive(true);
+        InputReader.playerControllerInputBlocked = true;
     }
 
     public void OnClickCookingButton()
     {
         // 플레이어 Cooking FSM 호출!
-        
+        CookingPanelManager.Instance.StartCook();
         // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
-        CookingPanelManager.Instance.OnCookingCompleted(true);
+        //CookingPanelManager.Instance.OnCookingCompleted(true);
         
         CloseTab();
     }
 
     private void CloseTab()
     {
+
+        InputReader.playerControllerInputBlocked = false;
         isOpen = false;
         CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
