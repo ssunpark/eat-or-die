@@ -39,9 +39,7 @@ public class PlayerAttackState : APlayerState
                 Debug.Log($"Attacked {target.name} for {damage} damage.");
             }
         }
-        Debug.Log(attackDelay);
         yield return new WaitForSeconds(attackDelay);
-        Debug.Log("gogo");
         _fsm.ChangeState(EPlayerState.Idle);
     }
 

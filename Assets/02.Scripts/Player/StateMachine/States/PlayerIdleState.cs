@@ -19,6 +19,11 @@ public class PlayerIdleState : APlayerState
             _fsm.ChangeState(EPlayerState.Attack);
             return;
         }
+        if (inputData.isInteracting)
+        {
+            _fsm.ChangeState(EPlayerState.Interact);
+            return;
+        }
 
         Vector3 dir = inputData.direction;
 

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 // 수현
 public class CookingPotInteractable : MonoBehaviour, IInteractable
 {
@@ -6,5 +6,6 @@ public class CookingPotInteractable : MonoBehaviour, IInteractable
     public void Interact()
     {
         CookingPanelUI.SetActive(true);
+        InputReader.playerControllerInputBlocked = true;
     }
 }

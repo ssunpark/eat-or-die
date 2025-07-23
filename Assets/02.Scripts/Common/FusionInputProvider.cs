@@ -11,7 +11,6 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
 
-    private string _nickname = "Player";
     private Dictionary<EStatType, float> _statInputs = new();
 
     private void Awake()
