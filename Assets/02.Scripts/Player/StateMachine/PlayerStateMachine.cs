@@ -13,7 +13,6 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
 
     private PlayerController _controller;
 
-
     //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
     [HideInInspector]
     public float MoveSatietyTimer;
@@ -29,10 +28,10 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
             { EPlayerState.Move, new PlayerMoveState(this, _controller) },
             { EPlayerState.Attack, new PlayerAttackState(this, _controller) },
             { EPlayerState.Hit, new PlayerHitState(this, _controller) },
-            /*
             { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
+        
             { EPlayerState.Cooking, new PlayerCookingState(this, _controller) },
-            { EPlayerState.Down, new PlayerDownState(this, _controller) },
+            /*{ EPlayerState.Down, new PlayerDownState(this, _controller) },
             { EPlayerState.Dead, new PlayerDeadState(this, _controller) },
              */
         };
@@ -118,4 +117,15 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
             return false;
         }
     }
+
+    public void StartCooking()
+    {
+        ChangeState(EPlayerState.Cooking);
+    }
+
+    public void FinishCooking()
+    {
+        ChangeState(EPlayerState.Idle);
+    }
+
 }

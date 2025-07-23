@@ -53,10 +53,29 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
 
+
+
     // 요리 시스템 <-> 플레이어 FSM 연동 (Exit 메서드에서 호출)
-    public void OnCookingCompleted(bool isSuccess)
+    //public void OnCookingCompleted(bool isSuccess)
+    //{
+    //    if (isSuccess)
+    //    {
+    //        ProcessCookingResult();
+    //    }
+    //    else
+    //    {
+    //        ReturnRecipesToInventory();
+    //    }
+    //}
+    public void OnCookingCompleted()
     {
-        if (isSuccess)
+        if (!_isCooking)
+        {
+            Debug.LogWarning("요리가 진행 중이 아닙니다.");
+            return;
+        }
+        _isCooking = false;
+        if (_t>=_cookTime)
         {
             ProcessCookingResult();
         }
@@ -147,5 +166,24 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     {
         InventoryManager.Instance.PickItemFromGround(item);
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+    }
+    private float _t;
+    private float _cookTime = 4f;
+    private bool _isCooking;
+    internal void StartCook()
+    {
+        Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().StartCooking();
+        _t = 0;
+        _isCooking = true;
+    }
+    
+    private void Update()
+    {
+        if (!_isCooking) return;
+        _t += Time.deltaTime;
+        if (_t >= _cookTime)
+        {
+            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().FinishCooking();
+        }
     }
 }
