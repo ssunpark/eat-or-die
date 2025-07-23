@@ -27,7 +27,7 @@ public class UI_Hand : MonoBehaviour
 	
 	public void UpdateHandUI()
 	{
-		ItemStack itemInHand = HandEntity.Instance.ItemStack;
+		Item itemInHand = HandEntity.Instance.Item;
 		if (itemInHand == null)
 		{
 			IconImage.gameObject.SetActive(false);

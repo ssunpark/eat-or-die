@@ -53,9 +53,9 @@ public class ItemObject : NetworkBehaviour, IPickable
                 // 인벤에 등록 요청
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
-                    ItemStack itemStack = new ItemStack(ItemID,
+                    Item item = new Item(ItemID,
                         ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
-                    InventoryManager.Instance.PickItemFromGround(itemStack);
+                    InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
                 }
                 _target = null;

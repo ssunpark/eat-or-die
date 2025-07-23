@@ -21,10 +21,10 @@ public class UI_RecipeButton : MonoBehaviour
         _data = Data;
         // RecipeNameTextUI.text = Data.Name;
         
-        AItem item = ItemManager.Instance.GetItem(_data.ResultID);
-        if (item != null)
+        AItemInfo itemInfo = ItemManager.Instance.GetItem(_data.ResultID);
+        if (itemInfo != null)
         {
-            IconImage.sprite = item.ItemData.Icon;
+            IconImage.sprite = itemInfo.ItemData.Icon;
             IconImage.gameObject.SetActive(true);
         }
         else

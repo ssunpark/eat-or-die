@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-public class EquipmentItem : AItem, IEquipable
+public class EquipmentItemInfo : AItemInfo, IEquipable
 {
     // 장비 아이템 스텟 효과
     
-    public EquipmentItem(ItemData itemData) : base(itemData)
+    public EquipmentItemInfo(ItemData itemData) : base(itemData)
     {
     }
 

@@ -1,7 +1,8 @@
 ﻿using System;
 
-// 갯수를 포함하는 아이템 정보
-public class ItemStack
+// 외부에서 보이는 값이 변하는 아이템 실질적인 객체
+// 내구도, 갯수 유형으로 나뉨
+public class Item
 {
     public readonly int ID;
     public readonly int MaxQuantity;
@@ -9,7 +10,7 @@ public class ItemStack
     private int _quantity;
     public int Quantity => _quantity;
 
-    public ItemStack(int id, int maxQuantity, int initialQuantity = 0)
+    public Item(int id, int maxQuantity, int initialQuantity = 0)
     {
         if (id < 0)
         {

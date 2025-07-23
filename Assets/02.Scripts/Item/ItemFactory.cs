@@ -6,7 +6,7 @@ public class ItemFactory
     private EatEffectFactory _eatEffectFactory = new();
 
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public EatItem CreateEatItem(EatItemRawData rawData)
+    public EatItemInfo CreateEatItem(EatItemRawData rawData)
     {
         var effectList = new List<IEatItemEffect>();
 
@@ -29,7 +29,7 @@ public class ItemFactory
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable,
             rawData.MaxQuantity, rawData.IconPath);
-        return new EatItem(itemData, effectList);
+        return new EatItemInfo(itemData, effectList);
     }
 
     // public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
@@ -44,7 +44,7 @@ public class ItemFactory
     //     return new WeaponItem(itemData, rawData.Type);
     // }
 
-    public UsableItem CreateUsableItem(UsableItemRawData rawData)
+    public UsableItemInfo CreateUsableItem(UsableItemRawData rawData)
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.MaxQuantity,
             rawData.AddressablePath);
@@ -54,6 +54,6 @@ public class ItemFactory
             EUseAction.Water => new UseActionWateringCan(),
             EUseAction.Plant => new UseActionSeed(rawData.ID),
         };
-        return new UsableItem(itemData, rawData.InteractionTag, useAction);
+        return new UsableItemInfo(itemData, rawData.InteractionTag, useAction);
     }
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
 {
-    private ItemStack[] _ingredients ;
-    public ItemStack[] Ingredients => _ingredients;
+    private Item[] _ingredients ;
+    public Item[] Ingredients => _ingredients;
     public event Action OnInventoryUpdated;
 
     public UI_RecipeList RecipeListUI;
@@ -19,8 +19,8 @@ public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
     public void UpdateIngredients()
     {
         _ingredients = InventoryManager.Instance.Inventory.SlotList
-            .Where(slot => slot.ItemStack != null && slot.ItemStack.ID >= 200000 && slot.ItemStack.ID < 300000)
-            .Select(slot => slot.ItemStack)
+            .Where(slot => slot.Item != null && slot.Item.ID >= 200000 && slot.Item.ID < 300000)
+            .Select(slot => slot.Item)
             .ToArray();
         for (int i = 0; i < _ingredients.Length; i++)
         {

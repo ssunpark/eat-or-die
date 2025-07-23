@@ -39,10 +39,10 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
         }
         else
         {
-            if (HandEntity.Instance.ItemStack.ID == slot.ItemStack.ID)
+            if (HandEntity.Instance.Item.ID == slot.Item.ID)
             {
                 // 스택 합치기
-                ItemStack popped = foodInventory.PopSingleItemInSlot(SlotIndex);
+                Item popped = foodInventory.PopSingleItemInSlot(SlotIndex);
                 if (!HandEntity.Instance.TryAddItem(popped))
                 {
                     // 손에 더 못 넣으면 다시 인벤토리에 넣기
@@ -57,7 +57,7 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
 
     public void UpdateSlotUI()
     {
-        var itemInSlot = CookingPanelManager.Instance.FoodInventory.SlotList[SlotIndex].ItemStack;
+        var itemInSlot = CookingPanelManager.Instance.FoodInventory.SlotList[SlotIndex].Item;
         if (itemInSlot == null)
         {
             IconImage.gameObject.SetActive(false);

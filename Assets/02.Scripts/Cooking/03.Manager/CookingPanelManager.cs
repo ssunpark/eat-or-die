@@ -20,7 +20,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         else
         {
-            HandEntity.Instance.PickUpItem(Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
+            HandEntity.Instance.PickUpItem(Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
@@ -35,18 +35,18 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         else
         {
-            if (HandEntity.Instance.ItemStack.ID == Inventory.SlotList[slotIndex].ItemStack.ID)
+            if (HandEntity.Instance.Item.ID == Inventory.SlotList[slotIndex].Item.ID)
             {
                 var itemInSlot = Inventory.PopSingleItemInSlot(slotIndex);
                 if (!HandEntity.Instance.TryAddItem(itemInSlot))
                 {
-                    Inventory.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
+                    Inventory.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
                 }
             }
             else
             {
                 var temp = Inventory.PopItemInSlot(slotIndex);
-                Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
+                Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
                 HandEntity.Instance.PickUpItem(temp);
             }
         }
@@ -94,8 +94,8 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     {
         if (HasEmptySlot()) return -1;
 
-        int id1 = Inventory.SlotList[0].ItemStack.ID;
-        int id2 = Inventory.SlotList[1].ItemStack.ID;
+        int id1 = Inventory.SlotList[0].Item.ID;
+        int id2 = Inventory.SlotList[1].Item.ID;
 
         foreach (var recipe in FoodCSVDataManager.Instance.RecipeCSVDataList)
         {
@@ -128,7 +128,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         {
             if (!slot.IsEmpty)
             {
-                TransferItemToInventory(slot.ItemStack);
+                TransferItemToInventory(slot.Item);
                 slot.RemoveItem();
             }
         }
@@ -153,7 +153,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
             return;
         }
 
-        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new ItemStack(itemId, resultItem.ItemData.MaxQuantity, 1));
+        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new Item(itemId, resultItem.ItemData.MaxQuantity, 1));
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
 
         if (remain != null)
@@ -162,7 +162,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
     }
 
-    private void TransferItemToInventory(ItemStack item)
+    private void TransferItemToInventory(Item item)
     {
         InventoryManager.Instance.PickItemFromGround(item);
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();

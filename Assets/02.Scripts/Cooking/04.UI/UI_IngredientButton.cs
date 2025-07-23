@@ -24,10 +24,10 @@ public class UI_IngredientButton : MonoBehaviour
         // IngredientNameTextUI.text = _data.Name;
         IngredientID = _data.ID;
         
-        AItem item = ItemManager.Instance.GetItem(_data.ID);
-        if (item != null)
+        AItemInfo itemInfo = ItemManager.Instance.GetItem(_data.ID);
+        if (itemInfo != null)
         {
-            IconImage.sprite = item.ItemData.Icon;
+            IconImage.sprite = itemInfo.ItemData.Icon;
             IconImage.gameObject.SetActive(true);
         }
         else

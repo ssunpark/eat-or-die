@@ -31,7 +31,7 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 
 	public void UpdateSlotUI()
 	{
-		ItemStack itemInSlot = QuickSlotManager.Instance.QuickSlots.SlotList[SlotIndex].ItemStack;
+		Item itemInSlot = QuickSlotManager.Instance.QuickSlots.SlotList[SlotIndex].Item;
 		if (itemInSlot == null)
 		{
 			IconImage.gameObject.SetActive(false);

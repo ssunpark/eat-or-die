@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-public class UsableItem : AItem, IUsable, IEquipable
+public class UsableItemInfo : AItemInfo, IUsable, IEquipable
 {
     private readonly IUseAction _useAction;
     private readonly string _interactionTag;
     
-    public UsableItem(ItemData itemData, string interactionTag, IUseAction useAction) : base(itemData)
+    public UsableItemInfo(ItemData itemData, string interactionTag, IUseAction useAction) : base(itemData)
     {
         _interactionTag = interactionTag;
         _useAction = useAction;

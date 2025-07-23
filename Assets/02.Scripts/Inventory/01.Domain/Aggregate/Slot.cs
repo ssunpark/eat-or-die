@@ -1,22 +1,22 @@
 public class Slot
 {
-    public ItemStack ItemStack { get; private set; }
-    public bool IsEmpty => ItemStack == null;
+    public Item Item { get; private set; }
+    public bool IsEmpty => Item == null;
     
-    public void AddItem(ItemStack itemStack)
+    public void AddItem(Item item)
     {
-        ItemStack = itemStack;
+        Item = item;
     }
 
     public void RemoveItem()
     {
-        ItemStack = null;
+        Item = null;
     }
 
     public void UseItem()
     {
-        ItemStack.TryRemove(1);
-        if (ItemStack.Quantity == 0)
+        Item.TryRemove(1);
+        if (Item.Quantity == 0)
         {
             RemoveItem();
         }

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-public class WeaponItem : AItem, IEquipable
+public class WeaponItemInfo : AItemInfo, IEquipable
 {
     public readonly EWeaponType _type;
     // TODO: 강화 속성은 추후에
     
-    public WeaponItem(ItemData itemData, EWeaponType weaponType) : base(itemData)
+    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType) : base(itemData)
     {
         _type = weaponType;
     }
