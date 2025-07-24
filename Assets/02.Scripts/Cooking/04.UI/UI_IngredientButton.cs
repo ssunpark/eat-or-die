@@ -8,8 +8,6 @@ public class UI_IngredientButton : MonoBehaviour
     // public TextMeshProUGUI IngredientNameTextUI;
     public Image IconImage;
     public Button  IngredientButtonUI;
-    
-    private IngredientCSVData _data;
     public int IngredientID { get; private set; }
 
     private void Start()
@@ -18,24 +16,26 @@ public class UI_IngredientButton : MonoBehaviour
         // IconImage.gameObject.SetActive(false);
     }
     
-    public void Refresh(IngredientCSVData data)
+    public void Refresh(AItemInfo itemInfo)
     {
-        _data = data;
-        // IngredientNameTextUI.text = _data.Name;
-        IngredientID = _data.ID;
-        
-        AItemInfo itemInfo = ItemManager.Instance.GetItem(_data.ID);
-        if (itemInfo != null)
+        if (itemInfo == null)
+        {
+            Debug.LogWarning("[UI_IngredientButton] 전달된 아이템 정보가 null입니다.");
+            IconImage.gameObject.SetActive(false);
+            return;
+        }
+
+        IngredientID = itemInfo.ItemData.ID;
+
+        if (itemInfo.ItemData.Icon != null)
         {
             IconImage.sprite = itemInfo.ItemData.Icon;
             IconImage.gameObject.SetActive(true);
         }
         else
         {
-            {
-                Debug.LogWarning($"[UI_IngredientButton] 아이템 데이터 없음 - ID: {_data.ID}");
-                IconImage.gameObject.SetActive(false);
-            }
+            Debug.LogWarning($"[UI_IngredientButton] 아이콘이 비어 있음 - ID: {IngredientID}");
+            IconImage.gameObject.SetActive(false);
         }
     }
 

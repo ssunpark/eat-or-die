@@ -31,7 +31,7 @@ public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
 
     public void UpdateRecipes(int ingredientID)
     {
-        var filteredRecipes = FoodCSVDataManager.Instance.RecipeCSVDataList
+        var filteredRecipes = RecipeDataManager.Instance.RecipeCSVDataList
             .Where(recipe => recipe.Ingredient1ID == ingredientID || recipe.Ingredient2ID == ingredientID)
             .ToList();
 

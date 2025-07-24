@@ -1,7 +1,7 @@
 using CsvHelper.Configuration.Attributes;
 
 [System.Serializable]
-public class RecipeCSVData
+public class Recipe
 {
     [Name("ID")]
     public int ID { get; set; }
