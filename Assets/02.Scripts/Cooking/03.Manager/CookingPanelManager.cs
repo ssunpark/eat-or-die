@@ -52,21 +52,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
-
-
-
-    // 요리 시스템 <-> 플레이어 FSM 연동 (Exit 메서드에서 호출)
-    //public void OnCookingCompleted(bool isSuccess)
-    //{
-    //    if (isSuccess)
-    //    {
-    //        ProcessCookingResult();
-    //    }
-    //    else
-    //    {
-    //        ReturnRecipesToInventory();
-    //    }
-    //}
+    
     public void OnCookingCompleted()
     {
         if (!_isCooking)
@@ -97,7 +83,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         int id1 = Inventory.SlotList[0].Item.ID;
         int id2 = Inventory.SlotList[1].Item.ID;
 
-        foreach (var recipe in FoodCSVDataManager.Instance.RecipeCSVDataList)
+        foreach (var recipe in RecipeDataManager.Instance.RecipeCSVDataList)
         {
             if ((recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
                 (recipe.Ingredient1ID == id2 && recipe.Ingredient2ID == id1))
