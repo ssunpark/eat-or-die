@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using UnityEngine;
 
@@ -89,10 +90,11 @@ public class ItemManager : NetworkBehaviour
         return _itemDictionary.GetValueOrDefault(id);
     }
 
-    // public List<int> GetInger
-    // {
-    //     
-    // }
+    public List<int> GetFoodIngredientList()
+    {
+        return _itemDictionary.Values
+            .Where(itemInfo => itemInfo.ItemData.IsIngredient).Select(itemInfo => itemInfo.ItemData.ID).ToList();
+    }
 
     /// <summary>
     /// 아이템 생성(드랍)
