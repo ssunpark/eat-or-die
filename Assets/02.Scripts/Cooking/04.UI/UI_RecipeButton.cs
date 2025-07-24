@@ -11,12 +11,12 @@ public class UI_RecipeButton : MonoBehaviour
     public Color UnlockedColor = Color.white;
     public Color lockedColor = Color.gray;
     
-    private RecipeCSVData _data;
+    private Recipe _data;
     private bool _isUnlocked = false;
     public int RecipeID => _data.ID;
     public int ResultItemID => _data.ResultID;
     
-    public void Refresh(RecipeCSVData Data)
+    public void Refresh(Recipe Data)
     {
         _data = Data;
         // RecipeNameTextUI.text = Data.Name;
