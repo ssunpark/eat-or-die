@@ -12,7 +12,7 @@ public class EatEffect_HungerInstantRecovery : IEatItemEffect
         _description = description;
     }
 
-    public void UseEffect()
+    public void UseEffect(GameObject target)
     {
         // 매개 변수로 받은 특정 타겟에 대해 효과 적용
         Debug.Log(Description);

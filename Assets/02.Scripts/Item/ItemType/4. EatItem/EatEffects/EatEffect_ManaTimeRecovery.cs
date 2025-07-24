@@ -14,8 +14,9 @@ public class EatEffect_ManaTimeRecovery : IEatItemEffect
         _description = description;
     }
 
-    public void UseEffect()
+    public void UseEffect(GameObject target)
     {
         Debug.Log(Description);
+        // target.GetComponent<PlayerController>().Stat.ApplyModifier(EStatType.ManaTimeRecovery, new StatModifier(EStatModifierType.Add, _value, FoodModifierSource.Food,true, _duration));
     }
 }

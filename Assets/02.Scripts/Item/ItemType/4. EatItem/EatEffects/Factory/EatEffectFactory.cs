@@ -20,23 +20,24 @@ public class EatEffectFactory
             EEatItemEffectType.None => null,
             EEatItemEffectType.HungerInstantRecovery => new EatEffect_HungerInstantRecovery(value, description),
             EEatItemEffectType.HungerTimeRecovery => new EatEffect_HungerTimeRecovery(value, duration, description),
-            EEatItemEffectType.HungerConsumeReduction => new EatEffect_HungerConsumeReduction(value, description),
-            EEatItemEffectType.MaxHunger => new EatEffect_MaxHunger(value, description),
+            EEatItemEffectType.HungerConsumeReduction => new EatEffect_HungerConsumeReduction(value, duration, description),
+            EEatItemEffectType.MaxHunger => new EatEffect_MaxHunger(value, duration, description),
             EEatItemEffectType.ManaTimeRecovery => new EatEffect_ManaTimeRecovery(value, duration, description),
-            EEatItemEffectType.MaxMana => new EatEffect_MaxMana(value, description),
-            EEatItemEffectType.MoveSpeed => new EatEffect_MoveSpeed(value, description),
-            EEatItemEffectType.Damage => new EatEffect_Damage(value, description),
-            EEatItemEffectType.MeleeDamage => new EatEffect_MeleeDamage(value, description),
-            EEatItemEffectType.MagicDamage => new EatEffect_MagicDamage(value, description),
-            EEatItemEffectType.AttackSpeed => new EatEffect_AttackSpeed(value, description),
-            EEatItemEffectType.Defense => new EatEffect_Defense(value, description),
-            EEatItemEffectType.MeleeDefense => new EatEffect_MeleeDefense(value, description),
-            EEatItemEffectType.MagicDefense => new EatEffect_MagicDefense(value, description),
-            EEatItemEffectType.BossDamage => new EatEffect_BossDamage(value, description),
-            EEatItemEffectType.BossDefense => new EatEffect_BossDefense(value, description),
+            EEatItemEffectType.MaxMana => new EatEffect_MaxMana(value, duration, description),
+            EEatItemEffectType.MoveSpeed => new EatEffect_MoveSpeed(value, duration, description),
+            EEatItemEffectType.Damage => new EatEffect_Damage(value, duration, description),
+            EEatItemEffectType.MeleeDamage => new EatEffect_MeleeDamage(value, duration, description),
+            EEatItemEffectType.MagicDamage => new EatEffect_MagicDamage(value, duration, description),
+            EEatItemEffectType.AttackSpeed => new EatEffect_AttackSpeed(value, duration, description),
+            EEatItemEffectType.Defense => new EatEffect_Defense(value, duration, description),
+            EEatItemEffectType.MeleeDefense => new EatEffect_MeleeDefense(value, duration, description),
+            EEatItemEffectType.MagicDefense => new EatEffect_MagicDefense(value, duration, description),
+            EEatItemEffectType.BossDamage => new EatEffect_BossDamage(value, duration, description),
+            EEatItemEffectType.BossDefense => new EatEffect_BossDefense(value, duration, description),
             _ => null
         };
     }
+
 
 
     private void LoadDescriptions()

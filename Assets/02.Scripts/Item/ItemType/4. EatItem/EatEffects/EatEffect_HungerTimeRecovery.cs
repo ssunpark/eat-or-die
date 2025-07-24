@@ -14,7 +14,7 @@ public class EatEffect_HungerTimeRecovery : IEatItemEffect
         _description = description;
     }
     
-    public void UseEffect()
+    public void UseEffect(GameObject target)
     {
         Debug.Log(Description);
     }

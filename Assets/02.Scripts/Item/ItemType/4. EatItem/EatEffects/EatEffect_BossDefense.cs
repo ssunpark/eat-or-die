@@ -3,17 +3,20 @@
 public class EatEffect_BossDefense : IEatItemEffect
 {
     private readonly float _value;
+    private readonly float _duration;
     private string _description;
     public string Description => _description;
 
-    public EatEffect_BossDefense(float value, string description)
+    public EatEffect_BossDefense(float value, float duration, string description)
     {
         _value = value;
+        _duration = duration;
         _description = description;
     }
 
-    public void UseEffect()
+    public void UseEffect(GameObject target)
     {
         Debug.Log(Description);
+        // target.GetComponent<PlayerController>().Stat.ApplyModifier(EStatType.BossDefense, new StatModifier(EStatModifierType.Percentage, _value, FoodModifierSource.Food,true, _duration));
     }
 }
