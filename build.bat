@@ -1,11 +1,12 @@
 @echo off
 setlocal
 
-:: Jenkins의 현재 작업 디렉토리 기준으로 Unity 프로젝트 루트로 이동 (Client 폴더)
-cd /d "%~dp0\.."
+:: 현재 스크립트 기준으로 프로젝트 루트 경로 지정
+set SCRIPT_DIR=%~dp0
+set PROJECT_PATH=%SCRIPT_DIR%
 
-:: 현재 디렉토리를 PROJECT_PATH로 설정
-set PROJECT_PATH=%cd%
+:: 뒤에 \ 가 붙는 경우 제거 (깨끗한 경로로 만들기)
+if %PROJECT_PATH:~-1%==\ set PROJECT_PATH=%PROJECT_PATH:~0,-1%
 
 :: Unity 실행 파일 경로
 set UNITY_PATH="C:\Program Files\Unity\Hub\Editor\6000.0.48f1\Editor\Unity.exe"
