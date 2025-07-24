@@ -7,10 +7,15 @@ public static class BuildScript
 	public static void PerformBuild()
 	{
 		string[] scenes = { "Assets/01.Scenes/PopupTestScene.unity" };
+		string buildPath = "Build/eatOrDie.exe";
+
+		Debug.Log("🛠 Starting build process...");
+		Debug.Log($"📁 Target path: {buildPath}");
+
 		BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions
 		{
 			scenes = scenes,
-			locationPathName = "Build/eatOrDie.exe",
+			locationPathName = buildPath,
 			target = BuildTarget.StandaloneWindows64,
 			options = BuildOptions.None
 		};
@@ -18,9 +23,18 @@ public static class BuildScript
 		BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
 		BuildSummary summary = report.summary;
 
+		Debug.Log($"📦 Build Result: {summary.result}");
+		Debug.Log($"📦 Output Path: {summary.outputPath}");
+		Debug.Log($"📦 Total Warnings: {summary.totalWarnings}, Errors: {summary.totalErrors}");
+
+		foreach (var step in report.steps)
+		{
+			Debug.Log($"🧩 Step: {step.name} - Duration: {step.duration.TotalSeconds}s");
+		}
+
 		if (summary.result == BuildResult.Succeeded)
 		{
-			Debug.Log($"✅ Build completed successfully. {summary.totalSize} bytes");
+			Debug.Log($"✅ Build completed successfully. Size: {summary.totalSize} bytes");
 		}
 		else
 		{
