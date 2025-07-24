@@ -43,8 +43,8 @@ public class SeedData
         {
             int levelID = level;
             string addressableAssetName = level != MaxGrowthLevel
-                ? $"{addressablePath}{level} Variant"
-                : $"{addressablePath}Dried Variant";
+                ? $"{addressablePath}_{level}"
+                : $"{addressablePath}_Dried";
             // 생성 하고 바로 풀링하기 위해 동기 생성
             GameObject plantPrefab = Addressables.LoadAssetAsync<GameObject>(addressableAssetName).WaitForCompletion();
             _plantPrefabDictionary.Add(levelID, plantPrefab);
