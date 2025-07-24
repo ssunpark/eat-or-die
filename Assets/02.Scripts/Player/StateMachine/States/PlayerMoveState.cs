@@ -26,8 +26,11 @@ public class PlayerMoveState : APlayerState
 
         if (inputData.isAttacking)
         {
-            _fsm.ChangeState(EPlayerState.Attack);
-            return;
+            if (CanAttack)
+            {
+                _fsm.ChangeState(EPlayerState.Attack);
+                return;
+            }
         }
         if (inputData.isInteracting)
         {
@@ -52,11 +55,11 @@ public class PlayerMoveState : APlayerState
 
         Vector3 dir = inputData.direction;
 
-        _moveSatietyTimer += Time.deltaTime;
+        _moveSatietyTimer += _fsm.Runner.DeltaTime;
         if (_moveSatietyTimer >= _moveStatietyInterval)
         {
             float rate = _stat.GetStat(EStatType.ConsumptionRate);
-            _resource.ConsumeSatiety(Time.deltaTime * _stat.GetStat(EStatType.ConsumptionRate));
+            _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.ConsumptionRate));
             _moveSatietyTimer = 0f;
         }
 

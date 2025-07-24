@@ -4,6 +4,8 @@ using UnityEngine;
 public class Stat
 {
     public int Level;
+    public int Exp;
+    public int ExpToNextLevel => (Level + 1) * 100; // 예시
     public bool CanLevelUp;
     public float BaseStat { get; private set; }
     public float CurrentValue { get; private set; }
@@ -12,6 +14,7 @@ public class Stat
     private int _increaseGap;
 
     private readonly List<StatModifier> _modifiers = new();
+
 
     public void SetBaseStat(float value)
     {
@@ -46,12 +49,32 @@ public class Stat
     public void LevelUp()
     {
         if (!CanLevelUp) return;
+        if (Exp < ExpToNextLevel) return;
+        Exp -= ExpToNextLevel;
         Level++;
+    }
+
+    public void SetLevel(int level)
+    {
+        if (level < 0) return;
+        Level = level;
+        CurrentValue = TotalStat;
     }
 
     public void AddModifier(StatModifier modifier)
     {
-        _modifiers.Add(modifier);
+        if (_modifiers.Any(m => m.Source == modifier.Source && m.Type == modifier.Type))
+        {
+            // 이미 같은 소스와 타입의 모디파이어가 있다면 업데이트
+            var existingModifier = _modifiers.First(m => m.Source == modifier.Source && m.Type == modifier.Type);
+            existingModifier.Value= modifier.Value; // 값 업데이트
+            existingModifier.Duration = modifier.Duration;// 지속시간 업데이트
+        }
+        else
+        {
+            // 새로운 모디파이어 추가
+            _modifiers.Add(modifier);
+        }
     }
 
     public void RemoveModifiersFrom(object source)
@@ -78,13 +101,13 @@ public class Stat
         {
             switch (mod.Type)
             {
-                case StatModifierType.Add:
+                case EStatModifierType.Add:
                     addSum += mod.Value;
                     break;
-                case StatModifierType.Percentage:
+                case EStatModifierType.Percentage:
                     percentageSum += mod.Value;
                     break;
-                case StatModifierType.Multiply:
+                case EStatModifierType.Multiply:
                     multiplyProduct *= mod.Value;
                     break;
             }
