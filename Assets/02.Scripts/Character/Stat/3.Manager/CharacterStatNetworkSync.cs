@@ -2,7 +2,7 @@
 
 public class CharacterStatNetworkSync : NetworkBehaviour
 {
-    [Networked, Capacity(22)] public NetworkArray<float> NetStats => default;
+    [Networked, Capacity(23)] public NetworkArray<float> NetStats => default;
 
     private StatManager _statManager;
 
@@ -49,6 +49,7 @@ public class CharacterStatNetworkSync : NetworkBehaviour
             EStatType.MagicDefense => 19,
             EStatType.BossDamage => 20,
             EStatType.BossDefense => 21,
+            EStatType.HungerConsumeReduction => 22,
             _ => -1
         };
     }

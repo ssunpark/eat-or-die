@@ -22,4 +22,5 @@
     MagicDefense,           // 마법 방어력
     BossDamage,              // 보스 공격력
     BossDefense,             // 보스 방어력
+    HungerConsumeReduction, // 배고픔 감소량 감소
 }
