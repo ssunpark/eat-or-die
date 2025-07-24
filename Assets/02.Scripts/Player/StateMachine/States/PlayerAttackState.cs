@@ -5,6 +5,12 @@ public class PlayerAttackState : APlayerState
 {
     public PlayerAttackState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller) { }
 
+
+    private float _damage;
+    private float _attackSpeed;
+    private float _attackDelay;
+    private float _attackTimer;
+
     public override void Enter()
     {
         _fsm.StartCoroutine(AttackCoroutine());
@@ -16,6 +22,9 @@ public class PlayerAttackState : APlayerState
             _controller.RPC_SetIsAttacking(true);
         }
 
+        _damage = _stat.GetStat(EStatType.Damage);
+        _attackSpeed = _stat.GetStat(EStatType.AttackSpeed);
+        _attackDelay = 1f / Mathf.Max(_attackSpeed, 0.01f);
     }
 
     private System.Collections.IEnumerator AttackCoroutine()
@@ -23,8 +32,6 @@ public class PlayerAttackState : APlayerState
         float damage = _stat.GetStat(EStatType.Damage);
         float attackSpeed = _stat.GetStat(EStatType.AttackSpeed);
         float attackDelay = 1f / Mathf.Max(attackSpeed, 0.01f);
-
-
 
         yield return new WaitForSeconds(0.1f);
 
@@ -43,7 +50,26 @@ public class PlayerAttackState : APlayerState
         _fsm.ChangeState(EPlayerState.Idle);
     }
 
-    public override void Tick() { }
+    public override void Tick() 
+    {
+        // 애니메이션 이벤트로 실행
+        //Vector3 attackOrigin = _controller.transform.position + Vector3.up * 0.5f;
+        //Vector3 direction = _controller.transform.forward;
+
+        //if (Physics.Raycast(attackOrigin, direction, out RaycastHit hit, 1.5f))
+        //{
+        //    if (hit.collider.TryGetComponent(out NetworkObject target))
+        //    {
+        //        _controller.RPC_DealDamage(target, Mathf.RoundToInt(_damage));
+        //        Debug.Log($"Attacked {target.name} for {_damage} damage.");
+        //    }
+        //}
+        _attackTimer += Time.deltaTime;
+        if (_attackTimer >= _attackDelay)
+        {
+            _fsm.ChangeState(EPlayerState.Idle);
+        }
+    }
 
     public override void Exit()
     {
