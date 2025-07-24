@@ -37,12 +37,13 @@ public class ItemFactory
     //     var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
     //     return new EquipmentItem(itemData);
     // }
-    //
-    // public WeaponItem CreateWeaponItem(WeaponItemRawData rawData)
-    // {
-    //     var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
-    //     return new WeaponItem(itemData, rawData.Type);
-    // }
+    
+    public WeaponItemInfo CreateWeaponItem(WeaponItemRawData rawData)
+    {
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false, rawData.MaxStack, rawData.MaxDuration,
+            rawData.AddressablePath);
+        return new WeaponItemInfo(itemData, rawData.Type);
+    }
 
     public UsableItemInfo CreateUsableItem(UsableItemRawData rawData)
     {

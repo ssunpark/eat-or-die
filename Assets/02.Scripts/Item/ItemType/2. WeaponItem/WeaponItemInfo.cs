@@ -3,6 +3,7 @@
 public class WeaponItemInfo : AItemInfo, IEquipable
 {
     public readonly EWeaponType _type;
+    public readonly float Damage;
     // TODO: 강화 속성은 추후에
     
     public WeaponItemInfo(ItemData itemData, EWeaponType weaponType) : base(itemData)
