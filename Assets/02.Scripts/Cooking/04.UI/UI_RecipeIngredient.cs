@@ -21,18 +21,18 @@ public class UI_RecipeIngredient : MonoBehaviour
         if (_isInitialized) return;
         _isInitialized = true;
         
-        List<int> _ingredientIds = ItemManager.Instance.GetFoodIngredientList();
+        List<int> ingredientIdList = ItemManager.Instance.GetFoodIngredientList();
         _ingredientButtonDict.Clear();
         
 
-        foreach (int id in _ingredientIds)
+        foreach (int id in ingredientIdList)
         {
             AItemInfo itemInfo = ItemManager.Instance.GetItem(id);
             if (itemInfo == null) continue;
 
             GameObject buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var button = buttonObj.GetComponent<UI_IngredientButton>();
-            button.Refresh(itemInfo); // <- AItemInfo 넘김
+            button.Refresh(itemInfo.ItemData); // <- AItemInfo 넘김
             buttonObj.SetActive(false);
 
             _ingredientButtonDict[itemInfo.ItemData.ID] = button;

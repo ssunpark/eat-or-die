@@ -83,7 +83,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         int id1 = Inventory.SlotList[0].Item.ID;
         int id2 = Inventory.SlotList[1].Item.ID;
 
-        foreach (var recipe in RecipeDataManager.Instance.RecipeCSVDataList)
+        foreach (var recipe in RecipeManager.Instance.RecipeList)
         {
             if ((recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
                 (recipe.Ingredient1ID == id2 && recipe.Ingredient2ID == id1))

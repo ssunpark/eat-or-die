@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-public class RecipeDataManager : MonoBehaviour
+public class RecipeManager : MonoBehaviour
 {
-    public static RecipeDataManager Instance { get; private set; }
+    public static RecipeManager Instance { get; private set; }
 
     private const string RECIPE_CSV_PATH = "/FoodCSV/Recipe.csv";
     
-    public List<Recipe> RecipeCSVDataList { get; private set; }
+    public List<Recipe> RecipeList { get; private set; }
     public event Action OnDataLoaded;
     
     private void Awake()
@@ -29,9 +29,9 @@ public class RecipeDataManager : MonoBehaviour
 
     private void InitFoodData()
     {
-        RecipeCSVDataList = CSVLoader<Recipe>.LoadCSV(Application.streamingAssetsPath + RECIPE_CSV_PATH);
+        RecipeList = CSVLoader<Recipe>.LoadCSV(Application.streamingAssetsPath + RECIPE_CSV_PATH);
 
-        Debug.Log($"로드 완료 - RecipeCSVDataList: {RecipeCSVDataList.Count}, ");
+        Debug.Log($"로드 완료 - RecipeCSVDataList: {RecipeList.Count}, ");
         OnDataLoaded?.Invoke();
     }
 }

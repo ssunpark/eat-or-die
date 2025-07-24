@@ -12,7 +12,7 @@ public class UI_RecipeList : MonoBehaviour
     // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {
-        _recipeCsvDataList = RecipeDataManager.Instance.RecipeCSVDataList;
+        _recipeCsvDataList = RecipeManager.Instance.RecipeList;
 
         foreach (var recipe in _recipeCsvDataList)
         {
