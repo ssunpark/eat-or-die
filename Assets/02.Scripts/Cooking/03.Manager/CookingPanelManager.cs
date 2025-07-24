@@ -9,6 +9,8 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     
     public Inventory FoodInventory = new Inventory(1);
     public Action OnCookOutputUpdated;
+    
+    public UI_CookingCompletedPopup UI_CookingCompletedPopup;
 
     public void OnClickMouseLeft(int slotIndex)
     {
@@ -105,6 +107,14 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
 
         ConsumeInputIngredients();
         GiveItemToInventory(resultItemId);
+        
+        var resultItemInfo = ItemManager.Instance.GetItem(resultItemId);
+        if (resultItemInfo != null)
+        {
+            UI_CookingCompletedPopup.Refresh(resultItemInfo.ItemData);
+            UI_CookingCompletedPopup.CookingCompletedPopupUI.SetActive(true);
+        }
+        
         OnCookOutputUpdated?.Invoke();
     }
 
