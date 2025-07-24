@@ -6,7 +6,7 @@ public static class BuildScript
 {
 	public static void PerformBuild()
 	{
-		string[] scenes = { "Assets/01.Scenes/PopupTestScene.unity" };
+		string[] scenes = { "Assets/01.Scenes/PrototypeDemoScene.unity" };
 		string buildPath = "Build/eatOrDie.exe";
 
 		Debug.Log("🛠 Starting build process...");
