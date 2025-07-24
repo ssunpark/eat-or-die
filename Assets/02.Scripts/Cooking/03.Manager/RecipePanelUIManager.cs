@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
+public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
     private Item[] _ingredients ;
     public Item[] Ingredients => _ingredients;

@@ -41,6 +41,6 @@ public class UI_IngredientButton : MonoBehaviour
 
     public void OnClickButton()
     {
-        RecipePanelManager.Instance.UpdateRecipes(IngredientID);
+        RecipePanelUIManager.Instance.UpdateRecipes(IngredientID);
     }
 }

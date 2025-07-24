@@ -13,7 +13,7 @@ public class UI_RecipeIngredient : MonoBehaviour
 
     private void OnEnable()
     {
-        RecipePanelManager.Instance.OnInventoryUpdated += RefreshIngredientButtons;
+        RecipePanelUIManager.Instance.OnInventoryUpdated += RefreshIngredientButtons;
     }
 
     public void Init()
@@ -48,7 +48,7 @@ public class UI_RecipeIngredient : MonoBehaviour
         }
 
         // 현재 인벤토리에 있는 재료들만 활성화
-        var ingredientList = RecipePanelManager.Instance.Ingredients;
+        var ingredientList = RecipePanelUIManager.Instance.Ingredients;
         if (ingredientList != null && ingredientList.Length > 0)
         {
             Debug.Log(ingredientList[0].ID);

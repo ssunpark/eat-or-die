@@ -14,7 +14,7 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
         IconImage.gameObject.SetActive(false);
         QuantityText.gameObject.SetActive(false);
 
-        CookingPanelManager.Instance.OnCookOutputUpdated += UpdateSlotUI;
+        CookingManager.Instance.OnCookOutputUpdated += UpdateSlotUI;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -28,7 +28,7 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
     // 결과 슬롯의 아이콘과 수량 갱신
     private void TakeOutItem()
     {
-        var foodInventory = CookingPanelManager.Instance.FoodInventory;
+        var foodInventory = CookingManager.Instance.FoodInventory;
         var slot = foodInventory.SlotList[SlotIndex];
         if (slot.IsEmpty) return;
 
@@ -57,7 +57,7 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
 
     public void UpdateSlotUI()
     {
-        var itemInSlot = CookingPanelManager.Instance.FoodInventory.SlotList[SlotIndex].Item;
+        var itemInSlot = CookingManager.Instance.FoodInventory.SlotList[SlotIndex].Item;
         if (itemInSlot == null)
         {
             IconImage.gameObject.SetActive(false);

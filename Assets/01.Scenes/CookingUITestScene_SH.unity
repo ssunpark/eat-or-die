@@ -3390,7 +3390,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &125812240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21365,17 +21365,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6283885303135411905, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
   m_PrefabInstance: {fileID: 1553716237}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &954528111 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2362385731858742166, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
-  m_PrefabInstance: {fileID: 1553716237}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 954528107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2137d6aaad5c49f38a171c8bc24e1fdd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &957326728
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33619,9 +33608,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1497953476}
-  - component: {fileID: 1497953475}
   - component: {fileID: 1497953474}
+  - component: {fileID: 1497953477}
   - component: {fileID: 1497953473}
+  - component: {fileID: 1497953475}
   m_Layer: 0
   m_Name: CookManager
   m_TagString: Untagged
@@ -33654,7 +33644,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f4a0d69b86449e89912a5b4119f584a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_CookingCompletedPopup: {fileID: 954528111}
 --- !u!114 &1497953475
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33682,6 +33671,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1497953477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1497953472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51f413f7258a464c96b93a17a08ac304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _t: 0
+  _cookTime: 4
+  _isCooking: 0
 --- !u!1001 &1499259255
 PrefabInstance:
   m_ObjectHideFlags: 0
