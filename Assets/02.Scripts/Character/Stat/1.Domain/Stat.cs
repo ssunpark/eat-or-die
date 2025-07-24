@@ -4,6 +4,8 @@ using UnityEngine;
 public class Stat
 {
     public int Level;
+    public int Exp;
+    public int ExpToNextLevel => (Level + 1) * 100; // 예시
     public bool CanLevelUp;
     public float BaseStat { get; private set; }
     public float CurrentValue { get; private set; }
@@ -12,6 +14,7 @@ public class Stat
     private int _increaseGap;
 
     private readonly List<StatModifier> _modifiers = new();
+
 
     public void SetBaseStat(float value)
     {
@@ -46,7 +49,16 @@ public class Stat
     public void LevelUp()
     {
         if (!CanLevelUp) return;
+        if (Exp < ExpToNextLevel) return;
+        Exp -= ExpToNextLevel;
         Level++;
+    }
+
+    public void SetLevel(int level)
+    {
+        if (level < 0) return;
+        Level = level;
+        CurrentValue = TotalStat;
     }
 
     public void AddModifier(StatModifier modifier)
