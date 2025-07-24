@@ -38,7 +38,7 @@ public class CharacterStatNetworkSync : NetworkBehaviour
             EStatType.Armor => 8,
             EStatType.SprintingMultiplier => 9,
             EStatType.MaxSatiety => 10,
-            EStatType.MaxHealth => 11,
+            EStatType.AttackRange => 11,
             _ => -1
         };
     }

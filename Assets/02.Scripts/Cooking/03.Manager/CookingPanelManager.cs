@@ -166,7 +166,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     private void Update()
     {
         if (!_isCooking) return;
-        _t += Time.deltaTime;
+        _t += Room.Instance.Runner.DeltaTime;
         if (_t >= _cookTime)
         {
             Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
