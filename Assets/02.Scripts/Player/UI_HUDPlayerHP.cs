@@ -23,7 +23,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
         {
             // 이벤트 구독
             _resourceManager.OnSatietyChanged += _resourceManager_OnSatietyChanged;
-            _resourceManager_OnSatietyChanged(statManager.GetStat(EStatType.MaxHealth), statManager.GetStat(EStatType.MaxHealth));
+            _resourceManager_OnSatietyChanged(statManager.GetStat(EStatType.MaxSatiety), statManager.GetStat(EStatType.MaxSatiety));
         }
         else
         {
@@ -58,7 +58,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
         // Unsubscribe to prevent memory leaks when the HUD element is destroyed
         if (_resourceManager != null)
         {
-            _resourceManager.OnHealthChanged -= _resourceManager_OnSatietyChanged;
+            _resourceManager.OnSatietyChanged -= _resourceManager_OnSatietyChanged;
         }
     }
 }
