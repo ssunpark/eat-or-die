@@ -1,4 +1,4 @@
-﻿public enum StatModifierType
+﻿public enum EStatModifierType
 {
     Add,
     Multiply,
@@ -7,11 +7,11 @@
 
 public class StatModifier
 {
-    public StatModifierType Type;
+    public EStatModifierType Type;
     public float Value;
     public object Source; // 장비/버프 등 출처 구분용
 
-    public StatModifier(StatModifierType type, float value, object source)
+    public StatModifier(EStatModifierType type, float value, object source)
     {
         Type = type;
         Value = value;

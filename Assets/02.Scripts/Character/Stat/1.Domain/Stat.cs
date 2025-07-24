@@ -90,13 +90,13 @@ public class Stat
         {
             switch (mod.Type)
             {
-                case StatModifierType.Add:
+                case EStatModifierType.Add:
                     addSum += mod.Value;
                     break;
-                case StatModifierType.Percentage:
+                case EStatModifierType.Percentage:
                     percentageSum += mod.Value;
                     break;
-                case StatModifierType.Multiply:
+                case EStatModifierType.Multiply:
                     multiplyProduct *= mod.Value;
                     break;
             }
