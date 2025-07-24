@@ -31,8 +31,8 @@ public class FoodCSVDataManager : MonoBehaviour
 
     private void InitFoodData()
     {
-        RecipeCSVDataList = CSVLoader<RecipeCSVData>.LoadFoodCSV(Application.streamingAssetsPath + RECIPE_CSV_PATH);
-        IngredientCsvDataList = CSVLoader<IngredientCSVData>.LoadFoodCSV(Application.streamingAssetsPath + INGREDIENT_CSV_PATH);
+        RecipeCSVDataList = CSVLoader<RecipeCSVData>.LoadCSV(Application.streamingAssetsPath + RECIPE_CSV_PATH);
+        IngredientCsvDataList = CSVLoader<IngredientCSVData>.LoadCSV(Application.streamingAssetsPath + INGREDIENT_CSV_PATH);
         // HarvestDataList = AllDataList.FindAll(x => x.ERecipeType == "Harvest");
         // BuffDataList = AllDataList.FindAll(x => x.ERecipeType == "Buff");
 

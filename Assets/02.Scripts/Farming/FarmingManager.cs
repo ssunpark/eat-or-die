@@ -58,7 +58,7 @@ public class FarmingManager : NetworkBehaviour
         _seedDictionary = new Dictionary<int, SeedData>();
         _plantPoolDictionary = new Dictionary<PlantPoolKey, Pool<Transform>>();
         var seedRawDataList =
-            ItemDataLoader.LoadItemRawData<SeedRawData>(
+            CSVLoader<SeedRawData>.LoadCSV(
                 $"{Application.streamingAssetsPath}{PLANT_CSV_PATH}");
         foreach (var rawData in seedRawDataList)
         {
