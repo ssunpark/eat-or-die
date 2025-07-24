@@ -22,7 +22,7 @@ public class PlayerHitState : APlayerState
 
     public override void Tick()
     {
-        _elapsed += Time.deltaTime;
+        _elapsed += _fsm.Runner.DeltaTime;
 
         if (_elapsed >= _hitStunDuration)
         {
