@@ -12,7 +12,7 @@ public class ItemFactory
 
         var rawEffects = new (EEatItemEffectType type, float? value, float? duration)[]
         {
-            (EEatItemEffectType.HungerInstantRecovery, rawData.HungerRestore, null),    // 기본적인 배고픔 증가
+            (EEatItemEffectType.HungerInstantRecovery, rawData.HungerRestore, null), // 기본적인 배고픔 증가
             (rawData.EffectType1, rawData.Value1, rawData.Duration1),
             (rawData.EffectType2, rawData.Value2, rawData.Duration2),
             (rawData.EffectType3, rawData.Value3, rawData.Duration3),
@@ -37,17 +37,19 @@ public class ItemFactory
     //     var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
     //     return new EquipmentItem(itemData);
     // }
-    
+
     public WeaponItemInfo CreateWeaponItem(WeaponItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false, rawData.MaxStack, rawData.MaxDuration,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false,
+            rawData.MaxStack, rawData.MaxDuration,
             rawData.AddressablePath);
-        return new WeaponItemInfo(itemData, rawData.Type);
+        return new WeaponItemInfo(itemData, rawData.Type, rawData.Damage, rawData.AttackSpeed, rawData.Range);
     }
 
     public UsableItemInfo CreateUsableItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity, rawData.MaxDuration ?? 1f,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity,
+            rawData.MaxDuration ?? 1f,
             rawData.AddressablePath);
         IUseAction useAction = rawData.UseAction switch
         {

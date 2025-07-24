@@ -2,13 +2,18 @@
 
 public class WeaponItemInfo : AItemInfo, IEquipable
 {
-    public readonly EWeaponType _type;
+    public readonly EWeaponType Type;
     public readonly float Damage;
+    public readonly float AttackSpeed;
+    public readonly float Range;
     // TODO: 강화 속성은 추후에
     
-    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType) : base(itemData)
+    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType, float damage, float attackSpeed, float range) : base(itemData)
     {
-        _type = weaponType;
+        Type = weaponType;
+        Damage = damage;
+        AttackSpeed = attackSpeed;
+        Range = range;
     }
 
     public void Equip(GameObject player)
