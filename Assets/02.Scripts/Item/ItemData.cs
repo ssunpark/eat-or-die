@@ -18,7 +18,7 @@ public class ItemData
     public Sprite Icon => _icon;
     // .. 등등 추가 예정
 
-    public ItemData(int id, string name, string description, bool cookable, bool isIngredient, int maxQuantity, float maxDurability,string iconAddressablePath)
+    public ItemData(int id, string name, string description, bool cookable, bool isIngredient, int maxQuantity, float maxDurability, string iconAddressablePath)
     {
         // TODO: 유효성 검사
         ID = id;

@@ -33,7 +33,7 @@ public class ItemFactory
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
-            rawData.MaxQuantity, 0, rawData.IconPath);
+            rawData.MaxQuantity, 1f, rawData.IconPath);
         return new EatItemInfo(itemData, effectList);
     }
     
