@@ -9,6 +9,7 @@ public class ItemData
     public readonly int ID;
     public readonly string Name;
     public readonly int MaxQuantity;
+    public readonly int MaxDurability;
     public readonly bool Cookable;
     private string _description;
     public string Description => _description;
