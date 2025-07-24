@@ -16,7 +16,7 @@ public class Inventory
         }
     }
 
-    public ItemStack PopItemInSlot(int slotIndex)
+    public Item PopItemInSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
@@ -24,12 +24,12 @@ public class Inventory
             return null;
         }
         
-        ItemStack slotItem =  SlotList[slotIndex].ItemStack;
+        Item slotItem =  SlotList[slotIndex].Item;
         SlotList[slotIndex].RemoveItem();
         return slotItem;
     }
     
-    public ItemStack PopSingleItemInSlot(int slotIndex)
+    public Item PopSingleItemInSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
@@ -41,60 +41,60 @@ public class Inventory
         
         if (targetSlot.IsEmpty) return null;
         
-        ItemStack itemStack = targetSlot.ItemStack;
+        Item item = targetSlot.Item;
         
-        if (itemStack.Quantity > 1)
+        if (item.Quantity > 1)
         {
-            itemStack.SetQuantity(itemStack.Quantity - 1);
-            return new ItemStack(itemStack.ID, itemStack.MaxQuantity, 1);
+            item.SetQuantity(item.Quantity - 1);
+            return new Item(item.ID, item.MaxQuantity, 1);
         }
         else
         {
             targetSlot.RemoveItem();
-            return itemStack;
+            return item;
         }
     }
     
-    public ItemStack PutItemInSlot(int slotIndex, ItemStack itemStack)
+    public Item PutItemInSlot(int slotIndex, Item item)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
             Debug.LogError("Invalid slot index: " + slotIndex);
-            return itemStack;
+            return item;
         }
 
         Slot targetSlot = SlotList[slotIndex];
         
         if (targetSlot.IsEmpty)
         {
-            targetSlot.AddItem(itemStack);
+            targetSlot.AddItem(item);
             return null;
         }
         
-        if (targetSlot.ItemStack.ID == itemStack.ID)
+        if (targetSlot.Item.ID == item.ID)
         {
-            if (targetSlot.ItemStack.Quantity + itemStack.Quantity > targetSlot.ItemStack.MaxQuantity)
+            if (targetSlot.Item.Quantity + item.Quantity > targetSlot.Item.MaxQuantity)
             {
-                int excessQuantity = targetSlot.ItemStack.Quantity + itemStack.Quantity - targetSlot.ItemStack.MaxQuantity;
-                targetSlot.ItemStack.SetQuantity(targetSlot.ItemStack.MaxQuantity);
-                itemStack.SetQuantity(excessQuantity);
-                return itemStack;
+                int excessQuantity = targetSlot.Item.Quantity + item.Quantity - targetSlot.Item.MaxQuantity;
+                targetSlot.Item.SetQuantity(targetSlot.Item.MaxQuantity);
+                item.SetQuantity(excessQuantity);
+                return item;
             }
             else
             {
-                targetSlot.ItemStack.TryAdd(itemStack.Quantity);
+                targetSlot.Item.TryAdd(item.Quantity);
                 return null;
             }
         }
         else
         {
-            ItemStack temp = targetSlot.ItemStack;
-            targetSlot.AddItem(itemStack);
+            Item temp = targetSlot.Item;
+            targetSlot.AddItem(item);
             return temp;
         }
     }
 
-    public ItemStack PickItemFromGround(ItemStack itemStack)
+    public Item PickItemFromGround(Item item)
     {
         foreach (Slot slot in SlotList)
         {
@@ -102,17 +102,17 @@ public class Inventory
             {
                 continue;
             }
-            if (slot.ItemStack.ID == itemStack.ID)
+            if (slot.Item.ID == item.ID)
             {
-                if (slot.ItemStack.Quantity + itemStack.Quantity > slot.ItemStack.MaxQuantity)
+                if (slot.Item.Quantity + item.Quantity > slot.Item.MaxQuantity)
                 {
-                    int excessQuantity = slot.ItemStack.Quantity + itemStack.Quantity - slot.ItemStack.MaxQuantity;
-                    slot.ItemStack.SetQuantity(slot.ItemStack.MaxQuantity);
-                    itemStack.SetQuantity(excessQuantity);
+                    int excessQuantity = slot.Item.Quantity + item.Quantity - slot.Item.MaxQuantity;
+                    slot.Item.SetQuantity(slot.Item.MaxQuantity);
+                    item.SetQuantity(excessQuantity);
                 }
                 else
                 {
-                    slot.ItemStack.TryAdd(itemStack.Quantity);
+                    slot.Item.TryAdd(item.Quantity);
                     return null;
                 }
             }
@@ -122,11 +122,11 @@ public class Inventory
         {
             if (slot.IsEmpty)
             {
-                slot.AddItem(itemStack);
+                slot.AddItem(item);
                 return null;
             }
         }
 
-        return itemStack;
+        return item;
     }
 }

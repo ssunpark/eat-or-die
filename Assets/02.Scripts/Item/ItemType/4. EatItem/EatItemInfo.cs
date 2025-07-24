@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class EatItem : AItem, IEatable, IUsable
+public class EatItemInfo : AItemInfo, IEatable, IUsable
 {
     private readonly List<IEatItemEffect> _effectList;
 
-    public EatItem(ItemData itemData, List<IEatItemEffect> effectList) : base(itemData)
+    public EatItemInfo(ItemData itemData, List<IEatItemEffect> effectList) : base(itemData)
     {
         _effectList = effectList;
         foreach (var effect in effectList)

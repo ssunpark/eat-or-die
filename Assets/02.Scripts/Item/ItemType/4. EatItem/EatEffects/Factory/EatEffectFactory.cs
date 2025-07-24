@@ -14,6 +14,7 @@ public class EatEffectFactory
     public IEatItemEffect CreateEatItemEffect(EEatItemEffectType type, float value, float duration)
     {
         var description = _descriptionTemplates[type];
+        description = EatEffectUtils.FormatSmart(description, value, duration);
         return type switch
         {
             EEatItemEffectType.None => null,

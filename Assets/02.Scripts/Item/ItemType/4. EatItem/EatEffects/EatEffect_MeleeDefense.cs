@@ -9,7 +9,7 @@ public class EatEffect_MeleeDefense : IEatItemEffect
     public EatEffect_MeleeDefense(float value, string description)
     {
         _value = value;
-        _description = EatEffectUtils.FormatSmart(description, value);
+        _description = description;
     }
 
     public void UseEffect()

@@ -9,7 +9,7 @@ public class EatEffect_BossDamage : IEatItemEffect
     public EatEffect_BossDamage(float value, string description)
     {
         _value = value;
-        _description = EatEffectUtils.FormatSmart(description, value);
+        _description = description;
     }
 
     public void UseEffect()

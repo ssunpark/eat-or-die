@@ -28,7 +28,7 @@ public class ItemManager : NetworkBehaviour
     private NetworkPrefabRef _itemObjectPrefab;
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
-    private Dictionary<int, AItem> _itemDictionary;
+    private Dictionary<int, AItemInfo> _itemDictionary;
     
     // 아이템 팩토리
     private ItemFactory _itemFactory;
@@ -43,7 +43,7 @@ public class ItemManager : NetworkBehaviour
         _itemFactory = new ItemFactory();
         
         // 데이터 로드 후 생성
-        _itemDictionary = new Dictionary<int, AItem>();
+        _itemDictionary = new Dictionary<int, AItemInfo>();
         
         // 음식 아이템
         var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
@@ -84,7 +84,7 @@ public class ItemManager : NetworkBehaviour
     /// AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
     /// </summary>
     /// <param name="id">아이템 ID</param>
-    public AItem GetItem(int id)
+    public AItemInfo GetItem(int id)
     {
         return _itemDictionary.GetValueOrDefault(id);
     }
@@ -104,7 +104,7 @@ public class ItemManager : NetworkBehaviour
             return;
         }
         
-        if (!_itemDictionary.TryGetValue(id, out AItem item))
+        if (!_itemDictionary.TryGetValue(id, out AItemInfo item))
         {
             Debug.LogWarning($"없는 아이템입니다. ID: {id}");
             return;

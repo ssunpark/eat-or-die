@@ -21,14 +21,14 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     {
         if (HandEntity.Instance.IsHandEmpty)
         {
-            ItemStack itemInSlot = _inventory.PopItemInSlot(slotIndex);
+            Item itemInSlot = _inventory.PopItemInSlot(slotIndex);
             if (itemInSlot == null) return;
             
             HandEntity.Instance.PickUpItem(itemInSlot);
         }
         else
         {
-            HandEntity.Instance.PickUpItem(_inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
+            HandEntity.Instance.PickUpItem(_inventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
         }
         OnSlotUpdated[slotIndex]?.Invoke();
         OnInventoryUpdated?.Invoke();
@@ -44,18 +44,18 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         }
         else
         {
-            if (HandEntity.Instance.ItemStack.ID == _inventory.SlotList[slotIndex].ItemStack.ID)
+            if (HandEntity.Instance.Item.ID == _inventory.SlotList[slotIndex].Item.ID)
             {
-                ItemStack itemInSlot = _inventory.PopSingleItemInSlot(slotIndex);
+                Item itemInSlot = _inventory.PopSingleItemInSlot(slotIndex);
                 if (!HandEntity.Instance.TryAddItem(itemInSlot))
                 {
-                    _inventory.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
+                    _inventory.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
                 }
             }
             else
             {
-                ItemStack temp = _inventory.PopItemInSlot(slotIndex);
-                _inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
+                Item temp = _inventory.PopItemInSlot(slotIndex);
+                _inventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
                 HandEntity.Instance.PickUpItem(temp);
             }
         }
@@ -64,9 +64,9 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         OnInventoryUpdated?.Invoke();
     }
 
-    public void PickItemFromGround(ItemStack itemStack)
+    public void PickItemFromGround(Item item)
     {
-        ItemStack remain = _inventory.PickItemFromGround(itemStack);
+        Item remain = _inventory.PickItemFromGround(item);
         
         OnInventoryUpdated?.Invoke();
      

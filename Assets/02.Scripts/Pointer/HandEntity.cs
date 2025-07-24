@@ -3,26 +3,26 @@ using UnityEngine;
 
 public class HandEntity : BehaviourSingleton<HandEntity>
 {
-    public ItemStack ItemStack;
-    public bool IsHandEmpty => ItemStack == null;
+    public Item Item;
+    public bool IsHandEmpty => Item == null;
     
     public Action OnItemPickedUp;
     
-    public void PickUpItem(ItemStack itemStack)
+    public void PickUpItem(Item item)
     {
-        if (itemStack != null)
+        if (item != null)
         {
-            Debug.Log($"Item picked up: {itemStack.ID}");
+            Debug.Log($"Item picked up: {item.ID}");
         }
-        ItemStack = itemStack;
+        Item = item;
         OnItemPickedUp?.Invoke();
     }
 
-    public bool TryAddItem(ItemStack itemStack)
+    public bool TryAddItem(Item item)
     {
-        if (itemStack.ID != ItemStack.ID) return false;
+        if (item.ID != Item.ID) return false;
 
-        if (!ItemStack.TryAdd(itemStack.Quantity)) return false;
+        if (!Item.TryAdd(item.Quantity)) return false;
         
         OnItemPickedUp?.Invoke();
         return true;
@@ -30,7 +30,7 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     
     public void DropItem()
     {
-        ItemStack = null;
+        Item = null;
         OnItemPickedUp?.Invoke();
     }
 }

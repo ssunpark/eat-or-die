@@ -9,7 +9,7 @@ public class EatEffect_MaxMana : IEatItemEffect
     public EatEffect_MaxMana(float value, string description)
     {
         _value = value;
-        _description = EatEffectUtils.FormatSmart(description, value);
+        _description = description;
     }
     
     public void UseEffect()

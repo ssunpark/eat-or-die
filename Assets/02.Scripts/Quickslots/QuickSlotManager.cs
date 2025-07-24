@@ -25,29 +25,29 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 			}
 			
 			// 슬롯의 아이템 타입에 따라 적절한 메서드를 호출해야 합니다. 근데 지금은 연결할 로직이 없음
-			AItem itemInSlot = ItemManager.Instance.GetItem(QuickSlots.SlotList[slotIndex].ItemStack.ID);
-			if (itemInSlot is IEquipable equipItem)
+			AItemInfo itemInfoInSlot = ItemManager.Instance.GetItem(QuickSlots.SlotList[slotIndex].Item.ID);
+			if (itemInfoInSlot is IEquipable equipItem)
 			{
 				Debug.Log("Equipping item: " + equipItem);
                 equipItem.Equip(Room.Instance.LocalPlayer);
 			}
 			else
 			{
-				Debug.Log("Item is not equippable: " + itemInSlot.ItemData.Name);
+				Debug.Log("Item is not equippable: " + itemInfoInSlot.ItemData.Name);
 			}
 			return;
 		}
 		
 		if (HandEntity.Instance.IsHandEmpty)
 		{
-			ItemStack itemInSlot = QuickSlots.PopItemInSlot(slotIndex);
+			Item itemInSlot = QuickSlots.PopItemInSlot(slotIndex);
 			if (itemInSlot == null) return;
             
 			HandEntity.Instance.PickUpItem(itemInSlot);
 		}
 		else
 		{
-			HandEntity.Instance.PickUpItem(QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack));
+			HandEntity.Instance.PickUpItem(QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
 		}
 		OnQuickSlotUpdated[slotIndex]?.Invoke();
 	}
@@ -62,18 +62,18 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		else
 		{
-			if (HandEntity.Instance.ItemStack.ID == QuickSlots.SlotList[slotIndex].ItemStack.ID)
+			if (HandEntity.Instance.Item.ID == QuickSlots.SlotList[slotIndex].Item.ID)
 			{
-				ItemStack itemInSlot = QuickSlots.PopSingleItemInSlot(slotIndex);
+				Item itemInSlot = QuickSlots.PopSingleItemInSlot(slotIndex);
 				if (!HandEntity.Instance.TryAddItem(itemInSlot))
 				{
-					QuickSlots.SlotList[slotIndex].ItemStack.TryAdd(itemInSlot.Quantity);
+					QuickSlots.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
 				}
 			}
 			else
 			{
-				ItemStack temp = QuickSlots.PopItemInSlot(slotIndex);
-				QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.ItemStack);
+				Item temp = QuickSlots.PopItemInSlot(slotIndex);
+				QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
 				HandEntity.Instance.PickUpItem(temp);
 			}
 		}
