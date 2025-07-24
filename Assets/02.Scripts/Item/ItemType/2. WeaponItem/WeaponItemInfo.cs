@@ -31,10 +31,10 @@ public class WeaponItemInfo : AItemInfo, IEquipable
     {
         Debug.Log($"장착 : {ItemData.Name}");
         // 장비 스텟 수치만큼 증가
-        var weaponObject = _weaponPool.Get();
+        // var weaponObject = _weaponPool.Get();
         player.GetComponent<PlayerItemHolder>().SetHoldItem(ItemData.ID);
-        player.GetComponent<StatManager>().ApplyModifier(EStatType.Damage, new StatModifier(StatModifierType.Add, Damage, ItemData.Name));
-        player.GetComponent<StatManager>().ApplyModifier(EStatType.AttackSpeed, new StatModifier(StatModifierType.Add, AttackSpeed, ItemData.Name));
+        player.GetComponent<PlayerController>().Stat.ApplyModifier(EStatType.Damage, new StatModifier(EStatModifierType.Add, Damage, ItemData.Name));
+        player.GetComponent<PlayerController>().Stat.ApplyModifier(EStatType.AttackSpeed, new StatModifier(EStatModifierType.Add, AttackSpeed, ItemData.Name));
         // player.GetComponent<StatManager>().ApplyModifier(EStatType.Range, new StatModifier(StatModifierType.Add, Range, ItemData.Name));
     }
 
