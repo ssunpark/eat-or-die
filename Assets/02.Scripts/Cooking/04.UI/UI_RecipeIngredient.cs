@@ -6,8 +6,7 @@ public class UI_RecipeIngredient : MonoBehaviour
 {
     public GameObject Container;
     public GameObject ButtonPrefab;
-
-    private List<IngredientCSVData> _ingredientCsvDataList;
+    
     private Dictionary<int, UI_IngredientButton> _ingredientButtonDict = new Dictionary<int, UI_IngredientButton>();
 
     private bool _isInitialized = false;
@@ -21,22 +20,23 @@ public class UI_RecipeIngredient : MonoBehaviour
     {
         if (_isInitialized) return;
         _isInitialized = true;
-
-        _ingredientCsvDataList = FoodCSVDataManager.Instance.IngredientCsvDataList;
+        
+        List<int> _ingredientIds = ItemManager.Instance.GetFoodIngredientList();
         _ingredientButtonDict.Clear();
         
 
-        foreach (var ingredientData in _ingredientCsvDataList)
+        foreach (int id in _ingredientIds)
         {
+            AItemInfo itemInfo = ItemManager.Instance.GetItem(id);
+            if (itemInfo == null) continue;
+
             GameObject buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var button = buttonObj.GetComponent<UI_IngredientButton>();
-            button.Refresh(ingredientData);
-            buttonObj.SetActive(false); // 처음엔 다 꺼두기
+            button.Refresh(itemInfo); // <- AItemInfo 넘김
+            buttonObj.SetActive(false);
 
-            _ingredientButtonDict[ingredientData.ID] = button;
+            _ingredientButtonDict[itemInfo.ItemData.ID] = button;
         }
-
-        // 인벤토리 이벤트 구독 (한 번만)
     }
 
     private void RefreshIngredientButtons()

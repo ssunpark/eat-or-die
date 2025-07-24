@@ -24,16 +24,12 @@ public class CharacterResourceNetworkSync : NetworkBehaviour
             if (HasStateAuthority) NetCurrentSatiety = cur;
         };
 
-        _resource.OnHealthChanged += _onHealthChangedHandler;
         _resource.OnSatietyChanged += _onSatietyChangedHandler;
     }
 
     private void OnDisable()
     {
         if (_resource == null) return;
-
-        if (_onHealthChangedHandler != null)
-            _resource.OnHealthChanged -= _onHealthChangedHandler;
 
         if (_onSatietyChangedHandler != null)
             _resource.OnSatietyChanged -= _onSatietyChangedHandler;

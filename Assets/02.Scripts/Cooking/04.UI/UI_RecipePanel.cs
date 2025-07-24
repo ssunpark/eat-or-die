@@ -24,12 +24,6 @@ public class UI_RecipePanel : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-    
-    // private void Start()
-    // {
-    //     FoodCSVDataManager.Instance.OnDataLoaded += Init;
-    //     Debug.Log("UI_RecipePanel Start");
-    // }
 
     private void Init()
     {

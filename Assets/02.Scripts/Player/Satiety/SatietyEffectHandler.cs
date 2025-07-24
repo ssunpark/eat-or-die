@@ -7,6 +7,7 @@
     private const string DebuffSource = "SatietyDebuff";
     private const string CriticalSource = "SatietyCritical";
 
+
     public SatietyEffectHandler(ResourceManager resource, StatManager stat)
     {
         _resource = resource;
@@ -26,9 +27,9 @@
 
         if (ratio >= 0.7f)
         {
-            _stat.ApplyModifier(EStatType.Damage, new StatModifier(StatModifierType.Percentage, 0.5f, BuffSource));
-            _stat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(StatModifierType.Multiply, 2f, CriticalSource));
-            _stat.ApplyModifier(EStatType.SprintingMultiplier, new StatModifier(StatModifierType.Percentage, 3f, CriticalSource));
+            _stat.ApplyModifier(EStatType.Damage, new StatModifier(EStatModifierType.Percentage, 0.5f, BuffSource));
+            _stat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(EStatModifierType.Multiply, 2f, CriticalSource));
+            _stat.ApplyModifier(EStatType.SprintingMultiplier, new StatModifier(EStatModifierType.Percentage, 3f, CriticalSource));
         }
         else if (ratio <= 0.1f)
         {
@@ -37,7 +38,7 @@
         }
         else if (ratio <= 0.3f)
         {
-            _stat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(StatModifierType.Percentage, -0.3f, DebuffSource));
+            _stat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(EStatModifierType.Percentage, -0.3f, DebuffSource));
         }
     }
 }
