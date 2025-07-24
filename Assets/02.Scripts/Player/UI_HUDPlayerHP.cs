@@ -23,7 +23,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
         {
             // 이벤트 구독
             _resourceManager.OnSatietyChanged += _resourceManager_OnSatietyChanged;
-            _resourceManager_OnSatietyChanged(statManager.GetStat(EStatType.MaxSatiety), statManager.GetStat(EStatType.MaxSatiety));
+            _resourceManager_OnSatietyChanged(statManager.GetStat(EStatType.MaxHunger), statManager.GetStat(EStatType.MaxHunger));
         }
         else
         {

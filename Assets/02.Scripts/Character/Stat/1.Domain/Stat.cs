@@ -69,11 +69,13 @@ public class Stat
             var existingModifier = _modifiers.First(m => m.Source == modifier.Source && m.Type == modifier.Type);
             existingModifier.Value= modifier.Value; // 값 업데이트
             existingModifier.Duration = modifier.Duration;// 지속시간 업데이트
+            Debug.Log($"Updated modifier: {existingModifier.Source}, Type: {existingModifier.Type}, Value: {existingModifier.Value}, Duration: {existingModifier.Duration}");
         }
         else
         {
             // 새로운 모디파이어 추가
             _modifiers.Add(modifier);
+            Debug.Log($"Added modifier: {modifier.Source}, Type: {modifier.Type}, Value: {modifier.Value}, Duration: {modifier.Duration}");
         }
     }
 
@@ -115,5 +117,27 @@ public class Stat
 
         float result = (baseValue * multiplyProduct) + (baseValue * percentageSum) + addSum;
         return result;
+    }
+
+    public void UpdateModifiers(float deltaTime)
+    {
+        if(deltaTime <= 0f)
+        {
+            Debug.LogWarning("Delta time must be greater than zero to update modifiers.");
+            return;
+        }
+        for (int i = _modifiers.Count - 1; i >= 0; i--)
+        {
+            var mod = _modifiers[i];
+            if (mod.IsBuff)
+            {
+                mod.Duration -= deltaTime;
+                if (mod.Duration <= 0f)
+                {
+                    _modifiers.RemoveAt(i);
+                    Debug.Log($"Removed expired modifier: {mod.Source}, Type: {mod.Type}");
+                }
+            }
+        }
     }
 }

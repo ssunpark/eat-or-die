@@ -8,10 +8,10 @@ public static class CharacterStatPreset
         {
             ECharacterType.Farmer => new()
             {
-                { EStatType.MaxSatiety, 120f },
-                { EStatType.Damage, 5f },
+                { EStatType.MaxHunger, 120f },
+                { EStatType.MeleeDamage, 5f },
                 { EStatType.MoveSpeed, 3.5f },
-                { EStatType.Armor, 0f },
+                { EStatType.Defense, 0f },
                 { EStatType.Acceleration, 80f},
                 { EStatType.JumpPower, 3f },
                 { EStatType.AttackSpeed, 1.5f },
@@ -21,10 +21,10 @@ public static class CharacterStatPreset
             },
             ECharacterType.Warrior => new()
             {
-                { EStatType.MaxSatiety, 100f },
-                { EStatType.Damage, 10f },
+                { EStatType.MaxHunger, 100f },
+                { EStatType.MeleeDamage, 10f },
                 { EStatType.MoveSpeed, 3f },
-                { EStatType.Armor, 0f },
+                { EStatType.Defense, 0f },
                 { EStatType.Acceleration, 80f},
                 { EStatType.JumpPower, 3f },
                 { EStatType.AttackSpeed, 1f },
@@ -33,9 +33,9 @@ public static class CharacterStatPreset
             },
             ECharacterType.Mage => new()
             {
-                { EStatType.MaxSatiety, 80f },
-                { EStatType.Damage, 15f },
-                { EStatType.Armor, -5f },
+                { EStatType.MaxHunger, 80f },
+                { EStatType.MeleeDamage, 15f },
+                { EStatType.Defense, -5f },
                 { EStatType.MoveSpeed, 3.2f },
                 { EStatType.Acceleration, 80f},
                 { EStatType.JumpPower, 3f },
@@ -45,10 +45,10 @@ public static class CharacterStatPreset
             },
             ECharacterType.Chef => new()
             {
-                { EStatType.MaxSatiety, 150f },
-                { EStatType.Damage, 5f },
+                { EStatType.MaxHunger, 150f },
+                { EStatType.MeleeDamage, 5f },
                 { EStatType.MoveSpeed, 3.5f },
-                { EStatType.Armor, 0f },
+                { EStatType.Defense, 0f },
                 { EStatType.Acceleration, 80f},
                 { EStatType.JumpPower, 3f },
                 { EStatType.AttackSpeed, 1.3f },

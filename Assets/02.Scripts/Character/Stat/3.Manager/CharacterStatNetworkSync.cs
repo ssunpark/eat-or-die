@@ -2,7 +2,7 @@
 
 public class CharacterStatNetworkSync : NetworkBehaviour
 {
-    [Networked, Capacity(12)] public NetworkArray<float> NetStats => default;
+    [Networked, Capacity(22)] public NetworkArray<float> NetStats => default;
 
     private StatManager _statManager;
 
@@ -27,18 +27,28 @@ public class CharacterStatNetworkSync : NetworkBehaviour
     {
         return type switch
         {
-            EStatType.ConsumptionRate => 0,
-            EStatType.MaxShield => 1,
+            EStatType.ConsumptionOverTime => 0,
+            EStatType.HungerRecoveryOverTime => 1,
             EStatType.MoveSpeed => 2,
             EStatType.Acceleration => 3,
             EStatType.JumpPower => 4,
-            EStatType.Damage => 5,
-            EStatType.AttackSpeed => 6,
-            EStatType.CritChance => 7,
-            EStatType.Armor => 8,
-            EStatType.SprintingMultiplier => 9,
-            EStatType.MaxSatiety => 10,
-            EStatType.AttackRange => 11,
+            EStatType.MeleeDamage => 5,
+            EStatType.MagicDamage => 6,
+            EStatType.AttackSpeed => 7,
+            EStatType.CritChance => 8,
+            EStatType.Defense => 9,
+            EStatType.SprintingMultiplier => 10,
+            EStatType.MaxHunger => 11,
+            EStatType.AttackRange => 12,
+            EStatType.HarvestBonusChance => 13,
+            EStatType.CookBonusChnace => 14,
+            EStatType.MaxMana => 15,
+            EStatType.ManaRecoveryOverTime => 16,
+            EStatType.CritDamageRatio => 17,
+            EStatType.MeleeDefense => 18,
+            EStatType.MagicDefense => 19,
+            EStatType.BossDamage => 20,
+            EStatType.BossDefense => 21,
             _ => -1
         };
     }
