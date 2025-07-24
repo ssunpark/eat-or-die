@@ -9,6 +9,7 @@ public class ItemData
     public readonly int ID;
     public readonly string Name;
     public readonly int MaxQuantity;
+    public readonly float MaxDurability;
     public readonly bool Cookable;
     private string _description;
     public string Description => _description;
@@ -16,7 +17,7 @@ public class ItemData
     public Sprite Icon => _icon;
     // .. 등등 추가 예정
 
-    public ItemData(int id, string name, string description, bool cookable, int maxQuantity, string iconAddressablePath)
+    public ItemData(int id, string name, string description, bool cookable, int maxQuantity, float maxDurability,string iconAddressablePath)
     {
         // TODO: 유효성 검사
         ID = id;
@@ -24,6 +25,7 @@ public class ItemData
         _description = description;
         Cookable = cookable;
         MaxQuantity = maxQuantity;
+        MaxDurability = maxDurability;
         var finalIconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
 
         Addressables.LoadAssetAsync<Sprite>(finalIconAddressablePath).Completed += (handle) =>

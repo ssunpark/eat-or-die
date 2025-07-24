@@ -46,7 +46,7 @@ public class ItemManager : NetworkBehaviour
         _itemDictionary = new Dictionary<int, AItemInfo>();
         
         // 음식 아이템
-        var eatItemRawDataList = ItemDataLoader.LoadItemRawData<EatItemRawData>($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
+        var eatItemRawDataList = CSVLoader<EatItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
         foreach (var data in eatItemRawDataList)
         {
             var useItem = _itemFactory.CreateEatItem(data);
@@ -70,8 +70,8 @@ public class ItemManager : NetworkBehaviour
         // }
         
         // 도구 아이템
-        var usableRawDataList = ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
-        usableRawDataList.AddRange(ItemDataLoader.LoadItemRawData<UsableItemRawData>($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
+        var usableRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
+        usableRawDataList.AddRange(CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
         foreach (var data in usableRawDataList)
         {
             var useItem = _itemFactory.CreateUsableItem(data);
@@ -89,6 +89,11 @@ public class ItemManager : NetworkBehaviour
         return _itemDictionary.GetValueOrDefault(id);
     }
 
+    // public List<int> GetInger
+    // {
+    //     
+    // }
+
     /// <summary>
     /// 아이템 생성(드랍)
     /// </summary>
@@ -97,7 +102,7 @@ public class ItemManager : NetworkBehaviour
     /// <param name="position">생성 위치</param>
     /// <param name="rotation">생성 시 각도</param>
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_CreateItemObject(int id, int quantity, Vector3 position, Quaternion rotation)
+    public void RPC_CreateItemObject(int id, int quantity, float durability, Vector3 position, Quaternion rotation)
     {
         if (!Runner.IsServer)
         {
@@ -121,6 +126,7 @@ public class ItemManager : NetworkBehaviour
                 item.ItemID = id;
                 item.Quantity = quantity;
                 item.SpawnPosition = position;
+                item.Durability = durability;
             });
     }
 }

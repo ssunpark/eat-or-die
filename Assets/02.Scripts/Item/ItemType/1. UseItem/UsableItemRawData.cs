@@ -16,6 +16,9 @@ public class UsableItemRawData
     
     [Name("MaxStack")]
     public int MaxQuantity { get; set; }
+    
+    [Name("Duration")]
+    public float? MaxDuration { get; set; }
 
     [Name("InteractionTag")]
     public string InteractionTag { get; set; }

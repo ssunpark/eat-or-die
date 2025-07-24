@@ -6,11 +6,15 @@ public class Item
 {
     public readonly int ID;
     public readonly int MaxQuantity;
+    public readonly float MaxDurability;
     
     private int _quantity;
     public int Quantity => _quantity;
+    
+    private float _durability;
+    public float Durability => _durability;
 
-    public Item(int id, int maxQuantity, int initialQuantity = 0)
+    public Item(int id, int maxQuantity = 1, int initialQuantity = 0, float maxDurability = 1, float initialDurability = 1)
     {
         if (id < 0)
         {
@@ -22,13 +26,25 @@ public class Item
             throw new Exception("아이템 최대 갯수는 1 이상입니다.");
         }
 
-        if (initialQuantity < 0 || initialQuantity > maxQuantity)
+        if (maxDurability < 1)
         {
-            throw new Exception("수량은 0 이상 최대 수량 이하여야 합니다.");
+            throw new Exception("아이템 최대 내구도는 1이상입니다.");
+        }
+
+        if (initialQuantity < 1 || initialQuantity > maxQuantity)
+        {
+            throw new Exception("초기 수량은 1 이상 최대 수량 이하여야 합니다.");
+        }
+
+        if (initialDurability < 1 || initialDurability > maxDurability)
+        {
+            throw new Exception("초기 내구도는 1 이상 최대 내구도 이하여야 합니다.");
         }
 
         ID = id;
         MaxQuantity = maxQuantity;
+        MaxDurability = maxDurability;
+        _durability = initialDurability;
         _quantity = initialQuantity;
     }
 
@@ -73,6 +89,50 @@ public class Item
         }
 
         _quantity -= amount;
+        return true;
+    }
+    
+    // 내구도 제어 함수
+
+    public void SetDurability(float durability)
+    {
+        if (durability < 0f || durability > MaxDurability)
+        {
+            throw new Exception("내구도는 0 이상 최대 내구도 이하여야 합니다.");
+        }
+
+        _durability = durability;
+    }
+
+    public bool TryAddDurability(float amount)
+    {
+        if (amount < 0f)
+        {
+            return false;
+        }
+
+        if (_durability + amount > MaxDurability)
+        {
+            return false;
+        }
+
+        _durability += amount;
+        return true;
+    }
+
+    public bool TryReduceDurability(float amount)
+    {
+        if (amount < 0f)
+        {
+            return false;
+        }
+
+        if (_durability - amount < 0f)
+        {
+            return false;
+        }
+
+        _durability -= amount;
         return true;
     }
 }

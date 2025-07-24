@@ -43,7 +43,7 @@ public class EatEffectFactory
     {
         _descriptionTemplates = new Dictionary<EEatItemEffectType, string>();
         var effectList =
-            ItemDataLoader.LoadItemRawData<EatEffectRawData>($"{Application.streamingAssetsPath}{EFFECTTYPE_CSV_PATH}");
+            CSVLoader<EatEffectRawData>.LoadCSV($"{Application.streamingAssetsPath}{EFFECTTYPE_CSV_PATH}");
         foreach (var effect in effectList)
         {
             _descriptionTemplates.Add(effect.Type, effect.Description);
