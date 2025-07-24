@@ -24,7 +24,7 @@ public class ItemData
         ID = id;
         Name = name;
         _description = description;
-        IsIngredient = IsIngredient;
+        IsIngredient = isIngredient;
         Cookable = cookable;
         MaxQuantity = maxQuantity;
         MaxDurability = maxDurability;

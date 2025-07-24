@@ -27,7 +27,7 @@ public class ItemFactory
             effectList.Add(effect);
         }
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
             rawData.MaxQuantity, 0, rawData.IconPath);
         return new EatItemInfo(itemData, effectList);
     }
@@ -46,7 +46,7 @@ public class ItemFactory
 
     public UsableItemInfo CreateUsableItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.MaxQuantity, rawData.MaxDuration ?? 1f,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity, rawData.MaxDuration ?? 1f,
             rawData.AddressablePath);
         IUseAction useAction = rawData.UseAction switch
         {
