@@ -12,7 +12,7 @@ public class PlayerController : CharacterBase
 
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
     public SatietyEffectHandler SatietyEffectHandler => _satietyEffectHandler;
-    [Networked]public bool IsAttacking { get; set; }
+    [Networked]public bool MoveFlag { get; set; }
 
     private float _lastAttackTime;
     public float LastAttackTime
@@ -27,9 +27,9 @@ public class PlayerController : CharacterBase
     [SerializeField] private string _playerHUDTagName = "PlayerHUD";
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_SetIsAttacking(bool attacking)
+    public void RPC_SetMoveFlag(bool flag)
     {
-        IsAttacking = attacking;
+        MoveFlag = flag;
     }
 
     public override void Spawned()

@@ -1,6 +1,4 @@
-﻿
-using Fusion;
-using Mono.Cecil;
+﻿using Fusion;
 using UnityEngine;
 
 public class PlayerMove:NetworkBehaviour
@@ -52,7 +50,7 @@ public class PlayerMove:NetworkBehaviour
                 : 1f;
 
 
-            float moveSpeed = _controller.IsAttacking
+            float moveSpeed = _controller.MoveFlag
                 ? 0f
                 : (baseSpeed * sprintMultiplier);
             if (_characterController.maxSpeed != moveSpeed)
