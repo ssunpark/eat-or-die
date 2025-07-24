@@ -36,5 +36,8 @@ public class WeaponItemRawData
     public float Range { get; set; }
 
     [Name("IconPath(Addressable)")]
-    public string AddressablePath { get; set; }
+    public string IconPath { get; set; }
+    
+    [Name("PrefabPath(Addressable)")]
+    public string PrefabPath { get; set; }
 }

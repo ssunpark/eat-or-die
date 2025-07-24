@@ -14,7 +14,7 @@ public class EquipmentItemInfo : AItemInfo, IEquipable
         // 장비 스텟 수치만큼 증가
     }
 
-    public void Unequip(GameObject player)
+    public void Unequip(GameObject player, GameObject itemObject = null)
     {
         Debug.Log($"해제 : {ItemData.Name}");
         // 장비 스텟 수치만큼 감소

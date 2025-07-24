@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Redcode.Pools;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class WeaponItemInfo : AItemInfo, IEquipable
 {
@@ -6,25 +8,49 @@ public class WeaponItemInfo : AItemInfo, IEquipable
     public readonly float Damage;
     public readonly float AttackSpeed;
     public readonly float Range;
+
+    private readonly Transform _poolParent;
+    private Pool<Transform> _weaponPool;
     // TODO: 강화 속성은 추후에
-    
-    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType, float damage, float attackSpeed, float range) : base(itemData)
+
+    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType, float damage, float attackSpeed, float range,
+        string prefabPath, Transform poolParent) : base(itemData)
     {
         Type = weaponType;
         Damage = damage;
         AttackSpeed = attackSpeed;
         Range = range;
+        _poolParent = poolParent;
+
+        // 풀링
+        GameObject plantPrefab = Addressables.LoadAssetAsync<GameObject>(prefabPath).WaitForCompletion();
+        _weaponPool = Pool.Create(plantPrefab.transform, 10, poolParent.transform);
     }
 
     public void Equip(GameObject player)
     {
         Debug.Log($"장착 : {ItemData.Name}");
         // 장비 스텟 수치만큼 증가
+        var weaponObject = _weaponPool.Get();
+        player.GetComponent<PlayerItemHolder>().SetHoldItem(ItemData.ID);
+        player.GetComponent<StatManager>().ApplyModifier(EStatType.Damage, new StatModifier(StatModifierType.Add, Damage, ItemData.Name));
+        player.GetComponent<StatManager>().ApplyModifier(EStatType.AttackSpeed, new StatModifier(StatModifierType.Add, AttackSpeed, ItemData.Name));
+        // player.GetComponent<StatManager>().ApplyModifier(EStatType.Range, new StatModifier(StatModifierType.Add, Range, ItemData.Name));
     }
 
-    public void Unequip(GameObject player)
+    public void Unequip(GameObject player, GameObject itemObject = null)
     {
         Debug.Log($"해제 : {ItemData.Name}");
         // 장비 스텟 수치만큼 감소
+        player.GetComponent<StatManager>().RemoveModifiersFrom(ItemData.Name);
+        
+        // 풀 반환
+        if (itemObject == null)
+        {
+            return;
+        }
+        
+        _weaponPool.Take(itemObject.transform);
+        itemObject.transform.SetParent(_poolParent);
     }
 }

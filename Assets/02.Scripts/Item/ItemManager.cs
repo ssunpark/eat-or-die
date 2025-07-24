@@ -24,6 +24,7 @@ public class ItemManager : NetworkBehaviour
     private const string FOOD_CSV_PATH = "/ItemCSV/Food.csv";
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
     private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
+    private const string WEAPON_CSV_PATH = "/ItemCSV/Weapon.csv";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -50,8 +51,8 @@ public class ItemManager : NetworkBehaviour
         var eatItemRawDataList = CSVLoader<EatItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
         foreach (var data in eatItemRawDataList)
         {
-            var useItem = _itemFactory.CreateEatItem(data);
-            _itemDictionary[data.ID] = useItem;
+            var eatItem = _itemFactory.CreateEatItem(data);
+            _itemDictionary[data.ID] = eatItem;
         }
         
         // 장비 아이템
@@ -63,20 +64,22 @@ public class ItemManager : NetworkBehaviour
         // }
         
         // 무기 아이템
-        // var weaponItemRawData = ItemDataLoader.LoadItemRawData<WeaponItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}");
-        // foreach (var data in equipmentItemRawData)
-        // {
-        //     var useItem = _itemFactory.CreateEquipmentItem(data);
-        //     _itemDict[data.ID] = useItem;
-        // }
+        var weaponItemRawData = CSVLoader<WeaponItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{WEAPON_CSV_PATH}");
+        foreach (var data in weaponItemRawData)
+        {
+            GameObject poolParent = new GameObject($"{data.ID}_Pool");
+            poolParent.transform.SetParent(transform);
+            var weaponItem = _itemFactory.CreateWeaponItem(data, poolParent.transform);
+            _itemDictionary[data.ID] = weaponItem;
+        }
         
         // 도구 아이템
         var usableRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
         usableRawDataList.AddRange(CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
         foreach (var data in usableRawDataList)
         {
-            var useItem = _itemFactory.CreateUsableItem(data);
-            _itemDictionary[data.ID] = useItem;
+            var usableItem = _itemFactory.CreateUsableItem(data);
+            _itemDictionary[data.ID] = usableItem;
         }
     }
 

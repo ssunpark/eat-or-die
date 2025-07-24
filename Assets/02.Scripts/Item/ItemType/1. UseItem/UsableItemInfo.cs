@@ -27,7 +27,7 @@ public class UsableItemInfo : AItemInfo, IUsable, IEquipable
         player.GetComponent<PlayerItemHolder>().SetHoldItem(ItemData.ID);
     }
 
-    public void Unequip(GameObject player)
+    public void Unequip(GameObject player, GameObject itemObject = null)
     {
         // 해제하면 상호작용 할 태그 수정
         player.GetComponent<PlayerInteractions>().OnUnequipped();

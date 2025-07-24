@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class ItemFactory
 {
@@ -38,12 +39,12 @@ public class ItemFactory
     //     return new EquipmentItem(itemData);
     // }
 
-    public WeaponItemInfo CreateWeaponItem(WeaponItemRawData rawData)
+    public WeaponItemInfo CreateWeaponItem(WeaponItemRawData rawData, Transform poolParent)
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false,
             rawData.MaxStack, rawData.MaxDuration,
-            rawData.AddressablePath);
-        return new WeaponItemInfo(itemData, rawData.Type, rawData.Damage, rawData.AttackSpeed, rawData.Range);
+            rawData.IconPath);
+        return new WeaponItemInfo(itemData, rawData.Type, rawData.Damage, rawData.AttackSpeed, rawData.Range, rawData.PrefabPath, poolParent);
     }
 
     public UsableItemInfo CreateUsableItem(UsableItemRawData rawData)
