@@ -10,19 +10,21 @@ public class ItemData
     public readonly string Name;
     public readonly int MaxQuantity;
     public readonly float MaxDurability;
-    public readonly bool Cookable;
+    public readonly bool IsIngredient;  // 재료인지
+    public readonly bool Cookable;  // 솥에 들어갈 수 있는지?
     private string _description;
     public string Description => _description;
     private Sprite _icon;
     public Sprite Icon => _icon;
     // .. 등등 추가 예정
 
-    public ItemData(int id, string name, string description, bool cookable, int maxQuantity, float maxDurability,string iconAddressablePath)
+    public ItemData(int id, string name, string description, bool cookable, bool isIngredient, int maxQuantity, float maxDurability,string iconAddressablePath)
     {
         // TODO: 유효성 검사
         ID = id;
         Name = name;
         _description = description;
+        IsIngredient = isIngredient;
         Cookable = cookable;
         MaxQuantity = maxQuantity;
         MaxDurability = maxDurability;
