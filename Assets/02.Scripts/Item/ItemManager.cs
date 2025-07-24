@@ -8,18 +8,6 @@ using UnityEngine;
 public class ItemManager : NetworkBehaviour
 {
     public static ItemManager Instance { get; private set; }
-
-    public override void Spawned()
-    {
-        if (Instance == null)
-        {
-            Instance = this; 
-        }
-        else
-        {
-            Runner.Despawn(Object); // 중복 방지
-        }
-    }
     
     private const string FOOD_CSV_PATH = "/ItemCSV/Food.csv";
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
@@ -34,6 +22,19 @@ public class ItemManager : NetworkBehaviour
     
     // 아이템 팩토리
     private ItemFactory _itemFactory;
+    
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this; 
+        }
+        else
+        {
+            Destroy(gameObject);
+            // Runner.Despawn(Object); // 중복 방지
+        }
+    }
 
     private void Start()
     {

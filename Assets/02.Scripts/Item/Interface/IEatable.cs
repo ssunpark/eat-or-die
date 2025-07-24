@@ -1,4 +1,6 @@
-﻿public interface IEatable
+﻿using UnityEngine;
+
+public interface IEatable
 {
-    public void Eat();
+    public void Eat(GameObject target);
 }
