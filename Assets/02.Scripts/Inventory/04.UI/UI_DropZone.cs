@@ -24,6 +24,7 @@ public class UI_DropZone : MonoBehaviour, IPointerDownHandler
 				ItemManager.Instance.RPC_CreateItemObject(
 					itemInHand.ID,
 					itemInHand.Quantity, 
+                    itemInHand.Durability,
 					HandEntity.Instance.transform.position, 
 					HandEntity.Instance.transform.rotation);
 				HandEntity.Instance.DropItem();

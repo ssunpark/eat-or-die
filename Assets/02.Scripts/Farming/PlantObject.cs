@@ -79,13 +79,13 @@ public class PlantObject : NetworkBehaviour, IInteractable
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
             // 작물 수확
-            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, transform.position,
+            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
                 Quaternion.identity);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
             // 썩은 작물
-            ItemManager.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, transform.position, Quaternion.identity);
+            ItemManager.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, 1, transform.position, Quaternion.identity);
         }
         
         // 풀 반환

@@ -1,5 +1,4 @@
-﻿using System;
-using Fusion;
+﻿using Fusion;
 using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
@@ -10,8 +9,10 @@ public class ItemObject : NetworkBehaviour, IPickable
     [Networked]
     public int Quantity { get; set; }
     [Networked]
+    public float Durability { get; set; }
+    [Networked]
     public Vector3 SpawnPosition { get; set; }
-    
+
     // private bool _isDespawn;
     private NetworkId _targetID;
     private bool _hasOwner;
@@ -47,17 +48,19 @@ public class ItemObject : NetworkBehaviour, IPickable
         if (_target != null)
         {
             transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Time.deltaTime);
-            
+
             if (Vector3.Distance(transform.position, _target.position) < _absorbThreshold)
             {
                 // 인벤에 등록 요청
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
+                    var itemData = ItemManager.Instance.GetItem(ItemID).ItemData;
                     Item item = new Item(ItemID,
-                        ItemManager.Instance.GetItem(ItemID).ItemData.MaxQuantity, Quantity);
+                        itemData.MaxQuantity, Quantity, itemData.MaxDurability, Durability);
                     InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
                 }
+
                 _target = null;
             }
         }
@@ -70,7 +73,7 @@ public class ItemObject : NetworkBehaviour, IPickable
         {
             return;
         }
-        
+
         Runner.Despawn(Object);
     }
 

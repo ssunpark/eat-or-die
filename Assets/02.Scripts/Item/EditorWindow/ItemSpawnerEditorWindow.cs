@@ -6,6 +6,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
 {
     private int _itemId = 0;
     private int _quantity = 1;
+    private float _durability = 1;
     private Vector3 _spawnPosition = Vector3.zero;
     private Vector3 _spawnRotationEuler = Vector3.zero;
 
@@ -23,6 +24,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
         _itemId = EditorGUILayout.IntField("Item ID", _itemId);
         _quantity = EditorGUILayout.IntField("Quantity", _quantity);
+        _durability = EditorGUILayout.FloatField("Durability", _durability);
         _spawnPosition = EditorGUILayout.Vector3Field("Spawn Position", _spawnPosition);
         _spawnRotationEuler = EditorGUILayout.Vector3Field("Rotation (Euler)", _spawnRotationEuler);
         
@@ -63,7 +65,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
             try
             {
-                itemManager.RPC_CreateItemObject(_itemId, _quantity, _spawnPosition, rotation);
+                itemManager.RPC_CreateItemObject(_itemId, _quantity, _durability, _spawnPosition, rotation);
                 Debug.Log($"[EditorWindow] ID {_itemId} 아이템 생성 성공");
 
                 var item = itemManager.GetItem(_itemId);

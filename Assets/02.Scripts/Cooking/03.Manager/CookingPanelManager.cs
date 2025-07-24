@@ -158,7 +158,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
 
         if (remain != null)
         {
-            ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, Vector3.zero, Quaternion.identity);
+            ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
         }
     }
 
