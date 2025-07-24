@@ -1,19 +1,23 @@
 ﻿using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemFactory
 {
-    // 음식 아이템 효과 factory
-    private EatEffectFactory _eatEffectFactory = new();
+    // 음식 아이템 효과 설명 factory
+    private EatEffectManager _eatEffectManager = new();
 
     // 주어진 데이터에 맞게 아이템 생성 후 반환
     public EatItemInfo CreateEatItem(EatItemRawData rawData)
     {
         var effectList = new List<IEatItemEffect>();
+        
+        // 기본 배고픔
+        IEatItemEffect hungerEffect = new EatEffect_HungerInstantRecovery(rawData.HungerRestore);
+        effectList.Add(hungerEffect);
 
-        var rawEffects = new (EEatItemEffectType type, float? value, float? duration)[]
+        var rawEffects = new (EStatType? type, float? value, float? duration)[]
         {
-            (EEatItemEffectType.HungerInstantRecovery, rawData.HungerRestore, null), // 기본적인 배고픔 증가
             (rawData.EffectType1, rawData.Value1, rawData.Duration1),
             (rawData.EffectType2, rawData.Value2, rawData.Duration2),
             (rawData.EffectType3, rawData.Value3, rawData.Duration3),
@@ -21,16 +25,23 @@ public class ItemFactory
 
         foreach (var (type, value, duration) in rawEffects)
         {
-            if (type == EEatItemEffectType.None)
-                continue;
-
-            var effect = _eatEffectFactory.CreateEatItemEffect(type, value ?? 0f, duration ?? 0f);
-            effectList.Add(effect);
+            if (type is EStatType statType)
+            {
+                var effect = CreateEffect(statType, value ?? 0f, duration ?? 0f);
+                effectList.Add(effect);
+            }
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
             rawData.MaxQuantity, 0, rawData.IconPath);
         return new EatItemInfo(itemData, effectList);
+    }
+    
+    private IEatItemEffect CreateEffect(EStatType statType, float value, float duration)
+    {
+        var type = _eatEffectManager.GetStatModifierType(statType);
+        var desc = _eatEffectManager.GetDescription(statType, value, duration);
+        return new EatEffect_StatModifier(statType, value, duration, type, desc);
     }
 
     // public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)

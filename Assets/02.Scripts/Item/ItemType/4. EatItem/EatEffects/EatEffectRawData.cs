@@ -3,7 +3,10 @@
 public class EatEffectRawData
 {
     [Name("EEffectType")]
-    public EEatItemEffectType Type { get; set; }
+    public EStatType Type { get; set; }
+    
+    [Name("EStatModifierType")]
+    public EStatModifierType StatModifierType { get; set; }
     
     [Name("Description")]
     public string Description { get; set; }

@@ -6,10 +6,10 @@ public class EatEffect_HungerInstantRecovery : IEatItemEffect
     private string _description;
     public string Description => _description;
 
-    public EatEffect_HungerInstantRecovery(float value, string description)
+    public EatEffect_HungerInstantRecovery(float value)
     {
         _value = value;
-        _description = description;
+        _description = $"배고픔이 {_value}만큼 즉시 회복됩니다.";
     }
 
     public void UseEffect(GameObject target)
