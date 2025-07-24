@@ -15,7 +15,7 @@ public class PlayerCookingState : APlayerState
 
     public override void Exit()
     {
-        CookingPanelManager.Instance.OnCookingCompleted();
+        CookingManager.Instance.OnCookingCompleted();
         _controller.Rpc_PlayAnimTrigger(EAnimTrigger.CookDone);
     }
 

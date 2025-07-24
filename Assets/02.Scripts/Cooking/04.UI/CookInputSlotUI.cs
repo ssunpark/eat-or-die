@@ -17,14 +17,14 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
     {
         IconImage.gameObject.SetActive(false);
         QuantityText.gameObject.SetActive(false);
-        CookingPanelManager.Instance.OnCookingSlotUpdated[SlotIndex] += UpdateSlotUI;
+        CookingManager.Instance.OnCookingSlotUpdated[SlotIndex] += UpdateSlotUI;
     }
     
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         { 
-            CookingPanelManager.Instance.OnClickMouseLeft(SlotIndex);
+            CookingManager.Instance.OnClickMouseLeft(SlotIndex);
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -33,7 +33,7 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
                 InventoryManager.Instance.OnClickMouseRight(SlotIndex);
             }else if (eventData.pointerEnter.GetComponent<CookInputSlotUI>() != null)
             {
-                CookingPanelManager.Instance.OnClickMouseRight(SlotIndex);
+                CookingManager.Instance.OnClickMouseRight(SlotIndex);
             }
         }
     }
@@ -41,7 +41,7 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
     // 슬롯에 있는 아이콘과 수량 표시 갱신
     public void UpdateSlotUI()
     {
-        Item itemInSlot = CookingPanelManager.Instance.Inventory.SlotList[SlotIndex].Item;
+        Item itemInSlot = CookingManager.Instance.Inventory.SlotList[SlotIndex].Item;
         if (itemInSlot == null)
         {
             IconImage.gameObject.SetActive(false);
