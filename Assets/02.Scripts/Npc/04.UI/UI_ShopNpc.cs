@@ -6,6 +6,6 @@ public class UI_ShopNpc : MonoBehaviour
 
     private void Start()
     {
-        SeedShopPanelUI.SetActive(false);
+        SeedShopPanelUI.SetActive(true);
     }
 }
