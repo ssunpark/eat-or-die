@@ -48,12 +48,12 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         _activeState = _states[CurrentState];
         _activeState.Enter();
 
-        _controller.Resource.OnSatietyChanged += Resource_OnSatietyChanged;
+        _controller.Resource.OnHungerChanged += Resource_OnSatietyChanged;
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
-        _controller.Resource.OnSatietyChanged -= Resource_OnSatietyChanged;
+        _controller.Resource.OnHungerChanged -= Resource_OnSatietyChanged;
         _activeState?.Exit();
         _activeState = null;
         _states.Clear();
