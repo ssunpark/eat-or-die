@@ -38,7 +38,7 @@ public class UI_CookingPanel : MonoBehaviour
     public void OnClickCookingButton()
     {
         // 플레이어 Cooking FSM 호출!
-        CookingPanelManager.Instance.StartCook();
+        CookingManager.Instance.StartCook();
         // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
         //CookingPanelManager.Instance.OnCookingCompleted(true);
         // CookingPanelManager.Instance.ProcessCookingResult(); // 수현 테스트 코드

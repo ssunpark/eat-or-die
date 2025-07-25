@@ -31,12 +31,14 @@ public class ItemMagnet : NetworkBehaviour
             }
             // 서버 조건 체크 (인벤토리 매니저 RPC) => 아이템 스택의 오너가 설정됨
             var networkItem = item.GetComponent<NetworkObject>();
-            RPC_RequestPick(networkItem.Id, Runner.LocalPlayer);
+
+            var vectorToItem = networkItem.transform.position;
+            RPC_RequestPick(networkItem.Id, Runner.LocalPlayer, transform.position);
         }
     }
     
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_RequestPick(NetworkId itemId, PlayerRef player)
+    public void RPC_RequestPick(NetworkId itemId, PlayerRef player, Vector3 playerPos)
     {
         var itemObject = Runner.FindObject(itemId)?.GetComponent<ItemObject>();
 
@@ -51,7 +53,14 @@ public class ItemMagnet : NetworkBehaviour
             Debug.Log("이미 다른 플레이어가 주움");
             return;
         }
-        
+        var itemPos = itemObject.transform.position;
+        Debug.Log($"요청 플레이어 위치: {playerPos}, 아이템 위치: {itemPos}");
+        if(Vector3.Distance(itemPos, playerPos) > _absorbRadius)
+        {
+            Debug.Log("아이템이 너무 멀리 있음");
+            return;
+        }
+
         itemObject.HasOwner = true;
         
         // 아이템 흡수 연출 시작

@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
+public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
     private Item[] _ingredients ;
     public Item[] Ingredients => _ingredients;
@@ -31,7 +31,7 @@ public class RecipePanelManager : BehaviourSingleton<RecipePanelManager>
 
     public void UpdateRecipes(int ingredientID)
     {
-        var filteredRecipes = RecipeDataManager.Instance.RecipeCSVDataList
+        var filteredRecipes = RecipeManager.Instance.RecipeList
             .Where(recipe => recipe.Ingredient1ID == ingredientID || recipe.Ingredient2ID == ingredientID)
             .ToList();
 
