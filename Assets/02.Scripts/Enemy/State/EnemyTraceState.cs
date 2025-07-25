@@ -21,7 +21,7 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
         }
 
         // stateMachine.Rigidbody.position = stateMachine.NavMeshAgent.nextPosition;
-        stateMachine.NavMeshAgent.destination = stateMachine.Target.transform.position;
+        stateMachine.NavMeshAgent.SetDestination(stateMachine.Target.transform.position);
     }
 
     public void Exit(EnemyStateMachine stateMachine)
