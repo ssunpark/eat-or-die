@@ -16,31 +16,15 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
     private void Start()
     {
         InitNpcData();
-        InitNpcItemData();
-        InitNpcDialogueData();
     }
 
     private void InitNpcData()
     {
         NpcList = CSVLoader<Npc>.LoadCSV(Application.streamingAssetsPath + NPC_CSV_PATH);
-
-        Debug.Log($"로드 완료 - NpcList: {NpcList.Count}, ");
-        OnDataLoaded?.Invoke();
-    }
-    
-    private void InitNpcItemData()
-    {
         NpcItemList = CSVLoader<NpcItem>.LoadCSV(Application.streamingAssetsPath + NPCITEM_CSV_PATH);
-
-        Debug.Log($"로드 완료 - NpcItemList: {NpcItemList.Count}, ");
-        OnDataLoaded?.Invoke();
-    }
-    
-    private void InitNpcDialogueData()
-    {
         NpcDialogueList = CSVLoader<NpcDialogue>.LoadCSV(Application.streamingAssetsPath + NPCDIALOGUE_CSV_PATH);
 
-        Debug.Log($"로드 완료 - NpcDialogueList: {NpcDialogueList.Count}, ");
+        Debug.Log($"로드 완료 - NpcList: {NpcList.Count}, NpcItemList: {NpcItemList.Count}, NpcDialogueList: {NpcDialogueList.Count}");
         OnDataLoaded?.Invoke();
     }
 }

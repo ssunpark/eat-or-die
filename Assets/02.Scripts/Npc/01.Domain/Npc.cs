@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using CsvHelper.Configuration.Attributes;
 using UnityEngine;
 // 수현
@@ -16,5 +17,4 @@ public class Npc
     
     [Name("UnlockFloor")]
     public int UnlockFloor { get; set; }
-    
 }
