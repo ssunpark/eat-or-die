@@ -2,7 +2,7 @@
 
 public class CharacterStatNetworkSync : NetworkBehaviour
 {
-    [Networked, Capacity(23)] public NetworkArray<float> NetStats => default;
+    [Networked, Capacity(24)] public NetworkArray<float> NetStats => default;
 
     private StatManager _statManager;
 
@@ -27,30 +27,38 @@ public class CharacterStatNetworkSync : NetworkBehaviour
     {
         return type switch
         {
-            EStatType.ConsumptionOverTime => 0,
-            EStatType.HungerRecoveryOverTime => 1,
-            EStatType.MoveSpeed => 2,
-            EStatType.Acceleration => 3,
-            EStatType.JumpPower => 4,
+            EStatType.MoveSpeed => 0,
+            EStatType.Acceleration => 1,
+            EStatType.JumpPower => 2,
+            EStatType.SprintingMultiplier => 3,
+
+            EStatType.TotalDamage => 4,
             EStatType.MeleeDamage => 5,
             EStatType.MagicDamage => 6,
             EStatType.AttackSpeed => 7,
-            EStatType.CritChance => 8,
-            EStatType.Defense => 9,
-            EStatType.SprintingMultiplier => 10,
-            EStatType.MaxHunger => 11,
-            EStatType.AttackRange => 12,
-            EStatType.HarvestBonusChance => 13,
-            EStatType.CookBonusChnace => 14,
-            EStatType.MaxMana => 15,
-            EStatType.ManaRecoveryOverTime => 16,
-            EStatType.CritDamageRatio => 17,
-            EStatType.MeleeDefense => 18,
-            EStatType.MagicDefense => 19,
-            EStatType.BossDamage => 20,
-            EStatType.BossDefense => 21,
-            EStatType.HungerConsumeReduction => 22,
+            EStatType.AttackRange => 8,
+            EStatType.CritChance => 9,
+            EStatType.CritDamageRatio => 10,
+            EStatType.BossDamage => 11,
+
+            EStatType.Defense => 12,
+            EStatType.MeleeDefense => 13,
+            EStatType.MagicDefense => 14,
+            EStatType.BossDefense => 15,
+
+            EStatType.MaxHunger => 16,
+            EStatType.HungerConsumptionOverTime => 17,
+            EStatType.HungerRecoveryOverTime => 18,
+            EStatType.HungerConsumeReduction => 19,
+
+            EStatType.MaxMana => 20,
+            EStatType.ManaRecoveryOverTime => 21,
+
+            EStatType.HarvestBonusChance => 22,
+            EStatType.CookBonusChance => 23,
+
             _ => -1
         };
     }
+
 }

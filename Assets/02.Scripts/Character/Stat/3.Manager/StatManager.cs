@@ -9,7 +9,7 @@ public class StatManager
     {
         _statDict = repo.GetCharacterStatData().ToDictionary(
             data => data.StatType,
-            data => new Stat(data.BaseAmount, data.CanLevelUp, data.IncreaseAmount)
+            data => new Stat(data.BaseAmount)
         );
     }
 

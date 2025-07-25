@@ -9,7 +9,7 @@ public class ResourceManager
     public float CurrentSatiety { get; private set; }
     public float CurrentMana { get; private set; }
 
-    public event Action<float, float> OnSatietyChanged;
+    public event Action<float, float> OnHungerChanged;
     public event Action<float, float> OnManaChanged;
 
     public ResourceManager(StatManager stat)
@@ -21,14 +21,14 @@ public class ResourceManager
     {
         float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Max(CurrentSatiety - amount, 0f);
-        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+        OnHungerChanged?.Invoke(CurrentSatiety, max);
     }
 
     public void RestoreSatiety(float amount)
     {
         float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Min(CurrentSatiety + amount, max);
-        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+        OnHungerChanged?.Invoke(CurrentSatiety, max);
     }
 
 
@@ -66,6 +66,6 @@ public class ResourceManager
     {
         float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Clamp(value, 0f, max);
-        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+        OnHungerChanged?.Invoke(CurrentSatiety, max);
     }
 }
