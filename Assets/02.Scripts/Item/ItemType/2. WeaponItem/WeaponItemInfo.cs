@@ -16,8 +16,7 @@ public class WeaponItemInfo : AItemInfo, IWeapon
     
     // TODO: 강화 속성은 추후에
 
-    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType, float damage, float attackSpeed, float range,
-        string prefabPath, Transform poolParent) : base(itemData, prefabPath, poolParent)
+    public WeaponItemInfo(ItemData itemData, Transform poolParent, EWeaponType weaponType, float damage, float attackSpeed, float range) : base(itemData, poolParent)
     {
         _type = weaponType;
         _damage = damage;

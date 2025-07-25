@@ -75,8 +75,8 @@ public class ItemObject : NetworkBehaviour, IPickable
             {
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
-                    var itemData = ItemManager.Instance.GetItem(ItemID).ItemData;
-                    var item = new Item(ItemID, itemData.MaxQuantity, Quantity, itemData.MaxDurability, Durability, ExtraInfo);
+                    var itemData = ItemManager.Instance.GetItem(ItemID);
+                    var item = new Item(itemData, Quantity, Durability, ExtraInfo);
                     InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
                 }

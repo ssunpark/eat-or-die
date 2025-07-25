@@ -7,7 +7,7 @@ public class EatItemInfo : AItemInfo, IEatable, IUsable
     
     public string InteractionTag => "Player";
 
-    public EatItemInfo(ItemData itemData, List<IEatItemEffect> effectList) : base(itemData)
+    public EatItemInfo(ItemData itemData, Transform poolParent, List<IEatItemEffect> effectList) : base(itemData, poolParent)
     {
         _effectList = effectList;
         foreach (var effect in effectList)

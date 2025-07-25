@@ -7,7 +7,7 @@ public class UsableItemInfo : AItemInfo, IUsable
 
     public string InteractionTag => _interactionTag;
     
-    public UsableItemInfo(ItemData itemData, string interactionTag, IUseAction useAction) : base(itemData)
+    public UsableItemInfo(ItemData itemData, Transform poolParent, string interactionTag, IUseAction useAction) : base(itemData, poolParent)
     {
         _interactionTag = interactionTag;
         _useAction = useAction;

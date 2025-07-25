@@ -4,9 +4,11 @@
 // 내구도, 갯수 유형으로 나뉨
 public class Item
 {
-    public readonly int ID;
+    public readonly AItemInfo ItemInfo;
     public readonly int MaxQuantity;
     public readonly float MaxDurability;
+
+    public int ID => ItemInfo.ItemData.ID;
 
     private int _quantity;
     public int Quantity => _quantity;
@@ -18,36 +20,27 @@ public class Item
     private string _extraInfo;
     public string ExtraInfo { get => _extraInfo; set => _extraInfo = value; }
 
-    public Item(int id, int maxQuantity = 1, int initialQuantity = 0, float maxDurability = 1, float initialDurability = 1, string extraInfo = "")
+    public Item(AItemInfo itemInfo, int initialQuantity = 0, float initialDurability = 1, string extraInfo = "")
     {
-        if (id < 0)
+        if (itemInfo == null)
         {
-            throw new Exception("아이템 ID은 음수가 아닙니다.");
+            throw new ArgumentNullException("아이템 정보는 null일 수 없습니다.");
         }
+        
+        ItemInfo = itemInfo;
+        MaxQuantity = itemInfo.ItemData.MaxQuantity;
+        MaxDurability = itemInfo.ItemData.MaxDurability;
 
-        if (maxQuantity < 1)
-        {
-            throw new Exception("아이템 최대 갯수는 1 이상입니다.");
-        }
-
-        if (maxDurability < 1)
-        {
-            throw new Exception("아이템 최대 내구도는 1이상입니다.");
-        }
-
-        if (initialQuantity < 1 || initialQuantity > maxQuantity)
+        if (initialQuantity < 1 || initialQuantity > MaxQuantity)
         {
             throw new Exception("초기 수량은 1 이상 최대 수량 이하여야 합니다.");
         }
 
-        if (initialDurability < 1 || initialDurability > maxDurability)
+        if (initialDurability < 1 || initialDurability > MaxDurability)
         {
             throw new Exception("초기 내구도는 1 이상 최대 내구도 이하여야 합니다.");
         }
-
-        ID = id;
-        MaxQuantity = maxQuantity;
-        MaxDurability = maxDurability;
+        
         _durability = initialDurability;
         _quantity = initialQuantity;
         _extraInfo = extraInfo;

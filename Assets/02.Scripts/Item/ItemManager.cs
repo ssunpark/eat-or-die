@@ -43,7 +43,7 @@ public class ItemManager : NetworkBehaviour
 
     private void Init()
     {
-        _itemFactory = new ItemFactory();
+        _itemFactory = new ItemFactory(transform);
         
         // 데이터 로드 후 생성
         _itemDictionary = new Dictionary<int, AItemInfo>();
@@ -70,7 +70,7 @@ public class ItemManager : NetworkBehaviour
         {
             GameObject poolParent = new GameObject($"{data.ID}_Pool");
             poolParent.transform.SetParent(transform);
-            var weaponItem = _itemFactory.CreateWeaponItem(data, poolParent.transform);
+            var weaponItem = _itemFactory.CreateWeaponItem(data);
             _itemDictionary[data.ID] = weaponItem;
         }
         
