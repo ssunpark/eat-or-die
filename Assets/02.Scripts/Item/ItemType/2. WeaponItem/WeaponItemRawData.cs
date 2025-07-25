@@ -10,7 +10,34 @@ public class WeaponItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
-    
-    [Name("WeaponType")]
+
+    [Name("Cookable")]
+    public bool Cookable { get; set; }
+
+    [Name("HasDurability")]
+    public bool HasDurability { get; set; }
+
+    [Name("MaxStack")]
+    public int MaxStack { get; set; }
+
+    [Name("EWeaponType")]
     public EWeaponType Type { get; set; }
+
+    [Name("Duration")]
+    public float MaxDuration { get; set; }
+
+    [Name("Damage")]
+    public float Damage { get; set; }
+
+    [Name("AttackSpeed")]
+    public float AttackSpeed { get; set; }
+
+    [Name("Range")]
+    public float Range { get; set; }
+
+    [Name("IconPath(Addressable)")]
+    public string IconPath { get; set; }
+    
+    [Name("PrefabPath(Addressable)")]
+    public string PrefabPath { get; set; }
 }

@@ -9,7 +9,7 @@ public class ItemMagnet : NetworkBehaviour
     [SerializeField]
     private LayerMask _itemLayerMask; // 아이템 레이어
     
-    private void Update()
+    private void FixedUpdate()
     {
         Pick();
     }
@@ -24,21 +24,19 @@ public class ItemMagnet : NetworkBehaviour
         var items = DetectPickableItems();
         foreach (var item in items)
         {
-            // 로컬 조건 체크 (인벤토리 매니저)
-            if (item.GetComponent<ItemObject>().HasOwner)
-            {
+            if (!item.TryGetComponent(out ItemObject itemObject) || !item.TryGetComponent(out NetworkObject networkItem))
                 continue;
-            }
+            // 로컬 조건 체크 (인벤토리 매니저)
+            if (!itemObject.IsPickable || itemObject.HasNetworkedOwner || itemObject.HasOwnerLocal)
+                continue;
             // 서버 조건 체크 (인벤토리 매니저 RPC) => 아이템 스택의 오너가 설정됨
-            var networkItem = item.GetComponent<NetworkObject>();
-
-            var vectorToItem = networkItem.transform.position;
-            RPC_RequestPick(networkItem.Id, Runner.LocalPlayer, transform.position);
+            itemObject.HasOwnerLocal = true;
+            RPC_RequestPick(networkItem.Id, Runner.LocalPlayer);
         }
     }
     
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_RequestPick(NetworkId itemId, PlayerRef player, Vector3 playerPos)
+    public void RPC_RequestPick(NetworkId itemId, PlayerRef player)
     {
         var itemObject = Runner.FindObject(itemId)?.GetComponent<ItemObject>();
 
@@ -48,20 +46,13 @@ public class ItemMagnet : NetworkBehaviour
             return;
         }
 
-        if (itemObject.HasOwner)
+        if (itemObject.HasNetworkedOwner)
         {
             Debug.Log("이미 다른 플레이어가 주움");
             return;
         }
-        var itemPos = itemObject.transform.position;
-        Debug.Log($"요청 플레이어 위치: {playerPos}, 아이템 위치: {itemPos}");
-        if(Vector3.Distance(itemPos, playerPos) > _absorbRadius)
-        {
-            Debug.Log("아이템이 너무 멀리 있음");
-            return;
-        }
 
-        itemObject.HasOwner = true;
+        itemObject.HasNetworkedOwner = true;
         
         // 아이템 흡수 연출 시작
         itemObject.RPC_Pick(GetComponent<NetworkObject>().Id);

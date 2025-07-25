@@ -27,7 +27,7 @@
 
         if (ratio >= 0.7f)
         {
-            _stat.ApplyModifier(EStatType.Damage, new StatModifier(EStatModifierType.Percentage, 0.5f, BuffSource));
+            _stat.ApplyModifier(EStatType.MeleeDamage, new StatModifier(EStatModifierType.Percentage, 0.5f, BuffSource));
             _stat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(EStatModifierType.Multiply, 2f, CriticalSource));
             _stat.ApplyModifier(EStatType.SprintingMultiplier, new StatModifier(EStatModifierType.Percentage, 3f, CriticalSource));
         }

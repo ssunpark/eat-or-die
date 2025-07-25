@@ -38,8 +38,9 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
             { EPlayerState.UsingTool, new PlayerUsingItemState(this, _controller) },
             { EPlayerState.Cooking, new PlayerCookingState(this, _controller) },
             { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
+            //{ EPlayerState.Dead, new PlayerDeadState(this, _controller) },
             /*{ EPlayerState.Down, new PlayerDownState(this, _controller) },
-            { EPlayerState.Dead, new PlayerDeadState(this, _controller) },
+            
              */
         };
 
@@ -63,7 +64,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     {
         // 배고픔이 감소할 때마다 상태를 업데이트
         // 배고픔이 30% 이하가 되면 플레이어 상태를 광폭화 상태로 변경
-        if (arg1 <= _controller.Stat.GetStat(EStatType.MaxSatiety) * 0.3f)
+        if (arg1 <= _controller.Stat.GetStat(EStatType.MaxHunger) * 0.3f)
         {
             //ChangeState(EPlayerState.rhkdvhrghk);
             //return;
@@ -71,7 +72,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         // 배고픔이 0 이하가 되면 플레이어 상태를 죽음으로 변경
         if (arg1 <= 0)
         {
-            // ChangeState(EPlayerState.Dead);
+            //ChangeState(EPlayerState.Dead);
         }
     }
 
@@ -102,7 +103,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     {
         if (!HasStateAuthority) return;
 
-        var dmg = amount * (100 / (100 + _controller.Stat.GetStat(EStatType.Armor)));
+        var dmg = amount * (100 / (100 + _controller.Stat.GetStat(EStatType.Defense)));
 
         _controller.Resource.ConsumeSatiety(dmg);
         RPC_OrderChangeState(EPlayerState.Hit);
@@ -124,5 +125,11 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     {
         ChangeState(newState);
     }
+
+    //private void SpawnCorpse()
+    //{
+    //    var playerName = _controller.gameObject.name;
+    //    ItemManager.Instance.RPC_CreateCorpseObject(playerName, _controller.transform.position, Quaternion.identity);
+    //}
 
 }
