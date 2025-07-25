@@ -59,7 +59,7 @@ public class PlayerMove:NetworkBehaviour
             }
             if (moveSpeed > 0f)
             {
-                _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.ConsumptionRate));
+                _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
             }
 
             _characterController.Move(moveDirection);

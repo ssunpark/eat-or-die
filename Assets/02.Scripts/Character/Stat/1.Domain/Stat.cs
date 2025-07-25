@@ -3,15 +3,9 @@ using System.Linq;
 using UnityEngine;
 public class Stat
 {
-    public int Level;
-    public int Exp;
-    public int ExpToNextLevel => (Level + 1) * 100; // 예시
-    public bool CanLevelUp;
     public float BaseStat { get; private set; }
     public float CurrentValue { get; private set; }
 
-    private float _increasePerGap;
-    private int _increaseGap;
 
     private readonly List<StatModifier> _modifiers = new();
 
@@ -23,42 +17,7 @@ public class Stat
     }
     public Stat(float baseStat)
     {
-        Level = 0;
         BaseStat = baseStat;
-        CanLevelUp = false;
-        _increasePerGap = 0f;
-        _increaseGap = 1;
-    }
-
-    public Stat(float baseStat, bool canLevelUp, float increasePerGap, int increaseGap = 1)
-    {
-        Level = 0;
-        BaseStat = baseStat;
-        CanLevelUp = canLevelUp;
-        _increasePerGap = increasePerGap;
-        _increaseGap = increaseGap;
-    }
-
-    public void SetCurrent(float value)
-    {
-        CurrentValue = Mathf.Clamp(value, 0f, TotalStat);
-    }
-
-    public void Restore(float amount) => SetCurrent(CurrentValue + amount);
-    public void Consume(float amount) => SetCurrent(CurrentValue - amount);
-    public void LevelUp()
-    {
-        if (!CanLevelUp) return;
-        if (Exp < ExpToNextLevel) return;
-        Exp -= ExpToNextLevel;
-        Level++;
-    }
-
-    public void SetLevel(int level)
-    {
-        if (level < 0) return;
-        Level = level;
-        CurrentValue = TotalStat;
     }
 
     public void AddModifier(StatModifier modifier)
@@ -69,11 +28,13 @@ public class Stat
             var existingModifier = _modifiers.First(m => m.Source == modifier.Source && m.Type == modifier.Type);
             existingModifier.Value= modifier.Value; // 값 업데이트
             existingModifier.Duration = modifier.Duration;// 지속시간 업데이트
+            Debug.Log($"Updated modifier: {existingModifier.Source}, Type: {existingModifier.Type}, Value: {existingModifier.Value}, Duration: {existingModifier.Duration}");
         }
         else
         {
             // 새로운 모디파이어 추가
             _modifiers.Add(modifier);
+            Debug.Log($"Added modifier: {modifier.Source}, Type: {modifier.Type}, Value: {modifier.Value}, Duration: {modifier.Duration}");
         }
     }
 
@@ -91,10 +52,9 @@ public class Stat
 
     private float CalculateFinalStat()
     {
-        float baseValue = BaseStat + (Level / _increaseGap) * _increasePerGap;
+        float baseValue = BaseStat;
 
         float addSum = 0f;
-        float percentageSum = 0f;
         float multiplyProduct = 1f;
 
         foreach (var mod in _modifiers)
@@ -105,15 +65,37 @@ public class Stat
                     addSum += mod.Value;
                     break;
                 case EStatModifierType.Percentage:
-                    percentageSum += mod.Value;
+                    Debug.LogError("EStatModifierType.Percentage 는 쓰이지 않습니다. CSV의 Percentage -> Multiply로 바꿔주세요");
                     break;
                 case EStatModifierType.Multiply:
-                    multiplyProduct *= mod.Value;
+                    multiplyProduct += mod.Value;
                     break;
             }
         }
 
-        float result = (baseValue * multiplyProduct) + (baseValue * percentageSum) + addSum;
+        float result = (baseValue * multiplyProduct) + addSum;
         return result;
+    }
+
+    public void UpdateModifiers(float deltaTime)
+    {
+        if(deltaTime <= 0f)
+        {
+            Debug.LogWarning("Delta time must be greater than zero to update modifiers.");
+            return;
+        }
+        for (int i = _modifiers.Count - 1; i >= 0; i--)
+        {
+            var mod = _modifiers[i];
+            if (mod.IsBuff)
+            {
+                mod.Duration -= deltaTime;
+                if (mod.Duration <= 0f)
+                {
+                    _modifiers.RemoveAt(i);
+                    Debug.Log($"Removed expired modifier: {mod.Source}, Type: {mod.Type}");
+                }
+            }
+        }
     }
 }

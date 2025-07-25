@@ -1,15 +1,32 @@
 ﻿public enum EStatType
 {
-    ConsumptionRate,       // 포만도 감소 속도
-    MaxShield,             // 최대 실드
-    MoveSpeed,             // 이동 속도
-    Acceleration,          // 가속도
-    JumpPower,             // 점프력
-    Damage,                // 공격력
-    AttackSpeed,           // 공격 속도
-    CritChance,            // 치명타 확률
-    Armor,                 // 방어력
-    SprintingMultiplier,   // 대시 속도 배율
-    MaxSatiety,                // 포만도 (배고픔 수치)
-    AttackRange,            // 공격 범위
+    MoveSpeed,
+    Acceleration,
+    JumpPower,
+    SprintingMultiplier,
+
+    TotalDamage,
+    MeleeDamage,
+    MagicDamage,
+    AttackSpeed,
+    AttackRange,
+    CritChance,
+    CritDamageRatio,
+    BossDamage,
+
+    Defense,
+    MeleeDefense,
+    MagicDefense,
+    BossDefense,
+
+    MaxHunger,
+    HungerConsumptionOverTime,
+    HungerRecoveryOverTime,
+    HungerConsumeReduction,
+
+    MaxMana,
+    ManaRecoveryOverTime,
+
+    HarvestBonusChance,
+    CookBonusChance
 }

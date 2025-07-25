@@ -3,28 +3,29 @@ using Fusion;
 
 public class CharacterResourceNetworkSync : NetworkBehaviour
 {
-    [Networked] public float NetCurrentHealth { get; set; }
+    [Networked] public float NetCurrentMana { get; set; }
     [Networked] public float NetCurrentSatiety { get; set; }
 
     private ResourceManager _resource;
 
-    private Action<float, float> _onHealthChangedHandler;
+    private Action<float, float> _onManaChangedHandler;
     private Action<float, float> _onSatietyChangedHandler;
 
     public void Initialize(ResourceManager resource)
     {
         _resource = resource;
 
-        _onHealthChangedHandler = (cur, _) =>
+        _onManaChangedHandler = (cur, _) =>
         {
-            if (HasStateAuthority) NetCurrentHealth = cur;
+            if (HasStateAuthority) NetCurrentMana = cur;
         };
         _onSatietyChangedHandler = (cur, _) =>
         {
             if (HasStateAuthority) NetCurrentSatiety = cur;
         };
 
-        _resource.OnSatietyChanged += _onSatietyChangedHandler;
+        _resource.OnHungerChanged += _onSatietyChangedHandler;
+        _resource.OnManaChanged += _onManaChangedHandler;
     }
 
     private void OnDisable()
@@ -32,6 +33,8 @@ public class CharacterResourceNetworkSync : NetworkBehaviour
         if (_resource == null) return;
 
         if (_onSatietyChangedHandler != null)
-            _resource.OnSatietyChanged -= _onSatietyChangedHandler;
+            _resource.OnHungerChanged -= _onSatietyChangedHandler;
+        if (_onManaChangedHandler != null)
+            _resource.OnManaChanged -= _onManaChangedHandler;
     }
 }

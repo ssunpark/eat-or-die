@@ -2,14 +2,10 @@
 {
     public EStatType StatType;
     public float BaseAmount;
-    public bool CanLevelUp;
-    public float IncreaseAmount;
 
-    public CharacterStatData(EStatType type, float baseAmount, bool canLevelUp, float increaseAmount)
+    public CharacterStatData(EStatType type, float baseAmount)
     {
         StatType = type;
         BaseAmount = baseAmount;
-        CanLevelUp = canLevelUp;
-        IncreaseAmount = increaseAmount;
     }
 }

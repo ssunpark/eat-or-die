@@ -21,22 +21,20 @@ public class PlayerAttackState : APlayerState
             _controller.RPC_SetMoveFlag(true);
         }
 
-        _damage = _stat.GetStat(EStatType.Damage);
+        _damage = _stat.GetStat(EStatType.MeleeDamage);
         _attackSpeed = _stat.GetStat(EStatType.AttackSpeed);
         _attackDelay = 0.6f / Mathf.Max(_attackSpeed, 0.01f);
-        Debug.Log($"Attack Speed: {_attackSpeed}, Attack Delay: {_attackDelay}");
         _controller.LastAttackTime = _fsm.Runner.LocalRenderTime;
 
         // 애니메이션 이벤트로 실행될 부분
         Vector3 attackOrigin = _controller.transform.position + Vector3.up * 0.5f;
         Vector3 direction = _controller.transform.forward;
 
-        if (Physics.Raycast(attackOrigin, direction, out RaycastHit hit, 1.5f))
+        if (Physics.Raycast(attackOrigin, direction, out RaycastHit hit, _stat.GetStat(EStatType.AttackRange)))
         {
             if (hit.collider.TryGetComponent(out NetworkObject target))
             {
                 _controller.RPC_DealDamage(target, Mathf.RoundToInt(_damage));
-                Debug.Log($"Attacked {target.name} for {_damage} damage.");
             }
         }
         //=================================
@@ -45,7 +43,6 @@ public class PlayerAttackState : APlayerState
     public override void Tick() 
     {
         _attackTimer += _fsm.Runner.DeltaTime;
-        Debug.Log($"Attack Timer: {_attackTimer}, Attack Delay: {_attackDelay}");
         if (_attackTimer >= _attackDelay)
         {
             _attackTimer = 0f;

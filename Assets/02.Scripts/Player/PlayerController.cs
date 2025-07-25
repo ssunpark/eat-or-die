@@ -1,5 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Data;
 using Fusion;
+using UnityEngine;
 
 [RequireComponent(typeof(NetworkObject))]
 [RequireComponent(typeof(NetworkCharacterController))]
@@ -7,11 +8,11 @@ public class PlayerController : CharacterBase
 {
     private NetworkCharacterController _characterController;
     private bool _isSpawned = false;
-    private SatietyEffectHandler _satietyEffectHandler;
+    private HungerEffectHandler _satietyEffectHandler;
     private PlayerStateMachine _fsm;
 
     [HideInInspector] public PlayerAnimator PlayerAnimatorController;
-    public SatietyEffectHandler SatietyEffectHandler => _satietyEffectHandler;
+    public HungerEffectHandler SatietyEffectHandler => _satietyEffectHandler;
     [Networked]public bool MoveFlag { get; set; }
 
     private float _lastAttackTime;
@@ -32,21 +33,32 @@ public class PlayerController : CharacterBase
         MoveFlag = flag;
     }
 
+    public override void FixedUpdateNetwork()
+    {
+        Stat.UpdateStats(Runner.DeltaTime);
+    }
+
     public override void Spawned()
     {
         if (Object.HasInputAuthority)
         {
             Room.Instance.SetLocalPlayer(gameObject);
         }
+        //관전 모드에서 플레이어를 등록
+        //SpectatorManager.Instance?.RegisterPlayer(this);
         _fsm = GetComponent<PlayerStateMachine>();
         _characterController = GetComponent<NetworkCharacterController>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
-        _satietyEffectHandler = new SatietyEffectHandler(Resource, Stat);
+        _satietyEffectHandler = new HungerEffectHandler(Resource, Stat);
         _isSpawned = true;
         TryInitialize();
     }
 
-    
+    private void OnDestroy()
+    {
+        //관전 모드에서 플레이어를 제거
+        //SpectatorManager.Instance?.UnregisterPlayer(this);
+    }
 
     private void TryInitialize()
     {

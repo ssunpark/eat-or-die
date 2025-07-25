@@ -9,8 +9,16 @@ public class StatManager
     {
         _statDict = repo.GetCharacterStatData().ToDictionary(
             data => data.StatType,
-            data => new Stat(data.BaseAmount, data.CanLevelUp, data.IncreaseAmount)
+            data => new Stat(data.BaseAmount)
         );
+    }
+
+    public void UpdateStats(float t)
+    {
+        foreach (var stat in _statDict)
+        {
+            stat.Value.UpdateModifiers(t);
+        }
     }
 
     public float GetStat(EStatType type) =>
