@@ -15,6 +15,17 @@ public class Inventory
             SlotList.Add(new Slot());
         }
     }
+    
+    public Item GetItemInSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= SlotList.Count)
+        {
+            Debug.LogError("Invalid slot index: " + slotIndex);
+            return null;
+        }
+        
+        return SlotList[slotIndex].Item;
+    }
 
     public Item PopItemInSlot(int slotIndex)
     {
@@ -24,7 +35,7 @@ public class Inventory
             return null;
         }
         
-        Item slotItem =  SlotList[slotIndex].Item;
+        Item slotItem = GetItemInSlot(slotIndex);
         SlotList[slotIndex].RemoveItem();
         return slotItem;
     }
