@@ -45,7 +45,7 @@ public class PlayerAttackState : APlayerState
     public override void Tick() 
     {
         _attackTimer += _fsm.Runner.DeltaTime;
-        Debug.Log($"Attack Timer: {_attackTimer}, Attack Delay: {_attackDelay}");
+        // Debug.Log($"Attack Timer: {_attackTimer}, Attack Delay: {_attackDelay}");
         if (_attackTimer >= _attackDelay)
         {
             _attackTimer = 0f;

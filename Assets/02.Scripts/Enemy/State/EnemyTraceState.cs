@@ -19,7 +19,9 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
         {
             stateMachine.RequestStateChange(EEnemyState.Idle);
         }
-        stateMachine.NavMeshAgent.SetDestination(stateMachine.Target.transform.position);
+
+        // stateMachine.Rigidbody.position = stateMachine.NavMeshAgent.nextPosition;
+        stateMachine.NavMeshAgent.destination = stateMachine.Target.transform.position;
     }
 
     public void Exit(EnemyStateMachine stateMachine)

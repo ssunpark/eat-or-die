@@ -17,6 +17,9 @@ public class EnemyStateMachine : NetworkBehaviour
 	private NavMeshAgent _navMeshAgent;
 	public NavMeshAgent NavMeshAgent => _navMeshAgent;
 	
+	private Rigidbody _rigidbody;
+	public Rigidbody Rigidbody => _rigidbody;
+	
 	[Networked] private EEnemyState NetworkedState { get; set; }
 	
 	private IEnemyState<EnemyStateMachine> _currentState;
@@ -26,6 +29,7 @@ public class EnemyStateMachine : NetworkBehaviour
 	{
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		_animator = GetComponent<Animator>();
+		_rigidbody = GetComponent<Rigidbody>();
 		_navMeshAgent = GetComponent<NavMeshAgent>();
 		// Stat = GetComponent<EnemyStat>();
 		
@@ -51,7 +55,7 @@ public class EnemyStateMachine : NetworkBehaviour
 	{
 		if (Object.HasStateAuthority)
 		{
-			_currentState?.Update(this, Time.deltaTime);
+			_currentState?.Update(this, Runner.DeltaTime);
 		}
 		foreach (string change in _changeDetector.DetectChanges(this))
 		{ 
