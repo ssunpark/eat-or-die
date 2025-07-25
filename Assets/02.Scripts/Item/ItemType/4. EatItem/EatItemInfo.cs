@@ -4,6 +4,8 @@ using UnityEngine;
 public class EatItemInfo : AItemInfo, IEatable, IUsable
 {
     private readonly List<IEatItemEffect> _effectList;
+    
+    public string InteractionTag => "Player";
 
     public EatItemInfo(ItemData itemData, List<IEatItemEffect> effectList) : base(itemData)
     {
@@ -28,15 +30,5 @@ public class EatItemInfo : AItemInfo, IEatable, IUsable
         {
             effect.UseEffect(target);
         }
-    }
-
-    public override void Equip(GameObject player)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override void Unequip(GameObject player, GameObject itemObject = null)
-    {
-        throw new System.NotImplementedException();
     }
 }

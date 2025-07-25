@@ -8,15 +8,4 @@ public class EquipmentItemInfo : AItemInfo
     {
     }
 
-    public override void Equip(GameObject player)
-    {
-        Debug.Log($"장착 : {ItemData.Name}");
-        // 장비 스텟 수치만큼 증가
-    }
-
-    public override void Unequip(GameObject player, GameObject itemObject = null)
-    {
-        Debug.Log($"해제 : {ItemData.Name}");
-        // 장비 스텟 수치만큼 감소
-    }
 }
