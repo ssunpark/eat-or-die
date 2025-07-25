@@ -14,9 +14,4 @@ public abstract class CharacterBase : NetworkBehaviour, IStatUser
         Resource = new ResourceManager(Stat);
     }
 
-    public virtual void InitializeTrait(ITraitDataRepository repo, StatManager statManager)
-    {
-        if (repo == null) repo = new MockTraitDataRepository();
-        
-    }
 }
