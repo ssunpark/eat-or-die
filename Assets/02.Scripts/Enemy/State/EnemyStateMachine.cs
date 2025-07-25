@@ -17,6 +17,9 @@ public class EnemyStateMachine : NetworkBehaviour
 	private NavMeshAgent _navMeshAgent;
 	public NavMeshAgent NavMeshAgent => _navMeshAgent;
 	
+	private NetworkCharacterController _characterController;
+	public NetworkCharacterController CharacterController => _characterController;
+	
 	[Networked] private EEnemyState NetworkedState { get; set; }
 	
 	private IEnemyState<EnemyStateMachine> _currentState;
@@ -27,6 +30,12 @@ public class EnemyStateMachine : NetworkBehaviour
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		_animator = GetComponent<Animator>();
 		_navMeshAgent = GetComponent<NavMeshAgent>();
+		_characterController = GetComponent<NetworkCharacterController>();
+		
+		_navMeshAgent.updateRotation = false;
+		_navMeshAgent.updateUpAxis = false;
+		_navMeshAgent.updatePosition = false;
+		
 		// Stat = GetComponent<EnemyStat>();
 		
 		_stateDictionary = new Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>>

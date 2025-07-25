@@ -10,7 +10,9 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
         if (stateMachine.Target == null)
         {
             stateMachine.RequestStateChange(EEnemyState.Idle);
+            return;
         }
+        stateMachine.NavMeshAgent.SetDestination(stateMachine.Target.transform.position);
     }
 
     public void Update(EnemyStateMachine stateMachine, float deltaTime)
@@ -19,6 +21,9 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
         {
             stateMachine.RequestStateChange(EEnemyState.Idle);
         }
+        
+        Vector3 direction = (stateMachine.NavMeshAgent.nextPosition - stateMachine.transform.position).normalized;
+        stateMachine.CharacterController.Move(direction);
         stateMachine.NavMeshAgent.SetDestination(stateMachine.Target.transform.position);
     }
 
