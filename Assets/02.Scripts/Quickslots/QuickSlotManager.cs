@@ -109,10 +109,4 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 
 		OnQuickSlotUpdated?.Invoke(slotIndex);
 	}
-    
-    // 플레이어가 접근해서 호출
-    // 손에 든 아이템 사용 함수 추가
-    // 사용 시 내구도 및 갯수 감소
-    // 아이템 사용
-    // UI 갱신
 }
