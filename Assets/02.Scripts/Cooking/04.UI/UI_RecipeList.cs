@@ -6,13 +6,13 @@ public class UI_RecipeList : MonoBehaviour
     public GameObject Container;
     public GameObject ButtonPrefab;
 
-    private List<RecipeCSVData> _recipeCsvDataList = new List<RecipeCSVData>();
+    private List<Recipe> _recipeCsvDataList = new List<Recipe>();
     private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
     
     // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {
-        _recipeCsvDataList = FoodCSVDataManager.Instance.RecipeCSVDataList;
+        _recipeCsvDataList = RecipeManager.Instance.RecipeList;
 
         foreach (var recipe in _recipeCsvDataList)
         {
@@ -32,7 +32,7 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    public void ShowFilteredRecipes(List<RecipeCSVData> recipes)
+    public void ShowFilteredRecipes(List<Recipe> recipes)
     {
         // 전부 비활성화
         foreach (var button in _recipeButtonList)

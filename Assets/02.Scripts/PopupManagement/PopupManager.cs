@@ -38,9 +38,16 @@ public class PopupManager : BehaviourSingleton<PopupManager>
 
 	public IReadOnlyList<AUI_PopupBase> GetAllOpenPopups()
 	{
-		// 열려있는 모든 팝업을 반환하는 메서드
-		// 캡슐화를 위해 열려있는 모든 팝업을 닫는 메서드로 변경될 수 있음
 		return openedPopups.AsReadOnly();
 	}
 
+	public void CloseAll()
+	{
+		IReadOnlyList<AUI_PopupBase> popups = GetAllOpenPopups();
+
+		for (int i = popups.Count - 1; i >= 0; --i)
+		{
+			popups[i].Close();
+		}
+	}
 }

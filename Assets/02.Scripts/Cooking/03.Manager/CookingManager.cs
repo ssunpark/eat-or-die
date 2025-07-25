@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
+public class CookingManager : BehaviourSingleton<CookingManager>
 {
     public Inventory Inventory = new Inventory(2);
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
     
     public Inventory FoodInventory = new Inventory(1);
     public Action OnCookOutputUpdated;
-
+    
     public void OnClickMouseLeft(int slotIndex)
     {
         if (HandEntity.Instance.IsHandEmpty)
@@ -52,21 +52,12 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
-
-
-
-    // 요리 시스템 <-> 플레이어 FSM 연동 (Exit 메서드에서 호출)
-    //public void OnCookingCompleted(bool isSuccess)
-    //{
-    //    if (isSuccess)
-    //    {
-    //        ProcessCookingResult();
-    //    }
-    //    else
-    //    {
-    //        ReturnRecipesToInventory();
-    //    }
-    //}
+    
+    private bool HasEmptySlot()
+    {
+        return Inventory.SlotList.Exists(slot => slot.IsEmpty);
+    }
+    
     public void OnCookingCompleted()
     {
         if (!_isCooking)
@@ -84,20 +75,15 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
             ReturnRecipesToInventory();
         }
     }
-
-    private bool HasEmptySlot()
-    {
-        return Inventory.SlotList.Exists(slot => slot.IsEmpty);
-    }
-
+    
     public int TryCook()
     {
         if (HasEmptySlot()) return -1;
-
+    
         int id1 = Inventory.SlotList[0].Item.ID;
         int id2 = Inventory.SlotList[1].Item.ID;
-
-        foreach (var recipe in FoodCSVDataManager.Instance.RecipeCSVDataList)
+    
+        foreach (var recipe in RecipeManager.Instance.RecipeList)
         {
             if ((recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
                 (recipe.Ingredient1ID == id2 && recipe.Ingredient2ID == id1))
@@ -107,7 +93,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         return 200044; // 애매한 요리 ID
     }
-
+    
     public void ProcessCookingResult()
     {
         int resultItemId = TryCook();
@@ -116,12 +102,12 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
             Debug.Log("조합 실패");
             return;
         }
-
+    
         ConsumeInputIngredients();
         GiveItemToInventory(resultItemId);
         OnCookOutputUpdated?.Invoke();
     }
-
+    
     public void ReturnRecipesToInventory()
     {
         foreach (var slot in Inventory.SlotList)
@@ -134,7 +120,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         OnCookingSlotUpdated.ForEach(action => action?.Invoke());
     }
-
+    
     private void ConsumeInputIngredients()
     {
         foreach (var slot in Inventory.SlotList)
@@ -143,7 +129,7 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         }
         OnCookingSlotUpdated.ForEach(action => action?.Invoke());
     }
-
+    
     private void GiveItemToInventory(int itemId)
     {
         var resultItem = ItemManager.Instance.GetItem(itemId);
@@ -152,16 +138,16 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
             Debug.LogError($"[CookingPanelManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
             return;
         }
-
+    
         var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new Item(itemId, resultItem.ItemData.MaxQuantity, 1));
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-
+    
         if (remain != null)
         {
             ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
         }
     }
-
+    
     private void TransferItemToInventory(Item item)
     {
         InventoryManager.Instance.PickItemFromGround(item);
@@ -170,6 +156,17 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
     private float _t;
     private float _cookTime = 4f;
     private bool _isCooking;
+    
+    private void Update()
+    {
+        if (!_isCooking) return;
+        _t += Time.deltaTime;
+        if (_t >= _cookTime)
+        {
+            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
+        }
+    }
+    
     internal void StartCook()
     {
         Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
@@ -177,13 +174,4 @@ public class CookingPanelManager : BehaviourSingleton<CookingPanelManager>
         _isCooking = true;
     }
     
-    private void Update()
-    {
-        if (!_isCooking) return;
-        _t += Room.Instance.Runner.DeltaTime;
-        if (_t >= _cookTime)
-        {
-            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
-        }
-    }
 }
