@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using ExitGames.Client.Photon.StructWrapping;
 using UnityEngine;
 
 public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 {
-	public Inventory QuickSlots;
+	private Inventory _quickSlots;
 	public int QuickSlotSize;
 
 	private int _selectedSlotIndex;
@@ -13,73 +14,95 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	
 	private void Awake()
 	{
-		QuickSlots = new Inventory(QuickSlotSize);
+		_quickSlots = new Inventory(QuickSlotSize);
+	}
+
+	private void SetSelectedSlot(int slotIndex)
+	{
+		_selectedSlotIndex = slotIndex;
+		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
 	}
 	
-	public void OnSelectSlot(int slotIndex)
+	public void UpdateSelectedSlot()
 	{
-		if (!PopupManager.Instance.IsOpen(EPopupType.Inventory))
-		{
-			if (_selectedSlotIndex == slotIndex) return;
+		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
+	}
 
-			if (!QuickSlots.SlotList[_selectedSlotIndex].IsEmpty)
-			{
-				AItemInfo itemInPlayerHand = ItemManager.Instance.GetItem(QuickSlots.SlotList[_selectedSlotIndex].Item.ID);
-				if (itemInPlayerHand is IEquipable equipped)
-				{
-					equipped.Unequip(Room.Instance.LocalPlayer);
-				}
-			}
-			
-			_selectedSlotIndex = slotIndex;
-			AItemInfo itemInfoInSlot = ItemManager.Instance.GetItem(QuickSlots.SlotList[slotIndex].Item.ID);
-			if (itemInfoInSlot is IEquipable equipItem)
-			{
-                equipItem.Equip(Room.Instance.LocalPlayer);
-			}
-			else
-			{
-				Debug.Log("Item is not equippable: " + itemInfoInSlot.ItemData.Name);
-			}
-			return;
-		}
+	public Item GetItemInSlot(int slotIndex)
+	{
+		Item item = _quickSlots.GetItemInSlot(slotIndex);
+
+		return item;
+	}
+	
+	public void SendItemToPlayer()
+	{
+		Item item = GetItemInSlot(_selectedSlotIndex);
 		
-		if (HandEntity.Instance.IsHandEmpty)
+		if (item == null)
 		{
-			Item itemInSlot = QuickSlots.PopItemInSlot(slotIndex);
-			if (itemInSlot == null) return;
-            
-			HandEntity.Instance.PickUpItem(itemInSlot);
+			Debug.Log("Selected slot is empty.");
+			//Room.Instance.LocalPlayer.UnequipItem();
 		}
 		else
 		{
-			HandEntity.Instance.PickUpItem(QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
+			Debug.Log("Sending item to player: " + item.ID);
+			// Room.Instance.LocalPlayer.EquipItem(item);
 		}
-		OnQuickSlotUpdated?.Invoke(slotIndex);
+	}
+
+	private void HandSwap()
+	{
+		HandEntity hand = HandEntity.Instance;
+		
+		if (hand.IsHandEmpty)
+		{
+			hand.PickUpItem(_quickSlots.PopItemInSlot(_selectedSlotIndex));
+		}
+		else
+		{
+			Item itemInHand = hand.GetItem();
+			hand.PickUpItem(_quickSlots.PutItemInSlot(_selectedSlotIndex, itemInHand));
+		}
+		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
+	}
+
+	public void OnClickMouseLeft(int slotIndex)
+	{
+		SetSelectedSlot(slotIndex);
+
+		if (PopupManager.Instance.IsOpen(EPopupType.Inventory))
+		{
+			HandSwap();
+		}
+		
+		SendItemToPlayer();
 	}
 
 	public void OnClickMouseRight(int slotIndex)
 	{
-		if (QuickSlots.SlotList[slotIndex].IsEmpty) return;
+		if (!PopupManager.Instance.IsOpen(EPopupType.Inventory)) return;
+		
+		if (_quickSlots.SlotList[slotIndex].IsEmpty) return;
         
 		if (HandEntity.Instance.IsHandEmpty)
 		{
-			HandEntity.Instance.PickUpItem(QuickSlots.PopSingleItemInSlot(slotIndex));
+			HandEntity.Instance.PickUpItem(_quickSlots.PopSingleItemInSlot(slotIndex));
 		}
 		else
 		{
-			if (HandEntity.Instance.Item.ID == QuickSlots.SlotList[slotIndex].Item.ID)
+			if (HandEntity.Instance.Item.ID == _quickSlots.SlotList[slotIndex].Item.ID)
 			{
-				Item itemInSlot = QuickSlots.PopSingleItemInSlot(slotIndex);
+				Item itemInSlot = _quickSlots.PopSingleItemInSlot(slotIndex);
 				if (!HandEntity.Instance.TryAddItem(itemInSlot))
 				{
-					QuickSlots.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
+					_quickSlots.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
 				}
 			}
 			else
 			{
-				Item temp = QuickSlots.PopItemInSlot(slotIndex);
-				QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
+				Item temp = _quickSlots.PopItemInSlot(slotIndex);
+				_quickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
 				HandEntity.Instance.PickUpItem(temp);
 			}
 		}

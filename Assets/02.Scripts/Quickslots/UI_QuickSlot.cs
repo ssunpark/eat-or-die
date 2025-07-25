@@ -20,7 +20,7 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 	{
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
-			QuickSlotManager.Instance.OnSelectSlot(SlotIndex);   
+			QuickSlotManager.Instance.OnClickMouseLeft(SlotIndex);   
 		}
 		else if (eventData.button == PointerEventData.InputButton.Right)
 		{
@@ -30,7 +30,7 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 
 	public void UpdateSlotUI()
 	{
-		Item itemInSlot = QuickSlotManager.Instance.QuickSlots.SlotList[SlotIndex].Item;
+		Item itemInSlot = QuickSlotManager.Instance.GetItemInSlot(SlotIndex);
 		if (itemInSlot == null)
 		{
 			IconImage.gameObject.SetActive(false);
