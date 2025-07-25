@@ -14,20 +14,29 @@ public class EatItemInfo : AItemInfo, IEatable, IUsable
         }
     }
 
-    public void Eat()
+    public void Eat(GameObject target)
     {
         foreach (var effect in _effectList)
         {
-            effect.UseEffect();
+            effect.UseEffect(target);
         }
     }
 
     public void Use(GameObject target)
     {
-        // 타겟에게 효과 주도록 수정
         foreach (var effect in _effectList)
         {
-            effect.UseEffect();
+            effect.UseEffect(target);
         }
+    }
+
+    public override void Equip(GameObject player)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void Unequip(GameObject player, GameObject itemObject = null)
+    {
+        throw new System.NotImplementedException();
     }
 }

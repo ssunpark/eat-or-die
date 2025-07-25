@@ -87,9 +87,10 @@ public class ItemSpawnerEditorWindow : EditorWindow
             EditorGUILayout.LabelField("Name", _lastSpawnedItemData.Name);
             EditorGUILayout.LabelField("Cookable", _lastSpawnedItemData.Cookable.ToString());
             EditorGUILayout.LabelField("IsIngredient", _lastSpawnedItemData.IsIngredient.ToString());
+            EditorGUILayout.LabelField("Max Quantity", _lastSpawnedItemData.MaxQuantity.ToString());
+            EditorGUILayout.LabelField("Max Durability", _lastSpawnedItemData.MaxDurability.ToString());
             EditorGUILayout.LabelField("Description");
             EditorGUILayout.TextArea(_lastSpawnedItemData.Description, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
-            EditorGUILayout.LabelField("Max Quantity", _lastSpawnedItemData.MaxQuantity.ToString());
 
             if (_lastSpawnedItemData.Icon != null)
             {
