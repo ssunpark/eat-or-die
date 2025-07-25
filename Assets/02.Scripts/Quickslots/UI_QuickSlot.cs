@@ -21,7 +21,7 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 	{
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
-			QuickSlotManager.Instance.OnClickMouseLeft(SlotIndex);   
+			QuickSlotManager.Instance.OnSelectSlot(SlotIndex);   
 		}
 		else if (eventData.button == PointerEventData.InputButton.Right)
 		{

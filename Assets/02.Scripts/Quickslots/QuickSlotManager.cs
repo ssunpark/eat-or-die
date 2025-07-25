@@ -6,6 +6,9 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 {
 	public Inventory QuickSlots;
 	public int QuickSlotSize;
+
+	private int _selectedSlotIndex = 0;
+	
 	public List<Action> OnQuickSlotUpdated = new List<Action>();
 	
 	private void Awake()
@@ -14,21 +17,25 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		OnQuickSlotUpdated = new List<Action>(new Action[QuickSlotSize]);
 	}
 	
-	public void OnClickMouseLeft(int slotIndex)
+	public void OnSelectSlot(int slotIndex)
 	{
 		if (!PopupManager.Instance.IsOpen(EPopupType.Inventory))
 		{
-			if (QuickSlots.SlotList[slotIndex].IsEmpty)
+			if (_selectedSlotIndex == slotIndex) return;
+
+			if (!QuickSlots.SlotList[_selectedSlotIndex].IsEmpty)
 			{
-				Room.Instance.LocalPlayer.GetComponent<FarmingInteractionTest>().OnUnequipped();
-				return;
+				AItemInfo itemInPlayerHand = ItemManager.Instance.GetItem(QuickSlots.SlotList[_selectedSlotIndex].Item.ID);
+				if (itemInPlayerHand is IEquipable equipped)
+				{
+					equipped.Unequip(Room.Instance.LocalPlayer);
+				}
 			}
 			
-			// 슬롯의 아이템 타입에 따라 적절한 메서드를 호출해야 합니다. 근데 지금은 연결할 로직이 없음
+			_selectedSlotIndex = slotIndex;
 			AItemInfo itemInfoInSlot = ItemManager.Instance.GetItem(QuickSlots.SlotList[slotIndex].Item.ID);
 			if (itemInfoInSlot is IEquipable equipItem)
 			{
-				Debug.Log("Equipping item: " + equipItem);
                 equipItem.Equip(Room.Instance.LocalPlayer);
 			}
 			else
