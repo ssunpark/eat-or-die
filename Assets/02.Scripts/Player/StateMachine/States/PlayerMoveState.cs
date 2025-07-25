@@ -57,8 +57,8 @@ public class PlayerMoveState : APlayerState
         _moveSatietyTimer += _fsm.Runner.DeltaTime;
         if (_moveSatietyTimer >= _moveStatietyInterval)
         {
-            float rate = _stat.GetStat(EStatType.ConsumptionRate);
-            _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.ConsumptionRate));
+            float rate = _stat.GetStat(EStatType.ConsumptionOverTime);
+            _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.ConsumptionOverTime));
             _moveSatietyTimer = 0f;
         }
 

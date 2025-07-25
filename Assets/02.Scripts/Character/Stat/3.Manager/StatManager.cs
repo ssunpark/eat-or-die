@@ -13,6 +13,14 @@ public class StatManager
         );
     }
 
+    public void UpdateStats(float t)
+    {
+        foreach (var stat in _statDict)
+        {
+            stat.Value.UpdateModifiers(t);
+        }
+    }
+
     public float GetStat(EStatType type) =>
         _statDict.TryGetValue(type, out var stat) ? stat.TotalStat : 0f;
 
