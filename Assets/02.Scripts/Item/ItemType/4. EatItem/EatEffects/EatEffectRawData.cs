@@ -2,7 +2,7 @@
 
 public class EatEffectRawData
 {
-    [Name("EEffectType")]
+    [Name("EStatType")]
     public EStatType Type { get; set; }
     
     [Name("EStatModifierType")]

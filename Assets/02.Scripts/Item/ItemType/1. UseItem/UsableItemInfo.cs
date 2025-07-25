@@ -17,7 +17,7 @@ public class UsableItemInfo : AItemInfo, IUsable, IEquipable
         _useAction.UseTool(target);
     }
 
-    public void Equip(GameObject player)
+    public override void Equip(GameObject player)
     {
         // 장착하면 상호작용 할 태그 수정
         player.GetComponent<PlayerInteractions>().OnUnequipped();
@@ -27,7 +27,7 @@ public class UsableItemInfo : AItemInfo, IUsable, IEquipable
         player.GetComponent<PlayerItemHolder>().SetHoldItem(ItemData.ID);
     }
 
-    public void Unequip(GameObject player, GameObject itemObject = null)
+    public override void Unequip(GameObject player, GameObject itemObject = null)
     {
         // 해제하면 상호작용 할 태그 수정
         player.GetComponent<PlayerInteractions>().OnUnequipped();
