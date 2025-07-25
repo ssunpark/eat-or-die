@@ -7,14 +7,13 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	public Inventory QuickSlots;
 	public int QuickSlotSize;
 
-	private int _selectedSlotIndex = 0;
+	private int _selectedSlotIndex;
 	
-	public List<Action> OnQuickSlotUpdated = new List<Action>();
+	public Action<int> OnQuickSlotUpdated;
 	
 	private void Awake()
 	{
 		QuickSlots = new Inventory(QuickSlotSize);
-		OnQuickSlotUpdated = new List<Action>(new Action[QuickSlotSize]);
 	}
 	
 	public void OnSelectSlot(int slotIndex)
@@ -56,7 +55,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		{
 			HandEntity.Instance.PickUpItem(QuickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
 		}
-		OnQuickSlotUpdated[slotIndex]?.Invoke();
+		OnQuickSlotUpdated?.Invoke(slotIndex);
 	}
 
 	public void OnClickMouseRight(int slotIndex)
@@ -85,7 +84,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 			}
 		}
 
-		OnQuickSlotUpdated[slotIndex]?.Invoke();
+		OnQuickSlotUpdated?.Invoke(slotIndex);
 	}
     
     // 플레이어가 접근해서 호출

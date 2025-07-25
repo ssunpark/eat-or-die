@@ -14,7 +14,6 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 		SlotIndex = slotIndex;
 		IconImage.gameObject.SetActive(false);
 		QuantityText.gameObject.SetActive(false);
-		QuickSlotManager.Instance.OnQuickSlotUpdated[SlotIndex] += UpdateSlotUI;
 	}
 
 	public void OnPointerDown(PointerEventData eventData)
