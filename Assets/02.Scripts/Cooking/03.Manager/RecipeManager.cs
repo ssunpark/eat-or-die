@@ -1,26 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-public class RecipeManager : MonoBehaviour
+public class RecipeManager : BehaviourSingleton<RecipeManager>
 {
-    public static RecipeManager Instance { get; private set; }
-
     private const string RECIPE_CSV_PATH = "/FoodCSV/Recipe.csv";
     
     public List<Recipe> RecipeList { get; private set; }
     public event Action OnDataLoaded;
-    
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
 
     private void Start()
     {
