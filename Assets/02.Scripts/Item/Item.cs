@@ -7,14 +7,18 @@ public class Item
     public readonly int ID;
     public readonly int MaxQuantity;
     public readonly float MaxDurability;
-    
+
     private int _quantity;
     public int Quantity => _quantity;
-    
+
     private float _durability;
     public float Durability => _durability;
 
-    public Item(int id, int maxQuantity = 1, int initialQuantity = 0, float maxDurability = 1, float initialDurability = 1)
+    // 추가적인 아이템 정보
+    private string _extraInfo;
+    public string ExtraInfo { get => _extraInfo; set => _extraInfo = value; }
+
+    public Item(int id, int maxQuantity = 1, int initialQuantity = 0, float maxDurability = 1, float initialDurability = 1, string extraInfo = "")
     {
         if (id < 0)
         {
@@ -46,6 +50,7 @@ public class Item
         MaxDurability = maxDurability;
         _durability = initialDurability;
         _quantity = initialQuantity;
+        _extraInfo = extraInfo;
     }
 
     // 수량 제어 함수
@@ -91,7 +96,7 @@ public class Item
         _quantity -= amount;
         return true;
     }
-    
+
     // 내구도 제어 함수
 
     public void SetDurability(float durability)
