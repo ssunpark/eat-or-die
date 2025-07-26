@@ -15510,6 +15510,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcId: 1200002
   SeedItemDetailUI: {fileID: 8047075623774924786}
+  NpcDialogueUI: {fileID: 8504747892084698796}
 --- !u!4 &697162502 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 103581554047355285, guid: 598869620d9a99046a47666ca789475e, type: 3}
@@ -78125,6 +78126,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6639532496562529762}
+  - component: {fileID: 8504747892084698796}
   - component: {fileID: 2469003530670165277}
   - component: {fileID: 8504747892084698795}
   m_Layer: 5
@@ -98280,6 +98282,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8504747892084698796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5146893232221190397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33db95333f8a46bb9c873a38e1a2594f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NpcDialogueText: {fileID: 2004930110311753916}
 --- !u!137 &8508351681953580245
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0

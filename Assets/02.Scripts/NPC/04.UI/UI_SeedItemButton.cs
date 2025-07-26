@@ -14,7 +14,7 @@ public class UI_SeedItemButton : MonoBehaviour
     {
         _itemInfo = itemInfo;
         IconImage.sprite = itemInfo.ItemData.Icon;
-        SeedNameText.text = itemInfo.ItemData.Name;
+        // SeedNameText.text = itemInfo.ItemData.Name;
     }
 
     public void OnClick()

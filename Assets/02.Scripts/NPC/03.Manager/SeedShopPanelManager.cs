@@ -10,6 +10,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
     
     [SerializeField] private int npcId = 1200002; // 모종 상인 NPC ID
     public UI_SeedItemDetail SeedItemDetailUI;
+    public UI_NpcDialogue NpcDialogueUI;
     
     private void Start()
     {
@@ -17,6 +18,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         if (NpcDataManager.Instance != null && NpcDataManager.Instance.NpcItemList != null)
         {
             LoadSeedItemsFromNpc(npcId);
+            UpdateNpcDialogue(npcId);
         }
         else
         {
@@ -65,10 +67,27 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         {
             SeedItemDetailUI.SetDetail(selected, npcItem);
         }
+        
+        UpdateNpcDialogue(npcId);
     }
+
+
 
     public void UpdateNpcDialogue(int npcID)
     {
-        
+        var dialogueList = NpcDataManager.Instance.NpcDialogueList
+            .Where(d => d.NPCID == npcID)
+            .ToList();
+
+        if (dialogueList.Count == 0)
+        {
+            Debug.LogWarning($"[NpcDialogue] NPC ID {npcID}의 대사가 없습니다.");
+            return;
+        }
+
+        int randomIndex = UnityEngine.Random.Range(0, dialogueList.Count);
+        string randomDialogue = dialogueList[randomIndex].DialogueContents;
+
+        NpcDialogueUI.Setup(randomDialogue);
     }
 }
