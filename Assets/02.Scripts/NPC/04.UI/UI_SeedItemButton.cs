@@ -7,19 +7,18 @@ using UnityEngine.UI;
 public class UI_SeedItemButton : MonoBehaviour
 {
     public Image IconImage;
-    public TextMeshProUGUI SeedNameText;
+    // public TextMeshProUGUI SeedNameText;
 
-    // private AItemInfo _itemInfo;
-
-    public void Setup(ItemData itemData)
+    private AItemInfo _itemInfo;
+    public void Setup(AItemInfo itemInfo)
     {
-        // _itemInfo = itemInfo;
-        IconImage.sprite = itemData.Icon;
-        SeedNameText.text = itemData.Name;
+        _itemInfo = itemInfo;
+        IconImage.sprite = itemInfo.ItemData.Icon;
+        // SeedNameText.text = itemInfo.ItemData.Name;
     }
 
     public void OnClick()
     {
-        // SeedShopPanelManager.Instance.UpdateSeedDetail(item.ID);
+        SeedShopPanelManager.Instance.UpdateSeedDetail(_itemInfo.ItemData.ID);
     }
 }
