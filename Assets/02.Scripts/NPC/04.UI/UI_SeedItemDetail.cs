@@ -8,9 +8,14 @@ public class UI_SeedItemDetail : MonoBehaviour
     public TextMeshProUGUI DescriptionText;
     public TextMeshProUGUI PriceText;
     public TextMeshProUGUI StockText;
+    public TextMeshProUGUI OwnedCountText;
 
     public void SetDetail(AItemInfo itemInfo, NpcItem npcItem)
     {
+        int itemID = itemInfo.ItemData.ID;
+        int count = InventoryManager.Instance.Inventory.GetItemCount(itemID);
+        OwnedCountText.text = $"소지개수: {count.ToString()} 개";
+        
         IconImage.sprite = itemInfo.ItemData.Icon;
         NameText.text = itemInfo.ItemData.Name;
         DescriptionText.text = itemInfo.ItemData.Description;

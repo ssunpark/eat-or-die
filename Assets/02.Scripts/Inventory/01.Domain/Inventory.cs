@@ -129,4 +129,17 @@ public class Inventory
 
         return item;
     }
+    
+    public int GetItemCount(int itemID)
+    {
+        int count = 0;
+        foreach (Slot slot in SlotList)
+        {
+            if (!slot.IsEmpty && slot.Item.ID == itemID)
+            {
+                count += slot.Item.Quantity;
+            }
+        }
+        return count;
+    }
 }
