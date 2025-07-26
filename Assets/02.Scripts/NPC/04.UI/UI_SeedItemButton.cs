@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class UI_SeedItemButton : MonoBehaviour
 {
     public Image IconImage;
-    // public TextMeshProUGUI SeedNameText;
+    public TextMeshProUGUI SeedNameText;
 
     private AItemInfo _itemInfo;
     public void Setup(AItemInfo itemInfo)
     {
         _itemInfo = itemInfo;
         IconImage.sprite = itemInfo.ItemData.Icon;
-        // SeedNameText.text = itemInfo.ItemData.Name;
+        SeedNameText.text = itemInfo.ItemData.Name;
     }
 
     public void OnClick()

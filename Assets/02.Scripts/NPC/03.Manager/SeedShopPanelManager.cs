@@ -9,7 +9,8 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
     public event Action OnSeedListUpdated;
     
     [SerializeField] private int npcId = 1200002; // 모종 상인 NPC ID
-
+    public UI_SeedItemDetail SeedItemDetailUI;
+    
     private void Start()
     {
         // NpcItemList가 이미 로드되어 있으면 바로 실행
@@ -53,18 +54,21 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 
         OnSeedListUpdated?.Invoke();
     }
-
+    
     public void UpdateSeedDetail(int seedItemID)
     {
         AItemInfo selected = _seedItems.FirstOrDefault(x => x.ItemData.ID == seedItemID);
         NpcItem npcItem = NpcDataManager.Instance.NpcItemList
             .FirstOrDefault(x => x.NpcID == npcId && x.ItemID == seedItemID);
-        
+
         if (selected != null && npcItem != null)
         {
-            Debug.Log("디테일 패널 등 UI 갱신");
-            // 디테일 패널 등 UI 갱신
-            // SeedListUI.ShowDetail(selected, npcItem);
+            SeedItemDetailUI.SetDetail(selected, npcItem);
         }
+    }
+
+    public void UpdateNpcDialogue(int npcID)
+    {
+        
     }
 }
