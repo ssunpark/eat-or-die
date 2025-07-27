@@ -22,8 +22,8 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
             stateMachine.RequestStateChange(EEnemyState.Idle);
         }
         
-        Vector3 direction = (stateMachine.NavMeshAgent.nextPosition - stateMachine.transform.position).normalized;
-        stateMachine.CharacterController.Move(direction);
+        Vector3 direction = stateMachine.NavMeshAgent.nextPosition - stateMachine.transform.position;
+        stateMachine.Move(direction);
         stateMachine.NavMeshAgent.SetDestination(stateMachine.Target.transform.position);
     }
 

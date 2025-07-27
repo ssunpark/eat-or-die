@@ -95,4 +95,17 @@ public class EnemyStateMachine : NetworkBehaviour
 	{
 		NetworkedState = newState;
 	}
+
+	public void Move(Vector3 direction)
+	{
+		if (!Object.HasStateAuthority) return;
+		
+		if (!_navMeshAgent.hasPath || _navMeshAgent.pathPending) return;
+		
+		if (direction.magnitude < 0.1f) return;
+		
+		Debug.Log(direction);
+		
+		CharacterController.Move(direction.normalized);
+	}
 }
