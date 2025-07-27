@@ -17,8 +17,7 @@ public class EnemyStateMachine : NetworkBehaviour
 	private NavMeshAgent _navMeshAgent;
 	public NavMeshAgent NavMeshAgent => _navMeshAgent;
 	
-	private NetworkCharacterController _characterController;
-	public NetworkCharacterController CharacterController => _characterController;
+	// private CharacterController _characterController;
 	
 	[Networked] private EEnemyState NetworkedState { get; set; }
 	
@@ -26,6 +25,8 @@ public class EnemyStateMachine : NetworkBehaviour
 	private Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>> _stateDictionary;
 	
 	// Stat으로 분리시킬 가능성 높음
+
+	private float _moveSpeed = 5f;
 	private float _attackRange = 2f;
 	public float AttackRange => _attackRange;
 	
@@ -34,7 +35,7 @@ public class EnemyStateMachine : NetworkBehaviour
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		_animator = GetComponent<Animator>();
 		_navMeshAgent = GetComponent<NavMeshAgent>();
-		_characterController = GetComponent<NetworkCharacterController>();
+		// _characterController = GetComponent<CharacterController>();
 		
 		_navMeshAgent.updateRotation = false;
 		_navMeshAgent.updateUpAxis = false;
@@ -62,7 +63,7 @@ public class EnemyStateMachine : NetworkBehaviour
 	
 	public override void FixedUpdateNetwork()
 	{
-		if (Object.HasStateAuthority)
+		if (HasStateAuthority)
 		{
 			_currentState?.Update(this, Time.deltaTime);
 		}
@@ -102,12 +103,13 @@ public class EnemyStateMachine : NetworkBehaviour
 
 	public void Move(Vector3 direction)
 	{
-		if (!Object.HasStateAuthority) return;
-		
-		if (!_navMeshAgent.hasPath || _navMeshAgent.pathPending) return;
+		if (!HasStateAuthority) return;
 		
 		if (direction.magnitude < 0.1f) return;
 		
-		CharacterController.Move(direction.normalized);
+		direction = direction.normalized;
+		
+		gameObject.transform.forward = direction;
+		transform.position += direction * Runner.DeltaTime * _moveSpeed;
 	}
 }
