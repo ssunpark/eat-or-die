@@ -7,6 +7,7 @@ public class EnemyIdleState : IEnemyState<EnemyStateMachine>
     public void Enter(EnemyStateMachine stateMachine)
     {
         Debug.Log("Entering Idle state");
+        stateMachine.Animator.Play("Idle");
     }
 
     public void Update(EnemyStateMachine stateMachine, float deltaTime)

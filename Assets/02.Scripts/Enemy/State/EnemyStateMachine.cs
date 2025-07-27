@@ -25,6 +25,10 @@ public class EnemyStateMachine : NetworkBehaviour
 	private IEnemyState<EnemyStateMachine> _currentState;
 	private Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>> _stateDictionary;
 	
+	// Stat으로 분리시킬 가능성 높음
+	private float _attackRange = 2f;
+	public float AttackRange => _attackRange;
+	
 	public override void Spawned()
 	{
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
@@ -42,8 +46,8 @@ public class EnemyStateMachine : NetworkBehaviour
 		{
 			{ EEnemyState.Idle, new EnemyIdleState() },
 			{ EEnemyState.Trace, new EnemyTraceState() },
+			{ EEnemyState.Attack, new EnemyAttackState() },
 			// { EEnemyState.Patrol, new EnemyPatrolState() },
-			// { EEnemyState.Attack, new EnemyAttackState() },
 			// { EEnemyState.Die, new EnemyDieState() }
 		};
 
@@ -103,8 +107,6 @@ public class EnemyStateMachine : NetworkBehaviour
 		if (!_navMeshAgent.hasPath || _navMeshAgent.pathPending) return;
 		
 		if (direction.magnitude < 0.1f) return;
-		
-		Debug.Log(direction);
 		
 		CharacterController.Move(direction.normalized);
 	}
