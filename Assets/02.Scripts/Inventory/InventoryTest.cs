@@ -4,6 +4,6 @@ public class InventoryTest : MonoBehaviour
 {
 	public void OnClickGenerateItemButton(int itemID)
 	{
-		InventoryManager.Instance.PickItemFromGround(new Item(itemID, 99, 1));
+		InventoryManager.Instance.PickItemFromGround(new Item(ItemManager.Instance.GetItem(itemID), 99, 1));
 	}
 }
