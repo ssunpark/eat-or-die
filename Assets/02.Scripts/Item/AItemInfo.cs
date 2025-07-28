@@ -1,17 +1,28 @@
-﻿// 외부 클래스에서 이벤트를 발생 시키기 위한 추상 클래스
-
+﻿using Redcode.Pools;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public abstract class AItemInfo
 {
     public readonly ItemData ItemData;
+    private readonly Transform _poolParent;
+    private Pool<Transform> _holdItemPool;
+    // 아이템 프리팹 풀링
 
-    protected AItemInfo(ItemData itemData)
+    protected AItemInfo(ItemData itemData, Transform poolParent = null)
     {
         ItemData = itemData;
+        _poolParent = poolParent;
+        
+        // 풀링
+        _holdItemPool = Pool.Create(ItemData.Prefab.transform, 10, _poolParent.transform);
     }
-    
-    public abstract void Equip(GameObject player);
 
-    public abstract void Unequip(GameObject player, GameObject itemObject = null);
+    public GameObject GetHoldItemObject() => _holdItemPool.Get().gameObject;
+
+    public void ReturnHoldItemToPool(GameObject item)
+    {
+        _holdItemPool.Take(item.transform);
+        item.transform.SetParent(_poolParent);
+    }
 }
