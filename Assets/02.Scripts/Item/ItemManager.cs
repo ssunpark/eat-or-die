@@ -43,7 +43,7 @@ public class ItemManager : NetworkBehaviour
 
     private void Init()
     {
-        _itemFactory = new ItemFactory();
+        _itemFactory = new ItemFactory(transform);
         
         // 데이터 로드 후 생성
         _itemDictionary = new Dictionary<int, AItemInfo>();
@@ -70,7 +70,7 @@ public class ItemManager : NetworkBehaviour
         {
             GameObject poolParent = new GameObject($"{data.ID}_Pool");
             poolParent.transform.SetParent(transform);
-            var weaponItem = _itemFactory.CreateWeaponItem(data, poolParent.transform);
+            var weaponItem = _itemFactory.CreateWeaponItem(data);
             _itemDictionary[data.ID] = weaponItem;
         }
         
@@ -108,7 +108,7 @@ public class ItemManager : NetworkBehaviour
     /// <param name="position">생성 위치</param>
     /// <param name="rotation">생성 시 각도</param>
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_CreateItemObject(int id, int quantity, float durability, Vector3 position, Quaternion rotation)
+    public void RPC_CreateItemObject(int id, int quantity, float durability, Vector3 position, Quaternion rotation, string extraInfo = "")
     {
         if (!Runner.IsServer)
         {
@@ -133,6 +133,7 @@ public class ItemManager : NetworkBehaviour
                 item.Quantity = quantity;
                 item.SpawnPosition = position;
                 item.Durability = durability;
+                item.ExtraInfo = extraInfo;
             });
     }
 }

@@ -18,6 +18,9 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     [Networked]
     public bool HasNetworkedOwner { get; set; }
+    
+    [Networked, Capacity(24)]
+    public string ExtraInfo { get; set; }
 
     private NetworkId _targetID;
 
@@ -72,8 +75,8 @@ public class ItemObject : NetworkBehaviour, IPickable
             {
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
-                    var itemData = ItemManager.Instance.GetItem(ItemID).ItemData;
-                    var item = new Item(ItemID, itemData.MaxQuantity, Quantity, itemData.MaxDurability, Durability);
+                    var itemData = ItemManager.Instance.GetItem(ItemID);
+                    var item = new Item(itemData, Quantity, Durability, ExtraInfo);
                     InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
                 }

@@ -139,7 +139,7 @@ public class CookingManager : BehaviourSingleton<CookingManager>
             return;
         }
     
-        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new Item(itemId, resultItem.ItemData.MaxQuantity, 1));
+        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new Item(resultItem, resultItem.ItemData.MaxQuantity, 1));
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     
         if (remain != null)
