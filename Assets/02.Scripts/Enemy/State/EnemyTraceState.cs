@@ -8,7 +8,6 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
     
     public void Enter(EnemyStateMachine stateMachine)
     {
-        Debug.Log("Entering Trace state");
         if (stateMachine.Target == null)
         {
             stateMachine.RequestStateChange(EEnemyState.Idle);
@@ -38,7 +37,6 @@ public class EnemyTraceState : IEnemyState<EnemyStateMachine>
 
     public void Exit(EnemyStateMachine stateMachine)
     {
-        stateMachine.Animator.Play("Idle");
     }
 }
         

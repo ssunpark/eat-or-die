@@ -63,19 +63,7 @@ public class EnemyStateMachine : NetworkBehaviour
 	
 	public override void FixedUpdateNetwork()
 	{
-		if (HasStateAuthority)
-		{
-			_currentState?.Update(this, Time.deltaTime);
-		}
-		foreach (string change in _changeDetector.DetectChanges(this))
-		{ 
-			if (change == nameof(NetworkedState)) 
-			{
-				_currentState?.Exit(this);
-				_currentState = _stateDictionary[NetworkedState];
-				_currentState?.Enter(this);
-			}
-		}
+		_currentState?.Update(this, Time.deltaTime);
 	}
 
 	public void RequestStateChange(EEnemyState newState)
@@ -111,5 +99,20 @@ public class EnemyStateMachine : NetworkBehaviour
 		
 		gameObject.transform.forward = direction;
 		transform.position += direction * Runner.DeltaTime * _moveSpeed;
+	}
+
+	public override void Render()
+	{
+		if (!HasStateAuthority) return;
+		
+		foreach (string change in _changeDetector.DetectChanges(this))
+		{ 
+			if (change == nameof(NetworkedState)) 
+			{
+				_currentState?.Exit(this);
+				_currentState = _stateDictionary[NetworkedState];
+				_currentState?.Enter(this);
+			}
+		}
 	}
 }
