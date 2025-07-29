@@ -6,12 +6,6 @@ public class UI_Hand : MonoBehaviour
 {
 	public Image IconImage;
 	public TextMeshProUGUI QuantityText;
-
-	private void Awake()
-	{
-		IconImage.gameObject.SetActive(false);
-		QuantityText.gameObject.SetActive(false);
-	}
 	
 	private void Start()
 	{

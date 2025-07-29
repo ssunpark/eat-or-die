@@ -5,49 +5,54 @@ public class PlayerAttackState : APlayerState
 {
     public PlayerAttackState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller) { }
 
+
+    private float _damage;
+    private float _attackSpeed;
+    private float _attackDelay;
+    private float _attackTimer;
+
     public override void Enter()
     {
-        _fsm.StartCoroutine(AttackCoroutine());
         if (_controller.Object.HasInputAuthority)
         {
             // 애니메이션 트리거
             _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Attack);
 
-            _controller.RPC_SetIsAttacking(true);
+            _controller.RPC_SetMoveFlag(true);
         }
 
-    }
+        _damage = _stat.GetStat(EStatType.MeleeDamage);
+        _attackSpeed = _stat.GetStat(EStatType.AttackSpeed);
+        _attackDelay = 0.6f / Mathf.Max(_attackSpeed, 0.01f);
+        _controller.LastAttackTime = _fsm.Runner.LocalRenderTime;
 
-    private System.Collections.IEnumerator AttackCoroutine()
-    {
-        float damage = _stat.GetStat(EStatType.Damage);
-        float attackSpeed = _stat.GetStat(EStatType.AttackSpeed);
-        float attackDelay = 1f / Mathf.Max(attackSpeed, 0.01f);
-
-
-
-        yield return new WaitForSeconds(0.1f);
-
+        // 애니메이션 이벤트로 실행될 부분
         Vector3 attackOrigin = _controller.transform.position + Vector3.up * 0.5f;
         Vector3 direction = _controller.transform.forward;
 
-        if (Physics.Raycast(attackOrigin, direction, out RaycastHit hit, 1.5f))
+        if (Physics.Raycast(attackOrigin, direction, out RaycastHit hit, _stat.GetStat(EStatType.AttackRange)))
         {
             if (hit.collider.TryGetComponent(out NetworkObject target))
             {
-                _controller.RPC_DealDamage(target, Mathf.RoundToInt(damage));
-                Debug.Log($"Attacked {target.name} for {damage} damage.");
+                _controller.RPC_DealDamage(target, Mathf.RoundToInt(_damage));
             }
         }
-        yield return new WaitForSeconds(attackDelay);
-        _fsm.ChangeState(EPlayerState.Idle);
+        //=================================
     }
 
-    public override void Tick() { }
+    public override void Tick() 
+    {
+        _attackTimer += _fsm.Runner.DeltaTime;
+        if (_attackTimer >= _attackDelay)
+        {
+            _attackTimer = 0f;
+            _fsm.ChangeState(EPlayerState.Idle);
+        }
+    }
 
     public override void Exit()
     {
         if (_controller.Object.HasInputAuthority)
-            _controller.RPC_SetIsAttacking(false);
+            _controller.RPC_SetMoveFlag(false);
     }
 }

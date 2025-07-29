@@ -15,6 +15,17 @@ public class Inventory
             SlotList.Add(new Slot());
         }
     }
+    
+    public Item GetItemInSlot(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= SlotList.Count)
+        {
+            Debug.LogError("Invalid slot index: " + slotIndex);
+            return null;
+        }
+        
+        return SlotList[slotIndex].Item;
+    }
 
     public Item PopItemInSlot(int slotIndex)
     {
@@ -24,7 +35,7 @@ public class Inventory
             return null;
         }
         
-        Item slotItem =  SlotList[slotIndex].Item;
+        Item slotItem = GetItemInSlot(slotIndex);
         SlotList[slotIndex].RemoveItem();
         return slotItem;
     }
@@ -46,7 +57,7 @@ public class Inventory
         if (item.Quantity > 1)
         {
             item.SetQuantity(item.Quantity - 1);
-            return new Item(item.ID, item.MaxQuantity, 1);
+            return new Item(item.ItemInfo, item.MaxQuantity, 1);
         }
         else
         {
@@ -128,5 +139,18 @@ public class Inventory
         }
 
         return item;
+    }
+    
+    public int GetItemCount(int itemID)
+    {
+        int count = 0;
+        foreach (Slot slot in SlotList)
+        {
+            if (!slot.IsEmpty && slot.Item.ID == itemID)
+            {
+                count += slot.Item.Quantity;
+            }
+        }
+        return count;
     }
 }

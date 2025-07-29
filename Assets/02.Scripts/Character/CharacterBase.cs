@@ -2,12 +2,16 @@
 
 public abstract class CharacterBase : NetworkBehaviour, IStatUser
 {
-    public StatManager Stat { get; private set; }
-    public ResourceManager Resource { get; private set; }
+    public StatManager Stat { get; protected set; }
+    public ResourceManager Resource { get; protected set; }
 
-    public virtual void InitializeStat(IStatDataRepository repo)
+    public TraitManager Trait { get; protected set; }
+
+    public virtual void InitializeCharacter(IStatDataRepository statRepo, ITraitDataRepository traitRepo)
     {
-        Stat = new StatManager(repo);
+        Stat = new StatManager(statRepo);
+        Trait = new TraitManager(traitRepo ?? new MockTraitDataRepository(), Stat);
         Resource = new ResourceManager(Stat);
     }
+
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using UnityEngine;
 
@@ -7,22 +8,11 @@ using UnityEngine;
 public class ItemManager : NetworkBehaviour
 {
     public static ItemManager Instance { get; private set; }
-
-    public override void Spawned()
-    {
-        if (Instance == null)
-        {
-            Instance = this; 
-        }
-        else
-        {
-            Runner.Despawn(Object); // 중복 방지
-        }
-    }
     
     private const string FOOD_CSV_PATH = "/ItemCSV/Food.csv";
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
     private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
+    private const string WEAPON_CSV_PATH = "/ItemCSV/Weapon.csv";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -32,6 +22,19 @@ public class ItemManager : NetworkBehaviour
     
     // 아이템 팩토리
     private ItemFactory _itemFactory;
+    
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this; 
+        }
+        else
+        {
+            Destroy(gameObject);
+            // Runner.Despawn(Object); // 중복 방지
+        }
+    }
 
     private void Start()
     {
@@ -40,7 +43,7 @@ public class ItemManager : NetworkBehaviour
 
     private void Init()
     {
-        _itemFactory = new ItemFactory();
+        _itemFactory = new ItemFactory(transform);
         
         // 데이터 로드 후 생성
         _itemDictionary = new Dictionary<int, AItemInfo>();
@@ -49,8 +52,8 @@ public class ItemManager : NetworkBehaviour
         var eatItemRawDataList = CSVLoader<EatItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
         foreach (var data in eatItemRawDataList)
         {
-            var useItem = _itemFactory.CreateEatItem(data);
-            _itemDictionary[data.ID] = useItem;
+            var eatItem = _itemFactory.CreateEatItem(data);
+            _itemDictionary[data.ID] = eatItem;
         }
         
         // 장비 아이템
@@ -62,20 +65,22 @@ public class ItemManager : NetworkBehaviour
         // }
         
         // 무기 아이템
-        // var weaponItemRawData = ItemDataLoader.LoadItemRawData<WeaponItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}");
-        // foreach (var data in equipmentItemRawData)
-        // {
-        //     var useItem = _itemFactory.CreateEquipmentItem(data);
-        //     _itemDict[data.ID] = useItem;
-        // }
+        var weaponItemRawData = CSVLoader<WeaponItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{WEAPON_CSV_PATH}");
+        foreach (var data in weaponItemRawData)
+        {
+            GameObject poolParent = new GameObject($"{data.ID}_Pool");
+            poolParent.transform.SetParent(transform);
+            var weaponItem = _itemFactory.CreateWeaponItem(data);
+            _itemDictionary[data.ID] = weaponItem;
+        }
         
         // 도구 아이템
         var usableRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
         usableRawDataList.AddRange(CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
         foreach (var data in usableRawDataList)
         {
-            var useItem = _itemFactory.CreateUsableItem(data);
-            _itemDictionary[data.ID] = useItem;
+            var usableItem = _itemFactory.CreateUsableItem(data);
+            _itemDictionary[data.ID] = usableItem;
         }
     }
 
@@ -89,10 +94,11 @@ public class ItemManager : NetworkBehaviour
         return _itemDictionary.GetValueOrDefault(id);
     }
 
-    // public List<int> GetInger
-    // {
-    //     
-    // }
+    public List<int> GetFoodIngredientList()
+    {
+        return _itemDictionary.Values
+            .Where(itemInfo => itemInfo.ItemData.IsIngredient).Select(itemInfo => itemInfo.ItemData.ID).ToList();
+    }
 
     /// <summary>
     /// 아이템 생성(드랍)
@@ -102,7 +108,7 @@ public class ItemManager : NetworkBehaviour
     /// <param name="position">생성 위치</param>
     /// <param name="rotation">생성 시 각도</param>
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_CreateItemObject(int id, int quantity, float durability, Vector3 position, Quaternion rotation)
+    public void RPC_CreateItemObject(int id, int quantity, float durability, Vector3 position, Quaternion rotation, string extraInfo = "")
     {
         if (!Runner.IsServer)
         {
@@ -127,6 +133,7 @@ public class ItemManager : NetworkBehaviour
                 item.Quantity = quantity;
                 item.SpawnPosition = position;
                 item.Durability = durability;
+                item.ExtraInfo = extraInfo;
             });
     }
 }

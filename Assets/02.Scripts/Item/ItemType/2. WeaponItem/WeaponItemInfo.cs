@@ -1,24 +1,26 @@
-﻿using UnityEngine;
+﻿using Redcode.Pools;
+using UnityEngine;
+using UnityEngine.AddressableAssets;
 
-public class WeaponItemInfo : AItemInfo, IEquipable
+public class WeaponItemInfo : AItemInfo, IWeapon
 {
-    public readonly EWeaponType _type;
-    // TODO: 강화 속성은 추후에
+    private readonly EWeaponType _type;
+    private readonly float _damage;
+    private readonly float _attackSpeed;
+    private readonly float _range;
     
-    public WeaponItemInfo(ItemData itemData, EWeaponType weaponType) : base(itemData)
+    public EWeaponType Type => _type;
+    public float Damage => _damage;
+    public float AttackSpeed => _attackSpeed;
+    public float Range => _range;
+    
+    // TODO: 강화 속성은 추후에
+
+    public WeaponItemInfo(ItemData itemData, Transform poolParent, EWeaponType weaponType, float damage, float attackSpeed, float range) : base(itemData, poolParent)
     {
         _type = weaponType;
-    }
-
-    public void Equip(GameObject player)
-    {
-        Debug.Log($"장착 : {ItemData.Name}");
-        // 장비 스텟 수치만큼 증가
-    }
-
-    public void Unequip(GameObject player)
-    {
-        Debug.Log($"해제 : {ItemData.Name}");
-        // 장비 스텟 수치만큼 감소
+        _damage = damage;
+        _attackSpeed = attackSpeed;
+        _range = range;
     }
 }

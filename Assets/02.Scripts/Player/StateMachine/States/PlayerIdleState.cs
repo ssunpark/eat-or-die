@@ -16,8 +16,11 @@ public class PlayerIdleState : APlayerState
         
         if (inputData.isAttacking)
         {
-            _fsm.ChangeState(EPlayerState.Attack);
-            return;
+            if(CanAttack)
+            {
+                _fsm.ChangeState(EPlayerState.Attack);
+                return;
+            }
         }
         if (inputData.isInteracting)
         {

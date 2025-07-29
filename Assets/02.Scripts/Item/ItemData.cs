@@ -10,24 +10,27 @@ public class ItemData
     public readonly string Name;
     public readonly int MaxQuantity;
     public readonly float MaxDurability;
-    public readonly bool Cookable;
+    public readonly bool IsIngredient;  // 재료인지
+    public readonly bool Cookable;  // 솥에 들어갈 수 있는지?
     private string _description;
     public string Description => _description;
     private Sprite _icon;
     public Sprite Icon => _icon;
-    // .. 등등 추가 예정
+    private GameObject _prefab;
+    public GameObject Prefab => _prefab;
 
-    public ItemData(int id, string name, string description, bool cookable, int maxQuantity, float maxDurability,string iconAddressablePath)
+    public ItemData(int id, string name, string description, bool cookable, bool isIngredient, int maxQuantity, float maxDurability, string iconAddressablePath, string prefabAddressablePath)
     {
         // TODO: 유효성 검사
         ID = id;
         Name = name;
         _description = description;
+        IsIngredient = isIngredient;
         Cookable = cookable;
         MaxQuantity = maxQuantity;
         MaxDurability = maxDurability;
+        
         var finalIconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
-
         Addressables.LoadAssetAsync<Sprite>(finalIconAddressablePath).Completed += (handle) =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
@@ -39,6 +42,9 @@ public class ItemData
                 throw new Exception($"아이콘 로드에 실패했습니다. 아이콘 경로: {finalIconAddressablePath}");
             }
         };
+        
+        var finalPrefabAddressablePath = string.IsNullOrEmpty(prefabAddressablePath) ? "Weapon_Staff_Prefab" : prefabAddressablePath;
+        _prefab = Addressables.LoadAssetAsync<GameObject>(finalPrefabAddressablePath).WaitForCompletion();
     }
 
     public void AddDescription(string description)

@@ -11,8 +11,8 @@ public class EatItemRawData
     [Name("Description")]
     public string Description { get; set; }
 
-    [Name("Cookable")]
-    public bool Cookable { get; set; }
+    [Name("IsIngredient")]
+    public bool IsIngredient { get; set; }
 
     [Name("MaxStack")]
     public int MaxQuantity { get; set; }
@@ -21,7 +21,7 @@ public class EatItemRawData
     public int HungerRestore { get; set; }
 
     [Name("EEffectType1")]
-    public EEatItemEffectType EffectType1 { get; set; }
+    public EStatType? EffectType1 { get; set; }
 
     [Name("EffectValue1")]
     public float? Value1 { get; set; }
@@ -30,7 +30,7 @@ public class EatItemRawData
     public float? Duration1 { get; set; }
 
     [Name("EEffectType2")]
-    public EEatItemEffectType EffectType2 { get; set; }
+    public EStatType? EffectType2 { get; set; }
 
     [Name("EffectValue2")]
     public float? Value2 { get; set; }
@@ -39,7 +39,7 @@ public class EatItemRawData
     public float? Duration2 { get; set; }
 
     [Name("EEffectType3")]
-    public EEatItemEffectType EffectType3 { get; set; }
+    public EStatType? EffectType3 { get; set; }
 
     [Name("EffectValue3")]
     public float? Value3 { get; set; }

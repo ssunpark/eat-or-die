@@ -19,7 +19,7 @@ public class EnemySpawner : MonoBehaviour
             _spawnTimer = 0f;
             n++;
         }
-        _spawnTimer += Time.deltaTime;
+        _spawnTimer += Room.Instance.Runner.DeltaTime;
     }
 
     private void SpawnEnemy()

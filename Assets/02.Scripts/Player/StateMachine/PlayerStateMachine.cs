@@ -5,25 +5,25 @@ using UnityEngine;
 // 현재 플레이어 상태 전환 관리
 public class PlayerStateMachine : NetworkBehaviour, IDamageable
 {
-    //[Networked, OnChangedRender(nameof(OnStateChanged))] 
+    public EPlayerState CurrentStateForDebug; // 디버그용 현재 상태 (인스펙터에서 확인 가능)
     public EPlayerState CurrentState { get; set; }
-
     private Dictionary<EPlayerState, APlayerState> _states;
     private APlayerState _activeState;
 
-    private PlayerController _controller;
-
-    public EPlayerState CurrentStateForDebug;
+    #region References
     [HideInInspector] public PlayerInteractions Interact;
+    private PlayerController _controller;
+    #endregion
+
+    public IInteractable Interactable;
+    public IUsable Usable;
 
     //이동중일 때 배고픔 감소 속도 조절을 위한 타이머
     [HideInInspector]
     public float MoveSatietyTimer;
     // 몇초 이동했을 때 배고픔 감소가 일어날지
-    public float MoveStatietyInterval = 3f;
+    public float MoveStatietyInterval = 1f;
 
-    public IInteractable Interactable;
-    public IUsable Usable;
 
     public override void Spawned()
     {
@@ -38,8 +38,9 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
             { EPlayerState.UsingTool, new PlayerUsingItemState(this, _controller) },
             { EPlayerState.Cooking, new PlayerCookingState(this, _controller) },
             { EPlayerState.Interact, new PlayerInteractState(this, _controller) },
+            //{ EPlayerState.Dead, new PlayerDeadState(this, _controller) },
             /*{ EPlayerState.Down, new PlayerDownState(this, _controller) },
-            { EPlayerState.Dead, new PlayerDeadState(this, _controller) },
+            
              */
         };
 
@@ -47,12 +48,12 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         _activeState = _states[CurrentState];
         _activeState.Enter();
 
-        _controller.Resource.OnSatietyChanged += Resource_OnSatietyChanged;
+        _controller.Resource.OnHungerChanged += Resource_OnSatietyChanged;
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
-        _controller.Resource.OnSatietyChanged -= Resource_OnSatietyChanged;
+        _controller.Resource.OnHungerChanged -= Resource_OnSatietyChanged;
         _activeState?.Exit();
         _activeState = null;
         _states.Clear();
@@ -63,7 +64,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     {
         // 배고픔이 감소할 때마다 상태를 업데이트
         // 배고픔이 30% 이하가 되면 플레이어 상태를 광폭화 상태로 변경
-        if (arg1 <= _controller.Stat.GetStat(EStatType.MaxSatiety) * 0.3f)
+        if (arg1 <= _controller.Stat.GetStat(EStatType.MaxHunger) * 0.3f)
         {
             //ChangeState(EPlayerState.rhkdvhrghk);
             //return;
@@ -71,7 +72,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
         // 배고픔이 0 이하가 되면 플레이어 상태를 죽음으로 변경
         if (arg1 <= 0)
         {
-            // ChangeState(EPlayerState.Dead);
+            //ChangeState(EPlayerState.Dead);
         }
     }
 
@@ -102,7 +103,7 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     {
         if (!HasStateAuthority) return;
 
-        var dmg = amount * (100 / (100 + _controller.Stat.GetStat(EStatType.Armor)));
+        var dmg = amount * (100 / (100 + _controller.Stat.GetStat(EStatType.Defense)));
 
         _controller.Resource.ConsumeSatiety(dmg);
         RPC_OrderChangeState(EPlayerState.Hit);
@@ -124,5 +125,11 @@ public class PlayerStateMachine : NetworkBehaviour, IDamageable
     {
         ChangeState(newState);
     }
+
+    //private void SpawnCorpse()
+    //{
+    //    var playerName = _controller.gameObject.name;
+    //    ItemManager.Instance.RPC_CreateCorpseObject(playerName, _controller.transform.position, Quaternion.identity);
+    //}
 
 }

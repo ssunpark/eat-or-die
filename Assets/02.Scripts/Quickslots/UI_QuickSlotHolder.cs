@@ -16,5 +16,18 @@ public class UI_QuickSlotHolder : MonoBehaviour
 			quickSlotComponent.Initialize(i);
 			_quickSlotList.Add(quickSlotComponent);
 		}
+
+		QuickSlotManager.Instance.OnQuickSlotUpdated += UpdateSlotUI;
+	}
+	
+	private void UpdateSlotUI(int slotIndex)
+	{
+		if (slotIndex < 0 || slotIndex >= _quickSlotList.Count)
+		{
+			Debug.LogWarning("Invalid slot index: " + slotIndex);
+			return;
+		}
+		
+		_quickSlotList[slotIndex].UpdateSlotUI();
 	}
 }

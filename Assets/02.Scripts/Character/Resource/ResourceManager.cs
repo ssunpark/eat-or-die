@@ -1,67 +1,71 @@
 ﻿using System;
 using UnityEngine;
+
+// Todo: DDD로 변경
 public class ResourceManager
 {
     private readonly StatManager _stat;
 
-    public float CurrentHealth { get; private set; }
     public float CurrentSatiety { get; private set; }
+    public float CurrentMana { get; private set; }
 
-    public event Action<float, float> OnHealthChanged;
-    public event Action<float, float> OnSatietyChanged;
+    public event Action<float, float> OnHungerChanged;
+    public event Action<float, float> OnManaChanged;
 
     public ResourceManager(StatManager stat)
     {
         _stat = stat;
-        CurrentHealth = _stat.GetStat(EStatType.MaxHealth);
-        CurrentSatiety = _stat.GetStat(EStatType.MaxSatiety);
+        CurrentSatiety = _stat.GetStat(EStatType.MaxHunger);
     }
-
-    public void ConsumeHealth(float amount)
-    {
-        float max = _stat.GetStat(EStatType.MaxHealth);
-        CurrentHealth = Mathf.Max(CurrentHealth - amount, 0f);
-        OnHealthChanged?.Invoke(CurrentHealth, max);
-    }
-
-    public void RestoreHealth(float amount)
-    {
-        float max = _stat.GetStat(EStatType.MaxHealth);
-        CurrentHealth = Mathf.Min(CurrentHealth + amount, max);
-        OnHealthChanged?.Invoke(CurrentHealth, max);
-    }
-
     public void ConsumeSatiety(float amount)
     {
-        float max = _stat.GetStat(EStatType.MaxSatiety);
+        float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Max(CurrentSatiety - amount, 0f);
-        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+        OnHungerChanged?.Invoke(CurrentSatiety, max);
     }
 
     public void RestoreSatiety(float amount)
     {
-        float max = _stat.GetStat(EStatType.MaxSatiety);
+        float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Min(CurrentSatiety + amount, max);
-        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+        OnHungerChanged?.Invoke(CurrentSatiety, max);
+    }
+
+
+    public void RestoreMana(float amount)
+    {
+        float max = _stat.GetStat(EStatType.MaxMana);
+        CurrentMana = Mathf.Min(CurrentMana + amount, max);
+        OnManaChanged?.Invoke(CurrentMana, max);
+    }
+    public void ConsumeMana(float amount)
+    {
+        float max = _stat.GetStat(EStatType.MaxMana);
+        CurrentMana = Mathf.Max(CurrentMana - amount, 0f);
+        OnManaChanged?.Invoke(CurrentMana, max);
+    }
+
+    public bool HasEnoughMana(float amount)
+    {
+        return CurrentMana >= amount;
     }
 
     public void ResetAll()
     {
-        SetHealth(_stat.GetStat(EStatType.MaxHealth));
-        SetSatiety(_stat.GetStat(EStatType.MaxSatiety));
+        SetSatiety(_stat.GetStat(EStatType.MaxHunger));
+        SetMana(_stat.GetStat(EStatType.MaxMana));
     }
 
-    public void SetHealth(float value)
+    public void SetMana(float value)
     {
-        float max = _stat.GetStat(EStatType.MaxHealth);
-        CurrentHealth = Mathf.Clamp(value, 0f, max);
-        OnHealthChanged?.Invoke(CurrentHealth, max);
+        float max = _stat.GetStat(EStatType.MaxMana);
+        CurrentMana = Mathf.Clamp(value, 0f, max);
+        OnManaChanged?.Invoke(CurrentMana, max);
     }
-
     public void SetSatiety(float value)
     {
-        float max = _stat.GetStat(EStatType.MaxSatiety);
+        float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Clamp(value, 0f, max);
-        OnSatietyChanged?.Invoke(CurrentSatiety, max);
+        OnHungerChanged?.Invoke(CurrentSatiety, max);
     }
 }

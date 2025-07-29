@@ -6,28 +6,41 @@ public class ItemObject : NetworkBehaviour, IPickable
 {
     [Networked]
     public int ItemID { get; set; }
+
     [Networked]
     public int Quantity { get; set; }
+
     [Networked]
     public float Durability { get; set; }
+
     [Networked]
     public Vector3 SpawnPosition { get; set; }
 
-    // private bool _isDespawn;
+    [Networked]
+    public bool HasNetworkedOwner { get; set; }
+    
+    [Networked, Capacity(24)]
+    public string ExtraInfo { get; set; }
+
     private NetworkId _targetID;
-    private bool _hasOwner;
-    public bool HasOwner { get => _hasOwner; set => _hasOwner = value; }
+
+    private float _time;
+    
+    private bool _isPickable;
+    public bool IsPickable => _isPickable;
+    
+    private bool _hasOwnerLocal;
+    public bool HasOwnerLocal { get => _hasOwnerLocal; set => _hasOwnerLocal = value; }
 
     [SerializeField]
     private float _absorbSpeed = 10f;
     [SerializeField]
     private float _absorbThreshold = 0.1f;
+    [SerializeField]
+    private float _pickableTime = 1f;
 
-    // 흡수 대상
     private Transform _target;
-
     private Collider _collider;
-
     private SpriteRenderer _spriteRenderer;
 
     private void Awake()
@@ -45,18 +58,25 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     private void Update()
     {
+        _time += Time.deltaTime;
+        if (_time >= _pickableTime)
+        {
+            _isPickable = true;
+        }
+
+        if (!_isPickable)
+            return;
+
         if (_target != null)
         {
             transform.position = Vector3.Lerp(transform.position, _target.position, _absorbSpeed * Time.deltaTime);
 
             if (Vector3.Distance(transform.position, _target.position) < _absorbThreshold)
             {
-                // 인벤에 등록 요청
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
-                    var itemData = ItemManager.Instance.GetItem(ItemID).ItemData;
-                    Item item = new Item(ItemID,
-                        itemData.MaxQuantity, Quantity, itemData.MaxDurability, Durability);
+                    var itemData = ItemManager.Instance.GetItem(ItemID);
+                    var item = new Item(itemData, Quantity, Durability, ExtraInfo);
                     InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
                 }
@@ -70,9 +90,7 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void RPC_Despawn()
     {
         if (!Runner.IsServer)
-        {
             return;
-        }
 
         Runner.Despawn(Object);
     }
@@ -80,17 +98,11 @@ public class ItemObject : NetworkBehaviour, IPickable
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_Pick(NetworkId targetNetworkId)
     {
-        _hasOwner = true;
-
-        // 이 아이템을 주운 경우 줍기 비활성화
         _collider.enabled = false;
-
-        // 아이템 흡수 연출 타겟 설정
         _targetID = targetNetworkId;
-        _target = Runner.FindObject(targetNetworkId).gameObject.transform;
+        _target = Runner.FindObject(targetNetworkId)?.transform;
     }
 
-    // 외형 적용
     private void ApplyVisual(Sprite icon)
     {
         _spriteRenderer.sprite = icon;
