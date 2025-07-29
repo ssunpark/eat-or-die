@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class CraftRecipeManager : BehaviourSingleton<CraftRecipeManager>
 {
-    private const string CRAFTRECIPE_CSV_PATH = "/CraftCSV/CraftRecipe.csv";
+    private const string CRAFTRECIPE_CSV_PATH = "/CraftCSV/CraftRecipeTest.csv";
     
-    public List<CraftRecipe> CraftRecipeList { get; private set; }
+    public List<CraftRecipe> CraftRecipeList { get; private set; } = new List<CraftRecipe>();
     public event Action OnDataLoaded;
 
-    private void Start()
+    private void Awake()
     {
         InitCraftRecipeData();
     }
@@ -20,5 +20,10 @@ public class CraftRecipeManager : BehaviourSingleton<CraftRecipeManager>
 
         Debug.Log($"로드 완료 - CraftRecipeCSVDataList: {CraftRecipeList.Count}, ");
         OnDataLoaded?.Invoke();
+    }
+
+    public List<CraftRecipe> GetAll()
+    {
+        return CraftRecipeList;
     }
 }
