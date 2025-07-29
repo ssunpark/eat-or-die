@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class CraftRecipeManager : BehaviourSingleton<CraftRecipeManager>
 {
-    private const string CRAFTRECIPE_CSV_PATH = "/CraftCSV/CraftRecipeTest.csv";
+    private const string CRAFTRECIPE_CSV_PATH = "/CraftCSV/CraftRecipe.csv";
     
     public List<CraftRecipe> CraftRecipeList { get; private set; } = new List<CraftRecipe>();
-    public event Action OnDataLoaded;
+    // public event Action OnDataLoaded;
 
     private void Awake()
     {
@@ -19,7 +19,7 @@ public class CraftRecipeManager : BehaviourSingleton<CraftRecipeManager>
         CraftRecipeList = CSVLoader<CraftRecipe>.LoadCSV(Application.streamingAssetsPath + CRAFTRECIPE_CSV_PATH);
 
         Debug.Log($"로드 완료 - CraftRecipeCSVDataList: {CraftRecipeList.Count}, ");
-        OnDataLoaded?.Invoke();
+        // OnDataLoaded?.Invoke();
     }
 
     public List<CraftRecipe> GetAll()
