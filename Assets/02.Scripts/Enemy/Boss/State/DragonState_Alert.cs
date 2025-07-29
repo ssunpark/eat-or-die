@@ -4,11 +4,11 @@ using Fusion.Addons.FSM;
 using UnityEngine;
 
 [Serializable]
-public class DragonState_Alert : DragonStateBase, IParentStateMachine
+public class DragonState_Alert : DragonStateBase, IParentState
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
 
-    public DragonState_Alert(DragonStateMachine machine) : base(machine)
+    public DragonState_Alert(DragonController controller) : base(controller)
     {
     }
 
@@ -16,26 +16,26 @@ public class DragonState_Alert : DragonStateBase, IParentStateMachine
     {
         Debug.Log("Alert 상태 진입");
 
-        StateMachine.FightMode(true);
-        StateMachine.Lock();
-        StateMachine.OnUnlock += OnUnlock;
-        StateMachine.Animator.SetTrigger("Roar");
+        Controller.FightMode(true);
+        Controller.Lock();
+        Controller.OnUnlock += OnUnlock;
+        Controller.Animator.SetTrigger("Roar");
     }
 
     private void OnUnlock()
     {
         _subStateMachine.TryActivateState<DragonState_Look>(true);
-        StateMachine.OnUnlock -= OnUnlock;
+        Controller.OnUnlock -= OnUnlock;
     }
 
     protected override void OnFixedUpdate()
     {
-        if (StateMachine.IsLocked)
+        if (Controller.IsLocked)
         {
             return; // 잠금 상태면 아무 것도 안 함
         }
 
-        if (StateMachine.Target == null)
+        if (Controller.Target == null)
         {
             Machine.TryActivateState<DragonState_Idle>(true);
         }
@@ -43,7 +43,7 @@ public class DragonState_Alert : DragonStateBase, IParentStateMachine
 
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
-        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonAlertSubStateMachine", new DragonState_Look(StateMachine, this));
+        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonAlertSubStateMachine", new DragonState_Look(Controller, this));
         
         stateMachines.Add(_subStateMachine);
     }

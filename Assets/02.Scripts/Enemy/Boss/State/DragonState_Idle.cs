@@ -5,11 +5,11 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [Serializable]
-public class DragonState_Idle : DragonStateBase, IParentStateMachine
+public class DragonState_Idle : DragonStateBase, IParentState
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
 
-    public DragonState_Idle(DragonStateMachine machine) : base(machine)
+    public DragonState_Idle(DragonController controller) : base(controller)
     {
     }
 
@@ -17,32 +17,32 @@ public class DragonState_Idle : DragonStateBase, IParentStateMachine
     {
         Debug.Log("Idle 상태 진입");
 
-        StateMachine.FightMode(false);
+        Controller.FightMode(false);
 
-        if (!StateMachine.IsLocked)
+        if (!Controller.IsLocked)
         {
             TryActiveRandomSubState();
         }
         else
         {
-            StateMachine.OnUnlock += OnUnlock;
+            Controller.OnUnlock += OnUnlock;
         }
     }
 
     private void OnUnlock()
     {
         TryActiveRandomSubState();
-        StateMachine.OnUnlock -= OnUnlock;
+        Controller.OnUnlock -= OnUnlock;
     }
 
     protected override void OnFixedUpdate()
     {
-        if (StateMachine.IsLocked)
+        if (Controller.IsLocked)
         {
             return; // 잠금 상태면 아무 것도 안 함
         }
         
-        if (StateMachine.Target != null)
+        if (Controller.Target != null)
         {
             Machine.TryActivateState<DragonState_Alert>(true);
         }
@@ -68,7 +68,7 @@ public class DragonState_Idle : DragonStateBase, IParentStateMachine
     
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
-        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonIdleSubStateMachine", new DragonState_Wait(StateMachine, this), new DragonState_Patrol(StateMachine, this));
+        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonIdleSubStateMachine", new DragonState_Wait(Controller, this), new DragonState_Patrol(Controller, this));
         
         stateMachines.Add(_subStateMachine);
     }

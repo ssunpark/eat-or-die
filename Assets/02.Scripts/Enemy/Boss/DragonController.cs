@@ -5,7 +5,7 @@ using Fusion.Addons.FSM;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class DragonStateMachine : NetworkBehaviour, IStateMachineOwner
+public class DragonController : NetworkBehaviour, IStateMachineOwner
 {
     private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
     

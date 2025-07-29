@@ -4,14 +4,14 @@ using UnityEngine;
 public class DragonSubStateBase : State<DragonSubStateBase>
 {
     [HideInInspector]
-    public DragonStateMachine StateMachine;
+    public DragonController Controller;
 
     [HideInInspector]
-    public IParentStateMachine ParentStateMachine;
+    public IParentState ParentState;
 
-    public DragonSubStateBase(DragonStateMachine stateMachine, IParentStateMachine parentStateMachine)
+    public DragonSubStateBase(DragonController controller, IParentState parentState)
     {
-        StateMachine = stateMachine;
-        ParentStateMachine = parentStateMachine;
+        Controller = controller;
+        ParentState = parentState;
     }
 }

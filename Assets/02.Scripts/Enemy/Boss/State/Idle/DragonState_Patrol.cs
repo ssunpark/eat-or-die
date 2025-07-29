@@ -10,7 +10,7 @@ public class DragonState_Patrol : DragonSubStateBase
     private Vector3 _destination;
     private bool _hasDestination;
 
-    public DragonState_Patrol(DragonStateMachine machine, IParentStateMachine parentMachine) : base(machine, parentMachine)
+    public DragonState_Patrol(DragonController controller, IParentState parent) : base(controller, parent)
     {
     }
 
@@ -19,12 +19,12 @@ public class DragonState_Patrol : DragonSubStateBase
         Debug.Log("Idle 배회 상태 진입");
         _hasDestination = false;
 
-        StateMachine.Animator.SetBool("IsMove", true);
+        Controller.Animator.SetBool("IsMove", true);
     }
 
     protected override void OnFixedUpdate()
     {
-        if (StateMachine.IsLocked)
+        if (Controller.IsLocked)
         {
             return; // 잠금 상태면 아무 것도 안 함
         }
@@ -34,41 +34,41 @@ public class DragonState_Patrol : DragonSubStateBase
             SetNewDestination();
         }
 
-        if (_hasDestination && !StateMachine.NavMeshAgent.pathPending)
+        if (_hasDestination && !Controller.NavMeshAgent.pathPending)
         {
-            StateMachine.Move(Machine.Runner.DeltaTime);
+            Controller.Move(Machine.Runner.DeltaTime);
         }
 
         if (Machine.StateTime >= _patrolDuration)
         {
-            ParentStateMachine.OnSubStateComplete();
+            ParentState.OnSubStateComplete();
         }
     }
 
     protected override void OnExitState()
     {
         Debug.Log("Idle 배회 상태 종료");
-        StateMachine.NavMeshAgent.ResetPath();
-        StateMachine.NavMeshAgent.velocity = Vector3.zero;
+        Controller.NavMeshAgent.ResetPath();
+        Controller.NavMeshAgent.velocity = Vector3.zero;
         
-        StateMachine.Animator.SetBool("IsMove", false);
+        Controller.Animator.SetBool("IsMove", false);
     }
 
     private bool Arrived()
     {
-        return !StateMachine.NavMeshAgent.pathPending &&
-               StateMachine.NavMeshAgent.remainingDistance <= StateMachine.NavMeshAgent.stoppingDistance;
+        return !Controller.NavMeshAgent.pathPending &&
+               Controller.NavMeshAgent.remainingDistance <= Controller.NavMeshAgent.stoppingDistance;
     }
 
     private void SetNewDestination()
     {
         Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(5f, _walkRadius);
-        randomDirection += StateMachine.transform.position;
+        randomDirection += Controller.transform.position;
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _walkRadius, NavMesh.AllAreas))
         {
             _destination = hit.position;
-            StateMachine.NavMeshAgent.SetDestination(_destination);
+            Controller.NavMeshAgent.SetDestination(_destination);
             _hasDestination = true;
         }
     }

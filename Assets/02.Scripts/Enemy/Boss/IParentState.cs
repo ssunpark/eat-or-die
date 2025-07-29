@@ -1,4 +1,4 @@
-﻿public interface IParentStateMachine
+﻿public interface IParentState
 {
     public void OnSubStateComplete();
 }
