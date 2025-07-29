@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class DragonLookState : IEnemyState<DragonStateMachine>
 {
-    private readonly DragonAlertState _parent;
+    private readonly IParentStateMachine _parent;
 
     private float _duration = 3f;
     private float _timer;
@@ -16,7 +16,7 @@ public class DragonLookState : IEnemyState<DragonStateMachine>
 
     public bool IsInterruptable => true;
 
-    public DragonLookState(DragonAlertState parent)
+    public DragonLookState(IParentStateMachine parent)
     {
         _parent = parent;
     }

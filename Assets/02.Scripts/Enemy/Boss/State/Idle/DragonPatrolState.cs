@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class DragonPatrolState : IEnemyState<DragonStateMachine>
 {
-    private readonly DragonIdleState _parent;
+    private readonly IParentStateMachine _parent;
     private float _timer = 5f;
     private float _walkRadius = 10f;
 
@@ -12,7 +12,7 @@ public class DragonPatrolState : IEnemyState<DragonStateMachine>
 
     public bool IsInterruptable => true;
 
-    public DragonPatrolState(DragonIdleState parent)
+    public DragonPatrolState(IParentStateMachine parent)
     {
         _parent = parent;
     }

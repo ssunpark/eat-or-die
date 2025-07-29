@@ -2,12 +2,12 @@
 
 public class DragonWaitState : IEnemyState<DragonStateMachine>
 {
-    private readonly DragonIdleState _parent;
+    private readonly IParentStateMachine _parent;
     private float _timer = 3f;
 
     public bool IsInterruptable => true;
 
-    public DragonWaitState(DragonIdleState parent)
+    public DragonWaitState(IParentStateMachine parent)
     {
         _parent = parent;
     }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class DragonIdleState : IEnemyState<DragonStateMachine>
+public class DragonIdleState : IEnemyState<DragonStateMachine>, IParentStateMachine
 {
     private IEnemyState<DragonStateMachine> _currentSubState;
     private DragonStateMachine _stateMachine;
