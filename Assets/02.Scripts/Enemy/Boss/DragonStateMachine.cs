@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Fusion;
+using Fusion.Addons.FSM;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class DragonStateMachine : NetworkBehaviour
+public class DragonStateMachine : NetworkBehaviour, IStateMachineOwner
 {
     private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
     
@@ -25,9 +26,8 @@ public class DragonStateMachine : NetworkBehaviour
     private Vector2 _smoothedVelocity = Vector2.zero;
     [SerializeField]
     private float _animSmoothSpeed = 1f;
-
-    private IEnemyState<DragonStateMachine> _currentState;
-    private Dictionary<EBossState, IEnemyState<DragonStateMachine>> _stateDictionary;
+    
+    private StateMachine<DragonStateBase> _dragonStateMachine;
 
     public override void Spawned()
     {
@@ -43,44 +43,6 @@ public class DragonStateMachine : NetworkBehaviour
         _navMeshAgent.updatePosition = false;
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
-
-        _stateDictionary = new Dictionary<EBossState, IEnemyState<DragonStateMachine>>
-        {
-            { EBossState.Idle, new DragonIdleState() },
-            { EBossState.Alert, new DragonAlertState() },
-            // { EBossState.Attack, new DragonPhase1State() },
-            // { EBossState.Spell, new DragonPhase2State() },
-            // { EBossState.Phase3, new DragonPhase3State() },
-            // { EBossState.Dead, new DragonDeadState() },
-        };
-        ChangeState(EBossState.Idle);
-    }
-
-    public override void FixedUpdateNetwork()
-    {
-        _currentState?.Update(this, Runner.DeltaTime);
-    }
-
-    public void ChangeState(EBossState newState)
-    {
-        if (!HasStateAuthority) return;
-
-        if (_currentState != null && !_currentState.IsInterruptable)
-        {
-            Debug.Log("현재 상태는 인터럽트 불가");
-            return;
-        }
-
-        _currentState?.Exit(this);
-        _currentState = _stateDictionary[newState];
-        _currentState?.Enter(this);
-    }
-    
-    public void ForceChangeState(EBossState newState)
-    {
-        _currentState?.Exit(this);
-        _currentState = _stateDictionary[newState];
-        _currentState?.Enter(this);
     }
     
     public void Move(float dt)
@@ -141,5 +103,12 @@ public class DragonStateMachine : NetworkBehaviour
     {
         _isLocked = false;
         OnUnlock?.Invoke();
+    }
+
+    public void CollectStateMachines(List<IStateMachine> stateMachines)
+    {
+        _dragonStateMachine = new StateMachine<DragonStateBase>("DragonStateMachine", new DragonState_Idle(this), new DragonState_Alert(this));
+        
+        stateMachines.Add(_dragonStateMachine);
     }
 }
