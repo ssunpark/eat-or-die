@@ -16,4 +16,6 @@ public class NpcItem
     
     [Name("재고수량")]
     public int StockQuantity { get; set; } // 무한개는 -1로 처리
+    
+    public bool IsInfinite => StockQuantity == -1;
 }
