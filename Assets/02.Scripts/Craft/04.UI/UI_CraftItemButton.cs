@@ -22,6 +22,17 @@ public class UI_CraftItemButton : MonoBehaviour
 
     public void CanInteractable()
     {
-        // 인벤토리에 있는 아이템 개수에 따라서 활성화/회색처리 로직 부르기
+        int haveMat1 = InventoryManager.Instance.Inventory.GetItemCount(_craftRecipe.CraftMaterial1ID);
+        int haveMat2 = InventoryManager.Instance.Inventory.GetItemCount(_craftRecipe.CraftMaterial2ID);
+
+        bool canCraft = haveMat1 >= _craftRecipe.CraftMaterial1Count &&
+                        haveMat2 >= _craftRecipe.CraftMaterial2Count;
+        
+        Button button = GetComponent<Button>();
+        button.interactable = canCraft;
+        
+        ColorBlock colors = button.colors;
+        colors.normalColor = canCraft ? Color.white : Color.gray;
+        button.colors = colors;
     }
 }
