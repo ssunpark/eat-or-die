@@ -12,11 +12,20 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
 
     private Dictionary<EStatType, float> _statInputs = new();
-
+    [HideInInspector]public Vector3[] SpawnPoint;
+    public enum SpawnPosition
+    {
+        DemoScene,
+        Origin
+    } 
+    public SpawnPosition SpawnPos;
     private void Awake()
     {
         _inputReader = FindAnyObjectByType<InputReader>();
 
+        SpawnPoint = new Vector3[2];
+        SpawnPoint[(int)SpawnPosition.DemoScene] = new Vector3(30, 0, 171);
+        SpawnPoint[(int)SpawnPosition.Origin] = new Vector3(0, 1, 0);
     }
 
     public void SetRunner(NetworkRunner runner)
@@ -50,8 +59,8 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         {
             var baseStats = new Dictionary<EStatType, float>(_statInputs);
 
-            Vector3 spawnPos = new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
-            // Vector3 spawnPos = new Vector3(30, 0, 171); // DemoScene Spawn Position
+            Vector3 spawnPos = SpawnPoint[(int)SpawnPos];
+            //new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0)
             runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
         }
     }

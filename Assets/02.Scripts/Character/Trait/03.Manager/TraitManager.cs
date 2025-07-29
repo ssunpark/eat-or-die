@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public class TraitManager
 {
+    public event Action<ETraitType, int> OnTraitLeveledUp; // (타입, 레벨 증가량)
+    public event Action<ETraitType, int> OnTraitExpGained; // (타입, 획득량)
+
+    private Dictionary<ETraitType, int> _skillPoints = new(); // 5레벨 단위 포인트
     private Dictionary<ETraitType, Trait> _traitDict;
     private readonly StatManager _statManager;
 
@@ -23,13 +28,31 @@ public class TraitManager
 
     public void AddExp(ETraitType type, int amount, CharacterTraitData traitData)
     {
-        if (_traitDict.TryGetValue(type, out var trait))
-        {
-            int oldLevel = trait.Level;
-            trait.AddExp(amount);
+        if (!_traitDict.TryGetValue(type, out var trait)) return;
 
-            if (trait.Level > oldLevel)
-                ApplyTraitEffect(traitData, trait.Level - oldLevel);
+        int prevLevel = trait.Level;
+        if (prevLevel == trait.MaxLevel) return;
+        trait.AddExp(amount);
+        OnTraitExpGained?.Invoke(type, amount);
+
+        if (trait.Level > prevLevel)
+        {
+            ApplyTraitEffect(traitData, trait.Level - prevLevel);
+            OnTraitLeveledUp?.Invoke(type, trait.Level - prevLevel);
+
+            int prevPoint = prevLevel / 5;
+            int newPoint = trait.Level / 5;
+            if (newPoint > prevPoint)
+            {
+                int gainedPoint = newPoint - prevPoint;
+                _skillPoints.TryAdd(type, 0);
+                _skillPoints[type] += gainedPoint;
+            }
+            if(trait.Level == trait.MaxLevel)
+            {
+                _skillPoints.TryAdd(type, 0);
+                _skillPoints[type] += 5;
+            }
         }
     }
 
@@ -91,4 +114,6 @@ public class TraitManager
             }
         }
     }
+
+
 }
