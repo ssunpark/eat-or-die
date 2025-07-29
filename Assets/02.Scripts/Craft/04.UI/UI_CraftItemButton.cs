@@ -38,7 +38,19 @@ public class UI_CraftItemButton : MonoBehaviour
 
     public void OnClick()
     {
-        // ResultID에 맞는 Material1ID의 Count와 Material2ID의 Count만큼 인벤토리에 있는 재료가 소진되고,
-        // 결과물이 인벤토리로 들어간다.
+        bool consumedMat1 = InventoryManager.Instance.Inventory.TryConsumeItem(_craftRecipe.CraftMaterial1ID, _craftRecipe.CraftMaterial1Count);
+        bool consumedMat2 = InventoryManager.Instance.Inventory.TryConsumeItem(_craftRecipe.CraftMaterial2ID, _craftRecipe.CraftMaterial2Count);
+
+        if (!consumedMat1 || !consumedMat2)
+        {
+            Debug.LogWarning("재료가 부족하여 제작에 실패했습니다.");
+            return;
+        }
+
+        Item craftedItem = new Item(_itemInfo, 1);
+        InventoryManager.Instance.PickItemFromGround(craftedItem);
+
+        Debug.Log($"{_itemInfo.ItemData.Name} 제작 성공!");
+        
     }
 }

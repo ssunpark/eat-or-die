@@ -55,8 +55,8 @@ public class UI_CraftItemList : MonoBehaviour
             _craftItemButtons.Add(craftItemButtons);
         }
     }
-
-    private void RefreshAllButtons()
+    
+    public void RefreshAllButtons()
     {
         foreach (var button in _craftItemButtons)
         {

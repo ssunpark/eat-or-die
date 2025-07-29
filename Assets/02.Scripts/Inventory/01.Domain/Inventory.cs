@@ -155,4 +155,38 @@ public class Inventory
     }
     
     // id로 조회해서 원하는 count만큼 개수 감소
+    public bool TryConsumeItem(int itemID, int amount)
+    {
+        int currentCount = GetItemCount(itemID);
+        if (currentCount < amount)
+        {
+            return false;
+        }
+
+        int remaining = amount;
+
+        foreach (Slot slot in SlotList)
+        {
+            if (slot.IsEmpty || slot.Item.ID != itemID)
+            {
+                continue;
+            }
+            if (slot.Item.Quantity > remaining)
+            {
+                slot.Item.SetQuantity(slot.Item.Quantity - remaining);
+                return true;
+            }
+            else
+            {
+                remaining -= slot.Item.Quantity;
+                slot.RemoveItem();
+            }
+            
+            if (remaining <= 0)
+            {
+                return true;
+            }
+        }
+        return true;
+    }
 }
