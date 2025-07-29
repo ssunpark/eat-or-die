@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-public class DragonIdlePatrolState : IEnemyState<DragonStateMachine>
+public class DragonPatrolState : IEnemyState<DragonStateMachine>
 {
     private readonly DragonIdleState _parent;
     private float _timer = 5f;
@@ -12,7 +12,7 @@ public class DragonIdlePatrolState : IEnemyState<DragonStateMachine>
 
     public bool IsInterruptable => true;
 
-    public DragonIdlePatrolState(DragonIdleState parent)
+    public DragonPatrolState(DragonIdleState parent)
     {
         _parent = parent;
     }

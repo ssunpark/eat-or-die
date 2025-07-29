@@ -42,9 +42,9 @@ public class DragonIdleState : IEnemyState<DragonStateMachine>
         int rand = Random.Range(0, 2);
         return rand switch
         {
-            0 => new DragonIdleWaitState(this),
-            1 => new DragonIdlePatrolState(this),
-            _ => new DragonIdleWaitState(this)
+            0 => new DragonWaitState(this),
+            1 => new DragonPatrolState(this),
+            _ => new DragonWaitState(this)
         };
     }
 }

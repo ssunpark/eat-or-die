@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 
-public class DragonIdleWaitState : IEnemyState<DragonStateMachine>
+public class DragonWaitState : IEnemyState<DragonStateMachine>
 {
     private readonly DragonIdleState _parent;
     private float _timer = 3f;
 
     public bool IsInterruptable => true;
 
-    public DragonIdleWaitState(DragonIdleState parent)
+    public DragonWaitState(DragonIdleState parent)
     {
         _parent = parent;
     }

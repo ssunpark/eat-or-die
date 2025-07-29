@@ -36,7 +36,7 @@ public class DragonStateMachine : NetworkBehaviour
         _stateDictionary = new Dictionary<EBossState, IEnemyState<DragonStateMachine>>
         {
             { EBossState.Idle, new DragonIdleState() },
-            { EBossState.Phase1, new DragonPhase1State() },
+            // { EBossState.Phase1, new DragonPhase1State() },
             // { EBossState.Phase2, new DragonPhase2State() },
             // { EBossState.Phase3, new DragonPhase3State() },
             // { EBossState.Dead, new DragonDeadState() },
@@ -51,11 +51,21 @@ public class DragonStateMachine : NetworkBehaviour
 
     public void ChangeState(EBossState newState)
     {
-        if (!HasStateAuthority)
+        if (!HasStateAuthority) return;
+
+        if (_currentState != null && !_currentState.IsInterruptable)
         {
+            Debug.Log("현재 상태는 인터럽트 불가");
             return;
         }
 
+        _currentState?.Exit(this);
+        _currentState = _stateDictionary[newState];
+        _currentState?.Enter(this);
+    }
+    
+    public void ForceChangeState(EBossState newState)
+    {
         _currentState?.Exit(this);
         _currentState = _stateDictionary[newState];
         _currentState?.Enter(this);
