@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class DragonStateMachine : NetworkBehaviour
 {
+    private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
+    
     [SerializeField]
     private GameObject _target;
     public GameObject Target => _target;
@@ -36,8 +38,9 @@ public class DragonStateMachine : NetworkBehaviour
         _stateDictionary = new Dictionary<EBossState, IEnemyState<DragonStateMachine>>
         {
             { EBossState.Idle, new DragonIdleState() },
-            // { EBossState.Phase1, new DragonPhase1State() },
-            // { EBossState.Phase2, new DragonPhase2State() },
+            { EBossState.Alert, new DragonAlertState() },
+            // { EBossState.Attack, new DragonPhase1State() },
+            // { EBossState.Spell, new DragonPhase2State() },
             // { EBossState.Phase3, new DragonPhase3State() },
             // { EBossState.Dead, new DragonDeadState() },
         };
@@ -73,25 +76,40 @@ public class DragonStateMachine : NetworkBehaviour
     
     public void Move(float dt)
     {
-        if (_navMeshAgent.pathPending) return;
+        if (NavMeshAgent.pathPending) return;
 
-        Vector3 next = _navMeshAgent.nextPosition;
-        Vector3 current = transform.position;
-        Vector3 direction = next - current;
+        // 1. 위치 이동
+        Vector3 next = NavMeshAgent.nextPosition;
+        transform.position = next;
+
+        // 2. 회전 처리
+        Vector3 direction;
+
+        if (Target != null)
+        {
+            direction = Target.transform.position - transform.position;
+        }
+        else
+        {
+            direction = NavMeshAgent.steeringTarget - transform.position;
+        }
+
         direction.y = 0f;
-
-        // 회전
-        if (direction.sqrMagnitude > 0.001f)
+        if (direction.sqrMagnitude > 0.01f)
         {
             Quaternion targetRot = Quaternion.LookRotation(direction.normalized);
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 targetRot,
-                _navMeshAgent.angularSpeed * dt
+                NavMeshAgent.angularSpeed * dt
             );
         }
+    }
 
-        // 위치 이동
-        transform.position = next;
+    public void FightMode(bool active)
+    {
+        int layerIndex = _animator.GetLayerIndex(ANIMATION_LAYER_FIGHT);
+        float targetWeight = active ? 1f : 0f;
+        _animator.SetLayerWeight(layerIndex, targetWeight);
     }
 }

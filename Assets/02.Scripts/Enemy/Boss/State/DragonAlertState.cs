@@ -1,7 +1,10 @@
-﻿using UnityEngine;
+﻿using UnityEditor.Animations;
+using UnityEngine;
 
-public class DragonIdleState : IEnemyState<DragonStateMachine>
+public class DragonAlertState : IEnemyState<DragonStateMachine>
 {
+    private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
+    
     private IEnemyState<DragonStateMachine> _currentSubState;
     private DragonStateMachine _stateMachine;
 
@@ -9,31 +12,31 @@ public class DragonIdleState : IEnemyState<DragonStateMachine>
 
     public void Enter(DragonStateMachine stateMachine)
     {
-        Debug.Log("Idle 상태 진입");
-        
-        stateMachine.FightMode(false);
+        Debug.Log("Alert 상태 진입");
+
+        stateMachine.FightMode(true);
 
         _stateMachine = stateMachine;
-        SetSubState(ChooseRandomIdleSubState());
+        SetSubState(new DragonLookState(this));
     }
 
     public void Update(DragonStateMachine stateMachine, float deltaTime)
     {
-        _currentSubState?.Update(stateMachine, deltaTime);
-        if (stateMachine.Target != null)
+        if (stateMachine.Target == null)
         {
-            stateMachine.ChangeState(EBossState.Alert);
+            stateMachine.ChangeState(EBossState.Idle);
         }
+        _currentSubState?.Update(stateMachine, deltaTime);
     }
 
     public void Exit(DragonStateMachine stateMachine)
     {
         _currentSubState?.Exit(stateMachine);
     }
-    
+
     public void OnSubStateComplete()
     {
-        SetSubState(ChooseRandomIdleSubState());
+        SetSubState(new DragonLookState(this));
     }
 
     private void SetSubState(IEnemyState<DragonStateMachine> newSubState)
@@ -43,14 +46,10 @@ public class DragonIdleState : IEnemyState<DragonStateMachine>
         _currentSubState?.Enter(_stateMachine);
     }
 
-    private IEnemyState<DragonStateMachine> ChooseRandomIdleSubState()
-    {
-        int rand = Random.Range(0, 2);
-        return rand switch
-        {
-            0 => new DragonWaitState(this),
-            1 => new DragonPatrolState(this),
-            _ => new DragonWaitState(this)
-        };
-    }
+    //
+    // private IEnemyState<DragonStateMachine> ChooseNextAlertSubState()
+    // {
+    //     // 공격 전 Ready 또는 상황에 따라 Chase 등 선택
+    //     return new DragonReadyState(this);
+    // }
 }
