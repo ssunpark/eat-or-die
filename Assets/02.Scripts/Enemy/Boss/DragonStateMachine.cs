@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -16,6 +17,14 @@ public class DragonStateMachine : NetworkBehaviour
 
     private NavMeshAgent _navMeshAgent;
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
+    
+    private bool _isLocked = false;
+    public bool IsLocked => _isLocked;
+    public event Action OnUnlock;
+    
+    private Vector2 _smoothedVelocity = Vector2.zero;
+    [SerializeField]
+    private float _animSmoothSpeed = 1f;
 
     private IEnemyState<DragonStateMachine> _currentState;
     private Dictionary<EBossState, IEnemyState<DragonStateMachine>> _stateDictionary;
@@ -104,6 +113,19 @@ public class DragonStateMachine : NetworkBehaviour
                 NavMeshAgent.angularSpeed * dt
             );
         }
+        
+        // 3. 애니메이션 파라미터 (보간 포함)
+        Vector3 localVelocity = transform.InverseTransformDirection(NavMeshAgent.desiredVelocity);
+        Vector2 targetVelocity = new Vector2(
+            Mathf.Clamp(localVelocity.x / NavMeshAgent.speed, -1f, 1f),
+            Mathf.Max(0f, localVelocity.z / NavMeshAgent.speed)
+        );
+
+        // Lerp 보간
+        _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, _animSmoothSpeed * dt);
+
+        _animator.SetFloat("XVelocity", _smoothedVelocity.x);
+        _animator.SetFloat("ZVelocity", _smoothedVelocity.y);
     }
 
     public void FightMode(bool active)
@@ -111,5 +133,13 @@ public class DragonStateMachine : NetworkBehaviour
         int layerIndex = _animator.GetLayerIndex(ANIMATION_LAYER_FIGHT);
         float targetWeight = active ? 1f : 0f;
         _animator.SetLayerWeight(layerIndex, targetWeight);
+    }
+    
+    public void Lock() => _isLocked = true;
+
+    public void Unlock()
+    {
+        _isLocked = false;
+        OnUnlock?.Invoke();
     }
 }

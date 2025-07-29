@@ -12,13 +12,32 @@ public class DragonIdleState : IEnemyState<DragonStateMachine>
         Debug.Log("Idle 상태 진입");
         
         stateMachine.FightMode(false);
-
+        
         _stateMachine = stateMachine;
+
+        if (!stateMachine.IsLocked)
+        {
+            SetSubState(ChooseRandomIdleSubState());
+        }
+        else
+        {
+            _stateMachine.OnUnlock += OnUnlock;
+        }
+    }
+
+    private void OnUnlock()
+    {
         SetSubState(ChooseRandomIdleSubState());
+        _stateMachine.OnUnlock -= OnUnlock;
     }
 
     public void Update(DragonStateMachine stateMachine, float deltaTime)
     {
+        if (stateMachine.IsLocked)
+        {
+            return; // 잠금 상태면 아무 것도 안 함
+        }
+
         _currentSubState?.Update(stateMachine, deltaTime);
         if (stateMachine.Target != null)
         {

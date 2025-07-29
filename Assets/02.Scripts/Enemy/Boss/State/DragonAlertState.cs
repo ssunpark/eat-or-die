@@ -1,10 +1,7 @@
-﻿using UnityEditor.Animations;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DragonAlertState : IEnemyState<DragonStateMachine>
 {
-    private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
-    
     private IEnemyState<DragonStateMachine> _currentSubState;
     private DragonStateMachine _stateMachine;
 
@@ -13,15 +10,26 @@ public class DragonAlertState : IEnemyState<DragonStateMachine>
     public void Enter(DragonStateMachine stateMachine)
     {
         Debug.Log("Alert 상태 진입");
-
-        stateMachine.FightMode(true);
-
+        
         _stateMachine = stateMachine;
+        _stateMachine.FightMode(true);
+        _stateMachine.OnUnlock += OnUnlock;
+        _stateMachine.Animator.SetTrigger("Roar");
+    }
+
+    private void OnUnlock()
+    {
         SetSubState(new DragonLookState(this));
+        _stateMachine.OnUnlock -= OnUnlock;
     }
 
     public void Update(DragonStateMachine stateMachine, float deltaTime)
     {
+        if (stateMachine.IsLocked)
+        {
+            return; // 잠금 상태면 아무 것도 안 함
+        }
+
         if (stateMachine.Target == null)
         {
             stateMachine.ChangeState(EBossState.Idle);
