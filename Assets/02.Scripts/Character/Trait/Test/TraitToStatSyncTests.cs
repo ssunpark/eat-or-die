@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿#if UNITY_EDITOR
+
+using NUnit.Framework;
 
 public class TraitToStatSyncTests
 {
@@ -23,3 +25,4 @@ public class TraitToStatSyncTests
         Assert.AreEqual(expected, actual, 0.0001f);
     }
 }
+#endif

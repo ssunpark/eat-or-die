@@ -18,6 +18,11 @@ public class HandEntity : BehaviourSingleton<HandEntity>
         OnItemPickedUp?.Invoke();
     }
 
+    public Item GetItem()
+    {
+        return Item;
+    }
+
     public bool TryAddItem(Item item)
     {
         if (item.ID != Item.ID) return false;
