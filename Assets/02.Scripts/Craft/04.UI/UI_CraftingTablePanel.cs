@@ -3,11 +3,6 @@
 public class UI_CraftingTablePanel : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.Craft;
-
-    private void Start()
-    {
-        gameObject.SetActive(false);
-    }
     
     private void Update()
     {
