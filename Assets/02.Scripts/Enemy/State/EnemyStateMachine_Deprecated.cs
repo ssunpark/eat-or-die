@@ -3,7 +3,7 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyStateMachine : NetworkBehaviour
+public class EnemyStateMachine_Deprecated : NetworkBehaviour
 {
 	// private EnemyStat _stat;
 	private ChangeDetector _changeDetector;
@@ -21,8 +21,8 @@ public class EnemyStateMachine : NetworkBehaviour
 	
 	[Networked] private EEnemyState NetworkedState { get; set; }
 	
-	private IEnemyState<EnemyStateMachine> _currentState;
-	private Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>> _stateDictionary;
+	private IEnemyState<EnemyStateMachine_Deprecated> _currentState;
+	private Dictionary<EEnemyState, IEnemyState<EnemyStateMachine_Deprecated>> _stateDictionary;
 	
 	// Stat으로 분리시킬 가능성 높음
 
@@ -43,7 +43,7 @@ public class EnemyStateMachine : NetworkBehaviour
 		
 		// Stat = GetComponent<EnemyStat>();
 		
-		_stateDictionary = new Dictionary<EEnemyState, IEnemyState<EnemyStateMachine>>
+		_stateDictionary = new Dictionary<EEnemyState, IEnemyState<EnemyStateMachine_Deprecated>>
 		{
 			{ EEnemyState.Idle, new EnemyIdleState() },
 			{ EEnemyState.Trace, new EnemyTraceState() },

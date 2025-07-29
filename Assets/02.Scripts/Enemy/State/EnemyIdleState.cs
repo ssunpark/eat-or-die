@@ -1,27 +1,27 @@
 ﻿using UnityEngine;
 
-public class EnemyIdleState : IEnemyState<EnemyStateMachine>
+public class EnemyIdleState : IEnemyState<EnemyStateMachine_Deprecated>
 {
     public bool IsInterruptable => true;
 
-    public void Enter(EnemyStateMachine stateMachine)
+    public void Enter(EnemyStateMachine_Deprecated stateMachineDeprecated)
     {
         Debug.Log("Entering Idle state");
-        stateMachine.Animator.Play("Idle");
+        stateMachineDeprecated.Animator.Play("Idle");
     }
 
-    public void Update(EnemyStateMachine stateMachine, float deltaTime)
+    public void Update(EnemyStateMachine_Deprecated stateMachineDeprecated, float deltaTime)
     {
         // OverlapSphere to check for player presence
-        Collider[] hitColliders = Physics.OverlapSphere(stateMachine.transform.position, 5f, LayerMask.GetMask("Player"));
+        Collider[] hitColliders = Physics.OverlapSphere(stateMachineDeprecated.transform.position, 5f, LayerMask.GetMask("Player"));
         
         if (hitColliders.Length == 0) return;
         
-        stateMachine.SetTarget(hitColliders[0].gameObject);
-        stateMachine.RequestStateChange(EEnemyState.Trace);
+        stateMachineDeprecated.SetTarget(hitColliders[0].gameObject);
+        stateMachineDeprecated.RequestStateChange(EEnemyState.Trace);
     }
 
-    public void Exit(EnemyStateMachine stateMachine)
+    public void Exit(EnemyStateMachine_Deprecated stateMachineDeprecated)
     {
         Debug.Log("Exiting Idle state");
     }
