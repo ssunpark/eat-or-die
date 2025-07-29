@@ -29,7 +29,7 @@ public class UI_Hand : MonoBehaviour
 			return;
 		}
 		
-		IconImage.sprite = ItemManager.Instance.GetItem(itemInHand.ID).ItemData.Icon;
+		IconImage.sprite = itemInHand.ItemInfo.ItemData.Icon;
 		QuantityText.text = itemInHand.Quantity.ToString();
 		IconImage.gameObject.SetActive(true);
 		QuantityText.gameObject.SetActive(itemInHand.Quantity > 1);

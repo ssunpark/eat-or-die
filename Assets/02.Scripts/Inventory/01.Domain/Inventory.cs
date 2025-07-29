@@ -57,7 +57,7 @@ public class Inventory
         if (item.Quantity > 1)
         {
             item.SetQuantity(item.Quantity - 1);
-            return new Item(item.ItemInfo, item.MaxQuantity, 1);
+            return new Item(item.ItemInfo, 1);
         }
         else
         {
