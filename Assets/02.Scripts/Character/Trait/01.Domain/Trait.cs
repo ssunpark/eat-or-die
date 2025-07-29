@@ -1,5 +1,6 @@
 ﻿public class Trait
 {
+    public readonly int MaxLevel = 100; // 최대 레벨
     public int Level { get; private set; }
     public int Exp { get; private set; }
     public int ExpToNextLevel => (Level + 1) * 100;
