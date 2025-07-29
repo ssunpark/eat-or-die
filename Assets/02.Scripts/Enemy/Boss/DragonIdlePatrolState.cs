@@ -36,9 +36,7 @@ public class DragonIdlePatrolState : IEnemyState<DragonStateMachine>
 
         if (_hasDestination && !stateMachine.NavMeshAgent.pathPending)
         {
-            Debug.DrawLine(stateMachine.NavMeshAgent.nextPosition, stateMachine.NavMeshAgent.nextPosition + Vector3.up * 3f, Color.red, 5f);
-            Vector3 direction = stateMachine.NavMeshAgent.nextPosition - stateMachine.transform.position;
-            stateMachine.Move(direction);
+            stateMachine.Move(dt);
         }
 
         if (_timer <= 0f)
@@ -51,6 +49,7 @@ public class DragonIdlePatrolState : IEnemyState<DragonStateMachine>
     {
         Debug.Log("Idle 배회 상태 종료");
         stateMachine.NavMeshAgent.ResetPath();
+        stateMachine.NavMeshAgent.velocity = Vector3.zero;
         
         stateMachine.Animator.SetBool("IsMove", false);
     }
@@ -63,7 +62,7 @@ public class DragonIdlePatrolState : IEnemyState<DragonStateMachine>
 
     private void SetNewDestination(DragonStateMachine stateMachine)
     {
-        Vector3 randomDirection = Random.insideUnitSphere * _walkRadius + Vector3.one * 5f;
+        Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(5f, _walkRadius);
         randomDirection += stateMachine.transform.position;
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _walkRadius, NavMesh.AllAreas))
