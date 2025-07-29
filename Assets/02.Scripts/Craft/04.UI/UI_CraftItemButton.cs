@@ -35,4 +35,10 @@ public class UI_CraftItemButton : MonoBehaviour
         colors.normalColor = canCraft ? Color.white : Color.gray;
         button.colors = colors;
     }
+
+    public void OnClick()
+    {
+        // ResultID에 맞는 Material1ID의 Count와 Material2ID의 Count만큼 인벤토리에 있는 재료가 소진되고,
+        // 결과물이 인벤토리로 들어간다.
+    }
 }

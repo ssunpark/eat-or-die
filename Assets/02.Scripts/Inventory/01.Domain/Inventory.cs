@@ -153,4 +153,6 @@ public class Inventory
         }
         return count;
     }
+    
+    // id로 조회해서 원하는 count만큼 개수 감소
 }
