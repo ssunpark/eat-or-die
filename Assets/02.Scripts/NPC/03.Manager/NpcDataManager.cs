@@ -15,7 +15,7 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
     public event Action OnNpcItemListLoaded;
 
 
-    private void Start()
+    private void Awake()
     {
         InitNpcData();
     }
