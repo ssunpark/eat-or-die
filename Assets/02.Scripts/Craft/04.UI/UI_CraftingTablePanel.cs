@@ -8,7 +8,6 @@ public class UI_CraftingTablePanel : AUI_PopupBase
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("esc키 누르기");
             Close();
             InputReader.playerControllerInputBlocked = false;
         }

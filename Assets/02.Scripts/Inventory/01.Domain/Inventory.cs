@@ -173,7 +173,7 @@ public class Inventory
             }
             if (slot.Item.Quantity > remaining)
             {
-                slot.Item.SetQuantity(slot.Item.Quantity - remaining);
+                slot.Item.TryRemove(remaining);
                 return true;
             }
             else

@@ -43,7 +43,7 @@ public class UI_CraftItemButton : MonoBehaviour
 
         if (!consumedMat1 || !consumedMat2)
         {
-            Debug.LogWarning("재료가 부족하여 제작에 실패했습니다.");
+            Debug.Log("재료가 부족하여 제작에 실패했습니다.");
             return;
         }
 

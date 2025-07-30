@@ -48,7 +48,6 @@ public class UI_CraftItemList : MonoBehaviour
             if (itemInfo == null || itemInfo.ItemData == null) continue;
             
             GameObject btn = Instantiate(CraftItemPrefab, container.transform);
-            Debug.Log("버튼 생성!!!!!");
             UI_CraftItemButton craftItemButtons = btn.GetComponent<UI_CraftItemButton>();
             craftItemButtons.Refresh(craftRecipe, itemInfo);
             btn.SetActive(false);
