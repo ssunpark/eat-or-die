@@ -21,7 +21,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     
     private bool _isLocked = false;
     public bool IsLocked => _isLocked;
-    public event Action OnUnlock;
     
     private Vector2 _smoothedVelocity = Vector2.zero;
     
@@ -54,13 +53,16 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _navMeshAgent.speed = BaseParams.MoveSpeed;
         _navMeshAgent.angularSpeed = BaseParams.RotationSpeed;
     }
-    
-    public void Lock() => _isLocked = true;
+
+    public void Lock()
+    {
+        _isLocked = true;
+        _navMeshAgent.ResetPath();
+    }
 
     public void Unlock()
     {
         _isLocked = false;
-        OnUnlock?.Invoke();
     }
 
     public void SetTarget(GameObject target)
@@ -127,6 +129,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, BaseParams.DetectRange);
+        
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, BaseParams.MeleeAttackDistance);
 
         float angle = BaseParams.FOVAngle;
         Vector3 left = Quaternion.Euler(0, -angle * 0.5f, 0) * transform.forward;

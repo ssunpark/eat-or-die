@@ -12,8 +12,9 @@ public class DragonStateMachine
 
         var idle = new DragonState_Idle(controller, ParamLoader);
         var alert = new DragonState_Alert(controller, ParamLoader);
+        var attack = new DragonState_MeleeAttack(controller, ParamLoader);
 
-        Machine = new StateMachine<DragonStateBase>("DragonStateMachine", idle, alert);
+        Machine = new StateMachine<DragonStateBase>("DragonStateMachine", idle, alert, attack);
     }
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)

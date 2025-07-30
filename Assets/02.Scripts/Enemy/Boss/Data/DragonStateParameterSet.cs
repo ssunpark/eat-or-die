@@ -6,7 +6,8 @@ public class DragonStateParameterSet
     public BaseParams Base;
     public PatrolParams Patrol;
     public WaitParams Wait;
-    public LookParams Look;
+    public AlertParams Alert;
+    public SwipeParams Swipe;
 
     [Serializable]
     public class BaseParams
@@ -17,6 +18,7 @@ public class DragonStateParameterSet
         public float DetectRange;
         public float FOVAngle;
         public float AnimSmoothSpeed;
+        public float MeleeAttackDistance;
     }
 
     [Serializable]
@@ -32,13 +34,22 @@ public class DragonStateParameterSet
     {
         public float WaitDuration;
     }
-
+    
     [Serializable]
-    public class LookParams
+    public class AlertParams
     {
+        public float LookProbability => 1.0f - ChaseProbability - RangedProbability;
+        public float ChaseProbability;
+        public float RangedProbability;
         public float LookDuration;
         public float AngleRange;
         public float MinAngleRange;
         public float WalkRange;
+    }
+
+    [Serializable]
+    public class SwipeParams
+    {
+        public float SwipeDuration;
     }
 }

@@ -5,7 +5,8 @@
     "HP": 3000,
     "DetectRange": 25.0,
     "FOVAngle": 90.0,
-    "AnimSmoothSpeed": 1.0
+    "AnimSmoothSpeed": 1.0,
+    "MeleeAttackDistance": 5.0
   },
   "Patrol": {
     "PatrolDuration": 5.0,
@@ -15,10 +16,15 @@
   "Wait": {
     "WaitDuration": 3.0
   },
-  "Look": {
+  "Alert": {
+    "ChaseProbability": 0.25,
+    "RangedProbability": 0.25,
     "LookDuration": 4.0,
     "AngleRange": 30.0,
     "MinAngleRange": 20.0,
-    "WalkRange": 5.0
+    "WalkRange": 3.0
+  },
+  "Swipe": {
+    "SwipeDuration": 3.0
   }
 }

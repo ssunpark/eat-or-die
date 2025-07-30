@@ -39,6 +39,12 @@ public class DragonState_Idle : DragonStateBase, IParentState
         }
     }
 
+    protected override void OnExitState()
+    {
+        Controller.FightMode(true);
+        Controller.Animator.SetTrigger("Roar");
+    }
+
     private void TryActiveRandomSubState()
     {
         int rand = Random.Range(0, 2);
