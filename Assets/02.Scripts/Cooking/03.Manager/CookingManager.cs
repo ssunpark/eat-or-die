@@ -77,8 +77,6 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     public int TryCook()
     {
-        if (HasEmptySlot()) return -1;
-    
         int id1 = Inventory.SlotList[0].Item.ID;
         int id2 = Inventory.SlotList[1].Item.ID;
     
@@ -96,14 +94,10 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     public void ProcessCookingResult()
     {
         int resultItemId = TryCook();
-        if (resultItemId == -1)
-        {
-            Debug.Log("조합 실패");
-            return;
-        }
     
         ConsumeInputIngredients();
         GiveItemToInventory(resultItemId);
+        ReturnRecipesToInventory();
         OnCookOutputUpdated?.Invoke();
     }
     
@@ -165,9 +159,10 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     internal void StartCook()
     {
-        //Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
+        if (HasEmptySlot()) return; // 빈 슬롯이면 return. 쿠킹 패널만 닫힘.
+        // Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
         _t = 0;
-        _isCooking = true;
+        _isCooking = true; // rpc로 변환
     }
     
 }
