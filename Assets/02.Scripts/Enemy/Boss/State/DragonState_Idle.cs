@@ -17,31 +17,24 @@ public class DragonState_Idle : DragonStateBase, IParentState
     {
         Controller.FightMode(false);
 
-        if (!Controller.IsLocked)
-        {
-            TryActiveRandomSubState();
-        }
-        else
-        {
-            Controller.OnUnlock += OnUnlock;
-        }
-    }
-
-    private void OnUnlock()
-    {
         TryActiveRandomSubState();
-        Controller.OnUnlock -= OnUnlock;
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked)
-        {
-            return; // 잠금 상태면 아무 것도 안 함
-        }
+        if (Controller.IsLocked) return;
 
+        // 이미 타겟 있으면 Alert 전환
         if (Controller.Target != null)
         {
+            Machine.TryActivateState<DragonState_Alert>(true);
+            return;
+        }
+
+        GameObject found = FindTargetInFOV();
+        if (found != null)
+        {
+            Controller.SetTarget(found);
             Machine.TryActivateState<DragonState_Alert>(true);
         }
     }
@@ -76,5 +69,31 @@ public class DragonState_Idle : DragonStateBase, IParentState
     public void OnSubStateComplete()
     {
         TryActiveRandomSubState();
+    }
+    
+    private GameObject FindTargetInFOV()
+    {
+        float range = Controller.BaseParams.DetectRange;
+        float angle = Controller.BaseParams.FOVAngle;
+        LayerMask targetMask = LayerMask.GetMask("Player");
+
+        var colliders = Physics.OverlapSphere(Controller.transform.position, range, targetMask);
+
+        foreach (var col in colliders)
+        {
+            Vector3 dir = (col.transform.position - Controller.transform.position).normalized;
+            float viewAngle = Vector3.Angle(Controller.transform.forward, dir);
+
+            if (viewAngle < angle * 0.5f)
+            {
+                if (!Physics.Linecast(Controller.transform.position + Vector3.up, col.transform.position + Vector3.up, out RaycastHit hit) ||
+                    hit.collider.gameObject == col.gameObject)
+                {
+                    return col.gameObject;
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -16,14 +16,7 @@ public class DragonState_Alert : DragonStateBase, IParentState
     {
         Controller.FightMode(true);
         Controller.Lock();
-        Controller.OnUnlock += OnUnlock;
         Controller.Animator.SetTrigger("Roar");
-    }
-
-    private void OnUnlock()
-    {
-        _subStateMachine.TryActivateState<DragonState_Look>(true);
-        Controller.OnUnlock -= OnUnlock;
     }
 
     protected override void OnFixedUpdate()

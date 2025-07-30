@@ -24,10 +24,17 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     public event Action OnUnlock;
     
     private Vector2 _smoothedVelocity = Vector2.zero;
-    [SerializeField]
-    private float _animSmoothSpeed = 1f;
     
     private DragonStateMachine _dragonStateMachine;
+
+    public DragonStateParameterSet.BaseParams BaseParams => _dragonStateMachine?.ParamLoader?.Base;
+
+    public void CollectStateMachines(List<IStateMachine> stateMachines)
+    {
+        _dragonStateMachine = new DragonStateMachine(this);
+        _dragonStateMachine.CollectStateMachines(stateMachines);
+    }
+
 
     public override void Spawned()
     {
@@ -44,8 +51,21 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
 
-        _navMeshAgent.speed = _dragonStateMachine.ParamLoader.Base.MoveSpeed;
-        _navMeshAgent.angularSpeed = _dragonStateMachine.ParamLoader.Base.RotationSpeed;
+        _navMeshAgent.speed = BaseParams.MoveSpeed;
+        _navMeshAgent.angularSpeed = BaseParams.RotationSpeed;
+    }
+    
+    public void Lock() => _isLocked = true;
+
+    public void Unlock()
+    {
+        _isLocked = false;
+        OnUnlock?.Invoke();
+    }
+
+    public void SetTarget(GameObject target)
+    {
+        _target = target;
     }
     
     public void Move(float dt)
@@ -87,7 +107,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         );
 
         // Lerp 보간
-        _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, _animSmoothSpeed * dt);
+        _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, BaseParams.AnimSmoothSpeed * dt);
 
         _animator.SetFloat("XVelocity", _smoothedVelocity.x);
         _animator.SetFloat("ZVelocity", _smoothedVelocity.y);
@@ -100,17 +120,21 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _animator.SetLayerWeight(layerIndex, targetWeight);
     }
     
-    public void Lock() => _isLocked = true;
-
-    public void Unlock()
+    private void OnDrawGizmosSelected()
     {
-        _isLocked = false;
-        OnUnlock?.Invoke();
-    }
+#if UNITY_EDITOR
+        if (BaseParams == null) return;
 
-    public void CollectStateMachines(List<IStateMachine> stateMachines)
-    {
-        _dragonStateMachine = new DragonStateMachine(this);
-        _dragonStateMachine.CollectStateMachines(stateMachines);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, BaseParams.DetectRange);
+
+        float angle = BaseParams.FOVAngle;
+        Vector3 left = Quaternion.Euler(0, -angle * 0.5f, 0) * transform.forward;
+        Vector3 right = Quaternion.Euler(0, angle * 0.5f, 0) * transform.forward;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, left * BaseParams.DetectRange);
+        Gizmos.DrawRay(transform.position, right * BaseParams.DetectRange);
+#endif
     }
 }

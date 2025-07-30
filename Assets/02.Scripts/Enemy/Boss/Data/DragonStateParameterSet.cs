@@ -15,6 +15,8 @@ public class DragonStateParameterSet
         public float RotationSpeed;
         public float HP;
         public float DetectRange;
+        public float FOVAngle;
+        public float AnimSmoothSpeed;
     }
 
     [Serializable]
