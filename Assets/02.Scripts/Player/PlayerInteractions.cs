@@ -9,18 +9,18 @@ public class PlayerInteractions : MonoBehaviour
     public string TagName;
     public int HoldItemID;
     public string ItemName;
+    public PlayerController _controller; // 플레이어 컨트롤러 참조
 
     public GameObject InteractionObject;       // 태그 일치용
     public GameObject UntaggedObject;          // 태그 없는 객체용
-    private PlayerStateMachine _fsm;
 
     private GameObject _targetObject;
 
     private void Start()
     {
+        _controller = GetComponent<PlayerController>();
         InteractionLayer = LayerMask.GetMask("Interactable");
         TagName = "Untagged";
-        _fsm = GetComponent<PlayerStateMachine>();
     }
 
     //상호작용 (예: 작물 수확 등)
@@ -46,6 +46,7 @@ public class PlayerInteractions : MonoBehaviour
         {
             usable = useToItem;
             _targetObject = InteractionObject;
+            Debug.Log($"아이템 사용: {useToItem.InteractionTag} on {_targetObject?.name ?? "null"}");
             return true;
         }
         usable = null;
@@ -63,6 +64,7 @@ public class PlayerInteractions : MonoBehaviour
         {
             if(_targetObject != null)
             {
+                Debug.Log($"아이템 사용: {usable.InteractionTag} on {_targetObject.name}");
                 usable.Use(_targetObject); // 태그 있는 객체 대상
                 return;
             }
@@ -85,7 +87,7 @@ public class PlayerInteractions : MonoBehaviour
 
     public void SearchInteractables()
     {
-        if (!_fsm.HasInputAuthority)
+        if (!_controller.HasInputAuthority)
             return;
 
         var colliderArray = Physics.OverlapSphere(transform.position, 10, InteractionLayer);
@@ -125,11 +127,21 @@ public class PlayerInteractions : MonoBehaviour
         UntaggedObject = untaggedClosest?.gameObject;
     }
 
-    public void OnEquipped(int holdItemID, string interactionTag)
+    public void OnEquipped(int holdItemID)
     {
         HoldItemID = holdItemID;
-        ItemName = ItemManager.Instance.GetItem(HoldItemID).ItemData.Name;
-        TagName = interactionTag;
+        var item = ItemManager.Instance.GetItem(HoldItemID);
+        ItemName = item.ItemData.Name;
+        
+        UsableItemInfo usableItem = item as UsableItemInfo;
+        TagName = usableItem?.InteractionTag ?? "Untagged";
+    }
+
+    public void OnEquipped(AItemInfo itemInfo)
+    {
+        HoldItemID = itemInfo?.ItemData.ID ?? 0;
+        ItemName = itemInfo?.ItemData.Name ?? "빈손";
+        TagName = itemInfo is IUsable usableItem ? usableItem.InteractionTag : "Untagged";
     }
 
     public void OnUnequipped()
