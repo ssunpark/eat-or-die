@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 {
 	private Inventory _quickSlots;
-	public int QuickSlotSize;
+	public Inventory Quickslots => _quickSlots;
+    public int QuickSlotSize;
 
 	private int _selectedSlotIndex;
 	
@@ -36,17 +37,20 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	public void SendItemToPlayer()
 	{
 		Item item = GetItemInSlot(_selectedSlotIndex);
-		
-		if (item == null)
-		{
-			Debug.Log("Selected slot is empty.");
-			//Room.Instance.LocalPlayer.UnequipItem();
-		}
-		else
-		{
-			Debug.Log("Sending item to player: " + item.ID);
-			// Room.Instance.LocalPlayer.EquipItem(item);
-		}
+		AItemInfo itemInfo = item?.ItemInfo;
+        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(itemInfo);
+  //      if (item == null)
+		//{
+		//	Debug.Log("Selected slot is empty.");
+            
+  //          //Room.Instance.LocalPlayer.UnequipItem();
+  //      }
+		//else
+		//{
+		//	Debug.Log("Sending item to player: " + item.ID);
+		//	Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(item.ID);
+  //          // Room.Instance.LocalPlayer.EquipItem(item);
+  //      }
 	}
 
 	private void HandSwap()

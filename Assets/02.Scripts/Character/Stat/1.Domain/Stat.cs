@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 public class Stat
 {
+    public event Action<EStatType, StatModifier> ModifierAdded;
+    public event Action<EStatType, StatModifier> ModifierRemoved;
     public float BaseStat { get; private set; }
     public float CurrentValue { get; private set; }
-
+    private EStatType _statType;
 
     private readonly List<StatModifier> _modifiers = new();
 
@@ -15,8 +18,9 @@ public class Stat
         BaseStat = value;
         CurrentValue = TotalStat;
     }
-    public Stat(float baseStat)
+    public Stat(EStatType statType, float baseStat)
     {
+        _statType = statType;
         BaseStat = baseStat;
     }
 
@@ -24,23 +28,44 @@ public class Stat
     {
         if (_modifiers.Any(m => m.Source == modifier.Source && m.Type == modifier.Type))
         {
-            // 이미 같은 소스와 타입의 모디파이어가 있다면 업데이트
             var existingModifier = _modifiers.First(m => m.Source == modifier.Source && m.Type == modifier.Type);
-            existingModifier.Value= modifier.Value; // 값 업데이트
-            existingModifier.Duration = modifier.Duration;// 지속시간 업데이트
-            Debug.Log($"Updated modifier: {existingModifier.Source}, Type: {existingModifier.Type}, Value: {existingModifier.Value}, Duration: {existingModifier.Duration}");
+            existingModifier.Value = modifier.Value;
+            existingModifier.Duration = modifier.Duration;
         }
         else
         {
-            // 새로운 모디파이어 추가
             _modifiers.Add(modifier);
-            Debug.Log($"Added modifier: {modifier.Source}, Type: {modifier.Type}, Value: {modifier.Value}, Duration: {modifier.Duration}");
+            ModifierAdded?.Invoke(_statType, modifier);
         }
     }
 
     public void RemoveModifiersFrom(object source)
     {
-        _modifiers.RemoveAll(mod => mod.Source == source);
+        for (int i = _modifiers.Count - 1; i >= 0; i--)
+        {
+            if (_modifiers[i].Source.Equals(source))
+            {
+                ModifierRemoved?.Invoke(_statType, _modifiers[i]);
+                _modifiers.RemoveAt(i);
+            }
+        }
+    }
+
+    public void UpdateModifiers(float deltaTime)
+    {
+        for (int i = _modifiers.Count - 1; i >= 0; i--)
+        {
+            var mod = _modifiers[i];
+            if (mod.IsBuff)
+            {
+                mod.Duration -= deltaTime;
+                if (mod.Duration <= 0f)
+                {
+                    ModifierRemoved?.Invoke(_statType, mod);
+                    _modifiers.RemoveAt(i);
+                }
+            }
+        }
     }
 
     public void ClearAllModifiers()
@@ -77,25 +102,5 @@ public class Stat
         return result;
     }
 
-    public void UpdateModifiers(float deltaTime)
-    {
-        if(deltaTime <= 0f)
-        {
-            Debug.LogWarning("Delta time must be greater than zero to update modifiers.");
-            return;
-        }
-        for (int i = _modifiers.Count - 1; i >= 0; i--)
-        {
-            var mod = _modifiers[i];
-            if (mod.IsBuff)
-            {
-                mod.Duration -= deltaTime;
-                if (mod.Duration <= 0f)
-                {
-                    _modifiers.RemoveAt(i);
-                    Debug.Log($"Removed expired modifier: {mod.Source}, Type: {mod.Type}");
-                }
-            }
-        }
-    }
+    
 }

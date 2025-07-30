@@ -17,7 +17,7 @@ public class ResourceManager
         _stat = stat;
         CurrentSatiety = _stat.GetStat(EStatType.MaxHunger);
     }
-    public void ConsumeSatiety(float amount)
+    public void ConsumeHunger(float amount)
     {
         float max = _stat.GetStat(EStatType.MaxHunger);
         CurrentSatiety = Mathf.Max(CurrentSatiety - amount, 0f);
