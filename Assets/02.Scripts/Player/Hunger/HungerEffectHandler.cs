@@ -47,13 +47,15 @@
             _stat.RemoveModifiersFrom(CriticalSource);
             _stat.ApplyModifier(EStatType.MoveSpeed, new StatModifier(EStatModifierType.Multiply, -0.3f, DebuffSource));
         }
-        else if (ratio < 0.1f && _previousHungerRatio >=0.1f)
+        else if (ratio < 0.1f && _previousHungerRatio >= 0.1f)
         {
-            //광폭화
             _previousHungerRatio = ratio;
+
             _stat.RemoveModifiersFrom(BuffSource);
             _stat.RemoveModifiersFrom(DebuffSource);
+            _stat.ApplyModifier(EStatType.MoveSpeed,
+                new StatModifier(EStatModifierType.Multiply, 1.5f, CriticalSource));
         }
-        
+
     }
 }

@@ -30,12 +30,13 @@ public class PlayerItemHolder: NetworkBehaviour
     }
 
 
-    public void SetHoldItem(int itemID)
-    {
 
+    public void SetHoldItem(AItemInfo itemInfo)
+    {
         Debug.Log($"[PlayerItemHolder] SetHoldItem Called.");
+        GetComponent<PlayerInteractions>().OnEquipped(itemInfo);
         if (!_playerController.HasInputAuthority) return;
-        RPC_SetHoldItemID(itemID);
+        RPC_SetHoldItemID(itemInfo?.ItemData.ID??0);
     }
 
 
@@ -46,6 +47,10 @@ public class PlayerItemHolder: NetworkBehaviour
         Debug.Log($"[PlayerItemHolder] HoldItemID changed to {HoldItemID}");
     }
 
+
+    // 나중에 csv에 영어이름이 추가되면 ItemDatabase 필요 없고?
+    // ApplyAnimatorOverride(영어 이름)으로 변경
+    // 
     private void OnChangedHoldItem()
     {
         Debug.Log($"[PlayerItemHolder] OnChangedHoldItem Called.");
@@ -68,6 +73,9 @@ public class PlayerItemHolder: NetworkBehaviour
         {
             switch (useAction)
             {
+                case EUseAction.Plant:
+                    ApplyAnimatorOverride("Seed");
+                    break;
                 case EUseAction.Plow:
                     ApplyAnimatorOverride("Hoe");
                     break;

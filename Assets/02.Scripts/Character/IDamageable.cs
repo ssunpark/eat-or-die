@@ -2,5 +2,5 @@
 
 public interface IDamageable
 {
-    void TakeDamage(int amount, PlayerRef attacker);
+    void TakeDamage(float amount, PlayerRef attacker);
 }

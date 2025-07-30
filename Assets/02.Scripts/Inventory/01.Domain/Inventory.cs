@@ -57,7 +57,7 @@ public class Inventory
         if (item.Quantity > 1)
         {
             item.SetQuantity(item.Quantity - 1);
-            return new Item(item.ItemInfo, item.MaxQuantity, 1);
+            return new Item(item.ItemInfo, 1);
         }
         else
         {
@@ -152,5 +152,41 @@ public class Inventory
             }
         }
         return count;
+    }
+    
+    // id로 조회해서 원하는 count만큼 개수 감소
+    public bool TryConsumeItem(int itemID, int amount)
+    {
+        int currentCount = GetItemCount(itemID);
+        if (currentCount < amount)
+        {
+            return false;
+        }
+
+        int remaining = amount;
+
+        foreach (Slot slot in SlotList)
+        {
+            if (slot.IsEmpty || slot.Item.ID != itemID)
+            {
+                continue;
+            }
+            if (slot.Item.Quantity > remaining)
+            {
+                slot.Item.TryRemove(remaining);
+                return true;
+            }
+            else
+            {
+                remaining -= slot.Item.Quantity;
+                slot.RemoveItem();
+            }
+            
+            if (remaining <= 0)
+            {
+                return true;
+            }
+        }
+        return true;
     }
 }
