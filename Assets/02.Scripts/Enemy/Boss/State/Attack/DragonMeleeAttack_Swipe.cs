@@ -16,20 +16,17 @@
     {
         _hasAttacked = false;
         
+        Controller.Animator.SetBool("IsMove", false);
         Controller.Animator.SetTrigger("Attack_Swipe");
     }
 
     protected override void OnFixedUpdate()
     {
-        // ParentState.OnSubStateComplete();
-        if (!_hasAttacked && Machine.StateTime >= _swipeParams.SwipeDuration)
+        if (Controller.IsLocked)
         {
-            _hasAttacked = true;
+            return;
         }
         
-        if (_hasAttacked && Machine.StateTime >= _swipeParams.SwipeDuration + 0.3f)
-        {
-            ParentState.OnSubStateComplete();
-        }
+        ParentState.OnSubStateComplete();
     }
 }

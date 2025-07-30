@@ -43,7 +43,7 @@ public class DragonState_Alert : DragonStateBase
     {
         float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
         
-        if (distance <= Controller.BaseParams.MeleeAttackDistance)
+        if (distance <= ParameterLoader.Base.MeleeAttackDistance)
         {
             Machine.TryActivateState<DragonState_MeleeAttack>(true);
             return;
@@ -77,7 +77,9 @@ public class DragonState_Alert : DragonStateBase
 
         float distance = Vector3.Distance(center, Controller.transform.position)
                          + Random.Range(-_alertParams.WalkRange, _alertParams.WalkRange);
-
+        
+        distance = Mathf.Max(_alertParams.MinDistance, distance);
+        
         Vector3 destination = center + rotatedDir * distance;
 
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 2f, NavMesh.AllAreas))

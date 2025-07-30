@@ -7,6 +7,7 @@ public class DragonStateParameterSet
     public PatrolParams Patrol;
     public WaitParams Wait;
     public AlertParams Alert;
+    public PrepareParams Prepare;
     public SwipeParams Swipe;
 
     [Serializable]
@@ -15,7 +16,8 @@ public class DragonStateParameterSet
         public float MoveSpeed;
         public float RotationSpeed;
         public float HP;
-        public float DetectRange;
+        public float DetectRadius;
+        public float FullAwarenessRadius;
         public float FOVAngle;
         public float AnimSmoothSpeed;
         public float MeleeAttackDistance;
@@ -45,6 +47,13 @@ public class DragonStateParameterSet
         public float AngleRange;
         public float MinAngleRange;
         public float WalkRange;
+        public float MinDistance;
+    }
+    
+    [Serializable]
+    public class PrepareParams
+    {
+        public float PrepareDuration;
     }
 
     [Serializable]

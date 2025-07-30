@@ -16,6 +16,8 @@ public class DragonState_Idle : DragonStateBase, IParentState
     protected override void OnEnterState()
     {
         Controller.FightMode(false);
+        
+        Controller.SetSightDetector(ParameterLoader.Base.FullAwarenessRadius, ParameterLoader.Base.DetectRadius, ParameterLoader.Base.FOVAngle);
 
         TryActiveRandomSubState();
     }
@@ -79,27 +81,10 @@ public class DragonState_Idle : DragonStateBase, IParentState
     
     private GameObject FindTargetInFOV()
     {
-        float range = Controller.BaseParams.DetectRange;
-        float angle = Controller.BaseParams.FOVAngle;
-        LayerMask targetMask = LayerMask.GetMask("Player");
-
-        var colliders = Physics.OverlapSphere(Controller.transform.position, range, targetMask);
-
-        foreach (var col in colliders)
+        foreach (var collider in Controller.SightDetector.DetectedColliders)
         {
-            Vector3 dir = (col.transform.position - Controller.transform.position).normalized;
-            float viewAngle = Vector3.Angle(Controller.transform.forward, dir);
-
-            if (viewAngle < angle * 0.5f)
-            {
-                if (!Physics.Linecast(Controller.transform.position + Vector3.up, col.transform.position + Vector3.up, out RaycastHit hit) ||
-                    hit.collider.gameObject == col.gameObject)
-                {
-                    return col.gameObject;
-                }
-            }
+            return collider.gameObject;
         }
-
         return null;
     }
 }

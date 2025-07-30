@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
+using RaycastPro.Detectors;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,9 +25,12 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     
     private Vector2 _smoothedVelocity = Vector2.zero;
     
+    private SightDetector _sightDetector;
+    public SightDetector SightDetector => _sightDetector;
+    
     private DragonStateMachine _dragonStateMachine;
 
-    public DragonStateParameterSet.BaseParams BaseParams => _dragonStateMachine?.ParamLoader?.Base;
+    private DragonStateParameterSet.BaseParams _baseParams => _dragonStateMachine?.ParamLoader?.Base;
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)
     {
@@ -34,6 +38,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _dragonStateMachine.CollectStateMachines(stateMachines);
     }
 
+    private void Awake()
+    {
+        _sightDetector = GetComponentInChildren<SightDetector>();
+    }
 
     public override void Spawned()
     {
@@ -50,13 +58,18 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
 
-        _navMeshAgent.speed = BaseParams.MoveSpeed;
-        _navMeshAgent.angularSpeed = BaseParams.RotationSpeed;
+        _navMeshAgent.speed = _baseParams.MoveSpeed;
+        _navMeshAgent.angularSpeed = _baseParams.RotationSpeed;
     }
 
     public void Lock()
     {
         _isLocked = true;
+        if (!_navMeshAgent.enabled)
+        {
+            return;
+        }
+
         _navMeshAgent.ResetPath();
     }
 
@@ -109,10 +122,42 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         );
 
         // Lerp 보간
-        _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, BaseParams.AnimSmoothSpeed * dt);
+        _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, _baseParams.AnimSmoothSpeed * dt);
 
         _animator.SetFloat("XVelocity", _smoothedVelocity.x);
         _animator.SetFloat("ZVelocity", _smoothedVelocity.y);
+    }
+    
+    public void MaintainDistanceAndLookAtTarget(float dt, float desiredDistance)
+    {
+        if (Target == null) return;
+
+        Vector3 direction = transform.position - Target.transform.position;
+        direction.y = 0f;
+
+        float currentDistance = direction.magnitude;
+        if (currentDistance < 0.01f) return;
+
+        // 1. 회전: 타겟을 바라봄
+        Quaternion targetRot = Quaternion.LookRotation(-direction.normalized); // 반대 방향 바라보기 아님
+        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation,
+            targetRot,
+            NavMeshAgent.angularSpeed / 2f * dt
+        );
+
+        // 2. 거리 유지: 너무 가까우면 뒤로 이동
+        if (currentDistance < desiredDistance)
+        {
+            Vector3 backDir = transform.forward * -1f;
+            float moveDistance = (desiredDistance - currentDistance);
+            Vector3 newPosition = transform.position + backDir * moveDistance;
+
+            // y 고정 (수직 이동 방지)
+            newPosition.y = transform.position.y;
+
+            transform.position = Vector3.MoveTowards(transform.position, newPosition, NavMeshAgent.speed * dt);
+        }
     }
 
     public void FightMode(bool active)
@@ -121,25 +166,33 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         float targetWeight = active ? 1f : 0f;
         _animator.SetLayerWeight(layerIndex, targetWeight);
     }
+
+    public void SetSightDetector(float fullAwarenessRadius, float detectRadius, float detectAngle)
+    {
+        _sightDetector.fullAwareness = fullAwarenessRadius;
+        _sightDetector.minRadius = fullAwarenessRadius;
+        _sightDetector.Radius = detectRadius;
+        _sightDetector.angleX = detectAngle;
+    }
     
     private void OnDrawGizmosSelected()
     {
 #if UNITY_EDITOR
-        if (BaseParams == null) return;
+        if (_baseParams == null) return;
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, BaseParams.DetectRange);
+        Gizmos.DrawWireSphere(transform.position, _baseParams.DetectRadius);
         
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, BaseParams.MeleeAttackDistance);
+        Gizmos.DrawWireSphere(transform.position, _baseParams.MeleeAttackDistance);
 
-        float angle = BaseParams.FOVAngle;
+        float angle = _baseParams.FOVAngle;
         Vector3 left = Quaternion.Euler(0, -angle * 0.5f, 0) * transform.forward;
         Vector3 right = Quaternion.Euler(0, angle * 0.5f, 0) * transform.forward;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawRay(transform.position, left * BaseParams.DetectRange);
-        Gizmos.DrawRay(transform.position, right * BaseParams.DetectRange);
+        Gizmos.DrawRay(transform.position, left * _baseParams.DetectRadius);
+        Gizmos.DrawRay(transform.position, right * _baseParams.DetectRadius);
 #endif
     }
 }

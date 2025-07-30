@@ -13,8 +13,11 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     protected override void OnEnterState()
     {
-        Controller.Animator.SetBool("IsMove", false);
-        
+        TryActiveRandomSubState();
+    }
+
+    private void TryActiveRandomSubState()
+    {
         int rand = Random.Range(0, 4); // 0~3
 
         switch (rand)
@@ -48,6 +51,17 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     public void OnSubStateComplete()
     {
-        Machine.TryActivateState<DragonState_Alert>(true); // or DragonState_Fight
+        // 너무 가까우면 후진
+        // 이후 둘중 하나
+        int rand = Random.Range(0, 2);
+        switch (rand)
+        {
+            case 0:
+                TryActiveRandomSubState();
+                break;
+            case 1:
+                Machine.TryActivateState<DragonState_Alert>(true); // or DragonState_Fight
+                break;
+        }
     }
 }

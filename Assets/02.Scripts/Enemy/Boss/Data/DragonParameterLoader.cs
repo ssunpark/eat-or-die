@@ -24,5 +24,6 @@ public class DragonParameterLoader
     public DragonStateParameterSet.PatrolParams Patrol => _parameters.Patrol;
     public DragonStateParameterSet.WaitParams Wait => _parameters.Wait;
     public DragonStateParameterSet.AlertParams Alert => _parameters.Alert;
+    public DragonStateParameterSet.PrepareParams Prepare => _parameters.Prepare;
     public DragonStateParameterSet.SwipeParams Swipe => _parameters.Swipe;
 }
