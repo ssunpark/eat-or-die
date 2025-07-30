@@ -138,13 +138,8 @@ public class CookingManager : BehaviourSingleton<CookingManager>
             return;
         }
     
-        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new Item(resultItem, resultItem.ItemData.MaxQuantity, 1));
+        InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1)); // 나중에 한번에 여러개 만드는거 생기면 1을 바꾸시면 됩니다
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-    
-        if (remain != null)
-        {
-            ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
-        }
     }
     
     private void TransferItemToInventory(Item item)
