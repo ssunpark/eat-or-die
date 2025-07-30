@@ -4,19 +4,18 @@ using Fusion.Addons.FSM;
 
 public class DragonState_Patrol : DragonSubStateBase
 {
-    private float _patrolDuration = 5f;
-    private float _walkRadius = 10f;
-
     private Vector3 _destination;
     private bool _hasDestination;
 
-    public DragonState_Patrol(DragonController controller, IParentState parent) : base(controller, parent)
+    private DragonStateParameterSet.PatrolParams _patrolParams;
+
+    public DragonState_Patrol(DragonController controller, IParentState parent, DragonStateParameterSet.PatrolParams patrolParams) : base(controller, parent)
     {
+        _patrolParams = patrolParams;
     }
 
     protected override void OnEnterState()
     {
-        Debug.Log("Idle 배회 상태 진입");
         _hasDestination = false;
 
         Controller.Animator.SetBool("IsMove", true);
@@ -39,7 +38,7 @@ public class DragonState_Patrol : DragonSubStateBase
             Controller.Move(Machine.Runner.DeltaTime);
         }
 
-        if (Machine.StateTime >= _patrolDuration)
+        if (Machine.StateTime >= _patrolParams.PatrolDuration)
         {
             ParentState.OnSubStateComplete();
         }
@@ -47,7 +46,6 @@ public class DragonState_Patrol : DragonSubStateBase
 
     protected override void OnExitState()
     {
-        Debug.Log("Idle 배회 상태 종료");
         Controller.NavMeshAgent.ResetPath();
         Controller.NavMeshAgent.velocity = Vector3.zero;
         
@@ -62,10 +60,10 @@ public class DragonState_Patrol : DragonSubStateBase
 
     private void SetNewDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(5f, _walkRadius);
+        Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(5f, _patrolParams.WalkRadius);
         randomDirection += Controller.transform.position;
 
-        if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _walkRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _patrolParams.WalkRadius, NavMesh.AllAreas))
         {
             _destination = hit.position;
             Controller.NavMeshAgent.SetDestination(_destination);

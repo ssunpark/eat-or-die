@@ -9,14 +9,12 @@ public class DragonState_Idle : DragonStateBase, IParentState
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
 
-    public DragonState_Idle(DragonController controller) : base(controller)
+    public DragonState_Idle(DragonController controller, DragonParameterLoader paramLoader) : base(controller, paramLoader)
     {
     }
 
     protected override void OnEnterState()
     {
-        Debug.Log("Idle 상태 진입");
-
         Controller.FightMode(false);
 
         if (!Controller.IsLocked)
@@ -41,7 +39,7 @@ public class DragonState_Idle : DragonStateBase, IParentState
         {
             return; // 잠금 상태면 아무 것도 안 함
         }
-        
+
         if (Controller.Target != null)
         {
             Machine.TryActivateState<DragonState_Alert>(true);
@@ -65,11 +63,13 @@ public class DragonState_Idle : DragonStateBase, IParentState
                 break;
         }
     }
-    
+
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
-        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonIdleSubStateMachine", new DragonState_Wait(Controller, this), new DragonState_Patrol(Controller, this));
-        
+        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonIdleSubStateMachine",
+            new DragonState_Wait(Controller, this, ParameterLoader.Wait), 
+            new DragonState_Patrol(Controller, this, ParameterLoader.Patrol));
+
         stateMachines.Add(_subStateMachine);
     }
 

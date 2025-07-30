@@ -4,22 +4,17 @@ using Fusion.Addons.FSM;
 
 public class DragonState_Look : DragonSubStateBase
 {
-    private float _lookDuration = 5f;
-
-    private float _walkRange = 5f;      // 앞뒤 이동 거리
-    private float _angleRange = 30f;    // 좌우 이동 각도
-    private float _minAngleRange = 20f; // 좌우 이동 각도
+    private DragonStateParameterSet.LookParams _lookParams;
 
     private bool _hasDestination;
 
-    public DragonState_Look(DragonController controller, IParentState parent) : base(controller, parent)
+    public DragonState_Look(DragonController controller, IParentState parent, DragonStateParameterSet.LookParams lookParams) : base(controller, parent)
     {
+        _lookParams = lookParams;
     }
 
     protected override void OnEnterState()
     {
-        Debug.Log("LookState 진입");
-
         _hasDestination = false;
 
         Controller.Animator.SetBool("IsMove", true);
@@ -32,7 +27,7 @@ public class DragonState_Look : DragonSubStateBase
             return; // 잠금 상태면 아무 것도 안 함
         }
         
-        if (Machine.StateTime >= _lookDuration)
+        if (Machine.StateTime >= _lookParams.LookDuration)
         {
             ParentState.OnSubStateComplete();
             return;
@@ -48,7 +43,6 @@ public class DragonState_Look : DragonSubStateBase
 
     protected override void OnExitState()
     {
-        Debug.Log("LookState 종료");
         Controller.Animator.SetBool("IsMove", false);
         Controller.NavMeshAgent.ResetPath();
     }
@@ -60,11 +54,11 @@ public class DragonState_Look : DragonSubStateBase
 
         // 랜덤 각도로 이동
         int randomSign = Random.value < 0.5f ? -1 : 1;
-        float offsetAngle = randomSign * Random.Range(_minAngleRange, _angleRange);
+        float offsetAngle = randomSign * Random.Range(_lookParams.MinAngleRange, _lookParams.AngleRange);
         Vector3 rotatedDir = Quaternion.Euler(0f, offsetAngle, 0f) * dir;
 
         float distance = Vector3.Distance(Controller.Target.transform.position, Controller.transform.position)
-                         + Random.Range(-_walkRange, _walkRange);
+                         + Random.Range(-_lookParams.WalkRange, _lookParams.WalkRange);
 
         Vector3 destination = center + rotatedDir * distance;
 

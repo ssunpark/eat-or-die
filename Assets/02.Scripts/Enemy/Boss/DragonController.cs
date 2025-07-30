@@ -27,7 +27,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private float _animSmoothSpeed = 1f;
     
-    private StateMachine<DragonStateBase> _dragonStateMachine;
+    private DragonStateMachine _dragonStateMachine;
 
     public override void Spawned()
     {
@@ -43,6 +43,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _navMeshAgent.updatePosition = false;
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
+
+        _navMeshAgent.speed = _dragonStateMachine.ParamLoader.Base.MoveSpeed;
+        _navMeshAgent.angularSpeed = _dragonStateMachine.ParamLoader.Base.RotationSpeed;
     }
     
     public void Move(float dt)
@@ -107,8 +110,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)
     {
-        _dragonStateMachine = new StateMachine<DragonStateBase>("DragonStateMachine", new DragonState_Idle(this), new DragonState_Alert(this));
-        
-        stateMachines.Add(_dragonStateMachine);
+        _dragonStateMachine = new DragonStateMachine(this);
+        _dragonStateMachine.CollectStateMachines(stateMachines);
     }
 }

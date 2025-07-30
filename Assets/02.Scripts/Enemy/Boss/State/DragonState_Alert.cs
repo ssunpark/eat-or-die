@@ -8,14 +8,12 @@ public class DragonState_Alert : DragonStateBase, IParentState
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
 
-    public DragonState_Alert(DragonController controller) : base(controller)
+    public DragonState_Alert(DragonController controller, DragonParameterLoader paramLoader) : base(controller, paramLoader)
     {
     }
 
     protected override void OnEnterState()
     {
-        Debug.Log("Alert 상태 진입");
-
         Controller.FightMode(true);
         Controller.Lock();
         Controller.OnUnlock += OnUnlock;
@@ -43,7 +41,8 @@ public class DragonState_Alert : DragonStateBase, IParentState
 
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
-        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonAlertSubStateMachine", new DragonState_Look(Controller, this));
+        _subStateMachine = new StateMachine<DragonSubStateBase>("DragonAlertSubStateMachine", 
+            new DragonState_Look(Controller, this, ParameterLoader.Look));
         
         stateMachines.Add(_subStateMachine);
     }
