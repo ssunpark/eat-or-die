@@ -9,7 +9,6 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     public Inventory FoodInventory = new Inventory(1);
     public Action OnCookOutputUpdated;
-    
     public void OnClickMouseLeft(int slotIndex)
     {
         if (HandEntity.Instance.IsHandEmpty)
@@ -163,13 +162,15 @@ public class CookingManager : BehaviourSingleton<CookingManager>
         _t += Time.deltaTime;
         if (_t >= _cookTime)
         {
-            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
+            // 플레이어 연결 미완료여서 임시로 플레이어와 상호작용없이 요리 완료
+            OnCookingCompleted();
+            //Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
         }
     }
     
     internal void StartCook()
     {
-        Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
+        //Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
         _t = 0;
         _isCooking = true;
     }
