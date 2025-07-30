@@ -54,7 +54,7 @@ public class PlayerDeadState : APlayerStateBase, IAnimationActionEndNotify
 
     void IAnimationActionEndNotify.OnAnimationFinished()
     {
-        SpectatorManager.Instance?.StartSpectate();
+        // SpectatorManager.Instance?.StartSpectate();
 
         // SpawnCorpse();
     }
