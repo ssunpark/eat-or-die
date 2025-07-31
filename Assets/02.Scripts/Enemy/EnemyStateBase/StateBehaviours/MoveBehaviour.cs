@@ -18,7 +18,17 @@ public class MoveBehaviour : AEnemyStateBehaviour
         };
         _moveStateMachine = new EnemyStateMachine("Move State Machine", this, stateList);
     }
-    
+
+    protected override bool CanEnterState()
+    {
+        return (Machine.Context.Target != null);
+    }
+
+    protected override void OnEnterState()
+    {
+        _moveStateMachine.TryActivateState(_traceState);
+    }
+
     protected override void OnEnterStateRender()
     {
         Debug.Log("Moving...");

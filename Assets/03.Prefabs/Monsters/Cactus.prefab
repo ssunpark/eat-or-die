@@ -790,6 +790,8 @@ GameObject:
   - component: {fileID: -7930600149514953330}
   - component: {fileID: 5293771665702562805}
   - component: {fileID: 5419383378729353496}
+  - component: {fileID: 4260784959756580981}
+  - component: {fileID: 2659134971517239456}
   m_Layer: 0
   m_Name: Cactus
   m_TagString: Untagged
@@ -816,8 +818,8 @@ Transform:
   - {fileID: 7923864467959274665}
   - {fileID: 317880912831572961}
   - {fileID: 2716706605336190560}
-  - {fileID: 254108010493916278}
   - {fileID: 4937043834821758868}
+  - {fileID: 254108010493916278}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2620569330388523952
@@ -863,8 +865,8 @@ MonoBehaviour:
   - {fileID: 5293771665702562805}
   - {fileID: 5419383378729353496}
   - {fileID: 8098781592835120505}
-  - {fileID: 165693091407877813}
   - {fileID: 6476991057249426944}
+  - {fileID: 165693091407877813}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &-7930600149514953330
 MonoBehaviour:
@@ -892,7 +894,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyId: 0
-  _idleBehaviour: {fileID: 0}
+  _idleBehaviour: {fileID: 8098781592835120505}
+  _moveBehaviour: {fileID: 6476991057249426944}
+  _attackBehaviour: {fileID: 165693091407877813}
 --- !u!114 &5419383378729353496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -910,6 +914,102 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &4260784959756580981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8788173875354196848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2979db1e4f954ef48dddfdb2c21cb9d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  influence: 1
+  triggerInteraction: 0
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  autoUpdate: 1
+  colorProfile: {fileID: 0}
+  gizmosUpdate: 3
+  blockLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  solverType: 1
+  checkLineOfSight: 1
+  usingTagFilter: 1
+  tagFilter: Player
+  onCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5293771665702562805}
+        m_TargetAssemblyTypeName: EnemyAI, Assembly-CSharp
+        m_MethodName: Detect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  pulseTime: 0
+  detectVector: {x: 0, y: 0, z: 0}
+  onDetectCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  onNewCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  onLostCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  ignoreList: []
+  colliders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  boundsSolver: 0
+  boundsCenter: 0
+  collectLOS: 0
+  radius: 10
+  height: 0
+  local: 1
+  limited: 1
+  limitCount: 8
+--- !u!195 &2659134971517239456
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8788173875354196848}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.8
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &8807479332320497351
 GameObject:
   m_ObjectHideFlags: 0

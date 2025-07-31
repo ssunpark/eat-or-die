@@ -10,6 +10,6 @@ public class TraceState : AEnemyState
 
     protected override void OnFixedUpdate()
     {
-        Context.Agent.SetDestination(Context.Target.position);
+        Context.Agent.SetDestination(Context.Target.transform.position);
     }
 }

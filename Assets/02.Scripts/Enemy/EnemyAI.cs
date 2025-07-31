@@ -2,27 +2,36 @@ using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using Fusion.Addons.FSM;
+using RaycastPro.Detectors;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
-public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable
+public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector
 {
 	[SerializeField] private int _enemyId;
+	
+	private RangeDetector _rangeDetector;
+	
 	public EnemyContext Context { get; private set; }
 	
 	[SerializeField] private IdleBehaviour _idleBehaviour;
+	[SerializeField] private MoveBehaviour _moveBehaviour;
+	[SerializeField] private AttackBehaviour _attackBehaviour;
 
 	private EnemyBehaviourMachine _behaviourMachine;
 
 	public override void Spawned()
 	{
-		Context = new EnemyContext
+		_rangeDetector = GetComponent<RangeDetector>();
+		
+		Context = new EnemyContext()
 		{
 			Target = null,
 			Stat = new EnemyStat(),
 			Animator = GetComponent<Animator>(),
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
+			Detector = this,
 		};
 		
 		Context.Agent.updatePosition = false;
@@ -38,6 +47,10 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable
 
 	public override void FixedUpdateNetwork()
 	{
+		if (_rangeDetector.Cast())
+		{
+			Detect();
+		}
 	}
 
 	public void Move()
@@ -50,5 +63,22 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable
 		
 		transform.forward = direction;
 		transform.position += direction * Context.Stat.MoveSpeed * Runner.DeltaTime;
+	}
+
+	public void Detect()
+	{
+		Context.Target = _rangeDetector.NearestMember.gameObject;
+		
+		float distance = Vector3.Distance(transform.position, Context.Target.transform.position);
+		
+		Debug.Log($"Target detected at distance {distance}");
+		if (distance <= Context.Stat.AttackRange)
+		{
+			_behaviourMachine.TryActivateState(_attackBehaviour);
+		}
+		else
+		{
+			_behaviourMachine.TryActivateState(_moveBehaviour);
+		}
 	}
 }
