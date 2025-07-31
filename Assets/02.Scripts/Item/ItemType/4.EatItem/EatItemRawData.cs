@@ -49,4 +49,7 @@ public class EatItemRawData
 
     [Name("IconPath(Addressable Key)")]
     public string IconPath { get; set; }
+    
+    [Name("InteractionTag")]
+    public string InteractionTag { get; set; }
 }

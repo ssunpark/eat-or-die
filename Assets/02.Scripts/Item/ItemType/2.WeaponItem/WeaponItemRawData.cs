@@ -20,8 +20,8 @@ public class WeaponItemRawData
     [Name("MaxStack")]
     public int MaxStack { get; set; }
 
-    [Name("EWeaponType")]
-    public EWeaponType Type { get; set; }
+    [Name("ActionName")]
+    public string ActionName { get; set; }
 
     [Name("Duration")]
     public float MaxDuration { get; set; }

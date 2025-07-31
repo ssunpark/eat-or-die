@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 // 외부에서 보이는 값이 변하는 아이템 실질적인 객체
 // 내구도, 갯수 유형으로 나뉨
@@ -44,6 +45,12 @@ public class Item
         _durability = initialDurability;
         _quantity = initialQuantity;
         _extraInfo = extraInfo;
+    }
+
+    public void Use(GameObject target)
+    {
+        ItemInfo.UseItem(target);
+        TryRemove(1);
     }
 
     // 수량 제어 함수
