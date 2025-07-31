@@ -6,7 +6,6 @@ public class StatManager
 {
     private readonly Dictionary<EStatType, Stat> _stats = new();
 
-    // 🔥 이벤트 시스템
     public event Action<EStatType, StatModifier> OnModifierAdded;
     public event Action<EStatType, StatModifier> OnModifierRemoved;
 
