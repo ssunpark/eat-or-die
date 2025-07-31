@@ -7,6 +7,7 @@ public class DragonStateParameterSet
     public PatrolParams Patrol;
     public WaitParams Wait;
     public AlertParams Alert;
+    public AttackParams Attack;
     public PrepareParams Prepare;
     public SwipeParams Swipe;
 
@@ -51,9 +52,17 @@ public class DragonStateParameterSet
     }
     
     [Serializable]
+    public class AttackParams
+    {
+        public float PrepareChance;
+        public float ContinueAttackChance;
+    }
+    
+    [Serializable]
     public class PrepareParams
     {
         public float PrepareDuration;
+        public float MinDistanceToFinishPrepare;
     }
 
     [Serializable]

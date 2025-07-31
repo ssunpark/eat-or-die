@@ -181,7 +181,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         if (_baseParams == null) return;
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, _baseParams.DetectRadius);
+        Gizmos.DrawWireSphere(transform.position, _dragonStateMachine.ParamLoader.Prepare.MinDistanceToFinishPrepare);
         
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, _baseParams.MeleeAttackDistance);

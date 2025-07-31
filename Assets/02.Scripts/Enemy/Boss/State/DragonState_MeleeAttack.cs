@@ -5,18 +5,20 @@ using UnityEngine;
 public class DragonState_MeleeAttack : DragonStateBase, IParentState
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
+    private DragonStateParameterSet.AttackParams _attackParams;
 
     public DragonState_MeleeAttack(DragonController controller, DragonParameterLoader loader)
         : base(controller, loader)
     {
+        _attackParams = ParameterLoader.Attack;
     }
 
     protected override void OnEnterState()
     {
-        TryActiveRandomSubState();
+        TryActiveRandomAttackSubState();
     }
 
-    private void TryActiveRandomSubState()
+    private void TryActiveRandomAttackSubState()
     {
         int rand = Random.Range(0, 4); // 0~3
 
@@ -52,30 +54,25 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     public void OnSubStateComplete()
     {
+        float prepareChance = Random.Range(0f, 1f);
         // 너무 가까우면 후진
-        Debug.Log(Vector3.Distance(
-            Controller.transform.position,
-            Controller.Target.transform.position
-        ));
         if (Vector3.Distance(
                 Controller.transform.position,
                 Controller.Target.transform.position
-            ) < 10f)
+            ) < ParameterLoader.Prepare.MinDistanceToFinishPrepare &&
+            prepareChance < _attackParams.PrepareChance)
         {
             _subStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true);
             return;
         }
 
         // 이후 둘중 하나
-        int rand = 0; //Random.Range(0, 2);
-        switch (rand)
+        float continueAttackChance = Random.Range(0f, 1f);
+        if (continueAttackChance < _attackParams.ContinueAttackChance)
         {
-            case 0:
-                TryActiveRandomSubState();
-                break;
-            case 1:
-                Machine.TryActivateState<DragonState_Alert>(true); // or DragonState_Fight
-                break;
+            TryActiveRandomAttackSubState();
+            return;
         }
+        Machine.TryActivateState<DragonState_Alert>(true);
     }
 }

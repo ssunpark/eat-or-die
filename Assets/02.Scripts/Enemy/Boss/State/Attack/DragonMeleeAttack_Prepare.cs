@@ -2,7 +2,6 @@
 
 public class DragonMeleeAttack_Prepare : DragonSubStateBase
 {
-    private float MinDistanceToFinish = 10f;
     private DragonStateParameterSet.PrepareParams _prepareParams;
     public DragonMeleeAttack_Prepare(
         DragonController controller,
@@ -22,7 +21,8 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
 
     protected override void OnFixedUpdate()
     {
-        Controller.MaintainDistanceAndLookAtTarget(Machine.Runner.DeltaTime, MinDistanceToFinish);
+        Debug.Log("왜 뒤로 계속 가");
+        Controller.MaintainDistanceAndLookAtTarget(Machine.Runner.DeltaTime, _prepareParams.MinDistanceToFinishPrepare);
 
         // 거리 측정
         float distanceToTarget = Vector3.Distance(
@@ -32,7 +32,7 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
 
         // 시간 또는 거리 조건 만족 시 종료
         if (Machine.StateTime >= _prepareParams.PrepareDuration ||
-            distanceToTarget >= MinDistanceToFinish)
+            distanceToTarget >= _prepareParams.MinDistanceToFinishPrepare)
         {
             ParentState.OnSubStateComplete();
         }

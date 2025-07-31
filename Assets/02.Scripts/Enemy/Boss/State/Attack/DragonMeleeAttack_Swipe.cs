@@ -16,6 +16,8 @@
     {
         _hasAttacked = false;
         
+        Controller.NavMeshAgent.ResetPath();
+        
         Controller.Animator.SetBool("IsMove", false);
         Controller.Animator.SetTrigger("Attack_Swipe");
     }
