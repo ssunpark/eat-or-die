@@ -55,22 +55,24 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
     public void OnSubStateComplete()
     {
         bool inSight = Controller.SightDetector.DetectedColliders.Count > 0;
-        // 시야에 있고 연속 공격이면 공격
+        float distance = Vector3.Distance(
+            Controller.transform.position,
+            Controller.Target.transform.position
+        );
+        // 시야에 있고 사거리 안이고 연속 공격 확률에 성공이면 공격
         float continueAttackRandom = Random.Range(0f, 1f);
         if (inSight &&
+            distance < ParameterLoader.Base.MeleeAttackDistance &&
             continueAttackRandom < _attackParams.ContinueAttackChance)
         {
             TryActiveRandomAttackSubState();
             return;
         }
-        
+
         // 시야 밖인 경우 대기 혹은 경계
-        
+
         float prepareRandom = Random.Range(0f, 1f);
-        float distance = Vector3.Distance(
-            Controller.transform.position,
-            Controller.Target.transform.position
-        );
+
         // 너무 가까우면 후진
         if (distance < ParameterLoader.Prepare.MinDistanceToFinishPrepare &&
             prepareRandom < _attackParams.PrepareChance)
