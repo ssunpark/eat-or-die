@@ -40,6 +40,7 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
+            new DragonMeleeAttack_Prepare(Controller, this, ParameterLoader.Prepare),
             new DragonMeleeAttack_Swipe(Controller, this, ParameterLoader.Swipe)
             // new DragonAttack_Swipe(Controller, this),
             // new DragonAttack_Swipe(Controller, this),
@@ -52,8 +53,21 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
     public void OnSubStateComplete()
     {
         // 너무 가까우면 후진
+        Debug.Log(Vector3.Distance(
+            Controller.transform.position,
+            Controller.Target.transform.position
+        ));
+        if (Vector3.Distance(
+                Controller.transform.position,
+                Controller.Target.transform.position
+            ) < 10f)
+        {
+            _subStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true);
+            return;
+        }
+
         // 이후 둘중 하나
-        int rand = Random.Range(0, 2);
+        int rand = 0; //Random.Range(0, 2);
         switch (rand)
         {
             case 0:

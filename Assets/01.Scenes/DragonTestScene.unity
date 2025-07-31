@@ -2362,7 +2362,10 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 80c7844dcc0a1974ca3446a3047affef, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 563961747387260025, guid: d1437c9c6452f1c4db713e084545d98b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 677812150}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 907555126369928899, guid: d1437c9c6452f1c4db713e084545d98b, type: 3}
       insertIndex: -1
@@ -2438,8 +2441,8 @@ MonoBehaviour:
   Animator: {fileID: 412937524}
   ApplyTiming: 2
   SyncSettings: 127
-  StateHashes: 000000004050def884c378d619c253540b3cc3922e001b45d44663d46539b0b76f761dff417d3d9d46980c4f847e744a5e26485bbf5210f5598a743989537929e3db7da0330270b075eb7ad7a53277c7
-  TriggerHashes: 00000000dede26c1
+  StateHashes: 000000004050def884c378d619c253540b3cc3922e001b45d44663d46539b0b76f761dff417d3d9d46980c4f847e744ad8833fcad2cc92825e26485bbf5210f5598a743989537929e3db7da0330270b075eb7ad7a53277c7
+  TriggerHashes: 00000000dede26c15198e5dc
   TotalWords: 9
 --- !u!114 &412937527
 MonoBehaviour:
@@ -2515,7 +2518,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 0}
-  _animSmoothSpeed: 1
 --- !u!114 &412937532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2529,6 +2531,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enableLogging: 1
+--- !u!4 &412937533 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 563961747387260025, guid: d1437c9c6452f1c4db713e084545d98b, type: 3}
+  m_PrefabInstance: {fileID: 412937522}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &480372389
 GameObject:
   m_ObjectHideFlags: 0
@@ -3276,6 +3283,95 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844fc0baa13deb244bd940882c1c5397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &677812149
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 677812150}
+  - component: {fileID: 677812151}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &677812150
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677812149}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 412937533}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &677812151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677812149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dba823e931ce154bae2d8fdcde05dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  influence: 1
+  triggerInteraction: 0
+  detectLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  autoUpdate: 1
+  colorProfile: {fileID: 0}
+  gizmosUpdate: 0
+  blockLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  solverType: 0
+  checkLineOfSight: 1
+  usingTagFilter: 0
+  tagFilter: Untagged
+  onCast:
+    m_PersistentCalls:
+      m_Calls: []
+  onDetect:
+    m_PersistentCalls:
+      m_Calls: []
+  pulseTime: 0
+  detectVector: {x: 0, y: 0, z: 0}
+  onDetectCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  onNewCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  onLostCollider:
+    m_PersistentCalls:
+      m_Calls: []
+  ignoreList: []
+  colliders:
+  - {fileID: 1177960463}
+  boundsSolver: 0
+  boundsCenter: 0
+  collectLOS: 0
+  angleX: 120
+  angleY: 90
+  radius: 2
+  limited: 0
+  limitCount: 3
+  minRadius: 1
+  fullAwareness: 2
 --- !u!1 &683388826
 GameObject:
   m_ObjectHideFlags: 0
@@ -3797,7 +3893,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &784407448
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8228,19 +8324,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1094493407799295879, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1094493407799295879, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1094493407799295879, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1094493407799295879, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1604454488307535238, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_SizeDelta.x
@@ -8388,19 +8484,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5304180399447951576, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5304180399447951576, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5304180399447951576, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5304180399447951576, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -160
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7562852486335294403, guid: 388dc85a6272aab4abaf041686cfee5a, type: 3}
       propertyPath: m_SizeDelta.y
