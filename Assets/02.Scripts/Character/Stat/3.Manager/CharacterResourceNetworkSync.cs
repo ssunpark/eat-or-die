@@ -1,6 +1,6 @@
 ﻿using System;
 using Fusion;
-
+using UnityEngine;
 public class CharacterResourceNetworkSync : NetworkBehaviour
 {
     [Networked, OnChangedRender(nameof(OnManaChanged))] public float NetCurrentMana { get; set; }
@@ -12,7 +12,7 @@ public class CharacterResourceNetworkSync : NetworkBehaviour
     private Action<float, float> _onHungryChangedHandler;
     private void OnHungryChanged()
     {
-        _resource?.SetSatiety(NetCurrentHungry);
+        _resource?.SetHunger(NetCurrentHungry);
     }
     private void OnManaChanged()
     {
