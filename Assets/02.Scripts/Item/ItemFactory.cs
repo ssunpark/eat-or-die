@@ -24,6 +24,7 @@ public class ItemFactory
     // 주어진 데이터에 맞게 아이템 생성 후 반환
     public AItemInfo CreateItem(EatItemRawData rawData)
     {
+        var holdEffectList = new List<IItemHoldEffect>();
         var effectList = new List<IUseEffect>();
         var extraDescription = new List<string>();
 
@@ -39,6 +40,7 @@ public class ItemFactory
             (rawData.EffectType3, rawData.Value3, rawData.Duration3),
         };
 
+        // 섭취 버프
         foreach (var (type, value, duration) in rawEffects)
         {
             if (type is EStatType statType)
@@ -53,9 +55,12 @@ public class ItemFactory
             }
         }
 
+        // HOld 효과 정의
+        holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
+
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
             rawData.MaxQuantity, 1f, rawData.IconPath, "");
-        return new AItemInfo(itemData, null, effectList, GetItemPoolParent(rawData.ID), extraDescription);
+        return new AItemInfo(itemData, holdEffectList, effectList, GetItemPoolParent(rawData.ID), extraDescription);
     }
 
     public AItemInfo CreateItem(WeaponItemRawData rawData)
@@ -63,7 +68,13 @@ public class ItemFactory
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false,
             rawData.MaxStack, rawData.MaxDuration,
             rawData.IconPath, rawData.PrefabPath);
-        return new AItemInfo(itemData, null,null, GetItemPoolParent(rawData.ID));
+        
+        // HOld 효과 정의
+        var holdStatEffect = new ItemHoldEffect_Weapon(rawData.Damage, rawData.AttackSpeed, rawData.Range);
+        var holdAnimatorEffect = new ItemHoldEffect_Animator(rawData.ActionName);
+        var holdEffectList = new List<IItemHoldEffect>() { holdStatEffect, holdAnimatorEffect };
+        
+        return new AItemInfo(itemData, holdEffectList, null, GetItemPoolParent(rawData.ID));
     }
 
     public AItemInfo CreateItem(UsableItemRawData rawData)
@@ -71,13 +82,20 @@ public class ItemFactory
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity,
             rawData.MaxDuration ?? 1f,
             rawData.AddressablePath, "");
-        IUseEffect useEffect = rawData.UseAction switch
+        
+        IUseEffect useEffect = rawData.ActionName switch
         {
-            EUseAction.Plow => new UseEffectHoe(),
-            EUseAction.Water => new UseEffectWateringCan(),
-            EUseAction.Plant => new UseEffectSeed(rawData.ID),
+            "Hoe" => new UseEffectHoe(),
+            "WateringCan" => new UseEffectWateringCan(),
+            "Seed" => new UseEffectSeed(rawData.ID),
         };
-        var effectList = new List<IUseEffect>() {useEffect};
-        return new AItemInfo(itemData, null, effectList, GetItemPoolParent(rawData.ID));
+        var effectList = new List<IUseEffect>() { useEffect };
+        
+        // HOld 효과 정의
+        var holdAnimatorEffect = new ItemHoldEffect_Animator(rawData.ActionName);
+        var holdInteractionEffect = new ItemHoldEffect_InteractionTag(rawData.InteractionTag);
+        var holdEffectList = new List<IItemHoldEffect>() { holdAnimatorEffect, holdInteractionEffect };
+        
+        return new AItemInfo(itemData, holdEffectList, effectList, GetItemPoolParent(rawData.ID));
     }
 }

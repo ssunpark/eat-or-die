@@ -21,7 +21,7 @@ public class ItemHoldEffect_Weapon : IItemHoldEffect
         target.GetComponent<PlayerController>().Stat.ApplyModifier(EStatType.AttackRange, new StatModifier(EStatModifierType.Add, _range, EFFECT_SOURCE));
     }
 
-    public void UnHold(GameObject target, GameObject itemObject)
+    public void UnHold(GameObject target)
     {
         target.GetComponent<PlayerController>().Stat.RemoveModifiersFrom(EFFECT_SOURCE);
     }

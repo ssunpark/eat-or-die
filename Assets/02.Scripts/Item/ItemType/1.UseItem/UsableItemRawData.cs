@@ -20,8 +20,8 @@ public class UsableItemRawData
     [Name("InteractionTag")]
     public string InteractionTag { get; set; }
 
-    [Name("Action")]
-    public EUseAction UseAction { get; set; }
+    [Name("ActionName")]
+    public string ActionName { get; set; }
 
     [Name("IconPath(Addressable)")]
     public string AddressablePath { get; set; }

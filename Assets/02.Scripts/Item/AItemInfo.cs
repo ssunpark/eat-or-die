@@ -44,10 +44,25 @@ public class AItemInfo
         }
     }
 
+    public void UnHoldItem(GameObject target, GameObject item)
+    {
+        foreach (var effect in _holdEffect)
+        {
+            effect.UnHold(target);
+        }
+
+        ReturnHoldItemToPool(item);
+    }
+
     public GameObject GetHoldItemObject() => _holdItemPool.Get().gameObject;
 
-    public void ReturnHoldItemToPool(GameObject item)
+    private void ReturnHoldItemToPool(GameObject item)
     {
+        if (item == null)
+        {
+            return;
+        }
+        
         _holdItemPool.Take(item.transform);
         item.transform.SetParent(_poolParent);
     }
