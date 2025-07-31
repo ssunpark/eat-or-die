@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class UseActionHoe : IUseAction
+public class UseEffectHoe : IUseEffect
 {
-    public void UseTool(GameObject target)
+    public void Use(GameObject target)
     {
         if (target.TryGetComponent(out FarmingGround farmingGround))
         {

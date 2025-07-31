@@ -53,7 +53,7 @@ public class ItemManager : NetworkBehaviour
         var eatItemRawDataList = CSVLoader<EatItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
         foreach (var data in eatItemRawDataList)
         {
-            var eatItem = _itemFactory.CreateEatItem(data);
+            var eatItem = _itemFactory.CreateItem(data);
             _itemDictionary[data.ID] = eatItem;
         }
         
@@ -71,7 +71,7 @@ public class ItemManager : NetworkBehaviour
         {
             GameObject poolParent = new GameObject($"{data.ID}_Pool");
             poolParent.transform.SetParent(transform);
-            var weaponItem = _itemFactory.CreateWeaponItem(data);
+            var weaponItem = _itemFactory.CreateItem(data);
             _itemDictionary[data.ID] = weaponItem;
         }
         
@@ -80,7 +80,7 @@ public class ItemManager : NetworkBehaviour
         usableRawDataList.AddRange(CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
         foreach (var data in usableRawDataList)
         {
-            var usableItem = _itemFactory.CreateUsableItem(data);
+            var usableItem = _itemFactory.CreateItem(data);
             _itemDictionary[data.ID] = usableItem;
         }
     }

@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class UseActionWateringCan : IUseAction
+public class UseEffectWateringCan : IUseEffect
 {
-    public void UseTool(GameObject target)
+    public void Use(GameObject target)
     {
         if (target.TryGetComponent(out FarmingGround farmingGround))
         {

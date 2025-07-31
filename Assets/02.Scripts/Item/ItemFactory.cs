@@ -22,13 +22,15 @@ public class ItemFactory
     }
 
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public EatItemInfo CreateEatItem(EatItemRawData rawData)
+    public AItemInfo CreateItem(EatItemRawData rawData)
     {
-        var effectList = new List<IEatItemEffect>();
+        var effectList = new List<IUseEffect>();
+        var extraDescription = new List<string>();
 
         // 기본 배고픔
-        IEatItemEffect hungerEffect = new EatEffect_HungerInstantRecovery(rawData.HungerRestore);
+        var hungerEffect = new EatEffect_HungerInstantRecovery(rawData.HungerRestore);
         effectList.Add(hungerEffect);
+        extraDescription.Add(hungerEffect.Description);
 
         var rawEffects = new (EStatType? type, float? value, float? duration)[]
         {
@@ -41,49 +43,41 @@ public class ItemFactory
         {
             if (type is EStatType statType)
             {
-                var effect = CreateEffect(statType, value ?? 0f, duration ?? 0f);
+                var statValue = value ?? 0;
+                var buffDuration = duration ?? 0;
+                var modifierType = _eatEffectManager.GetStatModifierType(statType);
+                var effect = new EatEffect_StatModifier(statType, statValue, buffDuration, modifierType);
                 effectList.Add(effect);
+                var desc = _eatEffectManager.GetDescription(statType, statValue, buffDuration);
+                extraDescription.Add(desc);
             }
         }
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
             rawData.MaxQuantity, 1f, rawData.IconPath, "");
-        return new EatItemInfo(itemData, GetItemPoolParent(rawData.ID), effectList);
+        return new AItemInfo(itemData, null, effectList, GetItemPoolParent(rawData.ID), extraDescription);
     }
 
-    private IEatItemEffect CreateEffect(EStatType statType, float value, float duration)
-    {
-        var type = _eatEffectManager.GetStatModifierType(statType);
-        var desc = _eatEffectManager.GetDescription(statType, value, duration);
-        return new EatEffect_StatModifier(statType, value, duration, type, desc);
-    }
-
-    // public EquipmentItem CreateEquipmentItem(EquipmentItemRawData rawData)
-    // {
-    //     var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, 1, "");
-    //     return new EquipmentItem(itemData);
-    // }
-
-    public WeaponItemInfo CreateWeaponItem(WeaponItemRawData rawData)
+    public AItemInfo CreateItem(WeaponItemRawData rawData)
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false,
             rawData.MaxStack, rawData.MaxDuration,
             rawData.IconPath, rawData.PrefabPath);
-        return new WeaponItemInfo(itemData, GetItemPoolParent(rawData.ID), rawData.Type, rawData.Damage,
-            rawData.AttackSpeed, rawData.Range);
+        return new AItemInfo(itemData, null,null, GetItemPoolParent(rawData.ID));
     }
 
-    public UsableItemInfo CreateUsableItem(UsableItemRawData rawData)
+    public AItemInfo CreateItem(UsableItemRawData rawData)
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity,
             rawData.MaxDuration ?? 1f,
             rawData.AddressablePath, "");
-        IUseAction useAction = rawData.UseAction switch
+        IUseEffect useEffect = rawData.UseAction switch
         {
-            EUseAction.Plow => new UseActionHoe(),
-            EUseAction.Water => new UseActionWateringCan(),
-            EUseAction.Plant => new UseActionSeed(rawData.ID),
+            EUseAction.Plow => new UseEffectHoe(),
+            EUseAction.Water => new UseEffectWateringCan(),
+            EUseAction.Plant => new UseEffectSeed(rawData.ID),
         };
-        return new UsableItemInfo(itemData, GetItemPoolParent(rawData.ID), rawData.InteractionTag, useAction);
+        var effectList = new List<IUseEffect>() {useEffect};
+        return new AItemInfo(itemData, null, effectList, GetItemPoolParent(rawData.ID));
     }
 }

@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
 
-public class UseActionSeed : IUseAction
+public class UseEffectSeed : IUseEffect
 {
     private readonly int _seedID;
 
-    public UseActionSeed(int seedID)
+    public UseEffectSeed(int seedID)
     {
         _seedID = seedID;
     }
     
-    public void UseTool(GameObject target)
+    public void Use(GameObject target)
     {
         if (target.TryGetComponent(out SeedGround seedGround))
         {
