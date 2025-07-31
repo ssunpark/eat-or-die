@@ -1,31 +1,29 @@
-﻿using UnityEngine;
-using Fusion.Addons.FSM;
+﻿using Fusion.Addons.FSM;
 public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
 {
     public PlayerHitState(PlayerController controller) : base(controller)
     {
         StateId = (int)EPlayerState.Hit;
     }
-
+    private bool _animationFinished;
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => _animationFinished
+        );
+    }
+    protected override bool CanExitState(IState nextState)
+    {
+        return _animationFinished;
+    }
     protected override void OnEnterState()
     {
-        //애니메이션이 아직 없어서 바로 Idle로 전환
-        Machine.ForceActivateState<PlayerIdleState>();
-        return;
-
-
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Hit);
-            _controller.RPC_SetMoveFlag(true);
-        }
-
+        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Hit);
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
+    public void OnAnimationFinished()
     {
-
-        _controller.RPC_SetMoveFlag(false);
-        Machine.ForceActivateState<PlayerIdleState>();
+        _animationFinished = true;
     }
 }

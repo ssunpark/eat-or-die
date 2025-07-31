@@ -1,29 +1,22 @@
-﻿using UnityEngine;
-using Fusion;
+﻿using Fusion.Addons.FSM;
 public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, IAnimationActionNotify
 {
     public PlayerCookingState(PlayerController controller) : base(controller) 
     {
         StateId = (int)EPlayerState.Cooking;
     }
+    private bool _animationFinished;
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => _animationFinished
+        );
+    }
     protected override void OnEnterState()
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.RPC_SetMoveFlag(true);
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Cook);
-        }
-    }
-
-    protected override void OnExitState()
-    {
-        if (_controller.Object.HasInputAuthority)
-        {
-            CookingManager.Instance.OnCookingCompleted();
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.CookDone);
-
-            _controller.RPC_SetMoveFlag(false);
-        }
+        _animationFinished = false;
+        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Cook);
     }
 
     void IAnimationActionNotify.OnActionMoment()
@@ -36,7 +29,8 @@ public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, I
         if (_controller.Object.HasInputAuthority)
         {
             CookingManager.Instance.OnCookingCompleted();
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.CookDone);
         }
+
+        _animationFinished = true;
     }
 }
