@@ -42,6 +42,7 @@ public class AItemInfo
         {
             effect.Hold(target);
         }
+        // 아이템 오브젝트 장착
     }
 
     public void UnHoldItem(GameObject target, GameObject item)
