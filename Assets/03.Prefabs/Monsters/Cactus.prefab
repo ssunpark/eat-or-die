@@ -588,6 +588,52 @@ Transform:
   - {fileID: 4173388937241616902}
   m_Father: {fileID: 8268060531918275018}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6566265854748772628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4937043834821758868}
+  - component: {fileID: 6476991057249426944}
+  m_Layer: 0
+  m_Name: MoveBehaviour
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4937043834821758868
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6566265854748772628}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8268060531918275018}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6476991057249426944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6566265854748772628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db27726a3ccb47aaac235614b5a1a94b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _priority: 0
+  _checkPriorityOnExit: 1
 --- !u!1 &6838400076704733290
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,6 +817,7 @@ Transform:
   - {fileID: 317880912831572961}
   - {fileID: 2716706605336190560}
   - {fileID: 254108010493916278}
+  - {fileID: 4937043834821758868}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &2620569330388523952
@@ -817,6 +864,7 @@ MonoBehaviour:
   - {fileID: 5419383378729353496}
   - {fileID: 8098781592835120505}
   - {fileID: 165693091407877813}
+  - {fileID: 6476991057249426944}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &-7930600149514953330
 MonoBehaviour:
@@ -843,8 +891,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73f3a8cbab27fe64da0f695bc7d753d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _idleState: {fileID: 8098781592835120505}
-  _attackState: {fileID: 165693091407877813}
+  _enemyId: 0
+  _idleBehaviour: {fileID: 0}
 --- !u!114 &5419383378729353496
 MonoBehaviour:
   m_ObjectHideFlags: 0

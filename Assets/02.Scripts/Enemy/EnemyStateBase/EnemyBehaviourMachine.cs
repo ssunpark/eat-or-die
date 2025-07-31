@@ -2,9 +2,14 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyBehaviourMachine : StateMachine<EnemyStateBehaviour>
+public class EnemyBehaviourMachine : StateMachine<AEnemyStateBehaviour>
 {
-    public EnemyBehaviourMachine(string name, params EnemyStateBehaviour[] states) : base(name, states)
+    public EnemyContext Context;
+    
+    public EnemyBehaviourMachine(string name, EnemyContext context, params AEnemyStateBehaviour[] states) : base(name, states)
     {
+        Context = context;
     }
+    
+    
 }
