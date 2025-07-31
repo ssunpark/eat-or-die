@@ -24,6 +24,12 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	{
 		_rangeDetector = GetComponent<RangeDetector>();
 		
+		Context.Agent.updatePosition = false;
+		Context.Agent.updateRotation = false;
+	}
+	
+	public void CollectStateMachines(List<IStateMachine> stateMachines)
+	{
 		Context = new EnemyContext()
 		{
 			Target = null,
@@ -34,12 +40,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			Detector = this,
 		};
 		
-		Context.Agent.updatePosition = false;
-		Context.Agent.updateRotation = false;
-	}
-	
-	public void CollectStateMachines(List<IStateMachine> stateMachines)
-	{
 		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, _idleBehaviour, _moveBehaviour, _attackBehaviour);
 		
 		stateMachines.Add(_behaviourMachine);
@@ -55,11 +55,11 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void Move()
 	{
-		Vector3 desiredVelocity = Context.Agent.desiredVelocity;
-
-		if (desiredVelocity.sqrMagnitude < 0.01f) return;
+		Vector3 direction = Context.Agent.nextPosition - transform.position;
 		
-		Vector3 direction = desiredVelocity.normalized;
+		if (direction.sqrMagnitude < 0.01f) return;
+		
+		direction.Normalize();
 		
 		transform.forward = direction;
 		transform.position += direction * Context.Stat.MoveSpeed * Runner.DeltaTime;
@@ -71,7 +71,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		float distance = Vector3.Distance(transform.position, Context.Target.transform.position);
 		
-		Debug.Log($"Target detected at distance {distance}");
 		if (distance <= Context.Stat.AttackRange)
 		{
 			_behaviourMachine.TryActivateState(_attackBehaviour);

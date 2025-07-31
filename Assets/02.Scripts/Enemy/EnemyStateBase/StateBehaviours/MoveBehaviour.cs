@@ -17,6 +17,8 @@ public class MoveBehaviour : AEnemyStateBehaviour
             // _avoidState
         };
         _moveStateMachine = new EnemyStateMachine("Move State Machine", this, stateList);
+        
+        stateMachines.Add(_moveStateMachine);
     }
 
     protected override bool CanEnterState()
