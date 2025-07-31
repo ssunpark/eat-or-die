@@ -169,7 +169,7 @@ public class CookingManager : NetworkBehaviour
             Debug.Log($"[CookingManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
             return;
         }
-
+        Debug.Log($"{_currentRequester}!~!!!!!!@@!@!@!!!!!!!!!!!!!!!!!!!!");
         // 요청자 객체 찾기
         NetworkObject playerObj = Runner.GetPlayerObject(_currentRequester);
         if (playerObj == null)
@@ -178,15 +178,8 @@ public class CookingManager : NetworkBehaviour
             return;
         }
 
-        var inventoryManager = playerObj.GetComponent<InventoryManager>();
-        if (inventoryManager == null)
-        {
-            Debug.Log("[CookingManager] 요청자의 InventoryManager가 존재하지 않습니다.");
-            return;
-        }
-
-        inventoryManager.PickItemFromGround(new Item(resultItem, 1));
-        inventoryManager.OnInventoryUpdated?.Invoke();
+        InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1));
+        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
     
     private void TransferItemToInventory(Item item)
@@ -207,9 +200,11 @@ public class CookingManager : NetworkBehaviour
         }
     }
     
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    // [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     internal void RPC_StartCook(PlayerRef requester)
     {
+        Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         if (_isCooking)
         {
             Debug.Log("요리가 이미 진행 중입니다.");
