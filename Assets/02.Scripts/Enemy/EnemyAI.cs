@@ -40,7 +40,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
-		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, _idleBehaviour);
+		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, _idleBehaviour, _moveBehaviour, _attackBehaviour);
 		
 		stateMachines.Add(_behaviourMachine);
 	}
