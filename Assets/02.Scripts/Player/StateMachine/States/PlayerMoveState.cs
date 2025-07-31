@@ -1,75 +1,47 @@
 ﻿using UnityEngine;
-
-public class PlayerMoveState : APlayerState
+using Fusion.Addons.FSM;
+public class PlayerMoveState : APlayerStateBase
 {
-    public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
-    {
-    }
-    public override void Enter()
-    {
-        _moveSatietyTimer = _fsm.MoveSatietyTimer;
-        _moveStatietyInterval = _fsm.MoveStatietyInterval;
-    }
-    public override bool CanMove => true;
-    public override bool CanAct => true;
-    private float _moveSatietyTimer;
+    private float _moveHungerTimer;
     private float _moveStatietyInterval;
+    public PlayerMoveState(PlayerController controller) : base(controller)
+    {
+        StateId = (int)EPlayerState.Move;
+    }
+    protected override void OnEnterState()
+    {
+        _moveHungerTimer = _controller.StateValues.MoveHungerTimer;
+        _moveStatietyInterval = _controller.StateValues.MoveHungerInterval;
+    }
 
-    public override void Tick()
+    protected override void OnFixedUpdate()
     {
         if (!_controller.GetInput(out NetworkInputData inputData))
         {
-            _fsm.ChangeState(EPlayerState.Idle);
+            Machine.ForceActivateState((int)EPlayerState.Idle);
             return;
-        }
-
-        if (inputData.isAttacking)
-        {
-            if (CanAttack)
-            {
-                _fsm.ChangeState(EPlayerState.Attack);
-                return;
-            }
-        }
-        if (inputData.isInteracting)
-        {
-            IInteractable interactable;
-            if (_fsm.Interact.TryInteract(out interactable))
-            {
-                _fsm.Interactable = interactable;
-                _fsm.ChangeState(EPlayerState.Interact);
-                return;
-            }
-        }
-        if (inputData.isUsing)
-        {
-            IUsable usable;
-            if(_fsm.Interact.TryUseItem(out usable))
-            {
-                _fsm.Usable = usable;
-                _fsm.ChangeState(EPlayerState.UsingTool);
-                return;
-            }
         }
 
         Vector3 dir = inputData.direction;
 
-        _moveSatietyTimer += _fsm.Runner.DeltaTime;
-        if (_moveSatietyTimer >= _moveStatietyInterval)
-        {
-            float rate = _stat.GetStat(EStatType.HungerConsumptionOverTime);
-            _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
-            _moveSatietyTimer = 0f;
-        }
+        _controller.Movement?.Move(dir, inputData.isRunning);
 
-        if (dir.sqrMagnitude <= 0.01f)
+        _moveHungerTimer += Machine.Runner.DeltaTime;
+        if (_moveHungerTimer >= _controller.StateValues.MoveHungerInterval)
         {
-            _fsm.ChangeState(EPlayerState.Idle);
+            _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
+            _moveHungerTimer = 0f;
+        }
+        if (PlayerFSMTransitionEvaluator.Evaluate(_controller, inputData, Machine.Runner, out var next))
+        {
+            Machine.ForceActivateState(next);
+            return;
         }
     }
 
-    public override void Exit()
+    protected override void OnExitState()
     {
-        _fsm.MoveSatietyTimer = _moveSatietyTimer;
+        _controller.StateValues.MoveHungerTimer = _moveHungerTimer;
+        _controller.Movement.Move(Vector3.zero, false);
     }
 }

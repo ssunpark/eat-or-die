@@ -1,27 +1,42 @@
 ﻿using UnityEngine;
 using Fusion;
-public class PlayerCookingState : APlayerState
+public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, IAnimationActionNotify
 {
-    public PlayerCookingState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller) { }
-
-    public override void Enter()
+    public PlayerCookingState(PlayerController controller) : base(controller) 
     {
-        // 애니메이션 재생 시작
+        StateId = (int)EPlayerState.Cooking;
+    }
+    protected override void OnEnterState()
+    {
         if (_controller.Object.HasInputAuthority)
         {
+            _controller.RPC_SetMoveFlag(true);
             _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Cook);
         }
     }
 
-    public override void Exit()
+    protected override void OnExitState()
     {
-        CookingManager.Instance.OnCookingCompleted();
-        _controller.Rpc_PlayAnimTrigger(EAnimTrigger.CookDone);
+        if (_controller.Object.HasInputAuthority)
+        {
+            CookingManager.Instance.OnCookingCompleted();
+            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.CookDone);
+
+            _controller.RPC_SetMoveFlag(false);
+        }
     }
 
-
-    public override void Tick()
+    void IAnimationActionNotify.OnActionMoment()
     {
+        
+    }
 
+    void IAnimationActionEndNotify.OnAnimationFinished()
+    {
+        if (_controller.Object.HasInputAuthority)
+        {
+            CookingManager.Instance.OnCookingCompleted();
+            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.CookDone);
+        }
     }
 }

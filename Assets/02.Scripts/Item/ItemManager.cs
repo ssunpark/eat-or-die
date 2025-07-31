@@ -34,11 +34,12 @@ public class ItemManager : NetworkBehaviour
             Destroy(gameObject);
             // Runner.Despawn(Object); // 중복 방지
         }
+        Init();
     }
 
     private void Start()
     {
-        Init();
+        // Init();
     }
 
     private void Init()

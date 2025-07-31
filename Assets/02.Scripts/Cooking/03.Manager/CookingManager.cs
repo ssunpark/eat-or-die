@@ -9,7 +9,6 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     public Inventory FoodInventory = new Inventory(1);
     public Action OnCookOutputUpdated;
-    
     public void OnClickMouseLeft(int slotIndex)
     {
         if (HandEntity.Instance.IsHandEmpty)
@@ -78,8 +77,6 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     public int TryCook()
     {
-        if (HasEmptySlot()) return -1;
-    
         int id1 = Inventory.SlotList[0].Item.ID;
         int id2 = Inventory.SlotList[1].Item.ID;
     
@@ -97,14 +94,10 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     public void ProcessCookingResult()
     {
         int resultItemId = TryCook();
-        if (resultItemId == -1)
-        {
-            Debug.Log("조합 실패");
-            return;
-        }
     
         ConsumeInputIngredients();
         GiveItemToInventory(resultItemId);
+        ReturnRecipesToInventory();
         OnCookOutputUpdated?.Invoke();
     }
     
@@ -139,13 +132,8 @@ public class CookingManager : BehaviourSingleton<CookingManager>
             return;
         }
     
-        var remain = InventoryManager.Instance.Inventory.PickItemFromGround(new Item(resultItem, resultItem.ItemData.MaxQuantity, 1));
+        InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1)); // 나중에 한번에 여러개 만드는거 생기면 1을 바꾸시면 됩니다
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-    
-        if (remain != null)
-        {
-            ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
-        }
     }
     
     private void TransferItemToInventory(Item item)
@@ -163,15 +151,18 @@ public class CookingManager : BehaviourSingleton<CookingManager>
         _t += Time.deltaTime;
         if (_t >= _cookTime)
         {
-            Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
+            // 플레이어 연결 미완료여서 임시로 플레이어와 상호작용없이 요리 완료
+            OnCookingCompleted();
+            //Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
         }
     }
     
     internal void StartCook()
     {
-        Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
+        if (HasEmptySlot()) return; // 빈 슬롯이면 return. 쿠킹 패널만 닫힘.
+        // Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
         _t = 0;
-        _isCooking = true;
+        _isCooking = true; // rpc로 변환
     }
     
 }
