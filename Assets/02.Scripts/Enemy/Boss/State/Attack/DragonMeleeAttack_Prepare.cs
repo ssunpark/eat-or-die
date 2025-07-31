@@ -21,7 +21,11 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
 
     protected override void OnFixedUpdate()
     {
-        Debug.Log("왜 뒤로 계속 가");
+        if (Controller.IsLocked)
+        {
+            return;
+        }
+        
         Controller.MaintainDistanceAndLookAtTarget(Machine.Runner.DeltaTime, _prepareParams.MinDistanceToFinishPrepare);
 
         // 거리 측정

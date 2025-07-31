@@ -59,7 +59,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         {
             var baseStats = new Dictionary<EStatType, float>(_statInputs);
 
-            Vector3 spawnPos = SpawnPoint[(int)SpawnPos];
+            Vector3 spawnPos = new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
             //new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0)
             runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
         }

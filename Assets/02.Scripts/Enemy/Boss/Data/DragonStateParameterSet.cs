@@ -10,6 +10,7 @@ public class DragonStateParameterSet
     public AttackParams Attack;
     public PrepareParams Prepare;
     public SwipeParams Swipe;
+    public RightScratchParams RightScratch;
 
     [Serializable]
     public class BaseParams
@@ -68,6 +69,12 @@ public class DragonStateParameterSet
     [Serializable]
     public class SwipeParams
     {
-        public float SwipeDuration;
+        // 공격 범위 관련 데이터
+    }
+
+    [Serializable]
+    public class RightScratchParams
+    {
+        // 공격 범위 관련 데이터
     }
 }

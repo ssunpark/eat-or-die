@@ -20,15 +20,15 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     private void TryActiveRandomAttackSubState()
     {
-        int rand = Random.Range(0, 4); // 0~3
+        int random = Random.Range(0, 2); // 0~3
 
-        switch (rand)
+        switch (random)
         {
             case 0:
                 _subStateMachine.TryActivateState<DragonMeleeAttack_Swipe>(true);
                 break;
             case 1:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_Swipe>(true);
+                _subStateMachine.TryActivateState<DragonMeleeAttack_RightScratch>(true);
                 break;
             case 2:
                 _subStateMachine.TryActivateState<DragonMeleeAttack_Swipe>(true);
@@ -43,8 +43,8 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
             new DragonMeleeAttack_Prepare(Controller, this, ParameterLoader.Prepare),
-            new DragonMeleeAttack_Swipe(Controller, this, ParameterLoader.Swipe)
-            // new DragonAttack_Swipe(Controller, this),
+            new DragonMeleeAttack_Swipe(Controller, this, ParameterLoader.Swipe),
+            new DragonMeleeAttack_RightScratch(Controller, this, ParameterLoader.RightScratch)
             // new DragonAttack_Swipe(Controller, this),
             // new DragonAttack_Swipe(Controller, this)
         );
@@ -54,25 +54,32 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     public void OnSubStateComplete()
     {
-        float prepareChance = Random.Range(0f, 1f);
+        bool inSight = Controller.SightDetector.DetectedColliders.Count > 0;
+        // 시야에 있고 연속 공격이면 공격
+        float continueAttackRandom = Random.Range(0f, 1f);
+        if (inSight &&
+            continueAttackRandom < _attackParams.ContinueAttackChance)
+        {
+            TryActiveRandomAttackSubState();
+            return;
+        }
+        
+        // 시야 밖인 경우 대기 혹은 경계
+        
+        float prepareRandom = Random.Range(0f, 1f);
+        float distance = Vector3.Distance(
+            Controller.transform.position,
+            Controller.Target.transform.position
+        );
         // 너무 가까우면 후진
-        if (Vector3.Distance(
-                Controller.transform.position,
-                Controller.Target.transform.position
-            ) < ParameterLoader.Prepare.MinDistanceToFinishPrepare &&
-            prepareChance < _attackParams.PrepareChance)
+        if (distance < ParameterLoader.Prepare.MinDistanceToFinishPrepare &&
+            prepareRandom < _attackParams.PrepareChance)
         {
             _subStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true);
             return;
         }
 
-        // 이후 둘중 하나
-        float continueAttackChance = Random.Range(0f, 1f);
-        if (continueAttackChance < _attackParams.ContinueAttackChance)
-        {
-            TryActiveRandomAttackSubState();
-            return;
-        }
+        // 모두 아닌경우 다시 경계 태세
         Machine.TryActivateState<DragonState_Alert>(true);
     }
 }
