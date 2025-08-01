@@ -42,6 +42,9 @@ public class PlayerAnimator : NetworkBehaviour
         { EAnimTrigger.Recover, Animator.StringToHash("Recover") }
     };
 
+    // Animation parameter hashes for persistent state
+    private static readonly int _isDeadHash = Animator.StringToHash("IsDead");
+
     private float _lerpSpeed = 10f;
 
     #region Unity Lifecycle
@@ -121,6 +124,15 @@ public class PlayerAnimator : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets the IsDead parameter for persistent dead state animation
+    /// This ensures late-joining players see the correct animation state
+    /// </summary>
+    public void SetDeadState(bool isDead)
+    {
+        _anim.SetBool(_isDeadHash, isDead);
+    }
+
 
     #endregion
 
@@ -142,6 +154,28 @@ public class PlayerAnimator : NetworkBehaviour
 
             if (_controller.FSM.ActiveState is IAnimationActionEndNotify endNotify)
                 endNotify.OnAnimationFinished();
+        }
+
+        // Ensure dead state animation is synchronized for late-joining players
+        SyncDeadStateAnimation();
+    }
+
+    /// <summary>
+    /// Synchronizes the dead animation state based on the current FSM state
+    /// This ensures late-joining players see the correct animation
+    /// </summary>
+    private void SyncDeadStateAnimation()
+    {
+        if (_controller?.FSM?.ActiveState != null)
+        {
+            bool isDead = _controller.FSM.ActiveState.StateId == (int)EPlayerState.Dead;
+            bool currentAnimState = _anim.GetBool(_isDeadHash);
+            
+            // Only update if there's a mismatch to avoid unnecessary animator calls
+            if (isDead != currentAnimState)
+            {
+                _anim.SetBool(_isDeadHash, isDead);
+            }
         }
     }
 

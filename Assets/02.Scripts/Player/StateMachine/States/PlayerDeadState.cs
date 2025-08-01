@@ -13,11 +13,25 @@ public class PlayerDeadState : APlayerStateBase, IAnimationActionEndNotify
         if(_controller.Object.HasInputAuthority)
         {
             InputReader.playerControllerInputBlocked = true;
-
         }
 
+        // Set persistent dead state for late-joining players
+        _controller.SetDeadAnimStateNetwork(true);
+        
+        // Play death animation trigger for current players
         _controller.PlayAnimTriggerNetwork(EAnimTrigger.Die);
         _controller.SetMoveFlagNetwork(true);
+    }
+
+    protected override void OnExitState()
+    {
+        // Clear dead state when exiting (in case of respawn/recovery)
+        _controller.SetDeadAnimStateNetwork(false);
+        
+        if(_controller.Object.HasInputAuthority)
+        {
+            InputReader.playerControllerInputBlocked = false;
+        }
     }
     protected override bool CanExitState(IState nextState)
     {

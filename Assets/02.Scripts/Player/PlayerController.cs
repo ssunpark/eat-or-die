@@ -222,6 +222,18 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         else if (HasStateAuthority)
             Rpc_PlayAnimTrigger_State(trigger);
     }
+
+    /// <summary>
+    /// Sets the dead animation state across network for all clients
+    /// This ensures late-joining players see the correct animation state
+    /// </summary>
+    public void SetDeadAnimStateNetwork(bool isDead)
+    {
+        if (HasInputAuthority)
+            Rpc_SetDeadAnimState_Input(isDead);
+        else if (HasStateAuthority)
+            Rpc_SetDeadAnimState_State(isDead);
+    }
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     public void Rpc_PlayAnimTrigger_Input(EAnimTrigger trigger)
     {
@@ -231,6 +243,17 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     public void Rpc_PlayAnimTrigger_State(EAnimTrigger trigger)
     {
         PlayerAnimatorController.PlayTrigger(trigger);
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    public void Rpc_SetDeadAnimState_Input(bool isDead)
+    {
+        PlayerAnimatorController.SetDeadState(isDead);
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Rpc_SetDeadAnimState_State(bool isDead)
+    {
+        PlayerAnimatorController.SetDeadState(isDead);
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
     public void RPC_DealDamage(NetworkObject target, float amount)
