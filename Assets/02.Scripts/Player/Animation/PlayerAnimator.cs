@@ -90,6 +90,11 @@ public class PlayerAnimator : NetworkBehaviour
     #endregion
     #region Animation Events (From Clip)
 
+    private void TryInitializeController()
+    {
+        if (_controller == null)
+            _controller = GetComponent<PlayerController>();
+    }
     public void OnActionMoment()
     {
         if (_controller?.FSM?.ActiveState is IAnimationActionNotify notify)
@@ -100,8 +105,18 @@ public class PlayerAnimator : NetworkBehaviour
 
     public void OnAnimationFinished()
     {
-        _shouldFinishState = true;
+        TryInitializeController();
+
+        if (_controller.FSM.ActiveState is IAnimationActionEndNotify notify)
+        {
+            notify.OnAnimationFinished();
+        }
+        else
+        {
+            Debug.LogWarning("PlayerAnimator: Current state is NOT IAnimationActionEndNotify");
+        }
     }
+
 
 
 
@@ -135,36 +150,29 @@ public class PlayerAnimator : NetworkBehaviour
                 return; // 아직 준비 안 됨
         }
         UpdateAnimationSpeed();
-
-        if (_shouldFinishState)
-        {
-            _shouldFinishState = false;
-
-            if (_controller.FSM.ActiveState is IAnimationActionEndNotify endNotify)
-                endNotify.OnAnimationFinished();
-        }
     }
-
-    private void UpdateAnimationSpeed()
+    public void SetSpeedParameter(float rawSpeed)
     {
-        float rawSpeed = _controller.GetComponent<NetworkCharacterController>().Velocity.magnitude;
+        if (_anim == null) return;
         float normalized = Mathf.InverseLerp(0f, _cachedRunSpeed, rawSpeed);
-
-        float targetSpeed = 0f;
-
         if (rawSpeed > 0.1f && rawSpeed < _cachedRunSpeed * 0.9f)
         {
-            targetSpeed = 0.5f; // 걷기
+            _targetSpeed = 0.5f; // 걷기
         }
         else if (rawSpeed >= _cachedRunSpeed * 0.9f)
         {
-            targetSpeed = 1f; // 뛰기
+            _targetSpeed = 1f; // 뛰기
         }
         else
         {
-            targetSpeed = 0f; // 정지 상태
+            _targetSpeed = 0f; // 정지 상태
         }
-        float lerpedSpeed = Mathf.Lerp(_anim.GetFloat("Speed"), targetSpeed, _lerpSpeed * Runner.DeltaTime);
+    }
+    float _targetSpeed;
+    private void UpdateAnimationSpeed()
+    {
+        float current = _anim.GetFloat("Speed");
+        float lerpedSpeed = Mathf.Lerp(current, _targetSpeed, _lerpSpeed * Runner.DeltaTime);
         _anim.SetFloat("Speed", lerpedSpeed);
     }
 
