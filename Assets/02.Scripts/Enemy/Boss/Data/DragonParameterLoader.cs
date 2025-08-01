@@ -28,4 +28,5 @@ public class DragonParameterLoader
     public DragonStateParameterSet.PrepareParams Prepare => _parameters.Prepare;
     public DragonStateParameterSet.SwipeParams Swipe => _parameters.Swipe;
     public DragonStateParameterSet.RightScratchParams RightScratch => _parameters.RightScratch;
+    public DragonStateParameterSet.LeftScratchParams LeftScratch => _parameters.LeftScratch;
 }
