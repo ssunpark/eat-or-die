@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class PlayerItemHolder: NetworkBehaviour
 {

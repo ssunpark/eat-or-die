@@ -18,6 +18,10 @@ public class PlayerInteractions : MonoBehaviour
         InteractionLayer = LayerMask.GetMask("Interactable");
         TagName = "Untagged";
     }
+    public void Interact(GameObject target)
+    {
+        target.GetComponent<IInteractable>()?.Interact();
+    }
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
@@ -27,9 +31,6 @@ public class PlayerInteractions : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 2f);
     }
 
-    internal void Interact(GameObject target)
-    {
-        target.GetComponent<IInteractable>()?.Interact();
-    }
+    
 #endif
 }
