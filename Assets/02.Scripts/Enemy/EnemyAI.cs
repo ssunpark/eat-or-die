@@ -64,6 +64,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void Move()
 	{
+		if (!Context.Agent.hasPath) return;
+		
 		Vector3 direction = Context.Agent.nextPosition - transform.position;
 		transform.forward = direction;
 		

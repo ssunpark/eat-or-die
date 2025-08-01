@@ -18,12 +18,12 @@ public class IdleBehaviour : AEnemyStateBehaviour
 	
 	protected override void OnEnterState()
 	{
-		Machine.Context.Animator.SetBool(Idle, true);
+		Machine.Context.Animator.SetTrigger(Idle);
 	}
 	
 	protected override void OnExitState()
 	{
-		Machine.Context.Animator.SetBool(Idle, false);
+		Machine.Context.Animator.ResetTrigger(Idle);
 	}
 	
 	protected override void OnEnterStateRender()

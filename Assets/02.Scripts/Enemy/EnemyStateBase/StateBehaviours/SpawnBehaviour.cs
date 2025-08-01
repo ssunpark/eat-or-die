@@ -6,11 +6,6 @@ public class SpawnBehaviour : AEnemyStateBehaviour
     private static readonly int Spawn = Animator.StringToHash("Spawn");
     private bool _isSpawned = false;
 
-    protected override void OnEnterState()
-    {
-        // Machine.Context.Animator.SetBool(Spawn, true);
-    }
-
     protected override void OnFixedUpdate()
     {
         AnimatorStateInfo stateInfo = Machine.Context.Animator.GetCurrentAnimatorStateInfo(0);
