@@ -7,8 +7,6 @@ public static class PlayerFSMTransitionEvaluator
     {
         nextState= null;
 
-        controller.StateValues.Interactable = null;
-        controller.StateValues.Usable = null;
         // 공격
         if (CanAttack(controller, runner))
         {
@@ -19,21 +17,6 @@ public static class PlayerFSMTransitionEvaluator
             }
         }
 
-        // 상호작용
-        if (input.isInteracting && controller.Interact.TryInteract(out var interactable))
-        {
-            controller.StateValues.Interactable = interactable;
-            nextState = controller.FSMStateInstances.Interact;
-            return true;
-        }
-
-        // 아이템 사용
-        if (input.isUsing && controller.Interact.TryUseItem(out var usable))
-        {
-            controller.StateValues.Usable = usable;
-            nextState = controller.FSMStateInstances.UseItem;
-            return true;
-        }
 
         // 이동
         if (input.direction.sqrMagnitude > 0.01f)

@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using Fusion; // Add Fusion for NetworkInputData
+﻿using Fusion; // Add Fusion for NetworkInputData
 using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
+using UnityEngine;
 public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
     public PlayerUseItemState(PlayerController controller) : base(controller)
@@ -9,6 +9,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAni
 
     }
     private bool _animationFinished;
+    private GameObject _target;
     protected override void OnInitialize()
     {
         this.AddTransition(
@@ -25,10 +26,12 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAni
 
     void IAnimationActionNotify.OnActionMoment()
     {
-        Debug.Log("PlayerUseItemState.OnActiodwnMoment");
-        _controller.Interact.UseOrInteract(
-                    usable: _controller.StateValues.Usable
-                );
+        if (_controller.CanUseHeldItem(out GameObject target))
+        {
+            _target = target;
+
+            _controller.ItemHolder.UseItem(_target);
+        }
     }
 
     void IAnimationActionEndNotify.OnAnimationFinished()

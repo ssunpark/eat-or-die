@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class StateValues
 {
-    public IInteractable Interactable;
-    public IUsable Usable;
     public float MoveHungerTimer = 0f;
     public float MoveHungerInterval = 1f;
 }
@@ -52,6 +50,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     private NetworkCharacterController _characterController;
     public PlayerAnimator PlayerAnimatorController { get; private set; }
     public PlayerInteractions Interact {  get; private set; }
+    public PlayerItemHolder ItemHolder { get; private set; }
     public PlayerMove Movement { get; private set; }
     public CharacterStatNetworkSync StatNetworkSync { get; private set; }
 
@@ -88,6 +87,8 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     private bool _isSpawned = false;
 
     #endregion
+
+    private const string INTERACT_TAG = "Interactable";
 
     public void SetMoveFlagNetwork(bool flag)
     {
@@ -170,6 +171,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         Interact = GetComponent<PlayerInteractions>();
         Movement = GetComponent<PlayerMove>();
         StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
+        ItemHolder = GetComponent<PlayerItemHolder>();
         _isSpawned = true;
         TryInitialize();
     }
@@ -312,5 +314,55 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     {
         _stateRequestQueue.ForceOverride(nextState);
     }
+
+    public bool CanUseHeldItem(out GameObject target)
+    {
+        target = null;
+        if (ItemHolder.HeldItem == null)
+            return false;
+
+        string requiredTag = ItemHolder.InteractionTag;
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Undefined")
+        {
+            Debug.Log($"[PlayerController] requiredTag is {requiredTag}.");
+            // 사용아이템의 상호작용가능한 물체가 Untagged일 수도 있어서 임시로 Undefined일때 체크
+            return false;
+        }
+        
+        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f, LayerMask.GetMask("Interactable")))
+        {
+            Debug.Log($"[PlayerController] Raycast에서 검출된 오브젝트 없음.");
+            return false;
+        }
+
+        GameObject hitObject = hit.collider.gameObject;
+        if (!hitObject.CompareTag(requiredTag))
+        {
+            Debug.Log($"[PlayerController] hitObject: {hitObject.name}, {hitObject.tag}");
+            return false;
+        }
+
+        float dist = Vector3.Distance(transform.position, hitObject.transform.position);
+        if (dist > 2f) return false;
+
+        target = hitObject;
+        return true;
+    }
+    public bool CanInteract(out GameObject target)
+    {
+        target = null;
+
+        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f, LayerMask.GetMask("Interactable")))
+            return false;
+
+        GameObject hitObject = hit.collider.gameObject;
+
+        float dist = Vector3.Distance(transform.position, hitObject.transform.position);
+        if (dist > 2f) return false;
+
+        target = hitObject;
+        return true;
+    }
+
 
 }

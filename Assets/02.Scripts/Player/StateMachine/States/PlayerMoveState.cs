@@ -25,13 +25,13 @@ public class PlayerMoveState : APlayerStateBase
         // 전이: 인터랙션 키 누르면 Interact로
         this.AddTransition(
             _controller.FSMStateInstances.Interact,
-            () => _controller.GetInput(out NetworkInputData input) && input.isInteracting && _controller.Interact.TryInteract(out var interactable)
+            () => _controller.GetInput(out NetworkInputData input) && input.isInteracting && _controller.CanInteract(out _)
         );
 
         // 전이: 아이템 사용
         this.AddTransition(
             _controller.FSMStateInstances.UseItem,
-            () => _controller.GetInput(out NetworkInputData input) && input.isUsing && _controller.Interact.TryUseItem(out var usable)
+            () => _controller.GetInput(out NetworkInputData input) && input.isUsing && _controller.CanUseHeldItem(out _)
         );
     }
     protected override void OnEnterState()

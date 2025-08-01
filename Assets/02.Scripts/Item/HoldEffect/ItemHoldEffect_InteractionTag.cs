@@ -14,12 +14,12 @@ public class ItemHoldEffect_InteractionTag : IItemHoldEffect
     public void Hold(GameObject target)
     {
         // 태그 설정
-        target.GetComponent<PlayerInteractions>().TagName = _interactionTag;
+        target.GetComponent<PlayerItemHolder>().InteractionTag = _interactionTag;
     }
 
     public void UnHold(GameObject target)
     {
         // 태그 해제
-        target.GetComponent<PlayerInteractions>().TagName = DEFAULT_TAG;
+        target.GetComponent<PlayerItemHolder>().InteractionTag = DEFAULT_TAG;
     }
 }

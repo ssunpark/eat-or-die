@@ -1,4 +1,5 @@
-﻿using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
+﻿using Fusion.Addons.FSM;
+using UnityEngine; // Add Fusion FSM for PlayerStateMachine
 public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
     public PlayerInteractState(PlayerController controller) : base(controller)
@@ -6,6 +7,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAn
         StateId = (int)EPlayerState.Interact;
     }
 
+    private GameObject _target;
     private bool _animationFinished;
     protected override void OnInitialize()
     {
@@ -18,16 +20,15 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAn
     {
         _animationFinished = false;
         _controller.PlayAnimTriggerNetwork(EAnimTrigger.Interact);
+        if (_controller.CanInteract(out GameObject target))
+        {
+            _target = target;
+        }
     }
 
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_controller.StateValues.Interactable != null)
-        {
-            _controller.Interact.UseOrInteract(
-                interactable: _controller.StateValues.Interactable
-            );
-        }
+        _controller.Interact.Interact(_target);
     }
 
     void IAnimationActionEndNotify.OnAnimationFinished()
