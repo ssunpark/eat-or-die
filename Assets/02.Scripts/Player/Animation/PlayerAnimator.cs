@@ -114,9 +114,13 @@ public class PlayerAnimator : NetworkBehaviour
 
     public void PlayTrigger(EAnimTrigger trigger)
     {
-        if (_triggerHash.TryGetValue(trigger, out int hash))
+        if (_anim != null && _triggerHash.TryGetValue(trigger, out int hash))
         {
             _anim.SetTrigger(hash);
+        }
+        else if (_anim == null)
+        {
+            Debug.LogError($"[Animator] Animator is null when trying to play trigger: {trigger}");
         }
         else
         {
@@ -130,7 +134,10 @@ public class PlayerAnimator : NetworkBehaviour
     /// </summary>
     public void SetDeadState(bool isDead)
     {
-        _anim.SetBool(_isDeadHash, isDead);
+        if (_anim != null)
+        {
+            _anim.SetBool(_isDeadHash, isDead);
+        }
     }
 
 
@@ -166,7 +173,7 @@ public class PlayerAnimator : NetworkBehaviour
     /// </summary>
     private void SyncDeadStateAnimation()
     {
-        if (_controller?.FSM?.ActiveState != null)
+        if (_controller?.FSM?.ActiveState != null && _anim != null)
         {
             bool isDead = _controller.FSM.ActiveState.StateId == (int)EPlayerState.Dead;
             bool currentAnimState = _anim.GetBool(_isDeadHash);

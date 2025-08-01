@@ -237,23 +237,27 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     public void Rpc_PlayAnimTrigger_Input(EAnimTrigger trigger)
     {
-        PlayerAnimatorController.PlayTrigger(trigger);
+        if (PlayerAnimatorController != null)
+            PlayerAnimatorController.PlayTrigger(trigger);
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void Rpc_PlayAnimTrigger_State(EAnimTrigger trigger)
     {
-        PlayerAnimatorController.PlayTrigger(trigger);
+        if (PlayerAnimatorController != null)
+            PlayerAnimatorController.PlayTrigger(trigger);
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     public void Rpc_SetDeadAnimState_Input(bool isDead)
     {
-        PlayerAnimatorController.SetDeadState(isDead);
+        if (PlayerAnimatorController != null)
+            PlayerAnimatorController.SetDeadState(isDead);
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void Rpc_SetDeadAnimState_State(bool isDead)
     {
-        PlayerAnimatorController.SetDeadState(isDead);
+        if (PlayerAnimatorController != null)
+            PlayerAnimatorController.SetDeadState(isDead);
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
     public void RPC_DealDamage(NetworkObject target, float amount)
