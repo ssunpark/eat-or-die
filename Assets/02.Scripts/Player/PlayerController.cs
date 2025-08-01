@@ -88,7 +88,8 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
 
     #endregion
 
-    private const string INTERACT_TAG = "Interactable";
+    public const float INTERACTABLE_DISTANCE = 2f;
+    public const float MAX_RAYCAST_DISTANCE = 100f; 
 
     public void SetMoveFlagNetwork(bool flag)
     {
@@ -329,7 +330,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
             return false;
         }
         
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f, LayerMask.GetMask("Interactable")))
+        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, MAX_RAYCAST_DISTANCE, LayerMask.GetMask("Interactable")))
         {
             Debug.Log($"[PlayerController] Raycast에서 검출된 오브젝트 없음.");
             return false;
@@ -343,7 +344,11 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         }
 
         float dist = Vector3.Distance(transform.position, hitObject.transform.position);
-        if (dist > 2f) return false;
+        if (dist > INTERACTABLE_DISTANCE)
+        {
+            Debug.Log($"[PlayerController] 거리 초과: {dist} > {INTERACTABLE_DISTANCE}");
+            return false;
+        }
 
         target = hitObject;
         return true;
@@ -352,13 +357,17 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     {
         target = null;
 
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f, LayerMask.GetMask("Interactable")))
+        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, MAX_RAYCAST_DISTANCE, LayerMask.GetMask("Interactable")))
             return false;
 
         GameObject hitObject = hit.collider.gameObject;
 
         float dist = Vector3.Distance(transform.position, hitObject.transform.position);
-        if (dist > 2f) return false;
+        if (dist > INTERACTABLE_DISTANCE)
+        {
+            Debug.Log($"[PlayerController] 거리 초과: {dist} > {INTERACTABLE_DISTANCE}");
+            return false;
+        }
 
         target = hitObject;
         return true;
