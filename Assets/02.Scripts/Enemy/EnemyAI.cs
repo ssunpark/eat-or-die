@@ -65,12 +65,12 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	public void Move()
 	{
 		Vector3 direction = Context.Agent.nextPosition - transform.position;
+		transform.forward = direction;
 		
 		if (direction.sqrMagnitude < 0.01f) return;
 		
 		direction.Normalize();
 		
-		transform.forward = direction;
 		transform.position += direction * Context.Stat.MoveSpeed * Runner.DeltaTime;
 	}
 
@@ -79,8 +79,9 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context.Target = _rangeDetector.NearestMember.gameObject;
 		
 		float distance = Vector3.Distance(transform.position, Context.Target.transform.position);
+		float angle = Vector3.Angle(transform.forward, Context.Target.transform.position - transform.position);
 		
-		if (distance <= Context.Stat.AttackRange)
+		if (distance <= Context.Stat.AttackRange && angle <= Context.Stat.AttackAngle)
 		{
 			_behaviourMachine.TryActivateState<AttackBehaviour>();
 		}
