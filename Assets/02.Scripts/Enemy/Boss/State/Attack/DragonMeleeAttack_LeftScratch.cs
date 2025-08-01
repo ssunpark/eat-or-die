@@ -16,7 +16,7 @@
     {
         _hasAttacked = false;
         
-        Controller.NavMeshAgent.ResetPath();
+        Controller.ResetNavMeshAgent();
         
         Controller.Lock();
         

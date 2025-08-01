@@ -17,6 +17,8 @@ public class DragonState_Idle : DragonStateBase, IParentState
 
     protected override void OnEnterState()
     {
+        Controller.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
+        
         Controller.FightMode(false);
         
         Controller.SetSightDetector(_baseParams.FullAwarenessRadius, _baseParams.DetectRadius, _baseParams.FOVAngle);

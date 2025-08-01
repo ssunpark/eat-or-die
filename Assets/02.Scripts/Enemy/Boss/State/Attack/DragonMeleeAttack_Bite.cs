@@ -15,8 +15,8 @@
     protected override void OnEnterState()
     {
         _hasAttacked = false;
-        
-        Controller.NavMeshAgent.ResetPath();
+
+        Controller.ResetNavMeshAgent();
         
         Controller.Lock();
         

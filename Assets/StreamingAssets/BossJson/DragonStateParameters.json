@@ -3,11 +3,11 @@
     "MoveSpeed": 2.0,
     "RotationSpeed": 120,
     "HP": 3000,
-    "DetectRadius": 15.0,
+    "DetectRadius": 30.0,
     "FullAwarenessRadius": 1.0,
     "FOVAngle": 100.0,
     "AnimSmoothSpeed": 1.0,
-    "MeleeAttackDistance": 8.0
+    "MeleeAttackDistance": 6.0
   },
   "Patrol": {
     "PatrolDuration": 5.0,
@@ -27,8 +27,13 @@
     "MinDistance": 10.0
   },
   "Chase": {
-    "ChaseSpeed": 4.0,
-    "MaxChaseTime": 10.0
+    "ChaseSpeed": 10.0,
+    "RotationSpeed": 360.0,
+    "SidestepProbability": 0.5,
+    "MinSidestepAngle": 30.0,
+    "MaxSidestepAngle": 60.0,
+    "SidestepRange": 3.0,
+    "MinSidestepDistance": 5.0
   },
   "Attack": {
     "ContinueAttackChance": 0.5
@@ -36,7 +41,7 @@
   "Prepare": {
     "PrepareChance": 0.6,
     "PrepareDuration": 1.0,
-    "MinDistanceToFinishPrepare": 6.0
+    "MinDistanceToFinishPrepare": 4.0
     
   },
   "Swipe": {

@@ -18,7 +18,7 @@ public class DragonMeleeAttack_Swipe : DragonSubStateBase
     {
         _hasAttacked = false;
 
-        Controller.NavMeshAgent.ResetPath();
+        Controller.ResetNavMeshAgent();
         
         Controller.Lock();
 

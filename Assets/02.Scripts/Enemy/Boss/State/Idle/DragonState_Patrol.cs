@@ -48,7 +48,7 @@ public class DragonState_Patrol : DragonSubStateBase
     {
         Controller.NavMeshAgent.ResetPath();
         Controller.NavMeshAgent.velocity = Vector3.zero;
-        
+
         Controller.Animator.SetBool("IsMove", false);
     }
 
@@ -66,7 +66,7 @@ public class DragonState_Patrol : DragonSubStateBase
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _patrolParams.WalkRadius, NavMesh.AllAreas))
         {
             _destination = hit.position;
-            Controller.NavMeshAgent.SetDestination(_destination);
+            Controller.SetDestination(_destination);
             _hasDestination = true;
         }
     }

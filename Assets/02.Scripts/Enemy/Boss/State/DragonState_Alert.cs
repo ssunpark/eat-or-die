@@ -18,6 +18,8 @@ public class DragonState_Alert : DragonStateBase
 
     protected override void OnEnterState()
     {
+        Controller.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
+        
         Controller.FightMode(true);
         _hasDestination = false;
         
@@ -43,29 +45,30 @@ public class DragonState_Alert : DragonStateBase
 
     private void HandleAlertDecision()
     {
-        float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
-        
-        if (distance <= _baseParams.MeleeAttackDistance)
-        {
-            Machine.TryActivateState<DragonState_MeleeAttack>(true);
-            return;
-        }
-        
-        float rand = Random.value;
-        if (rand < _alertParams.ChaseProbability)
-        {
-            Machine.TryActivateState<DragonState_Chase>(true);
-        }
-        else
-        {
-            // Machine.TryActivateState<DragonState_RangedAttack>(true);
-        }
+        Machine.TryActivateState<DragonState_Chase>(true);
+        // float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
+        //
+        // if (distance <= _baseParams.MeleeAttackDistance)
+        // {
+        //     Machine.TryActivateState<DragonState_MeleeAttack>(true);
+        //     return;
+        // }
+        //
+        // float rand = Random.value;
+        // if (rand < _alertParams.ChaseProbability)
+        // {
+        //     Machine.TryActivateState<DragonState_Chase>(true);
+        // }
+        // else
+        // {
+        //     // Machine.TryActivateState<DragonState_RangedAttack>(true);
+        // }
     }
 
     protected override void OnExitState()
     {
         Controller.Animator.SetBool("IsMove", false);
-        Controller.NavMeshAgent.ResetPath();
+        Controller.ResetNavMeshAgent();
     }
 
     private void ChooseNewLookDestination()
@@ -86,7 +89,7 @@ public class DragonState_Alert : DragonStateBase
 
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            Controller.NavMeshAgent.SetDestination(hit.position);
+            Controller.SetDestination(hit.position);
             _hasDestination = true;
         }
     }

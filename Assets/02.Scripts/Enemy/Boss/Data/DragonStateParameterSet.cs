@@ -59,7 +59,12 @@ public class DragonStateParameterSet
     public class ChaseParams
     {
         public float ChaseSpeed;
-        public float MaxChaseTime;
+        public float RotationSpeed;
+        public float SidestepProbability;
+        public float MinSidestepAngle;
+        public float MaxSidestepAngle;
+        public float SidestepRange;
+        public float MinSidestepDistance;
     }
 
     [Serializable]

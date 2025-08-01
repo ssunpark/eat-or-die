@@ -9,7 +9,7 @@ using UnityEngine.AI;
 public class DragonController : NetworkBehaviour, IStateMachineOwner
 {
     private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
-    
+
     [SerializeField]
     private GameObject _target;
     public GameObject Target => _target;
@@ -19,15 +19,15 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
 
     private NavMeshAgent _navMeshAgent;
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
-    
+
     private bool _isLocked = false;
     public bool IsLocked => _isLocked;
-    
+
     private Vector2 _smoothedVelocity = Vector2.zero;
-    
+
     private SightDetector _sightDetector;
     public SightDetector SightDetector => _sightDetector;
-    
+
     private DragonStateMachine _dragonStateMachine;
 
     private DragonStateParameterSet.BaseParams _baseParams => _dragonStateMachine?.ParamLoader?.Base;
@@ -82,13 +82,14 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     {
         _target = target;
     }
-    
+
     public void Move(float dt)
     {
-        if (NavMeshAgent.pathPending) return;
+        if (_navMeshAgent.pathPending)
+            return;
 
         // 1. 위치 이동
-        Vector3 next = NavMeshAgent.nextPosition;
+        Vector3 next = _navMeshAgent.nextPosition;
         transform.position = next;
 
         // 2. 회전 처리
@@ -100,7 +101,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         }
         else
         {
-            direction = NavMeshAgent.steeringTarget - transform.position;
+            direction = _navMeshAgent.steeringTarget - transform.position;
         }
 
         direction.y = 0f;
@@ -110,15 +111,15 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 targetRot,
-                NavMeshAgent.angularSpeed * dt
+                _navMeshAgent.angularSpeed * dt
             );
         }
-        
+
         // 3. 애니메이션 파라미터 (보간 포함)
-        Vector3 localVelocity = transform.InverseTransformDirection(NavMeshAgent.desiredVelocity);
+        Vector3 localVelocity = transform.InverseTransformDirection(_navMeshAgent.desiredVelocity);
         Vector2 targetVelocity = new Vector2(
-            Mathf.Clamp(localVelocity.x / NavMeshAgent.speed, -1f, 1f),
-            Mathf.Max(0f, localVelocity.z / NavMeshAgent.speed)
+            localVelocity.x,
+            localVelocity.z
         );
 
         // Lerp 보간
@@ -127,23 +128,25 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _animator.SetFloat("XVelocity", _smoothedVelocity.x);
         _animator.SetFloat("ZVelocity", _smoothedVelocity.y);
     }
-    
+
     public void MaintainDistanceAndLookAtTarget(float dt, float desiredDistance)
     {
-        if (Target == null) return;
+        if (Target == null)
+            return;
 
         Vector3 direction = transform.position - Target.transform.position;
         direction.y = 0f;
 
         float currentDistance = direction.magnitude;
-        if (currentDistance < 0.01f) return;
+        if (currentDistance < 0.01f)
+            return;
 
         // 1. 회전: 타겟을 바라봄
         Quaternion targetRot = Quaternion.LookRotation(-direction.normalized); // 반대 방향 바라보기 아님
         transform.rotation = Quaternion.RotateTowards(
             transform.rotation,
             targetRot,
-            NavMeshAgent.angularSpeed / 2f * dt
+            _navMeshAgent.angularSpeed / 2f * dt
         );
 
         // 2. 거리 유지: 너무 가까우면 뒤로 이동
@@ -156,7 +159,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
             // y 고정 (수직 이동 방지)
             newPosition.y = transform.position.y;
 
-            transform.position = Vector3.MoveTowards(transform.position, newPosition, NavMeshAgent.speed * dt);
+            transform.position = Vector3.MoveTowards(transform.position, newPosition, _navMeshAgent.speed * dt);
         }
     }
 
@@ -175,14 +178,38 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _sightDetector.angleX = detectAngle;
     }
     
+    public void SetDestination(Vector3 position)
+    {
+        if (!_navMeshAgent.enabled)
+            return;
+
+        _navMeshAgent.isStopped = false;
+        _navMeshAgent.SetDestination(position);
+    }
+
+    public void ResetNavMeshAgent()
+    {
+        _navMeshAgent.ResetPath();
+        _navMeshAgent.isStopped = true;
+        _navMeshAgent.velocity = Vector3.zero;
+        _navMeshAgent.nextPosition = transform.position;
+    }
+
+    public void SetNavMeshAgentMoveData(float moveSpeed, float angularSpeed)
+    {
+        _navMeshAgent.speed = moveSpeed;
+        _navMeshAgent.angularSpeed = angularSpeed;
+    }
+
     private void OnDrawGizmosSelected()
     {
 #if UNITY_EDITOR
-        if (_baseParams == null) return;
+        if (_baseParams == null)
+            return;
 
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, _dragonStateMachine.ParamLoader.Prepare.MinDistanceToFinishPrepare);
-        
+
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, _baseParams.MeleeAttackDistance);
 
