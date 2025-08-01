@@ -4,7 +4,7 @@ using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 
-public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
+public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
     private InputReader _inputReader;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
@@ -13,6 +13,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
 
     private Dictionary<EStatType, float> _statInputs = new();
     [HideInInspector]public Vector3[] SpawnPoint;
+
     public enum SpawnPosition
     {
         DemoScene,
@@ -44,12 +45,13 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
         var data = new NetworkInputData
         {
             direction = new Vector3(move.x, 0, move.y),
-            isAttacking = _inputReader.ConsumeAttackInput(),
-            isRunning = _inputReader.IsRunning,
-            isJumping = _inputReader.ConsumeJumpInput(),
-            isInteracting = _inputReader.ConsumeInteractionInput(),
-            isUsing = _inputReader.ConsumeUseItemInput()
         };
+
+        data.buttons.Set(EButtons.Attack, _inputReader.InputActions.Player.Attack.IsPressed());
+        data.buttons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
+        data.buttons.Set(EButtons.Jump, _inputReader.InputActions.Player.Jump.IsPressed());
+        data.buttons.Set(EButtons.Interact, _inputReader.InputActions.Player.Interact.IsPressed());
+        data.buttons.Set(EButtons.UseItem, _inputReader.InputActions.Player.UseItem.IsPressed());
         input.Set(data);
     }
 
