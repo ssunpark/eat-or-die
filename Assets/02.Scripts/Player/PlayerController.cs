@@ -329,7 +329,13 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
             return false;
         }
         
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f, LayerMask.GetMask("Interactable")))
+        if (mainCamera == null)
+        {
+            Debug.LogWarning("[PlayerController] Main camera is not available.");
+            return false;
+        }
+        
+        if (!Physics.Raycast(mainCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 100f, LayerMask.GetMask("Interactable")))
         {
             Debug.Log($"[PlayerController] Raycast에서 검출된 오브젝트 없음.");
             return false;
