@@ -5,6 +5,7 @@ using Fusion.Addons.FSM;
 public class DragonState_Alert : DragonStateBase
 {
     private DragonStateParameterSet.AlertParams _alertParams;
+    private DragonStateParameterSet.BaseParams _baseParams;
 
     private bool _hasDestination;
 
@@ -12,13 +13,14 @@ public class DragonState_Alert : DragonStateBase
         : base(controller, paramLoader)
     {
         _alertParams = paramLoader.Alert;
+        _baseParams = paramLoader.Base;
     }
 
     protected override void OnEnterState()
     {
         Controller.FightMode(true);
         _hasDestination = false;
-
+        
         Controller.Animator.SetBool("IsMove", true);
     }
 
@@ -43,21 +45,21 @@ public class DragonState_Alert : DragonStateBase
     {
         float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
         
-        if (distance <= ParameterLoader.Base.MeleeAttackDistance)
+        if (distance <= _baseParams.MeleeAttackDistance)
         {
             Machine.TryActivateState<DragonState_MeleeAttack>(true);
             return;
         }
-        //
-        // float rand = Random.value;
-        // if (rand < _alertParams.ChaseProbability)
-        // {
-        //     Machine.TryActivateState<DragonState_Chase>(true);
-        // }
-        // else
-        // {
-        //     Machine.TryActivateState<DragonState_RangedAttack>(true);
-        // }
+        
+        float rand = Random.value;
+        if (rand < _alertParams.ChaseProbability)
+        {
+            Machine.TryActivateState<DragonState_Chase>(true);
+        }
+        else
+        {
+            // Machine.TryActivateState<DragonState_RangedAttack>(true);
+        }
     }
 
     protected override void OnExitState()

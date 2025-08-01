@@ -13,6 +13,7 @@ public class DragonStateParameterSet
     public RightScratchParams RightScratch;
     public LeftScratchParams LeftScratch;
     public BiteParams Bite;
+    public ChaseParams Chase;
 
     [Serializable]
     public class BaseParams
@@ -40,7 +41,7 @@ public class DragonStateParameterSet
     {
         public float WaitDuration;
     }
-    
+
     [Serializable]
     public class AlertParams
     {
@@ -55,11 +56,18 @@ public class DragonStateParameterSet
     }
     
     [Serializable]
+    public class ChaseParams
+    {
+        public float ChaseSpeed;
+        public float MaxChaseTime;
+    }
+
+    [Serializable]
     public class AttackParams
     {
         public float ContinueAttackChance;
     }
-    
+
     [Serializable]
     public class PrepareParams
     {
@@ -79,7 +87,7 @@ public class DragonStateParameterSet
     {
         // 공격 범위 관련 데이터
     }
-    
+
     [Serializable]
     public class LeftScratchParams
     {
@@ -89,6 +97,5 @@ public class DragonStateParameterSet
     [Serializable]
     public class BiteParams
     {
-        
     }
 }

@@ -8,16 +8,18 @@ using Random = UnityEngine.Random;
 public class DragonState_Idle : DragonStateBase, IParentState
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
+    private DragonStateParameterSet.BaseParams _baseParams;
 
     public DragonState_Idle(DragonController controller, DragonParameterLoader paramLoader) : base(controller, paramLoader)
     {
+        _baseParams = paramLoader.Base;
     }
 
     protected override void OnEnterState()
     {
         Controller.FightMode(false);
         
-        Controller.SetSightDetector(ParameterLoader.Base.FullAwarenessRadius, ParameterLoader.Base.DetectRadius, ParameterLoader.Base.FOVAngle);
+        Controller.SetSightDetector(_baseParams.FullAwarenessRadius, _baseParams.DetectRadius, _baseParams.FOVAngle);
 
         TryActiveRandomSubState();
     }
