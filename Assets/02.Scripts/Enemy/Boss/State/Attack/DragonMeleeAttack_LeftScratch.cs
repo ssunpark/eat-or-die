@@ -18,6 +18,8 @@
         
         Controller.NavMeshAgent.ResetPath();
         
+        Controller.Lock();
+        
         Controller.Animator.SetBool("IsMove", false);
         Controller.Animator.SetTrigger("Attack_LeftScratch");
     }

@@ -20,7 +20,7 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     private void TryActiveRandomAttackSubState()
     {
-        int random = Random.Range(0, 2); // 0~3
+        int random = Random.Range(0, 4); // 0~3
 
         switch (random)
         {
@@ -31,10 +31,10 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
                 _subStateMachine.TryActivateState<DragonMeleeAttack_RightScratch>(true);
                 break;
             case 2:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_Swipe>(true);
+                _subStateMachine.TryActivateState<DragonMeleeAttack_LeftScratch>(true);
                 break;
             case 3:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_Swipe>(true);
+                _subStateMachine.TryActivateState<DragonMeleeAttack_Bite>(true);
                 break;
         }
     }
@@ -44,9 +44,9 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
         _subStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
             new DragonMeleeAttack_Prepare(Controller, this, ParameterLoader.Prepare),
             new DragonMeleeAttack_Swipe(Controller, this, ParameterLoader.Swipe),
-            new DragonMeleeAttack_RightScratch(Controller, this, ParameterLoader.RightScratch)
-            // new DragonAttack_Swipe(Controller, this),
-            // new DragonAttack_Swipe(Controller, this)
+            new DragonMeleeAttack_RightScratch(Controller, this, ParameterLoader.RightScratch),
+            new DragonMeleeAttack_LeftScratch(Controller, this, ParameterLoader.LeftScratch),
+            new DragonMeleeAttack_Bite(Controller, this, ParameterLoader.Bite)
         );
 
         stateMachines.Add(_subStateMachine);
@@ -69,15 +69,9 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
             return;
         }
 
-        // 시야 밖인 경우 대기 혹은 경계
-
-        float prepareRandom = Random.Range(0f, 1f);
-
         // 너무 가까우면 후진
-        if (distance < ParameterLoader.Prepare.MinDistanceToFinishPrepare &&
-            prepareRandom < _attackParams.PrepareChance)
+        if (_subStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true))
         {
-            _subStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true);
             return;
         }
 

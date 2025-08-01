@@ -12,6 +12,22 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
         _prepareParams = prepareParams;
     }
 
+    protected override bool CanEnterState()
+    {
+        if (Controller.IsLocked)
+        {
+            return false;
+        }
+        
+        float distance = Vector3.Distance(
+            Controller.transform.position,
+            Controller.Target.transform.position
+        );
+        float prepareRandom = Random.Range(0f, 1f);
+        return distance < _prepareParams.MinDistanceToFinishPrepare && 
+               prepareRandom < _prepareParams.PrepareChance;
+    }
+
     protected override void OnEnterState()
     {
         Controller.NavMeshAgent.enabled = false;

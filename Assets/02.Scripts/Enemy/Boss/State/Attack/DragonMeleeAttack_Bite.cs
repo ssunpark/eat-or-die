@@ -1,15 +1,15 @@
-﻿public class DragonMeleeAttack_RightScratch : DragonSubStateBase
+﻿public class DragonMeleeAttack_Bite : DragonSubStateBase
 {
-    private DragonStateParameterSet.RightScratchParams RightScratch;
+    private DragonStateParameterSet.BiteParams _biteParams;
     private bool _hasAttacked;
 
-    public DragonMeleeAttack_RightScratch(
+    public DragonMeleeAttack_Bite(
         DragonController controller,
         IParentState parent,
-        DragonStateParameterSet.RightScratchParams rightScratch)
+        DragonStateParameterSet.BiteParams bite)
         : base(controller, parent)
     {
-        RightScratch = rightScratch;
+        _biteParams = bite;
     }
 
     protected override void OnEnterState()
@@ -21,7 +21,7 @@
         Controller.Lock();
         
         Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetTrigger("Attack_RightScratch");
+        Controller.Animator.SetTrigger("Attack_Bite");
     }
 
     protected override void OnFixedUpdate()

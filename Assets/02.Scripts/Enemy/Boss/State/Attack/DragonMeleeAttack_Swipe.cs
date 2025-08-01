@@ -1,4 +1,6 @@
-﻿public class DragonMeleeAttack_Swipe : DragonSubStateBase
+﻿using UnityEngine;
+
+public class DragonMeleeAttack_Swipe : DragonSubStateBase
 {
     private DragonStateParameterSet.SwipeParams _swipeParams;
     private bool _hasAttacked;
@@ -15,9 +17,11 @@
     protected override void OnEnterState()
     {
         _hasAttacked = false;
-        
+
         Controller.NavMeshAgent.ResetPath();
         
+        Controller.Lock();
+
         Controller.Animator.SetBool("IsMove", false);
         Controller.Animator.SetTrigger("Attack_Swipe");
     }
@@ -28,7 +32,7 @@
         {
             return;
         }
-        
+
         ParentState.OnSubStateComplete();
     }
 }
