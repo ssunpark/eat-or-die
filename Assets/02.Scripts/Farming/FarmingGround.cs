@@ -1,10 +1,9 @@
-using System;
 using Fusion;
 using UnityEngine;
 
 public class FarmingGround : NetworkBehaviour
 {
-    [Networked]
+    [Networked, OnChangedRender(nameof(OnStateChanged))]
     public EFarmingGroundState State { get; set; }
     
     [SerializeField]
@@ -30,11 +29,24 @@ public class FarmingGround : NetworkBehaviour
 
     public override void Spawned()
     {
-        _baseGround.SetActive(State == EFarmingGroundState.None);
-        _plowedGround.SetActive(State != EFarmingGroundState.None);
+        OnStateChanged();
     }
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void OnStateChanged()
+    {
+        _baseGround.SetActive(State == EFarmingGroundState.None);
+        _plowedGround.SetActive(State == EFarmingGroundState.Plowed);
+
+        if (State == EFarmingGroundState.Watered)
+        {
+            _baseGround.SetActive(false);
+            _plowedGround.SetActive(true);
+            _plowedGroundRenderer.material = _waterMaterial;
+            _plowedSubGroundRenderer.material = _waterMaterial;
+        }
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_Plow()
     {
         if (State != EFarmingGroundState.None)
@@ -47,12 +59,9 @@ public class FarmingGround : NetworkBehaviour
         {
             State = EFarmingGroundState.Plowed;
         }
-        
-        _baseGround.SetActive(false);
-        _plowedGround.SetActive(true);
     }
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_Water()
     {
         if (State != EFarmingGroundState.Plowed)
@@ -64,9 +73,5 @@ public class FarmingGround : NetworkBehaviour
         {
             State = EFarmingGroundState.Watered;
         }
-        
-        // 머티리얼 변경
-        _plowedGroundRenderer.material = _waterMaterial;
-        _plowedSubGroundRenderer.material = _waterMaterial;
     }
 }
