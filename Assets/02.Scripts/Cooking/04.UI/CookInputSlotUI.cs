@@ -41,7 +41,7 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
     // 슬롯에 있는 아이콘과 수량 표시 갱신
     public void UpdateSlotUI()
     {
-        Item itemInSlot = CookingManager.Instance.Inventory.SlotList[SlotIndex].Item;
+        Item itemInSlot = CookingManager.Instance.IngredientInventory.SlotList[SlotIndex].Item;
         if (itemInSlot == null)
         {
             IconImage.gameObject.SetActive(false);

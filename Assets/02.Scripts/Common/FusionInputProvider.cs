@@ -62,7 +62,7 @@ public class FusionInputProvider : MonoBehaviour, INetworkRunnerCallbacks
             Vector3 spawnPos = SpawnPoint[(int)SpawnPos];
             //new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0)
             var playerObj = runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
-            runner.SetPlayerObject(player, playerObj); // ★ 반드시 필요
+            runner.SetPlayerObject(player, playerObj);
         }
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
