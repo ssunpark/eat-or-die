@@ -14,6 +14,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public EnemyContext Context { get; private set; }
 	
+	[SerializeField] private SpawnBehaviour _spawnBehaviour;
 	[SerializeField] private IdleBehaviour _idleBehaviour;
 	[SerializeField] private MoveBehaviour _moveBehaviour;
 	[SerializeField] private AttackBehaviour _attackBehaviour;
@@ -40,7 +41,15 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			Detector = this,
 		};
 		
-		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, _idleBehaviour, _moveBehaviour, _attackBehaviour);
+		AEnemyStateBehaviour[] stateList = new AEnemyStateBehaviour[]
+		{
+			_spawnBehaviour,
+			_idleBehaviour,
+			_moveBehaviour,
+			_attackBehaviour
+		};
+		
+		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, stateList);
 		
 		stateMachines.Add(_behaviourMachine);
 	}
@@ -73,11 +82,11 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		if (distance <= Context.Stat.AttackRange)
 		{
-			_behaviourMachine.TryActivateState(_attackBehaviour);
+			_behaviourMachine.TryActivateState<AttackBehaviour>();
 		}
 		else
 		{
-			_behaviourMachine.TryActivateState(_moveBehaviour);
+			_behaviourMachine.TryActivateState<MoveBehaviour>();
 		}
 	}
 }
