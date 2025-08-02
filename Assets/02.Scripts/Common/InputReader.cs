@@ -1,20 +1,14 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputReader : MonoBehaviour
+public class InputReader : BehaviourSingleton<InputReader>
 {
-    public Vector2 MoveInput { 
-        get
-        {
-            if (playerControllerInputBlocked || _externalInputBlocked)
-            {
-                return Vector2.zero;
-            }
-            return _moveInput;
-        }
-    }
-
-    private Vector2 _moveInput;
+    public Vector2 MoveInput { get; private set; }
+    public bool IsAttackDown { get; private set; }
+    public bool IsInteractDown { get; private set; }
+    public bool IsEscapeDown { get; private set; }
+    public bool IsUseItemDown { get; private set; }
+    public bool IsSprintDown { get; private set; }
     private PlayerInputActions _inputActions;
     public PlayerInputActions InputActions => _inputActions;
 
@@ -34,22 +28,53 @@ public class InputReader : MonoBehaviour
 
         _inputActions.Player.Move.performed += HandleMovePerformed;
         _inputActions.Player.Move.canceled += HandleMoveCanceled;
+        _inputActions.Player.Attack.performed += OnAttackPerformed;
+        _inputActions.Player.Interact.performed += OnInteractPerformed;
+        _inputActions.Player.UseItem.performed += OnUseItemPerformed;
+        _inputActions.Player.Sprint.performed += OnSprintPerformed;
+
     }
 
     private void HandleMovePerformed(InputAction.CallbackContext context)
     {
-        _moveInput = context.ReadValue<Vector2>();
+        MoveInput = context.ReadValue<Vector2>();
     }
 
     private void HandleMoveCanceled(InputAction.CallbackContext context)
     {
-        _moveInput = Vector2.zero;
+        MoveInput = Vector2.zero;
     }
+
+    private void OnAttackPerformed(InputAction.CallbackContext context)
+    {
+        IsAttackDown = context.action.IsPressed();
+    }
+    private void OnInteractPerformed(InputAction.CallbackContext context)
+    {
+        IsInteractDown = context.action.IsPressed();
+    }
+    private void OnEscapePerformed(InputAction.CallbackContext context)
+    {
+        IsEscapeDown = context.action.IsPressed();
+    }
+    private void OnUseItemPerformed(InputAction.CallbackContext context)
+    {
+        IsUseItemDown = context.action.IsPressed();
+    }
+    private void OnSprintPerformed(InputAction.CallbackContext context)
+    {
+        IsSprintDown = context.action.IsPressed();
+    }
+
 
     private void OnDisable()
     {
         _inputActions.Player.Move.performed -= HandleMovePerformed;
         _inputActions.Player.Move.canceled -= HandleMoveCanceled;
+        _inputActions.Player.Attack.performed -= OnAttackPerformed;
+        _inputActions.Player.Interact.performed -= OnInteractPerformed;
+        _inputActions.Player.UseItem.performed -= OnUseItemPerformed;
+
         _inputActions.Player.Disable();
     }
 

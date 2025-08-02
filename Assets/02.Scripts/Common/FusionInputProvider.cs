@@ -8,7 +8,6 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
     private InputReader _inputReader;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
 
     private Dictionary<EStatType, float> _statInputs = new();
