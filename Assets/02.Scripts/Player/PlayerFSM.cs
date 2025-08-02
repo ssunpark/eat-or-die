@@ -25,7 +25,8 @@ public class FSMStateInstances
 }
 [RequireComponent(typeof(NetworkObject))]
 [RequireComponent(typeof(NetworkCharacterController))]
-public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
+[RequireComponent(typeof(StateMachineController))]
+public class PlayerFSM : CharacterBase, IStateMachineOwner
 {
     #region Networked Properties
 
@@ -39,7 +40,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     #region FSM
 
     private StateMachine<APlayerStateBase> _playerFSM; // 메인 상태 머신
-    public StateMachine<APlayerStateBase> FSM => _playerFSM;
+    public StateMachine<APlayerStateBase> StateMachine => _playerFSM;
     public FSMStateInstances FSMStateInstances { get; private set; }
     public StateValues StateValues { get; set; } = new StateValues();
 
@@ -90,11 +91,22 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
 
     #endregion
 
+
+    public Player PlayerNetworkObject;
+    [Networked]
+    public NetworkBool CanInteract { get; set; } = false;
+    [Networked]
+    public NetworkBool CanAttack { get; set; } = true;
+    [Networked]
+    public NetworkBool CanUseItem { get; set; } = false;
+
+    Collider[] _testColliders = new Collider[8];
+    public LayerMask InteractLayerMask;
+    //public SimpleKCC simpleKCC;
+
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
     private float _checkTimer;
-    [Networked] public bool CanUseItem { get; set; }
-    [Networked] public bool CanInteract { get; set; }
 
     private GameObject _useTarget = null;
     public GameObject UseTarget => _useTarget;
@@ -346,7 +358,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
             // Berserk 상태면 Recover로 진입 시도
             if (_playerFSM.ActiveState == FSMStateInstances.Berserk)
             {
-                FSM.TryActivateState(FSMStateInstances.Recover);
+                StateMachine.TryActivateState(FSMStateInstances.Recover);
             }
         }
 

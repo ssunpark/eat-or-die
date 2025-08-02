@@ -3,7 +3,7 @@ using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
 using UnityEngine;
 public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
-    public PlayerUseItemState(PlayerController controller) : base(controller)
+    public PlayerUseItemState(PlayerFSM controller) : base(controller)
     {
         StateId = (int)EPlayerState.UseItem;
 

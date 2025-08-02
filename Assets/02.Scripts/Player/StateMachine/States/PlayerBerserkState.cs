@@ -7,7 +7,7 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
     private readonly BerserkChase _chase;
     private readonly BerserkAttack _attack;
 
-    public PlayerBerserkState(PlayerController controller) : base(controller)
+    public PlayerBerserkState(PlayerFSM controller) : base(controller)
     {
         _subFSM = new StateMachine<ABerserkSubStateBase>("BerserkFSM",
             new BerserkIdle(controller), // 초기 상태

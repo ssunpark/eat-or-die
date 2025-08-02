@@ -5,7 +5,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify, IAnim
 {
     private float _damage;
     private bool _animFinished;
-    public BerserkAttack(PlayerController controller) : base(controller) { }
+    public BerserkAttack(PlayerFSM controller) : base(controller) { }
     protected override void OnInitialize()
     {
         this.AddTransition(

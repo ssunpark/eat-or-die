@@ -3,7 +3,7 @@ public class BerserkIdle : ABerserkSubStateBase, IAnimationActionEndNotify
 {
     private bool _animFinished;
 
-    public BerserkIdle(PlayerController controller) : base(controller) { }
+    public BerserkIdle(PlayerFSM controller) : base(controller) { }
 
     protected override void OnInitialize()
     {

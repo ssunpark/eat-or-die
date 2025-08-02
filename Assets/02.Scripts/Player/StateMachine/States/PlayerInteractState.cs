@@ -2,7 +2,7 @@
 using UnityEngine; // Add Fusion FSM for PlayerStateMachine
 public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
-    public PlayerInteractState(PlayerController controller) : base(controller)
+    public PlayerInteractState(PlayerFSM controller) : base(controller)
     {
         StateId = (int)EPlayerState.Interact;
     }

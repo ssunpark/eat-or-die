@@ -5,7 +5,7 @@ public class PlayerMove:NetworkBehaviour
 {
     private NetworkCharacterController _ncc;
     private StatManager _stat;
-    private PlayerController _controller;
+    private PlayerFSM _controller;
     private ResourceManager _resource;
     private Vector3 _dir;
 
@@ -13,7 +13,7 @@ public class PlayerMove:NetworkBehaviour
     private float _sprintMultipler;
     private float _accelerationSpeed;
     private float _jumpImpulse;
-    public void Initialize(StatManager stat, NetworkCharacterController characterController, PlayerController playerController, ResourceManager resourceManager)
+    public void Initialize(StatManager stat, NetworkCharacterController characterController, PlayerFSM playerController, ResourceManager resourceManager)
     {
         _ncc = characterController;
         _stat = stat;

@@ -3,7 +3,7 @@ using Fusion;
 using Fusion.Addons.FSM;
 public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
-    public PlayerAttackState(PlayerController controller) : base(controller)
+    public PlayerAttackState(PlayerFSM controller) : base(controller)
     {
         StateId = (int)EPlayerState.Attack;
     }

@@ -3,14 +3,14 @@ using Fusion.Addons.FSM;
 using UnityEngine;
 public abstract class APlayerStateBase : State<APlayerStateBase>
 {
-    protected PlayerController _controller;
+    protected PlayerFSM _controller;
     protected StatManager _stat;
     protected ResourceManager _resource;
     protected bool _shouldAbortStateEarly = false; 
     protected NetworkInputData _input;
     private int _lastInputCacheTick = -1;
 
-    public APlayerStateBase(PlayerController controller)
+    public APlayerStateBase(PlayerFSM controller)
     {
         _controller = controller;
         _stat = controller.Stat;

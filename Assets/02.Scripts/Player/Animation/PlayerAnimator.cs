@@ -20,7 +20,7 @@ public class PlayerAnimator : NetworkBehaviour
 {
     private InputReader _inputReader;
     private Animator _anim;
-    private PlayerController _controller;
+    private PlayerFSM _controller;
     private bool _shouldFinishState;
     private float _cachedWalkSpeed;
     private float _cachedRunSpeed;
@@ -111,11 +111,11 @@ public class PlayerAnimator : NetworkBehaviour
     private void TryInitializeController()
     {
         if (_controller == null)
-            _controller = GetComponent<PlayerController>();
+            _controller = GetComponent<PlayerFSM>();
     }
     public void OnActionMoment()
     {
-        if (_controller?.FSM?.ActiveState is IAnimationActionNotify notify)
+        if (_controller?.StateMachine?.ActiveState is IAnimationActionNotify notify)
         {
             notify.OnActionMoment();
         }
@@ -125,7 +125,7 @@ public class PlayerAnimator : NetworkBehaviour
     {
         TryInitializeController();
 
-        if (_controller.FSM.ActiveState is IAnimationActionEndNotify notify)
+        if (_controller.StateMachine.ActiveState is IAnimationActionEndNotify notify)
         {
             notify.OnAnimationFinished();
         }

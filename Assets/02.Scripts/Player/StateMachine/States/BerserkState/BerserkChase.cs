@@ -5,7 +5,7 @@ public class BerserkChase : ABerserkSubStateBase
 {
     private Transform _target;
 
-    public BerserkChase(PlayerController controller) : base(controller) { }
+    public BerserkChase(PlayerFSM controller) : base(controller) { }
     protected override void OnInitialize()
     {
         this.AddTransition(

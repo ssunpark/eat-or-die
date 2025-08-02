@@ -2,7 +2,7 @@
 public class PlayerRecoverState : APlayerStateBase, IAnimationActionEndNotify
 {
 
-    public PlayerRecoverState(PlayerController controller) : base(controller)
+    public PlayerRecoverState(PlayerFSM controller) : base(controller)
     {
     }
     private bool _animationFinished;

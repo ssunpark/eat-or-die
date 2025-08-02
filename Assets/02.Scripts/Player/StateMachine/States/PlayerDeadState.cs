@@ -2,7 +2,7 @@
 using Fusion.Addons.FSM;
 public class PlayerDeadState : APlayerStateBase, IAnimationActionEndNotify
 {
-    public PlayerDeadState(PlayerController controller) : base(controller) {
+    public PlayerDeadState(PlayerFSM controller) : base(controller) {
         StateId = (int)EPlayerState.Dead;
     }
 

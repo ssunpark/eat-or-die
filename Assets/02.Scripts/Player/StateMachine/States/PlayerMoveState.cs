@@ -4,7 +4,7 @@ using Fusion;
 public class PlayerMoveState : APlayerStateBase
 {
     private float _hungerConsumptionOvertime;
-    public PlayerMoveState(PlayerController controller) : base(controller)
+    public PlayerMoveState(PlayerFSM controller) : base(controller)
     {
         StateId = (int)EPlayerState.Move;
     }

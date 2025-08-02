@@ -1,7 +1,7 @@
 ﻿using Fusion.Addons.FSM;
 public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, IAnimationActionNotify
 {
-    public PlayerCookingState(PlayerController controller) : base(controller) 
+    public PlayerCookingState(PlayerFSM controller) : base(controller) 
     {
         StateId = (int)EPlayerState.Cooking;
     }

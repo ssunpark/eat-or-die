@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerIdleState : APlayerStateBase
 {
-    public PlayerIdleState(PlayerController controller) : base(controller)
+    public PlayerIdleState(PlayerFSM controller) : base(controller)
     {
         StateId = (int)EPlayerState.Idle;
     }

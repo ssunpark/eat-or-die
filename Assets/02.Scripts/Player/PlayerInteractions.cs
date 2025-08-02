@@ -10,11 +10,11 @@ public class PlayerInteractions : MonoBehaviour
     public string TagName;
     public int HoldItemID;
     public string ItemName;
-    public PlayerController _controller; // 플레이어 컨트롤러 참조
+    public PlayerFSM _controller; // 플레이어 컨트롤러 참조
 
     private void Start()
     {
-        _controller = GetComponent<PlayerController>();
+        _controller = GetComponent<PlayerFSM>();
         InteractionLayer = LayerMask.GetMask("Interactable");
         TagName = "Untagged";
     }

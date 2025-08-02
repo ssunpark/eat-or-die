@@ -1,7 +1,7 @@
 ﻿using Fusion.Addons.FSM;
 public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
 {
-    public PlayerHitState(PlayerController controller) : base(controller)
+    public PlayerHitState(PlayerFSM controller) : base(controller)
     {
         StateId = (int)EPlayerState.Hit;
     }
@@ -10,7 +10,7 @@ public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
     {
         this.AddTransition(
             _controller.FSMStateInstances.Idle,
-            () => _animationFinished && _controller.FSM.ActiveState == _controller.FSMStateInstances.Hit
+            () => _animationFinished && _controller.StateMachine.ActiveState == _controller.FSMStateInstances.Hit
         );
     }
     protected override bool CanExitState(IState nextState)

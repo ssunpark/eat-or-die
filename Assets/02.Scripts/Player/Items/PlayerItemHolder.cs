@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerItemHolder: NetworkBehaviour
 {
     [SerializeField] private Animator _animator;
-    private PlayerController _playerController;
+    private PlayerFSM _playerController;
     public Item HeldItem { get; private set; }
     private GameObject _heldItemObject;
     public string InteractionTag;
@@ -28,7 +28,7 @@ public class PlayerItemHolder: NetworkBehaviour
         {
             _animatorOverrideMap[entry.key] = entry.controller;
         }
-        _playerController = GetComponent<PlayerController>();
+        _playerController = GetComponent<PlayerFSM>();
     }
 
     public void UseItem(GameObject target)
