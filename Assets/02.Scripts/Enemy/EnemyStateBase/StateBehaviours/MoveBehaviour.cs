@@ -38,11 +38,9 @@ public class MoveBehaviour : AEnemyStateBehaviour
     
     protected override void OnFixedUpdate()
     {
-        Machine.Context.Mover.Move();
-    }
-
-    protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
-    {
-        return Machine.StateTime > 0.2f;
+        if (!Machine.Context.Animator.IsInTransition(0))
+        {
+            Machine.Context.Mover.Move();
+        }
     }
 }

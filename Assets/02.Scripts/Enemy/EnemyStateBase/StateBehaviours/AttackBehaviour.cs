@@ -9,6 +9,7 @@ public class AttackBehaviour : AEnemyStateBehaviour
 	protected override void OnEnterState()
 	{
 		Debug.Log("Attacking...");
+		_isAttackFinished = false;
 		Machine.Context.Animator.SetTrigger(Attack);
 	}
 

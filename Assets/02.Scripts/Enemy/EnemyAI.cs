@@ -9,6 +9,8 @@ using UnityEngine.AI;
 public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IDamageable
 {
 	[SerializeField] private int _enemyId;
+
+	public int HitCountTemp = 0;
 	
 	private RangeDetector _rangeDetector;
 	
@@ -18,6 +20,10 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	[SerializeField] private IdleBehaviour _idleBehaviour;
 	[SerializeField] private MoveBehaviour _moveBehaviour;
 	[SerializeField] private AttackBehaviour _attackBehaviour;
+	[SerializeField] private HitBehaviour _hitBehaviour;
+	[SerializeField] private DieBehaviour _dieBehaviour;
+
+	private bool _hit = false;
 
 	private EnemyBehaviourMachine _behaviourMachine;
 
@@ -46,7 +52,9 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			_spawnBehaviour,
 			_idleBehaviour,
 			_moveBehaviour,
-			_attackBehaviour
+			_attackBehaviour,
+			_hitBehaviour,
+			_dieBehaviour,
 		};
 		
 		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, stateList);
@@ -56,6 +64,16 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public override void FixedUpdateNetwork()
 	{
+		if (_hit)
+		{
+			if (++HitCountTemp > 5)
+			{
+				_behaviourMachine.ForceActivateState<DieBehaviour>();
+			}
+			_behaviourMachine.ForceActivateState<HitBehaviour>();
+			_hit = false;
+		}
+		
 		if (_rangeDetector.Cast())
 		{
 			Detect();
@@ -90,5 +108,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void TakeDamage(float amount, PlayerRef attacker)
 	{
+		Debug.Log("Take damage");
+		_hit = true;
 	}
 }
