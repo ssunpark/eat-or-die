@@ -10,7 +10,7 @@ public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
     {
         this.AddTransition(
             _controller.FSMStateInstances.Idle,
-            () => _animationFinished
+            () => _animationFinished && _controller.FSM.ActiveState == _controller.FSMStateInstances.Hit
         );
     }
     protected override bool CanExitState(IState nextState)
@@ -19,11 +19,17 @@ public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
     }
     protected override void OnEnterState()
     {
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Hit);
+        _animationFinished = false;
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        _controller.PlayAnimTrigger(EAnimTrigger.Hit);
     }
 
     public void OnAnimationFinished()
     {
-        _animationFinished = true;
+        if(_controller.HasStateAuthority)
+            _animationFinished = true;
     }
 }

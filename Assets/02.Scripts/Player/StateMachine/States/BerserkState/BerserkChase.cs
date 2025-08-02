@@ -10,13 +10,14 @@ public class BerserkChase : ABerserkSubStateBase
     {
         this.AddTransition(
             Machine.GetState<BerserkAttack>(),
-            () => CanStartAttack()
+            CanStartAttack
         );
     }
 
     private bool CanStartAttack()
     {
         if (_target == null) return false;
+        if (!_controller.HasStateAuthority) return false;
 
         float distance = Vector3.Distance(_controller.transform.position, _target.position);
         if (distance > _stat.GetStat(EStatType.AttackRange)) return false;

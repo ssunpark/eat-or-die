@@ -26,7 +26,14 @@ public class PlayerAnimator : NetworkBehaviour
     private float _cachedRunSpeed;
     private StatManager _statManager;
     private bool _initialized;
+    private bool _isMoving;
 
+    [Networked, OnChangedRender(nameof(OnSpeedChanged))]
+    public float MoveSpeed { get; set; }
+    private void OnSpeedChanged()
+    {
+        SetSpeedParameter(MoveSpeed);
+    }
     private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new()
     {
         { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
@@ -46,6 +53,17 @@ public class PlayerAnimator : NetworkBehaviour
 
     #region Unity Lifecycle
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_SetMoveSpeed(float moveSpeed)
+    {
+        MoveSpeed = MoveSpeed;
+    }
+
+    public void SetIsMoving(bool isMoving)
+    {
+        _isMoving = isMoving;
+        SetSpeedParameter(_cachedWalkSpeed);
+    }
     public override void Spawned()
     {
         _anim = GetComponent<Animator>();
@@ -135,7 +153,7 @@ public class PlayerAnimator : NetworkBehaviour
             Debug.LogError($"[Animator] Trigger not found: {trigger}");
         }
     }
-
+    
 
     #endregion
 
@@ -154,6 +172,11 @@ public class PlayerAnimator : NetworkBehaviour
     public void SetSpeedParameter(float rawSpeed)
     {
         if (_anim == null) return;
+        if (_isMoving == false)
+        {
+            _targetSpeed = 0f;
+            return;
+        }
         float normalized = Mathf.InverseLerp(0f, _cachedRunSpeed, rawSpeed);
         if (rawSpeed > 0.1f && rawSpeed < _cachedRunSpeed * 0.9f)
         {

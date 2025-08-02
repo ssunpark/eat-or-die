@@ -7,28 +7,32 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAn
         StateId = (int)EPlayerState.Interact;
     }
 
-    private GameObject _target;
     private bool _animationFinished;
     protected override void OnInitialize()
     {
         this.AddTransition(
             _controller.FSMStateInstances.Idle,
-            () => _animationFinished
+            () => _animationFinished && _controller.HasStateAuthority
         );
     }
-    protected override void OnEnterState()
+
+    protected override void OnEnterStateRender()
     {
         _animationFinished = false;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Interact);
-        if (_controller.CanInteract(out GameObject target))
-        {
-            _target = target;
-        }
+        _controller.PlayAnimTrigger(EAnimTrigger.Interact);
+    }
+    protected override bool CanExitState(IState nextState)
+    {
+        return _animationFinished;
     }
 
+    protected override void OnFixedUpdate()
+    {
+    }
     void IAnimationActionNotify.OnActionMoment()
     {
-        _controller.Interact.Interact(_target);
+        if(_controller.HasInputAuthority)
+            _controller.Interact.Interact(_controller.InteractTarget);
     }
 
     void IAnimationActionEndNotify.OnAnimationFinished()

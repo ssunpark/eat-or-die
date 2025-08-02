@@ -10,9 +10,11 @@ public class PlayerRecoverState : APlayerStateBase, IAnimationActionEndNotify
     {
         this.AddTransition(
             _controller.FSMStateInstances.Idle,
-            () => _animationFinished
+            () => _animationFinished && _controller.HasStateAuthority
         );
     }
+
+
     public void OnAnimationFinished()
     {
         _animationFinished = true;
@@ -20,8 +22,13 @@ public class PlayerRecoverState : APlayerStateBase, IAnimationActionEndNotify
 
     protected override void OnEnterState()
     {
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Recover);
         _resource.RestoreHunger(_resource.MaxHunger / 20);
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        _animationFinished = false;
+        _controller.PlayAnimTrigger(EAnimTrigger.Recover);
     }
     protected override void OnExitState()
     {

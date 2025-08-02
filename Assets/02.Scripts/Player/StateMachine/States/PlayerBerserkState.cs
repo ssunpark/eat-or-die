@@ -35,7 +35,7 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
         {
             InputReader.playerControllerInputBlocked = true;
         }
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Berserk);
+        _controller.PlayAnimTrigger(EAnimTrigger.Berserk);
     }
 
     protected override void OnFixedUpdate()

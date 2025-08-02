@@ -29,8 +29,10 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
 {
     #region Networked Properties
 
-    [Networked]
+    [Networked, OnChangedRender(nameof(MoveChanged))]
     public bool MoveFlag { get; set; }
+
+    [Networked, OnChangedRender(nameof(MoveChanged))] public bool IsMoving { get; set; } = false;
 
     #endregion
 
@@ -89,7 +91,36 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
     #endregion
 
     public const float INTERACTABLE_DISTANCE = 2f;
-    public const float MAX_RAYCAST_DISTANCE = 100f; 
+    public const float MAX_RAYCAST_DISTANCE = 100f;
+    private float _checkTimer;
+    [Networked] public bool CanUseItem { get; set; }
+    [Networked] public bool CanInteract { get; set; }
+
+    private GameObject _useTarget = null;
+    public GameObject UseTarget => _useTarget;
+    private GameObject _interactTarget = null;
+    public GameObject InteractTarget => _interactTarget;
+    private void Update()
+    {
+        if (!HasInputAuthority) return;
+
+        _checkTimer += Time.deltaTime;
+        if (_checkTimer > 0.1f)
+        {
+            _checkTimer = 0f;
+            bool canUseItem = RaycastCheckForUsableItem(out _useTarget);
+            bool canInteract = RaycastCheckForInteractable(out _interactTarget);
+
+            RPC_SetFlags(canUseItem, canInteract);
+        }
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_SetFlags(bool canUseItem, bool canInteract)
+    {
+        CanUseItem = canUseItem;
+        CanInteract = canInteract;
+    }
 
     public void SetMoveFlagNetwork(bool flag)
     {
@@ -97,6 +128,11 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
             RPC_SetMoveFlag_Input(flag);
         else if (HasStateAuthority)
             RPC_SetMoveFlag_State(flag);
+    }
+
+    private void MoveChanged()
+    {
+        PlayerAnimatorController.SetIsMoving(!MoveFlag && IsMoving);
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
@@ -218,23 +254,29 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         list.Add(_playerFSM);
     }
 
+    public void PlayAnimTrigger(EAnimTrigger trigger)
+    {
+        PlayerAnimatorController.PlayTrigger(trigger);
+    }
+
     public void PlayAnimTriggerNetwork(EAnimTrigger trigger)
     {
+        // 본인 즉시 실행 (지연 없이)
+        PlayAnimTrigger(trigger);
+
+        // 모든 클라에 전파
         if (HasInputAuthority)
-            Rpc_PlayAnimTrigger_Input(trigger);
-        else if (HasStateAuthority)
-            Rpc_PlayAnimTrigger_State(trigger);
+            RPC_PlayTrigger(trigger);
     }
+
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    public void Rpc_PlayAnimTrigger_Input(EAnimTrigger trigger)
+    private void RPC_PlayTrigger(EAnimTrigger trigger)
     {
-        PlayerAnimatorController.PlayTrigger(trigger);
+        if (HasInputAuthority) return; // 이미 실행했음
+        PlayAnimTrigger(trigger);
     }
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void Rpc_PlayAnimTrigger_State(EAnimTrigger trigger)
-    {
-        PlayerAnimatorController.PlayTrigger(trigger);
-    }
+
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
     public void RPC_DealDamage(NetworkObject target, float amount)
     {
@@ -283,6 +325,11 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
 
     private void EvaluateCurrentHunger(float current, float max)
     {
+        if(current/max > 0.2)
+        {
+            _prevHunger = current;
+            return;
+        }
         if (current <= 0)
         {
             RequestState(FSMStateInstances.Dead);
@@ -316,7 +363,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         _stateRequestQueue.ForceOverride(nextState);
     }
 
-    public bool CanUseHeldItem(out GameObject target)
+    public bool RaycastCheckForUsableItem(out GameObject target)
     {
         target = null;
         if (ItemHolder.HeldItem == null)
@@ -351,9 +398,10 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         }
 
         target = hitObject;
+        Debug.Log($"[PlayerController] CanUseHeldItem 성공: {hitObject.name}, 거리: {dist}");
         return true;
     }
-    public bool CanInteract(out GameObject target)
+    public bool RaycastCheckForInteractable(out GameObject target)
     {
         target = null;
 
@@ -365,13 +413,11 @@ public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
         float dist = Vector3.Distance(transform.position, hitObject.transform.position);
         if (dist > INTERACTABLE_DISTANCE)
         {
-            Debug.Log($"[PlayerController] 거리 초과: {dist} > {INTERACTABLE_DISTANCE}");
             return false;
         }
 
         target = hitObject;
         return true;
     }
-
 
 }

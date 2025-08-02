@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayerMove:NetworkBehaviour
 {
-    private NetworkCharacterController _characterController;
+    private NetworkCharacterController _ncc;
     private StatManager _stat;
     private PlayerController _controller;
     private ResourceManager _resource;
@@ -15,7 +15,7 @@ public class PlayerMove:NetworkBehaviour
     private float _jumpImpulse;
     public void Initialize(StatManager stat, NetworkCharacterController characterController, PlayerController playerController, ResourceManager resourceManager)
     {
-        _characterController = characterController;
+        _ncc = characterController;
         _stat = stat;
         _controller = playerController;
         _resource = resourceManager;
@@ -39,9 +39,9 @@ public class PlayerMove:NetworkBehaviour
         _jumpImpulse = _stat.GetStat(EStatType.JumpPower);
         _accelerationSpeed = _stat.GetStat(EStatType.Acceleration);
 
-        _characterController.maxSpeed = _moveSpeed;
-        _characterController.jumpImpulse = _jumpImpulse;
-        _characterController.acceleration = _accelerationSpeed;
+        _ncc.maxSpeed = _moveSpeed;
+        _ncc.jumpImpulse = _jumpImpulse;
+        _ncc.acceleration = _accelerationSpeed;
     }
     public override void FixedUpdateNetwork()
     {
@@ -49,8 +49,15 @@ public class PlayerMove:NetworkBehaviour
         {
             return;
         }
+        if (_controller.IsMoving)
+        {
 
-        _characterController.Move(_dir);
+            _ncc.Move(_dir);
+        }
+        else
+        {
+            _ncc.Move(Vector3.zero);
+        }
         if (GetInput(out NetworkInputData inputData))
         {
             HandleJump(inputData);
@@ -60,27 +67,33 @@ public class PlayerMove:NetworkBehaviour
     public void Move(Vector3 dir, bool isRunning)
     {
         _dir = dir;
-
+        if (_dir == Vector3.zero)
+        {
+            _ncc.maxSpeed = 0f;
+            return;
+        }
         float sprintMultiplier = isRunning
             ? _sprintMultipler
             : 1f;
         float moveSpeed = _moveSpeed * sprintMultiplier;
 
-        if (_characterController.maxSpeed != moveSpeed)
+        
+
+        if (_ncc.maxSpeed != moveSpeed)
         {
-            _characterController.maxSpeed = moveSpeed;
+            _ncc.maxSpeed = moveSpeed;
         }
     }
 
     private void HandleJump(NetworkInputData inputData)
     {
-        if (inputData.isJumping && IsGrounded)
+        if (inputData.buttons.IsSet(EButtons.Jump) && IsGrounded)
         {
-            _characterController.Jump();
-            _controller.PlayAnimTriggerNetwork(EAnimTrigger.Jump);
+            _ncc.Jump();
+            _controller.PlayAnimTrigger(EAnimTrigger.Jump);
         }
     }
 
-    public bool IsGrounded => _characterController.Grounded;
+    public bool IsGrounded => _ncc.Grounded;
 
 }

@@ -9,33 +9,32 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAni
 
     }
     private bool _animationFinished;
-    private GameObject _target;
     protected override void OnInitialize()
     {
         this.AddTransition(
             _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
+            () => _animationFinished);
     }
-    protected override void OnEnterState()
+    protected override void OnEnterStateRender()
     {
         _animationFinished = false;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.UseItem);
+        _controller.PlayAnimTrigger(EAnimTrigger.UseItem);
     }
 
+    protected override bool CanExitState(IState nextState)
+    {
+        return _animationFinished;
+    }
 
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_controller.CanUseHeldItem(out GameObject target))
-        {
-            _target = target;
-
-            _controller.ItemHolder.UseItem(_target);
-        }
+        if (_controller.HasInputAuthority)
+            _controller.ItemHolder.UseItem(_controller.UseTarget);
     }
 
     void IAnimationActionEndNotify.OnAnimationFinished()
     {
+        Debug.Log("PlayerUseItemState: Animation finished");
         _animationFinished = true;
     }
 }

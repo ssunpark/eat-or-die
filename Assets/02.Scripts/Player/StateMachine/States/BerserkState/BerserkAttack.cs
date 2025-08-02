@@ -10,7 +10,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify, IAnim
     {
         this.AddTransition(
             Machine.GetState<BerserkChase>(),
-            () => _animFinished
+            () => _animFinished && _controller.HasStateAuthority
         );
     }
     protected override void OnEnterState()
@@ -19,7 +19,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify, IAnim
         _damage = (_stat.GetStat(EStatType.MeleeDamage) + _stat.GetStat(EStatType.MagicDamage)) * _stat.GetStat(EStatType.TotalDamage);
 
         _controller.LastAttackTime = Machine.Runner.LocalRenderTime;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Attack);
+        _controller.PlayAnimTrigger(EAnimTrigger.Attack);
     }
 
     public void OnActionMoment()

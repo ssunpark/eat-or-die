@@ -37,22 +37,29 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     }
 
 
+    private NetworkButtons _prevButtons;
+
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         if (_inputReader == null) return;
 
         var move = _inputReader.MoveInput;
+        var currentButtons = new NetworkButtons();
+        currentButtons.Set(EButtons.Attack, _inputReader.InputActions.Player.Attack.IsPressed());
+        currentButtons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
+        currentButtons.Set(EButtons.Jump, _inputReader.InputActions.Player.Jump.IsPressed());
+        currentButtons.Set(EButtons.Interact, _inputReader.InputActions.Player.Interact.IsPressed());
+        currentButtons.Set(EButtons.UseItem, _inputReader.InputActions.Player.UseItem.IsPressed());
+
         var data = new NetworkInputData
         {
             direction = new Vector3(move.x, 0, move.y),
+            buttons = currentButtons,
+            previousButtons = _prevButtons,
         };
 
-        data.buttons.Set(EButtons.Attack, _inputReader.InputActions.Player.Attack.IsPressed());
-        data.buttons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
-        data.buttons.Set(EButtons.Jump, _inputReader.InputActions.Player.Jump.IsPressed());
-        data.buttons.Set(EButtons.Interact, _inputReader.InputActions.Player.Interact.IsPressed());
-        data.buttons.Set(EButtons.UseItem, _inputReader.InputActions.Player.UseItem.IsPressed());
         input.Set(data);
+        _prevButtons = currentButtons;
     }
 
     public void SpawnPlayer(NetworkRunner runner, PlayerRef player)

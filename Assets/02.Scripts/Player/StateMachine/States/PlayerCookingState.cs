@@ -10,13 +10,20 @@ public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, I
     {
         this.AddTransition(
             _controller.FSMStateInstances.Idle,
-            () => _animationFinished
+            () => _animationFinished && _controller.HasStateAuthority
         );
     }
     protected override void OnEnterState()
     {
         _animationFinished = false;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Cook);
+    }
+    protected override void OnEnterStateRender()
+    {
+        _controller.PlayAnimTrigger(EAnimTrigger.Cook);
+    }
+    protected override bool CanExitState(IState nextState)
+    {
+        return _animationFinished;
     }
 
     void IAnimationActionNotify.OnActionMoment()

@@ -10,26 +10,53 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify, IAnim
     private float _damage;
     private bool _animationFinished;
     bool hasFinishedAnimation => _animationFinished;
-    bool hasMoveInput => _controller.GetInput(out NetworkInputData input) && input.direction.sqrMagnitude > 0.01f;
     protected override void OnInitialize()
     {
         this.AddTransition(
-            _controller.FSMStateInstances.Move,
-            () => hasFinishedAnimation && hasMoveInput
-        );
+            _controller.FSMStateInstances.Move,CanExitToMoveState);
 
         this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => hasFinishedAnimation && !hasMoveInput
-        );
+            _controller.FSMStateInstances.Idle, CanExitToIdleState);
     }
 
+    protected bool CanExitToMoveState()
+    {
+        if (!_controller.HasStateAuthority) return false;
+        if (!hasFinishedAnimation) return false;
+        if (!TryCacheInput()) return false;
+
+        return _input.direction.sqrMagnitude > 0.01f;
+    }
+
+    protected bool CanExitToIdleState()
+    {
+        if (!_controller.HasStateAuthority) return false;
+        if (!hasFinishedAnimation) return false;
+        if (!TryCacheInput()) return false;
+        return _input.direction.sqrMagnitude <= 0.01f;
+    }
+    protected override bool CanExitState(IState nextState)
+    {
+        return _animationFinished;
+    }
     protected override void OnEnterState()
     {
         _animationFinished = false;
         _damage = (_stat.GetStat(EStatType.MeleeDamage) + _stat.GetStat(EStatType.MagicDamage)) * _stat.GetStat(EStatType.TotalDamage);
         _controller.LastAttackTime = Machine.Runner.LocalRenderTime;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Attack);
+        
+
+        _controller.SetMoveFlagNetwork(true);
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        _controller.PlayAnimTrigger(EAnimTrigger.Attack);
+    }
+
+    protected override void OnExitState()
+    {
+        _controller.SetMoveFlagNetwork(false);
     }
 
 

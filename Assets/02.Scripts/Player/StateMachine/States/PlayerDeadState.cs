@@ -13,10 +13,9 @@ public class PlayerDeadState : APlayerStateBase, IAnimationActionEndNotify
         if(_controller.Object.HasInputAuthority)
         {
             InputReader.playerControllerInputBlocked = true;
-
         }
 
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Die);
+        _controller.PlayAnimTrigger(EAnimTrigger.Die);
         _controller.SetMoveFlagNetwork(true);
     }
     protected override bool CanExitState(IState nextState)
