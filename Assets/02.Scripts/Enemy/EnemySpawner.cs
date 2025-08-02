@@ -13,7 +13,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (Room.Instance == null || !Room.Instance.Runner.IsServer) return;
         
-        if (_spawnTimer >= SpawnDuration && n < 2)
+        if (_spawnTimer >= SpawnDuration && n < 1)
         {
             SpawnEnemy();
             _spawnTimer = 0f;
@@ -24,6 +24,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        Room.Instance.Runner.Spawn(_enemyPrefab, gameObject.transform.position, Quaternion.identity);
+        Room.Instance.Runner.Spawn(_enemyPrefab, gameObject.transform.position, Quaternion.identity, Room.Instance.Runner.LocalPlayer);
     }
 }
