@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -11,16 +12,19 @@ public class CookingManager : NetworkBehaviour
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
     
     public Inventory FoodInventory = new Inventory(1);
-    public Action OnCookOutputUpdated;
+    public event Action OnCookOutputUpdated;
     
     private Inventory _inputIngredientInventory;
+    
+    // Networked 변수는 이름에 추가했으면 좋겠다
     [Networked] private PlayerRef _currentRequester { get; set; }
-    [Networked] private float _t { get; set; }
-    [Networked] private bool _isCooking { get; set; }
+    [Networked] private NetworkBool _isCooking { get; set; }
     private float _cookTime = 4f;
-
-    private int _id1;
-    private int _id2;
+    
+    private float _t;
+    public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
+    
+    private bool _amICooking;
     private void Awake()
     {
         if (Instance == null)
@@ -32,10 +36,8 @@ public class CookingManager : NetworkBehaviour
             Destroy(gameObject);
         }
     }
-    
     public void OnClickMouseLeft(int slotIndex)
     {
-
         if (HandEntity.Instance.IsHandEmpty)
         {
             var itemInSlot = IngredientInventory.PopItemInSlot(slotIndex);
@@ -92,11 +94,10 @@ public class CookingManager : NetworkBehaviour
             Debug.Log("요리가 진행 중이 아닙니다.");
             return;
         }
-        _isCooking = false;
         
-        // InputReader.playerControllerInputBlocked = false;
+        RPC_IsCookingCheck();
         
-        if (_t>=_cookTime)
+        if (_t >= _cookTime)
         {
             ProcessCookingResult();
         }
@@ -104,16 +105,35 @@ public class CookingManager : NetworkBehaviour
         {
             ReturnRecipesToInventory();
         }
+        
+        _t = 0; // _t 초기화
+        _amICooking = false;
     }
     
+    // RPC가 _isCooking을 false로 만들어주는데 1프레임정도의 딜레이가 생겨서 1프레임도안 TryCook이 2번실행
     public int TryCook()
     {
+        // if (IngredientInventory.SlotList[0].IsEmpty || IngredientInventory.SlotList[1].IsEmpty)
+        // {
+        //     Debug.LogWarning("[TryCook] 재료 슬롯이 비어 있습니다.");
+        //     return -1;
+        // }
+        //
+        // if (IngredientInventory.SlotList[0].Item == null || IngredientInventory.SlotList[1].Item == null)
+        // {
+        //     Debug.LogError("[TryCook] 슬롯 아이템이 null입니다.");
+        //     return -1;
+        // }
         
+        int id1 = IngredientInventory.SlotList[0].Item.ID;
+        int id2 = IngredientInventory.SlotList[1].Item.ID;
+        
+       
         // 이 로직을 RecipeManager로 빼서 거기서 레시피 습득 여부까지 판단하도록
         foreach (var recipe in RecipeManager.Instance.RecipeList)
         {
-            if ((recipe.Ingredient1ID == _id1 && recipe.Ingredient2ID == _id2) ||
-                (recipe.Ingredient1ID == _id2 && recipe.Ingredient2ID == _id1))
+            if ((recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
+                (recipe.Ingredient1ID == id2 && recipe.Ingredient2ID == id1))
             {
                 return recipe.ResultID;
             }
@@ -124,8 +144,11 @@ public class CookingManager : NetworkBehaviour
     public void ProcessCookingResult()
     {
         int resultItemId = TryCook();
-    
-        // ConsumeInputIngredients();
+        // if (resultItemId == -1)
+        // {
+        //     return;
+        // }
+        ConsumeInputIngredients();
         GiveItemToInventory(resultItemId);
         ReturnRecipesToInventory();
         OnCookOutputUpdated?.Invoke();
@@ -155,27 +178,10 @@ public class CookingManager : NetworkBehaviour
     
     private void GiveItemToInventory(int itemId)
     {
-        // var resultItem = ItemManager.Instance.GetItem(itemId);
-        // if (resultItem == null)
-        // {
-        //     Debug.LogError($"[CookingPanelManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
-        //     return;
-        // }
-        //
-        // InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1)); // 나중에 한번에 여러개 만드는거 생기면 1을 바꾸시면 됩니다
-        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         var resultItem = ItemManager.Instance.GetItem(itemId);
         if (resultItem == null)
         {
             Debug.Log($"[CookingManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
-            return;
-        }
-        Debug.Log($"{_currentRequester}!~!!!!!!@@!@!@!!!!!!!!!!!!!!!!!!!!");
-        // 요청자 객체 찾기
-        NetworkObject playerObj = Runner.GetPlayerObject(_currentRequester);
-        if (playerObj == null)
-        {
-            Debug.Log($"[CookingManager] 요청자 PlayerRef에 대한 NetworkObject를 찾을 수 없습니다: {_currentRequester}");
             return;
         }
 
@@ -189,48 +195,44 @@ public class CookingManager : NetworkBehaviour
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
     
-    public override void FixedUpdateNetwork()
+    private void Update()
     {
-        if (!_isCooking) return;
-        _t += Runner.DeltaTime;
-        if (_t >= _cookTime)
+        // 네트워크 연결 이후 작동하게 하기 위함
+        if(!IsSpawned) return;
+        
+        if (_isCooking && _currentRequester == Runner.LocalPlayer && !_amICooking)
         {
-            // 플레이어 연결 미완료여서 임시로 플레이어와 상호작용없이 요리 완료
-            OnCookingCompleted();
-            //Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
+            _t += Time.deltaTime;
+            
+            if (_t >= _cookTime)
+            {
+                _amICooking = true;
+                OnCookingCompleted();
+            }
         }
     }
-    
+    // 요리 진행 _isCooking만 트루로 바꾸고 나머지는 로컬에서 진행
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_StartCook(int ingredient1Id, int ingredient2Id, RpcInfo info = default)
+    public void RPC_RequestStartCook(PlayerRef player)
     {
-        Debug.Log(">>> 요리 요청 도착");
-        _id1 = ingredient1Id;
-        _id2 = ingredient2Id;
-
         if (_isCooking)
         {
-            Debug.Log("요리가 이미 진행 중입니다.");
+            Debug.Log("[CookingManager] 서버에서 이미 요리 중입니다.");
             return;
         }
-
-        if (ingredient1Id == -1 || ingredient2Id == -1)
-        {
-            Debug.Log("빈 슬롯이 있어 요리를 시작할 수 없습니다.");
-            return;
-        }
-
-        _isCooking = true;
-        _t = 0f;
-        _currentRequester = info.Source;
         
+        //상태들만 바꿈
+        _isCooking = true;
+        _currentRequester = player;
     }
-
+    
+    // 패널에서 이 코드 실행
     public void TryStartCookRPC()
     {
         if (_isCooking)
         {
             Debug.Log("[CookingManager] 이미 요리 중입니다.");
+            // ReturnRecipesToInventory(); // 만약 이미 요리 중일때 인벤토리로 보내고 싶은 경우.
             return;
         }
 
@@ -240,19 +242,12 @@ public class CookingManager : NetworkBehaviour
             return;
         }
 
-        // 두 슬롯에서 재료 ID 추출
-        int id1 = IngredientInventory.SlotList[0].Item.ID;
-        int id2 = IngredientInventory.SlotList[1].Item.ID;
-
-        // 둘 중 하나라도 잘못된 아이디면 중단
-        if (id1 == -1 || id2 == -1)
-        {
-            Debug.Log("[CookingManager] 유효하지 않은 재료가 있습니다.");
-            return;
-        }
-
-        // RPC 호출 (서버에게 요리 시작 요청)
-        RPC_StartCook(id1, id2);
+        RPC_RequestStartCook(Runner.LocalPlayer); // 서버에게 요리 시작 요청
     }
 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_IsCookingCheck()
+    {
+        _isCooking = false;
+    }
 }
