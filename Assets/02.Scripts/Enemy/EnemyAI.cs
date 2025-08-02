@@ -6,7 +6,7 @@ using RaycastPro.Detectors;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
-public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector
+public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IDamageable
 {
 	[SerializeField] private int _enemyId;
 	
@@ -81,15 +81,14 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context.Target = _rangeDetector.NearestMember.gameObject;
 		
 		float distance = Vector3.Distance(transform.position, Context.Target.transform.position);
-		float angle = Vector3.Angle(transform.forward, Context.Target.transform.position - transform.position);
 		
-		if (distance <= Context.Stat.AttackRange && angle <= Context.Stat.AttackAngle)
-		{
-			_behaviourMachine.TryActivateState<AttackBehaviour>();
-		}
-		else
+		if (distance <= _rangeDetector.Radius)
 		{
 			_behaviourMachine.TryActivateState<MoveBehaviour>();
 		}
+	}
+
+	public void TakeDamage(float amount, PlayerRef attacker)
+	{
 	}
 }

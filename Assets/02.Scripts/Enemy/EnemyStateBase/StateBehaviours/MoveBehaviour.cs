@@ -28,16 +28,21 @@ public class MoveBehaviour : AEnemyStateBehaviour
 
     protected override void OnEnterState()
     {
+        Debug.Log("Moving...");
         _moveStateMachine.TryActivateState(_traceState);
     }
 
     protected override void OnEnterStateRender()
     {
-        Debug.Log("Moving...");
     }
     
     protected override void OnFixedUpdate()
     {
         Machine.Context.Mover.Move();
+    }
+
+    protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
+    {
+        return Machine.StateTime > 0.2f;
     }
 }

@@ -19,11 +19,6 @@ public class SpawnBehaviour : AEnemyStateBehaviour
 
     protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
     {
-        return _isSpawned;
-    }
-
-    protected override void OnExitState()
-    {
-        // Machine.Context.Animator.SetBool(Spawn, false);
+        return _isSpawned && nextStateBehaviour is IdleBehaviour;
     }
 }

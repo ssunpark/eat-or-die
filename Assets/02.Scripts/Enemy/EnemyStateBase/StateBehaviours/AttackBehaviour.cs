@@ -8,6 +8,7 @@ public class AttackBehaviour : AEnemyStateBehaviour
 	
 	protected override void OnEnterState()
 	{
+		Debug.Log("Attacking...");
 		Machine.Context.Animator.SetTrigger(Attack);
 	}
 
@@ -35,6 +36,5 @@ public class AttackBehaviour : AEnemyStateBehaviour
 
 	protected override void OnEnterStateRender()
 	{
-		Debug.Log("Attacking...");
 	}	
 }
