@@ -15,7 +15,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	private RangeDetector _rangeDetector;
 	
 	public EnemyContext Context { get; private set; }
-	
+
 	[SerializeField] private SpawnBehaviour _spawnBehaviour;
 	[SerializeField] private IdleBehaviour _idleBehaviour;
 	[SerializeField] private MoveBehaviour _moveBehaviour;
@@ -40,7 +40,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context = new EnemyContext()
 		{
 			Target = null,
-			Stat = new EnemyStat(),
+			Stat = GetComponent<EnemyStat>(),
 			Animator = GetComponent<Animator>(),
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
@@ -64,11 +64,15 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public override void FixedUpdateNetwork()
 	{
+		if (_behaviourMachine.ActiveState is DieBehaviour) return;
+		
 		if (_hit)
 		{
-			if (++HitCountTemp > 5)
+			HitCountTemp++;
+			if (HitCountTemp >= 3)
 			{
 				_behaviourMachine.ForceActivateState<DieBehaviour>();
+				return;
 			}
 			_behaviourMachine.ForceActivateState<HitBehaviour>();
 			_hit = false;

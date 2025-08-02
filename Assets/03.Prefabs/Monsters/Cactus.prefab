@@ -963,6 +963,7 @@ GameObject:
   - component: {fileID: 8268060531918275018}
   - component: {fileID: 2620569330388523952}
   - component: {fileID: 1154503123738464474}
+  - component: {fileID: 8937630392768497584}
   - component: {fileID: -7930600149514953330}
   - component: {fileID: 5293771665702562805}
   - component: {fileID: 5419383378729353496}
@@ -1048,6 +1049,21 @@ MonoBehaviour:
   - {fileID: 5912144478236344558}
   - {fileID: 5548221505200336598}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &8937630392768497584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8788173875354196848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f111b2a6fa84496189fea0de76c9e2a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackRange: 5
+  MoveSpeed: 3
+  AttackAngle: 3.5
 --- !u!114 &-7930600149514953330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1074,6 +1090,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyId: 0
+  HitCountTemp: 0
   _spawnBehaviour: {fileID: 5266104994893125905}
   _idleBehaviour: {fileID: 8098781592835120505}
   _moveBehaviour: {fileID: 6476991057249426944}
@@ -1169,7 +1186,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.8
-  m_Speed: 3.5
+  m_Speed: 10
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 60
