@@ -1,47 +1,94 @@
-﻿using UnityEngine;
+﻿using Fusion;
 using Fusion.Addons.FSM;
+using Fusion.Addons.SimpleKCC;
+using UnityEngine;
 public class PlayerMoveState : APlayerStateBase
 {
-    private float _moveHungerTimer;
-    private float _moveStatietyInterval;
-    public PlayerMoveState(PlayerController controller) : base(controller)
+    private float _hungerConsumptionOvertime; 
+    private float _moveSpeed;
+    private float _sprintMultipler;
+    public PlayerMoveState(PlayerFSM fsm) : base(fsm)
     {
-        StateId = (int)EPlayerState.Move;
+        AnimState = "Move";
     }
+
+
     protected override void OnEnterState()
     {
-        _moveHungerTimer = _controller.StateValues.MoveHungerTimer;
-        _moveStatietyInterval = _controller.StateValues.MoveHungerInterval;
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
+
+        if(_stat == null || _resource == null)
+        {
+            Debug.LogError("PlayerMoveState: Stat or Resource is null. Cannot enter state.");
+            return;
+        }
+        _hungerConsumptionOvertime = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.HungerConsumptionOverTime);
+        _moveSpeed = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.MoveSpeed);
+        _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
+        _fsm.CanInteract = true;
+        _fsm.CanUseItem = true;
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()
     {
-        if (!_controller.GetInput(out NetworkInputData inputData))
+        float multiplier = _fsm.CurrentInput.buttons.IsSet(EButtons.Run) ? _sprintMultipler : 1f;
+
+        var moveInput = _fsm.CurrentInput.direction;
+
+        if (moveInput.sqrMagnitude < 0.01f)
         {
-            Machine.ForceActivateState((int)EPlayerState.Idle);
+            Machine.ForceActivateState<PlayerIdleState>();
+            KCC.Move(Vector3.zero);
             return;
         }
 
-        Vector3 dir = inputData.direction;
+        Vector2 normalized = moveInput.normalized;
+        Vector3 movementDirection = new Vector3(normalized.x, 0, normalized.y);
 
-        _controller.Movement?.Move(dir, inputData.isRunning);
-
-        _moveHungerTimer += Machine.Runner.DeltaTime;
-        if (_moveHungerTimer >= _controller.StateValues.MoveHungerInterval)
+        if (movementDirection.sqrMagnitude > 0.001f)
         {
-            _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
-            _moveHungerTimer = 0f;
+            KCC.SetLookRotation(Quaternion.LookRotation(movementDirection));
         }
-        if (PlayerFSMTransitionEvaluator.Evaluate(_controller, inputData, Machine.Runner, out var next))
+
+        KCC.Move(movementDirection * _moveSpeed * multiplier, 0);
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
         {
-            Machine.ForceActivateState(next);
+            Machine.ForceActivateState<PlayerAttackState>();
             return;
         }
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Interact))
+        {
+            if (IsInteractTargetExists())
+            {
+                Machine.ForceActivateState<PlayerInteractState>();
+                return;
+            }
+        }
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.UseItem))
+        {
+            if (IsUseItemTargetExists())
+            {
+                Machine.ForceActivateState<PlayerUseItemState>();
+                return;
+            }
+        }
+        _resource.ConsumeHunger(_hungerConsumptionOvertime * Machine.Runner.DeltaTime);
+
     }
 
     protected override void OnExitState()
     {
-        _controller.StateValues.MoveHungerTimer = _moveHungerTimer;
-        _controller.Movement.Move(Vector3.zero, false);
     }
 }

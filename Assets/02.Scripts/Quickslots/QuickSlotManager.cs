@@ -37,20 +37,9 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	public void SendItemToPlayer()
 	{
 		Item item = GetItemInSlot(_selectedSlotIndex);
-		AItemInfo itemInfo = item?.ItemInfo;
-        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(itemInfo);
-  //      if (item == null)
-		//{
-		//	Debug.Log("Selected slot is empty.");
-            
-  //          //Room.Instance.LocalPlayer.UnequipItem();
-  //      }
-		//else
-		//{
-		//	Debug.Log("Sending item to player: " + item.ID);
-		//	Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(item.ID);
-  //          // Room.Instance.LocalPlayer.EquipItem(item);
-  //      }
+
+        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(item);
+		
 	}
 
 	private void HandSwap()

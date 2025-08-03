@@ -7,14 +7,16 @@ public class PlayerBerserkState : APlayerStateBase
     private readonly BerserkChase _chase;
     private readonly BerserkAttack _attack;
 
-    public PlayerBerserkState(PlayerController controller) : base(controller)
+    public PlayerBerserkState(PlayerFSM controller) : base(controller)
     {
-        _subFSM = new StateMachine<ABerserkSubStateBase>("BerserkFSM",
+        _subFSM = new StateMachine<ABerserkSubStateBase>("Berserk FSM",
+            new BerserkIdle(controller), // 초기 상태
             new BerserkChase(controller),
             new BerserkAttack(controller)
         );
         _subFSM.SetDefaultState(0);
-        StateId = (int)EPlayerState.Berserk;
+        AnimState = "Berserk";
+
     }
     protected override void CollectChildStateMachines(List<IStateMachine> list)
     {
@@ -22,23 +24,43 @@ public class PlayerBerserkState : APlayerStateBase
     }
     protected override void OnEnterState()
     {
-        _controller.Movement.Move(Vector3.zero, false); // 이동 멈춤
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
+
+        if (_stat == null || _resource == null)
+        {
+            Debug.LogError("PlayerBerserkState: Stat or Resource is null. Cannot enter state.");
+            return;
+        }
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        KCC.Move(Vector3.zero); // 이동 멈춤
 
         _subFSM.Reset(); // 내부 상태머신 초기화
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.RPC_SetMoveFlag(true);
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Berserk);
-        }
+
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()
     {
+
         _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 5);
     }
 
-    protected override void OnExitState()
-    {
-    }
+    
 
+    public void OnAnimationFinished()
+    {
+        if (_subFSM.ActiveState is IAnimationActionEndNotify notify)
+        {
+            Debug.Log("Berserk State: OnAnimationFinished Called");
+            notify.OnAnimationFinished();
+        }
+    }
 }

@@ -1,38 +1,35 @@
-﻿using UnityEngine;
-using Fusion; // Add Fusion for NetworkInputData
+﻿using Fusion; // Add Fusion for NetworkInputData
 using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
-public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
+using UnityEngine;
+public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
 {
-    public PlayerUseItemState(PlayerController controller) : base(controller)
+    public PlayerUseItemState(PlayerFSM controller) : base(controller)
     {
-        StateId = (int)EPlayerState.UseItem;
-
+        AnimState = "UseItem";
     }
-    protected override void OnEnterState()
+    protected override void OnEnterStateRender()
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.UseItem);
-            _controller.RPC_SetMoveFlag(true);
-        }
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
-    protected override void OnExitState()
-    {
-        if (_controller.Object.HasInputAuthority)
-            _controller.RPC_SetMoveFlag(false);
-    }
 
     void IAnimationActionNotify.OnActionMoment()
     {
-        Debug.Log("PlayerUseItemState.OnActiodwnMoment");
-        _controller.Interact.UseOrInteract(
-                    usable: _controller.StateValues.Usable
-                );
+        if (_fsm.HasInputAuthority)
+        {
+            Debug.Log("PlayerUseItemState: Using item at action moment.");
+            _fsm.ItemHolder.UseItem(_fsm.ItemUseTarget.gameObject);
+        }
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
+    protected override void OnFixedUpdate()
     {
-        Machine.ForceActivateState(_controller.FSMStateInstances.Idle);
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            Machine.ForceActivateState<PlayerIdleState>();
+        }
     }
 }
