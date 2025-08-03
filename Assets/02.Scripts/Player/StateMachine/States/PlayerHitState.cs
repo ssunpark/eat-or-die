@@ -1,29 +1,55 @@
 ﻿using Fusion.Addons.FSM;
-public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
+using Fusion.Addons.SimpleKCC;
+using UnityEngine;
+public class PlayerHitState : APlayerStateBase
 {
-    public PlayerHitState(PlayerController controller) : base(controller)
+    public PlayerHitState(PlayerFSM controller) : base(controller)
     {
-        StateId = (int)EPlayerState.Hit;
+        AnimState = "Hit";
+        delayTime = 0.33333f;
     }
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
-    }
-    protected override bool CanExitState(IState nextState)
-    {
-        return _animationFinished;
-    }
+    public float delayTime;
     protected override void OnEnterState()
     {
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Hit);
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
+
+        if (_stat == null || _resource == null)
+        {
+            Debug.LogError("PlayerHitState: Stat or Resource is null. Cannot enter state.");
+            return;
+        }
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
     }
 
-    public void OnAnimationFinished()
+    protected override void OnEnterStateRender()
     {
-        _animationFinished = true;
+        if (!_fsm.HasStateAuthority)
+        {
+            //_fsm.PlayerNetworkObject.damageFX.PlayFX();
+        }
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+    }
+
+    protected override void OnFixedUpdate()
+    {
+
+        if (Machine.StateTime >= delayTime)
+        {
+            if(_resource.GetHungerPercent() <= 0.1f)
+            {
+                Machine.ForceActivateState<PlayerBerserkState>();
+                return;
+            }
+            Machine.ForceActivateState<PlayerIdleState>();
+            return;
+        }
     }
 }

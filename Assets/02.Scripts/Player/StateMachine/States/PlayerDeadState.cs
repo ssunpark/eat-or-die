@@ -1,33 +1,47 @@
 ﻿using UnityEngine;
-using Fusion.Addons.FSM;
-public class PlayerDeadState : APlayerStateBase, IAnimationActionEndNotify
+public class PlayerDeadState : APlayerStateBase
 {
-    public PlayerDeadState(PlayerController controller) : base(controller) {
-        StateId = (int)EPlayerState.Dead;
+    public PlayerDeadState(PlayerFSM fsm) : base(fsm) {
     }
 
+    private Renderer[] _rendererObjects;
     protected override void OnEnterState()
     {
-        _controller.Movement.Move(Vector3.zero, false);
-
-        if(_controller.Object.HasInputAuthority)
-        {
-            InputReader.playerControllerInputBlocked = true;
-
-        }
-
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Die);
-        _controller.SetMoveFlagNetwork(true);
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        
     }
-    protected override bool CanExitState(IState nextState)
+
+    protected override void OnEnterStateRender()
     {
-        return false;
+        _rendererObjects = _fsm.GetComponentsInChildren<Renderer>(true);
+        if (_fsm.HasInputAuthority)
+        {
+            DropAllItems();
+        }
+        foreach (var renderer in _rendererObjects)
+            renderer.gameObject.SetActive(false);
     }
 
+    protected override void OnExitStateRender()
+    {
+        foreach (var renderer in _rendererObjects)
+            renderer.gameObject.SetActive(true);
+    }
+
+    protected override void OnFixedUpdate()
+    {
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
+        {
+            return;
+        }
+    }
 
 
     private void DropAllItems()
     {
+        Debug.LogWarning("PlayerDeadState: Dropping all items. This feature is not fully implemented yet.");
         // 아직 테스트 안함 -> 주석처리
         //if (InventoryManager.Instance != null)
         //{
@@ -60,11 +74,4 @@ public class PlayerDeadState : APlayerStateBase, IAnimationActionEndNotify
         //}
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
-    {
-        //SpectatorManager.Instance?.StartSpectate();
-
-        DropAllItems();
-        // SpawnCorpse();
-    }
 }

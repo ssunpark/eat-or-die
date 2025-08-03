@@ -20,13 +20,16 @@ public class PlayerAnimator : NetworkBehaviour
 {
     private InputReader _inputReader;
     private Animator _anim;
-    private PlayerController _controller;
+    private Player _player;
+    private PlayerFSM _fsm;
     private bool _shouldFinishState;
     private float _cachedWalkSpeed;
     private float _cachedRunSpeed;
     private StatManager _statManager;
     private bool _initialized;
+    private bool _isMoving;
 
+    
     private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new()
     {
         { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
@@ -49,14 +52,17 @@ public class PlayerAnimator : NetworkBehaviour
     public override void Spawned()
     {
         _anim = GetComponent<Animator>();
+        _fsm = GetComponent<PlayerFSM>();
     }
 
     public void TryInitialize()
     {
-        TryGetComponent(out _controller);
-        if (_controller == null || _controller.Stat == null)
+        _anim = GetComponent<Animator>();
+        _fsm = GetComponent<PlayerFSM>();
+        TryGetComponent(out _player);
+        if (_player == null || _player.Stat == null)
             return;
-        _statManager = _controller.Stat;
+        _statManager = _player.Stat;
         _statManager.RegisterModifierCallback(
         EStatType.MoveSpeed,
         (type, mod) => UpdateStatCache(),
@@ -90,18 +96,40 @@ public class PlayerAnimator : NetworkBehaviour
     #endregion
     #region Animation Events (From Clip)
 
+    private void TryInitializeController()
+    {
+        if (_player == null)
+            _player = GetComponent<Player>();
+    }
     public void OnActionMoment()
     {
-        if (_controller?.FSM?.ActiveState is IAnimationActionNotify notify)
+        if (_fsm?.StateMachine?.ActiveState is IAnimationActionNotify notify)
         {
+            Debug.Log($"PlayerAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnActionMoment();
         }
     }
 
     public void OnAnimationFinished()
     {
-        _shouldFinishState = true;
+        TryInitializeController();
+        //미사용
+        //Debug.Log($"PlayerAnimator: OnAnimationFinished called on state {_fsm?.StateMachine?.ActiveState?.GetType().Name}");
+        //if (_fsm == null || _fsm.StateMachine == null)
+        //{
+        //    Debug.LogError("PlayerAnimator: FSM or StateMachine is null.");
+        //    return;
+        //}
+        //if (_fsm?.StateMachine?.ActiveState is IAnimationActionEndNotify notify)
+        //{
+        //    notify.OnAnimationFinished();
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("PlayerAnimator: Current state is NOT IAnimationActionEndNotify");
+        //}
     }
+
 
 
 
@@ -120,7 +148,7 @@ public class PlayerAnimator : NetworkBehaviour
             Debug.LogError($"[Animator] Trigger not found: {trigger}");
         }
     }
-
+    
 
     #endregion
 
@@ -135,36 +163,34 @@ public class PlayerAnimator : NetworkBehaviour
                 return; // 아직 준비 안 됨
         }
         UpdateAnimationSpeed();
-
-        if (_shouldFinishState)
-        {
-            _shouldFinishState = false;
-
-            if (_controller.FSM.ActiveState is IAnimationActionEndNotify endNotify)
-                endNotify.OnAnimationFinished();
-        }
     }
-
-    private void UpdateAnimationSpeed()
+    public void SetSpeedParameter(float rawSpeed)
     {
-        float rawSpeed = _controller.GetComponent<NetworkCharacterController>().Velocity.magnitude;
+        if (_anim == null) return;
+        if (_isMoving == false)
+        {
+            _targetSpeed = 0f;
+            return;
+        }
         float normalized = Mathf.InverseLerp(0f, _cachedRunSpeed, rawSpeed);
-
-        float targetSpeed = 0f;
-
         if (rawSpeed > 0.1f && rawSpeed < _cachedRunSpeed * 0.9f)
         {
-            targetSpeed = 0.5f; // 걷기
+            _targetSpeed = 0.5f; // 걷기
         }
         else if (rawSpeed >= _cachedRunSpeed * 0.9f)
         {
-            targetSpeed = 1f; // 뛰기
+            _targetSpeed = 1f; // 뛰기
         }
         else
         {
-            targetSpeed = 0f; // 정지 상태
+            _targetSpeed = 0f; // 정지 상태
         }
-        float lerpedSpeed = Mathf.Lerp(_anim.GetFloat("Speed"), targetSpeed, _lerpSpeed * Runner.DeltaTime);
+    }
+    float _targetSpeed;
+    private void UpdateAnimationSpeed()
+    {
+        float current = _anim.GetFloat("Speed");
+        float lerpedSpeed = Mathf.Lerp(current, _targetSpeed, _lerpSpeed * Runner.DeltaTime);
         _anim.SetFloat("Speed", lerpedSpeed);
     }
 

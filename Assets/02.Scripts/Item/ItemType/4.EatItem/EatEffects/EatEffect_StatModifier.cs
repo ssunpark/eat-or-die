@@ -19,6 +19,6 @@ public class EatEffect_StatModifier : IUseEffect
     
     public void Use(GameObject target)
     {
-        target.GetComponent<PlayerController>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value, Food,true, _duration));
+        target.GetComponent<Player>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value, Food,true, _duration));
     }
 }
