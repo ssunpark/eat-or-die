@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Fusion.Addons.FSM;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 public class PlayerBerserkState : APlayerStateBase
 {
     private StateMachine<ABerserkSubStateBase> _subFSM;
@@ -23,13 +22,22 @@ public class PlayerBerserkState : APlayerStateBase
     {
         list.Add(_subFSM);
     }
-    protected override bool CanExitState(IState nextState)
-    {
-        return _resource.GetHungerPercent() > 0.1f || _resource.GetHungerPercent()==0f;
-    }
     protected override void OnEnterState()
     {
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
 
+        if (_stat == null || _resource == null)
+        {
+            Debug.LogError("PlayerBerserkState: Stat or Resource is null. Cannot enter state.");
+            return;
+        }
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         KCC.Move(Vector3.zero); // 이동 멈춤
@@ -41,6 +49,7 @@ public class PlayerBerserkState : APlayerStateBase
 
     protected override void OnFixedUpdate()
     {
+
         _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 5);
     }
 

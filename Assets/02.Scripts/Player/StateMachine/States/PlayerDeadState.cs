@@ -1,6 +1,4 @@
-﻿using Fusion.Addons.FSM;
-using UnityEngine;
-using UnityEngine.Rendering.Universal;
+﻿using UnityEngine;
 public class PlayerDeadState : APlayerStateBase
 {
     public PlayerDeadState(PlayerFSM fsm) : base(fsm) {
@@ -34,7 +32,7 @@ public class PlayerDeadState : APlayerStateBase
     protected override void OnFixedUpdate()
     {
         KCC.Move(Vector3.zero);
-        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Dead"])
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
         {
             return;
         }
@@ -43,6 +41,7 @@ public class PlayerDeadState : APlayerStateBase
 
     private void DropAllItems()
     {
+        Debug.LogWarning("PlayerDeadState: Dropping all items. This feature is not fully implemented yet.");
         // 아직 테스트 안함 -> 주석처리
         //if (InventoryManager.Instance != null)
         //{

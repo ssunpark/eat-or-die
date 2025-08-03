@@ -5,6 +5,9 @@ using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class StateValues
 {
@@ -82,7 +85,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
-
+    [Networked, Capacity(8)]
+    public NetworkLinkedList<NetworkObject> HitTargets { get; }
 
     public void CollectStateMachines(List<IStateMachine> list)
     {
@@ -277,4 +281,23 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         _previousInput = _currentInput;
         _currentInput = input;
     }
+
+    private void OnDrawGizmosSelected()
+    {
+#if UNITY_EDITOR
+        if (!EditorApplication.isPlaying)
+            return;
+
+        if (StateMachine?.ActiveState is PlayerAttackState attackState)
+        {
+            Vector3 origin = transform.position + transform.rotation * new Vector3(0f, 0.2f, 0.5f);
+            float range = AttackRange;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(origin, range);
+        }
+#endif
+    }
+
+    public float AttackRange => PlayerNetworkObject.Stat.GetStat(EStatType.AttackRange);
 }

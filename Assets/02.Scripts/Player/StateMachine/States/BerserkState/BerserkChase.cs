@@ -8,7 +8,6 @@ public class BerserkChase : ABerserkSubStateBase
     private float _sprintMultipler;
     public BerserkChase(PlayerFSM controller) : base(controller) {
         AnimState = "Run";
-
     }
 
     private bool CanStartAttack()

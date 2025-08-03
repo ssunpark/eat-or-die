@@ -1,8 +1,6 @@
 ﻿using Fusion;
 using Fusion.Addons.FSM;
-using Fusion.Addons.SimpleKCC;
 using UnityEngine;
-using static DG.Tweening.DOTweenAnimation;
 public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
 {
     public PlayerAttackState(PlayerFSM controller) : base(controller)
@@ -19,8 +17,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     private float _bossDamageMultiplier = 1f;
     private float _attackSpeed = 1f;
     private float _animationTime;
-    [Networked, Capacity(8)]
-    public NetworkLinkedList<NetworkObject> hitTargets => default;
+    
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
     {
@@ -50,19 +47,22 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
         _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
         _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed)??1f;
         Anim.SetFloat("AttackSpeed", _attackSpeed);
+        
         float baseClipLength = _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState];
-        _animationTime = Mathf.Max(baseClipLength / _attackSpeed,0.06f);
+        _animationTime = Mathf.Max(baseClipLength / _attackSpeed, 0.06f);
     }
 
 
     protected override void OnEnterStateRender()
     {
+        _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
+        Anim.SetFloat("AttackSpeed", _attackSpeed);
         Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnExitState()
     {
-        hitTargets.Clear();
+        _fsm.HitTargets.Clear();
     }
 
 
@@ -79,8 +79,10 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
 
             // If no enemy has been hit or this target has already been hit, we continue.
-            if (target == null || hitTargets.Contains(target.NetworkObject))
+            if (target == null || _fsm.HitTargets.Contains(target.NetworkObject) || target.NetworkObject == _fsm.PlayerNetworkObject.NetworkObject)
+            {
                 continue;
+            }
 
             AttackInfo attackState = new AttackInfo()
             {
@@ -93,10 +95,10 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             };
             target.OnHitLocal(attackState, _fsm.PlayerNetworkObject?.Object);
 
-            if (i >= hitTargets.Count)
-                hitTargets.Add(target.NetworkObject);
+            if (i >= _fsm.HitTargets.Count)
+                _fsm.HitTargets.Add(target.NetworkObject);
             else
-                hitTargets.Set(i, target.NetworkObject);
+                _fsm.HitTargets.Set(i, target.NetworkObject);
         }
         
     }

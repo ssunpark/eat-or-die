@@ -6,7 +6,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
     private float _damage;
     private bool _animFinished;
     public BerserkAttack(PlayerFSM fsm) : base(fsm) {
-        AnimState = "BerserkAttack";
+        AnimState = "Attack";
         _positionOffset = new Vector3(0f, 0.2f, 0.5f);
     }
     private Vector3 _positionOffset;
@@ -48,9 +48,16 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
 
         _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
         _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
-        Anim.SetFloat("SpeedMultiplier", _attackSpeed);
+        Anim.SetFloat("AttackSpeed", _attackSpeed);
         float baseClipLength = _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState];
         _animationTime = Mathf.Max(baseClipLength / _attackSpeed, 0.06f);
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
+        Anim.SetFloat("AttackSpeed", _attackSpeed);
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     public void OnActionMoment()

@@ -2,11 +2,11 @@
 using Fusion;
 using Fusion.Addons.FSM;
 using UnityEngine;
-public class Player : CharacterBase, IDamageable
+public class Player : CharacterBase, IDamageable, IAttackable
 {
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
-    float _damageRecoveryTime;
+    float _damageRecoveryTime = 0.5f;
 
     public PlayerFSM PlayerFSM;
 
@@ -32,6 +32,8 @@ public class Player : CharacterBase, IDamageable
         }
     }
 
+    public NetworkObject NetworkObject => Object;
+
     public override void Spawned()
     {
         base.Spawned();
@@ -45,7 +47,6 @@ public class Player : CharacterBase, IDamageable
                 camera.SetTarget(followTarget);
             }
         }
-
         //_hasPlayerTrackerRef = PlayerTracker.GetPlayerTrackerRef(Runner, out _playerTrackerRef);
         Resource.OnHungerChanged += EvaluateCurrentHunger;
         if (HasInputAuthority)
@@ -87,6 +88,13 @@ public class Player : CharacterBase, IDamageable
                 PlayerFSM.SetInput(input);
             }
         }
+
+        if (_nextState != null)
+        {
+            PlayerFSM.StateMachine.ForceActivateState(_nextState);
+            _nextState = null;
+        }
+
     }
 
 
@@ -106,6 +114,8 @@ public class Player : CharacterBase, IDamageable
     bool _takedDamage = false;
     float _prevHunger;
 
+    APlayerStateBase _nextState = null;
+
     private void EvaluateCurrentHunger(float current, float max)
     {
         if (_takedDamage)
@@ -118,13 +128,13 @@ public class Player : CharacterBase, IDamageable
             {
                 if (PlayerFSM.StateMachine.ActiveState is not PlayerHitState)
                 {
-                    PlayerFSM.StateMachine.ForceActivateState<PlayerHitState>();
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerHitState>();
                     return;
                 }
             }
             else if (PlayerFSM.StateMachine.ActiveState is not PlayerDeadState)
             {
-                PlayerFSM.StateMachine.ForceActivateState<PlayerDeadState>();
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
                 return;
             }
         }
@@ -138,7 +148,7 @@ public class Player : CharacterBase, IDamageable
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerDeadState)
             {
-                PlayerFSM.StateMachine.ForceActivateState<PlayerDeadState>();
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
                 return;
             }
         }
@@ -146,7 +156,7 @@ public class Player : CharacterBase, IDamageable
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerBerserkState)
             {
-                PlayerFSM.StateMachine.ForceActivateState<PlayerBerserkState>();
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
                 return;
             }
         }
@@ -154,7 +164,7 @@ public class Player : CharacterBase, IDamageable
         {
             if (PlayerFSM.StateMachine.ActiveState is PlayerBerserkState)
             {
-                PlayerFSM.StateMachine.ForceActivateState<PlayerRecoverState>();
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
                 return;
             }
         }
@@ -207,6 +217,32 @@ public class Player : CharacterBase, IDamageable
         else
         {
             Debug.LogError($"씬에서 태그 'PlayerHUD'를 가진 HUD 오브젝트를 찾을 수 없습니다.");
+        }
+    }
+
+    public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
+    {
+        RPC_HitByAttack(attack, attacker);
+        
+        //Todo: 맞는 이펙트? 재생
+    }
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+    {
+        OnHitStateAuthority(attack, attacker);
+    }
+
+    public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
+    {
+        if (DamagedTimer.ExpiredOrNotRunning(Runner))
+        {
+            //Todo: 이펙트 처리
+            float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+            float defense = Stat.GetStat(EStatType.Defense);
+            float finalDmg = amount * (100 / (100 + defense));
+
+            Resource.ConsumeHunger(finalDmg);
+            _takedDamage = true;
         }
     }
 }
