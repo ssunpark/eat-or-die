@@ -9,6 +9,9 @@ using UnityEngine.AI;
 public class DragonController : NetworkBehaviour, IStateMachineOwner
 {
     private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
+    [SerializeField]
+    private Transform _breathPoint;
+    public Transform BreathPoint => _breathPoint;
 
     [SerializeField]
     private GameObject _target;
@@ -34,25 +37,25 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)
     {
-        _dragonStateMachine = new DragonStateMachine(this);
         _dragonStateMachine.CollectStateMachines(stateMachines);
     }
 
     private void Awake()
     {
+        _dragonStateMachine = new DragonStateMachine(this);
         _sightDetector = GetComponentInChildren<SightDetector>();
+        _animator = GetComponent<Animator>();
+        _navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
-    public override void Spawned()
+    public override async void Spawned()
     {
+        await _dragonStateMachine.ParamLoader.LoadAddressablesAsync();
         if (!HasStateAuthority)
         {
             GetComponent<NavMeshAgent>().enabled = false;
             return;
         }
-
-        _animator = GetComponent<Animator>();
-        _navMeshAgent = GetComponent<NavMeshAgent>();
 
         _navMeshAgent.updatePosition = false;
         _navMeshAgent.updateRotation = false;

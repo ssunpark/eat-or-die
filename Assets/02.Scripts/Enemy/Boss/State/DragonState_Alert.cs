@@ -60,7 +60,7 @@ public class DragonState_Alert : DragonStateBase
         }
         else if (rand < _alertParams.ChaseProbability + _alertParams.RangedProbability)
         {
-            // Machine.TryActivateState<DragonState_RangedAttack>(true);
+            Machine.TryActivateState<DragonState_MagicAttack>(true);
         }
     }
 

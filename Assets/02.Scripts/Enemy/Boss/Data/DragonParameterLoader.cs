@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 public class DragonParameterLoader
 {
@@ -19,6 +21,12 @@ public class DragonParameterLoader
 
         _parameters = JsonUtility.FromJson<DragonStateParameterSet>(json);
     }
+    
+    public async Task LoadAddressablesAsync()
+    {
+        var breathPrefabHandle = Addressables.LoadAssetAsync<GameObject>(_parameters.Breath.BreathAddress);
+        _parameters.Breath.BreathPrefab = await breathPrefabHandle.Task;
+    }
 
     public DragonStateParameterSet.BaseParams Base => _parameters.Base;
     public DragonStateParameterSet.PatrolParams Patrol => _parameters.Patrol;
@@ -31,4 +39,6 @@ public class DragonParameterLoader
     public DragonStateParameterSet.RightScratchParams RightScratch => _parameters.RightScratch;
     public DragonStateParameterSet.LeftScratchParams LeftScratch => _parameters.LeftScratch;
     public DragonStateParameterSet.BiteParams Bite => _parameters.Bite;
+    public DragonStateParameterSet.MagicParams Magic => _parameters.Magic;
+    public DragonStateParameterSet.BreathParams Breath => _parameters.Breath;
 }

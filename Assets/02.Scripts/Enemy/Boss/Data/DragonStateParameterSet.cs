@@ -1,19 +1,31 @@
 ﻿using System;
+using UnityEngine;
 
 [Serializable]
 public class DragonStateParameterSet
 {
+    // 기본 데이터
     public BaseParams Base;
+    // - 배회 데이터
     public PatrolParams Patrol;
+    // - 대기 데이터
     public WaitParams Wait;
+    // 경계 데이터
     public AlertParams Alert;
+    // 근거리 공격 데이터
     public AttackParams Attack;
+    // - 근거리 공격 시 준비
     public PrepareParams Prepare;
+    // - 근거리 공격 패턴
     public SwipeParams Swipe;
     public RightScratchParams RightScratch;
     public LeftScratchParams LeftScratch;
     public BiteParams Bite;
+    // 추격 상태
     public ChaseParams Chase;
+    // 마법 공격 데이터
+    public MagicParams Magic;
+    public BreathParams Breath;
 
     [Serializable]
     public class BaseParams
@@ -102,5 +114,22 @@ public class DragonStateParameterSet
     [Serializable]
     public class BiteParams
     {
+    }
+    
+    [Serializable]
+    public class MagicParams
+    {
+        public float ContinueMagicProbability;
+    }
+    
+    [Serializable]
+    public class BreathParams
+    {
+        public float FireTime;       // 발사 타이밍
+        public float TotalDuration;  // 전체 지속 시간
+        public string BreathAddress; // 어드레서블 키
+        
+        [NonSerialized]
+        public GameObject BreathPrefab;
     }
 }
