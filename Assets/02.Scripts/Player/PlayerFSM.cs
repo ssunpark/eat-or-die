@@ -244,24 +244,25 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             if (interactPressed)
             {
                 // 즉시 상호작용가능한 오브젝트라면
-                if (false) // IInteractable에서 즉시 상호작용 가능한지 여부를 확인하는 필드 필요
+                if (interactable.IsImmediate)
                 {
                     interactable.Interact();
                     return false;
                     // 애니메이션 없이 상호작용할거라 InteractState로 안빠질겁니다
                 }
-                // else {
-                if(_testColliders[closestIndex].TryGetComponent(out NetworkObject net))
-                {
-                    RPC_SetInteractTarget(net);
-                    return true;
-                }
                 else
                 {
-                    Debug.LogWarning($"[PlayerController] Hit object {_testColliders[closestIndex].name} does not have a NetworkObject component.");
-                    return false;
+                    if (_testColliders[closestIndex].TryGetComponent(out NetworkObject net))
+                    {
+                        RPC_SetInteractTarget(net);
+                        return true;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[PlayerController] Hit object {_testColliders[closestIndex].name} does not have a NetworkObject component.");
+                        return false;
+                    }
                 }
-                //}
             }
         }
         return false;
