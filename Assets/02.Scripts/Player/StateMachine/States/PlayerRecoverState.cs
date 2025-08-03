@@ -1,0 +1,27 @@
+﻿using Fusion.Addons.FSM;
+public class PlayerRecoverState : APlayerStateBase
+{
+
+    public PlayerRecoverState(PlayerFSM controller) : base(controller)
+    {
+        AnimState = "Recover";
+    }
+
+
+
+    protected override void OnEnterState()
+    {
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        _resource.RestoreHunger(_resource.MaxHunger / 20);
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+    }
+    protected override void OnExitState()
+    {
+    }
+
+}

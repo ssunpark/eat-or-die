@@ -1,36 +1,29 @@
-﻿using UnityEngine;
-using Fusion; // Add Fusion for NetworkInputData
-using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
-public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
+﻿using Fusion.Addons.FSM;
+using UnityEngine; // Add Fusion FSM for PlayerStateMachine
+public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
 {
-    public PlayerInteractState(PlayerController controller) : base(controller)
+    public PlayerInteractState(PlayerFSM controller) : base(controller)
     {
-        StateId = (int)EPlayerState.Interact;
+        AnimState = "Interact";
     }
 
-    protected override void OnEnterState()
+    protected override void OnEnterStateRender()
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Interact);
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+    }
 
-            _controller.RPC_SetMoveFlag(true);
+    protected override void OnFixedUpdate()
+    {
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            Machine.ForceActivateState<PlayerIdleState>();
         }
     }
-
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_controller.StateValues.Interactable != null)
-        {
-            _controller.Interact.UseOrInteract(
-                interactable: _controller.StateValues.Interactable
-            );
-        }
+        if(_fsm.HasInputAuthority)
+            _fsm.Interact.Interact(_fsm.InteractTarget);
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
-    {
-        Machine.ForceActivateState(_controller.FSMStateInstances.Idle);
-        _controller.RPC_SetMoveFlag(false);
-    }
 }

@@ -13,17 +13,23 @@ public enum EAnimTrigger
     Die,
     Hit,
     Berserk,
-    UseItem
+    UseItem,
+    Recover
 }
 public class PlayerAnimator : NetworkBehaviour
 {
-    [Networked, OnChangedRender(nameof(OnSpeedChanged))]
-    public float Speed { get; set; }
     private InputReader _inputReader;
     private Animator _anim;
-    private PlayerController _controller;
+    private Player _player;
+    private PlayerFSM _fsm;
     private bool _shouldFinishState;
+    private float _cachedWalkSpeed;
+    private float _cachedRunSpeed;
+    private StatManager _statManager;
+    private bool _initialized;
+    private bool _isMoving;
 
+    
     private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new()
     {
         { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
@@ -35,7 +41,8 @@ public class PlayerAnimator : NetworkBehaviour
         { EAnimTrigger.Die, Animator.StringToHash("Die") },
         { EAnimTrigger.Hit, Animator.StringToHash("Hit") },
         { EAnimTrigger.Berserk, Animator.StringToHash("Berserk") },
-        { EAnimTrigger.UseItem, Animator.StringToHash("UseItem") }
+        { EAnimTrigger.UseItem, Animator.StringToHash("UseItem") },
+        { EAnimTrigger.Recover, Animator.StringToHash("Recover") }
     };
 
     private float _lerpSpeed = 10f;
@@ -44,8 +51,37 @@ public class PlayerAnimator : NetworkBehaviour
 
     public override void Spawned()
     {
-        _controller = GetComponent<PlayerController>();
-        _anim = GetComponentInChildren<Animator>();
+        _anim = GetComponent<Animator>();
+        _fsm = GetComponent<PlayerFSM>();
+    }
+
+    public void TryInitialize()
+    {
+        _anim = GetComponent<Animator>();
+        _fsm = GetComponent<PlayerFSM>();
+        TryGetComponent(out _player);
+        if (_player == null || _player.Stat == null)
+            return;
+        _statManager = _player.Stat;
+        _statManager.RegisterModifierCallback(
+        EStatType.MoveSpeed,
+        (type, mod) => UpdateStatCache(),
+        (type, mod) => UpdateStatCache()
+    );
+        _statManager.RegisterModifierCallback(
+            EStatType.SprintingMultiplier,
+            (type, mod) => UpdateStatCache(),
+            (type, mod) => UpdateStatCache()
+        );
+        UpdateStatCache();
+        _initialized = true;
+    }
+
+    private void UpdateStatCache()
+    {
+        _cachedWalkSpeed = _statManager.GetStat(EStatType.MoveSpeed);
+        float sprintMultiplier = _statManager.GetStat(EStatType.SprintingMultiplier);
+        _cachedRunSpeed = _cachedWalkSpeed * sprintMultiplier;
     }
 
     private void OnEnable()
@@ -60,18 +96,42 @@ public class PlayerAnimator : NetworkBehaviour
     #endregion
     #region Animation Events (From Clip)
 
+    private void TryInitializeController()
+    {
+        if (_player == null)
+            _player = GetComponent<Player>();
+    }
     public void OnActionMoment()
     {
-        if (_controller?.FSM?.ActiveState is IAnimationActionNotify notify)
+        if (_fsm?.StateMachine?.ActiveState is IAnimationActionNotify notify)
         {
+            Debug.Log($"PlayerAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnActionMoment();
         }
     }
 
     public void OnAnimationFinished()
     {
-        _shouldFinishState = true;
+        TryInitializeController();
+        //미사용
+        //Debug.Log($"PlayerAnimator: OnAnimationFinished called on state {_fsm?.StateMachine?.ActiveState?.GetType().Name}");
+        //if (_fsm == null || _fsm.StateMachine == null)
+        //{
+        //    Debug.LogError("PlayerAnimator: FSM or StateMachine is null.");
+        //    return;
+        //}
+        //if (_fsm?.StateMachine?.ActiveState is IAnimationActionEndNotify notify)
+        //{
+        //    notify.OnAnimationFinished();
+        //}
+        //else
+        //{
+        //    Debug.LogWarning("PlayerAnimator: Current state is NOT IAnimationActionEndNotify");
+        //}
     }
+
+
+
 
     #endregion
 
@@ -82,20 +142,13 @@ public class PlayerAnimator : NetworkBehaviour
         if (_triggerHash.TryGetValue(trigger, out int hash))
         {
             _anim.SetTrigger(hash);
-#if UNITY_EDITOR
-            Debug.Log($"[Animator] Triggered: {trigger} (hash: {hash})");
-#endif
         }
         else
         {
             Debug.LogError($"[Animator] Trigger not found: {trigger}");
         }
     }
-
-    private void OnSpeedChanged()
-    {
-        _anim.SetFloat("Speed", Speed);
-    }
+    
 
     #endregion
 
@@ -103,28 +156,44 @@ public class PlayerAnimator : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (Object.HasInputAuthority && GetInput(out NetworkInputData inputData))
+        if (!_initialized)
         {
-            float newSpeed = inputData.direction.sqrMagnitude > 0.01f
-                ? (_inputReader.IsRunning ? 1f : 0.5f)
-                : 0f;
-
-            Rpc_UpdateSpeed(Mathf.Lerp(Speed, newSpeed, _lerpSpeed * Runner.DeltaTime));
+            TryInitialize();
+            if (!_initialized)
+                return; // 아직 준비 안 됨
         }
-        if (_shouldFinishState)
-        {
-            _shouldFinishState = false;
-
-            if (_controller.FSM.ActiveState is IAnimationActionEndNotify endNotify)
-                endNotify.OnAnimationFinished();
-        }
+        UpdateAnimationSpeed();
     }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void Rpc_UpdateSpeed(float speed)
+    public void SetSpeedParameter(float rawSpeed)
     {
-        Speed = speed;
+        if (_anim == null) return;
+        if (_isMoving == false)
+        {
+            _targetSpeed = 0f;
+            return;
+        }
+        float normalized = Mathf.InverseLerp(0f, _cachedRunSpeed, rawSpeed);
+        if (rawSpeed > 0.1f && rawSpeed < _cachedRunSpeed * 0.9f)
+        {
+            _targetSpeed = 0.5f; // 걷기
+        }
+        else if (rawSpeed >= _cachedRunSpeed * 0.9f)
+        {
+            _targetSpeed = 1f; // 뛰기
+        }
+        else
+        {
+            _targetSpeed = 0f; // 정지 상태
+        }
     }
+    float _targetSpeed;
+    private void UpdateAnimationSpeed()
+    {
+        float current = _anim.GetFloat("Speed");
+        float lerpedSpeed = Mathf.Lerp(current, _targetSpeed, _lerpSpeed * Runner.DeltaTime);
+        _anim.SetFloat("Speed", lerpedSpeed);
+    }
+
 
     #endregion
 
