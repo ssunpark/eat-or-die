@@ -3,6 +3,7 @@ using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(NetworkObject))]
 public class SeedGround : NetworkBehaviour
 {
     [Networked]
