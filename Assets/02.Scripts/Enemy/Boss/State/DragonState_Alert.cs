@@ -57,11 +57,14 @@ public class DragonState_Alert : DragonStateBase
         if (rand < _alertParams.ChaseProbability)
         {
             Machine.TryActivateState<DragonState_Chase>(true);
+            return;
         }
         else if (rand < _alertParams.ChaseProbability + _alertParams.RangedProbability)
         {
             Machine.TryActivateState<DragonState_MagicAttack>(true);
+            return;
         }
+        Machine.TryActivateState<DragonState_Alert>(true);
     }
 
     protected override void OnExitState()
