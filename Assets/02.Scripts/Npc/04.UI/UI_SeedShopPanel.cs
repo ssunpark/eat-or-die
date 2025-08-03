@@ -1,6 +1,4 @@
-﻿using System;
-using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UI_SeedShopPanel : AUI_PopupBase
 {
@@ -11,7 +9,7 @@ public class UI_SeedShopPanel : AUI_PopupBase
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Close();
-            InputReader.playerControllerInputBlocked = false;
+            InputReader.Instance.ReleaseControl();
         }
     }
 }

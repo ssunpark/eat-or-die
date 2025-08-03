@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputReader : MonoBehaviour
+public class InputReader : BehaviourSingleton<InputReader>
 {
     public Vector2 MoveInput { get; private set; }
     public bool IsAttackDown { get; private set; }
@@ -13,7 +13,7 @@ public class InputReader : MonoBehaviour
     public PlayerInputActions InputActions => _inputActions;
 
     [HideInInspector]
-    public static bool playerControllerInputBlocked;
+    public bool playerControllerInputBlocked;
     protected bool _externalInputBlocked;
     private bool _paused;
 
