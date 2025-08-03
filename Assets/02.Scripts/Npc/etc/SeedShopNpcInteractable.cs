@@ -1,6 +1,7 @@
+using Fusion;
 using UnityEngine;
 // 수현
-public class SeedShopNpcInteractable : MonoBehaviour, IInteractable
+public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
 {
     public UI_SeedShopPanel UI_SeedShopPanel;
     public void Interact()
