@@ -1,75 +1,75 @@
 ﻿using UnityEngine;
-
-public class PlayerMoveState : APlayerState
+using Fusion.Addons.FSM;
+public class PlayerMoveState : APlayerStateBase
 {
-    public PlayerMoveState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
+    private float _hungerConsumptionOvertime;
+    public PlayerMoveState(PlayerController controller) : base(controller)
     {
+        StateId = (int)EPlayerState.Move;
     }
-    public override void Enter()
-    {
-        _moveSatietyTimer = _fsm.MoveSatietyTimer;
-        _moveStatietyInterval = _fsm.MoveStatietyInterval;
-    }
-    public override bool CanMove => true;
-    public override bool CanAct => true;
-    private float _moveSatietyTimer;
-    private float _moveStatietyInterval;
 
-    public override void Tick()
+    protected override void OnInitialize()
+    {
+        // 전이: 방향 입력이 없으면 Idle로
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => _controller.GetInput(out NetworkInputData input) && input.direction.sqrMagnitude <= 0.01f
+        );
+
+        // 전이: 공격 키
+        this.AddTransition(
+            _controller.FSMStateInstances.Attack,
+            () => CanStartAttack()
+        );
+
+        // 전이: 인터랙션 키 누르면 Interact로
+        this.AddTransition(
+            _controller.FSMStateInstances.Interact,
+            () => _controller.GetInput(out NetworkInputData input) && input.isInteracting && _controller.Interact.TryInteract(out var interactable)
+        );
+
+        // 전이: 아이템 사용
+        this.AddTransition(
+            _controller.FSMStateInstances.UseItem,
+            () => _controller.GetInput(out NetworkInputData input) && input.isUsing && _controller.Interact.TryUseItem(out var usable)
+        );
+    }
+    protected override void OnEnterState()
+    {
+        _hungerConsumptionOvertime = _stat.GetStat(EStatType.HungerConsumptionOverTime);
+    }
+
+    protected override void OnFixedUpdate()
     {
         if (!_controller.GetInput(out NetworkInputData inputData))
         {
-            _fsm.ChangeState(EPlayerState.Idle);
             return;
         }
-
-        if (inputData.isAttacking)
-        {
-            if (CanAttack)
-            {
-                _fsm.ChangeState(EPlayerState.Attack);
-                return;
-            }
-        }
-        if (inputData.isInteracting)
-        {
-            IInteractable interactable;
-            if (_fsm.Interact.TryInteract(out interactable))
-            {
-                _fsm.Interactable = interactable;
-                _fsm.ChangeState(EPlayerState.Interact);
-                return;
-            }
-        }
-        if (inputData.isUsing)
-        {
-            IUsable usable;
-            if(_fsm.Interact.TryUseItem(out usable))
-            {
-                _fsm.Usable = usable;
-                _fsm.ChangeState(EPlayerState.UsingTool);
-                return;
-            }
-        }
-
         Vector3 dir = inputData.direction;
-
-        _moveSatietyTimer += _fsm.Runner.DeltaTime;
-        if (_moveSatietyTimer >= _moveStatietyInterval)
+        if (dir.magnitude <= 0.01)
         {
-            float rate = _stat.GetStat(EStatType.HungerConsumptionOverTime);
-            _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
-            _moveSatietyTimer = 0f;
+            return;
         }
+        _controller.Movement?.Move(dir, inputData.isRunning);
 
-        if (dir.sqrMagnitude <= 0.01f)
-        {
-            _fsm.ChangeState(EPlayerState.Idle);
-        }
+        _resource.ConsumeHunger(_hungerConsumptionOvertime * Machine.Runner.DeltaTime);
     }
 
-    public override void Exit()
+    protected override void OnExitState()
     {
-        _fsm.MoveSatietyTimer = _moveSatietyTimer;
+        _controller.Movement.Move(Vector3.zero, false);
+    }
+
+    private bool CanStartAttack()
+    {
+        if (!_controller.GetInput(out NetworkInputData input))
+        {
+            return false;
+        }
+
+        if (!input.isAttacking) return false;
+
+        float cooldown = Mathf.Max(1f / _stat.GetStat(EStatType.AttackSpeed), 0.01f);
+        return _controller.LastAttackTime + cooldown < Machine.Runner.LocalRenderTime;
     }
 }

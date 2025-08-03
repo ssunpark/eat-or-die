@@ -1,58 +1,57 @@
 ﻿using UnityEngine;
 using Fusion;
-
-public class PlayerAttackState : APlayerState
+using Fusion.Addons.FSM;
+public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
-    public PlayerAttackState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller) { }
-
-
-    private float _damage;
-    private float _attackSpeed;
-    private float _attackDelay;
-    private float _attackTimer;
-
-    public override void Enter()
+    public PlayerAttackState(PlayerController controller) : base(controller)
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            // 애니메이션 트리거
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Attack);
+        StateId = (int)EPlayerState.Attack;
+    }
+    private float _damage;
+    private bool _animationFinished;
+    bool hasFinishedAnimation => _animationFinished;
+    bool hasMoveInput => _controller.GetInput(out NetworkInputData input) && input.direction.sqrMagnitude > 0.01f;
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            _controller.FSMStateInstances.Move,
+            () => hasFinishedAnimation && hasMoveInput
+        );
 
-            _controller.RPC_SetMoveFlag(true);
-        }
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => hasFinishedAnimation && !hasMoveInput
+        );
+    }
 
-        _damage = _stat.GetStat(EStatType.MeleeDamage);
-        _attackSpeed = _stat.GetStat(EStatType.AttackSpeed);
-        _attackDelay = 0.6f / Mathf.Max(_attackSpeed, 0.01f);
-        _controller.LastAttackTime = _fsm.Runner.LocalRenderTime;
+    protected override void OnEnterState()
+    {
+        _animationFinished = false;
+        _damage = (_stat.GetStat(EStatType.MeleeDamage) + _stat.GetStat(EStatType.MagicDamage)) * _stat.GetStat(EStatType.TotalDamage);
+        _controller.LastAttackTime = Machine.Runner.LocalRenderTime;
+        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Attack);
+    }
 
-        // 애니메이션 이벤트로 실행될 부분
-        Vector3 attackOrigin = _controller.transform.position + Vector3.up * 0.5f;
+
+    public void OnActionMoment()
+    {
+        Vector3 attackOrigin = _controller.transform.position + Vector3.up * 0.6f;
         Vector3 direction = _controller.transform.forward;
 
         if (Physics.Raycast(attackOrigin, direction, out RaycastHit hit, _stat.GetStat(EStatType.AttackRange)))
         {
             if (hit.collider.TryGetComponent(out NetworkObject target))
             {
-                _controller.RPC_DealDamage(target, Mathf.RoundToInt(_damage));
+                if (_controller.HasStateAuthority)
+                {
+                    _controller.RPC_DealDamage(target, _damage);
+                }
             }
         }
-        //=================================
     }
 
-    public override void Tick() 
+    public void OnAnimationFinished()
     {
-        _attackTimer += _fsm.Runner.DeltaTime;
-        if (_attackTimer >= _attackDelay)
-        {
-            _attackTimer = 0f;
-            _fsm.ChangeState(EPlayerState.Idle);
-        }
-    }
-
-    public override void Exit()
-    {
-        if (_controller.Object.HasInputAuthority)
-            _controller.RPC_SetMoveFlag(false);
+        _animationFinished = true;
     }
 }

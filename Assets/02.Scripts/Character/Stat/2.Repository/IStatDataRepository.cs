@@ -3,5 +3,6 @@
 public interface IStatDataRepository
 {
     List<CharacterStatData> GetCharacterStatData();
+
 }
 

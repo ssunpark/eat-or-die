@@ -1,16 +1,23 @@
 ﻿using System;
 using Fusion;
-
+using UnityEngine;
 public class CharacterResourceNetworkSync : NetworkBehaviour
 {
-    [Networked] public float NetCurrentMana { get; set; }
-    [Networked] public float NetCurrentSatiety { get; set; }
+    [Networked, OnChangedRender(nameof(OnManaChanged))] public float NetCurrentMana { get; set; }
+    [Networked, OnChangedRender(nameof(OnHungryChanged))] public float NetCurrentHungry { get; set; }
 
     private ResourceManager _resource;
 
     private Action<float, float> _onManaChangedHandler;
-    private Action<float, float> _onSatietyChangedHandler;
-
+    private Action<float, float> _onHungryChangedHandler;
+    private void OnHungryChanged()
+    {
+        _resource?.SetHunger(NetCurrentHungry);
+    }
+    private void OnManaChanged()
+    {
+        _resource?.SetMana(NetCurrentMana);
+    }
     public void Initialize(ResourceManager resource)
     {
         _resource = resource;
@@ -19,12 +26,12 @@ public class CharacterResourceNetworkSync : NetworkBehaviour
         {
             if (HasStateAuthority) NetCurrentMana = cur;
         };
-        _onSatietyChangedHandler = (cur, _) =>
+        _onHungryChangedHandler = (cur, _) =>
         {
-            if (HasStateAuthority) NetCurrentSatiety = cur;
+            if (HasStateAuthority) NetCurrentHungry = cur;
         };
 
-        _resource.OnHungerChanged += _onSatietyChangedHandler;
+        _resource.OnHungerChanged += _onHungryChangedHandler;
         _resource.OnManaChanged += _onManaChangedHandler;
     }
 
@@ -32,8 +39,8 @@ public class CharacterResourceNetworkSync : NetworkBehaviour
     {
         if (_resource == null) return;
 
-        if (_onSatietyChangedHandler != null)
-            _resource.OnHungerChanged -= _onSatietyChangedHandler;
+        if (_onHungryChangedHandler != null)
+            _resource.OnHungerChanged -= _onHungryChangedHandler;
         if (_onManaChangedHandler != null)
             _resource.OnManaChanged -= _onManaChangedHandler;
     }

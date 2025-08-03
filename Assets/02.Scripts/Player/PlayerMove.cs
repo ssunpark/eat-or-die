@@ -4,71 +4,71 @@ using UnityEngine;
 public class PlayerMove:NetworkBehaviour
 {
     private NetworkCharacterController _characterController;
-    private PlayerStateMachine _fsm;
     private StatManager _stat;
     private PlayerController _controller;
     private ResourceManager _resource;
-    
-    public void Initialize(StatManager stat, PlayerStateMachine fsm, NetworkCharacterController characterController, PlayerController playerController, ResourceManager resourceManager)
+    private Vector3 _dir;
+
+    private float _moveSpeed;
+    private float _sprintMultipler;
+    private float _accelerationSpeed;
+    private float _jumpImpulse;
+    public void Initialize(StatManager stat, NetworkCharacterController characterController, PlayerController playerController, ResourceManager resourceManager)
     {
-        _fsm = fsm;
         _characterController = characterController;
         _stat = stat;
         _controller = playerController;
         _resource = resourceManager;
 
-        _characterController.maxSpeed = stat.GetStat(EStatType.MoveSpeed);
-        _characterController.jumpImpulse = stat.GetStat(EStatType.JumpPower);
-        _characterController.acceleration = stat.GetStat(EStatType.Acceleration);
+        stat.RegisterModifierCallback(
+        EStatType.MoveSpeed,
+        (type, mod) => UpdateStatCache(),
+        (type, mod) => UpdateStatCache()
+    );
+        stat.RegisterModifierCallback(
+            EStatType.SprintingMultiplier,
+            (type, mod) => UpdateStatCache(),
+            (type, mod) => UpdateStatCache()
+        );
+        UpdateStatCache();
     }
+    private void UpdateStatCache()
+    {
+        _moveSpeed = _stat.GetStat(EStatType.MoveSpeed);
+        _sprintMultipler = _stat.GetStat(EStatType.SprintingMultiplier);
+        _jumpImpulse = _stat.GetStat(EStatType.JumpPower);
+        _accelerationSpeed = _stat.GetStat(EStatType.Acceleration);
 
+        _characterController.maxSpeed = _moveSpeed;
+        _characterController.jumpImpulse = _jumpImpulse;
+        _characterController.acceleration = _accelerationSpeed;
+    }
     public override void FixedUpdateNetwork()
     {
-        if (_fsm == null)
+        if (_controller.MoveFlag)
         {
             return;
         }
 
+        _characterController.Move(_dir);
         if (GetInput(out NetworkInputData inputData))
         {
-            HandleMove(inputData);
-
             HandleJump(inputData);
         }
     }
 
-    private void HandleMove(NetworkInputData inputData)
+    public void Move(Vector3 dir, bool isRunning)
     {
-        Vector3 moveDirection = inputData.direction;
+        _dir = dir;
 
-        if (moveDirection.sqrMagnitude > 0.01f)
+        float sprintMultiplier = isRunning
+            ? _sprintMultipler
+            : 1f;
+        float moveSpeed = _moveSpeed * sprintMultiplier;
+
+        if (_characterController.maxSpeed != moveSpeed)
         {
-
-            float baseSpeed = _stat.GetStat(EStatType.MoveSpeed);
-            float sprintMultiplier = inputData.isRunning
-                ? _stat.GetStat(EStatType.SprintingMultiplier)
-                : 1f;
-
-
-            float moveSpeed = _controller.MoveFlag
-                ? 0f
-                : (baseSpeed * sprintMultiplier);
-            if (_characterController.maxSpeed != moveSpeed)
-            {
-                _characterController.maxSpeed = moveSpeed;
-            }
-            if (moveSpeed > 0f)
-            {
-                _resource.ConsumeSatiety(_fsm.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
-            }
-
-            _characterController.Move(moveDirection);
-
-
-        }
-        else
-        {
-            _characterController.Move(Vector3.zero);
+            _characterController.maxSpeed = moveSpeed;
         }
     }
 
@@ -76,13 +76,8 @@ public class PlayerMove:NetworkBehaviour
     {
         if (inputData.isJumping && IsGrounded)
         {
-            float jumpPower = _stat.GetStat(EStatType.JumpPower);
-            _characterController.jumpImpulse = jumpPower;
             _characterController.Jump();
-            if (Object.HasInputAuthority)
-            {
-                _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Jump);
-            }
+            _controller.PlayAnimTriggerNetwork(EAnimTrigger.Jump);
         }
     }
 

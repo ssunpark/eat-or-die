@@ -31,17 +31,7 @@ public class ItemData
         MaxDurability = maxDurability;
         
         var finalIconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
-        Addressables.LoadAssetAsync<Sprite>(finalIconAddressablePath).Completed += (handle) =>
-        {
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                _icon = handle.Result;
-            }
-            else
-            {
-                throw new Exception($"아이콘 로드에 실패했습니다. 아이콘 경로: {finalIconAddressablePath}");
-            }
-        };
+        _icon = Addressables.LoadAssetAsync<Sprite>(finalIconAddressablePath).WaitForCompletion();
         
         var finalPrefabAddressablePath = string.IsNullOrEmpty(prefabAddressablePath) ? "Weapon_Staff_Prefab" : prefabAddressablePath;
         _prefab = Addressables.LoadAssetAsync<GameObject>(finalPrefabAddressablePath).WaitForCompletion();

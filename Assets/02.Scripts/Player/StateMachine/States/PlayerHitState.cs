@@ -1,36 +1,29 @@
-﻿using UnityEngine;
-
-public class PlayerHitState : APlayerState
+﻿using Fusion.Addons.FSM;
+public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
 {
-    private float _hitStunDuration;
-    private float _elapsed;
-
-    public PlayerHitState(PlayerStateMachine fsm, PlayerController controller) : base(fsm, controller)
+    public PlayerHitState(PlayerController controller) : base(controller)
     {
+        StateId = (int)EPlayerState.Hit;
+    }
+    private bool _animationFinished;
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => _animationFinished
+        );
+    }
+    protected override bool CanExitState(IState nextState)
+    {
+        return _animationFinished;
+    }
+    protected override void OnEnterState()
+    {
+        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Hit);
     }
 
-    public override void Enter()
+    public void OnAnimationFinished()
     {
-        _elapsed = 0f;
-        _hitStunDuration = 0.5f; // 경직 시간
-        if (_controller.Object.HasInputAuthority)
-        {
-            //_controller.Rpc_PlayAnimTrigger(EAnimTrigger.Hit);
-        }
-
-    }
-
-    public override void Tick()
-    {
-        _elapsed += _fsm.Runner.DeltaTime;
-
-        if (_elapsed >= _hitStunDuration)
-        {
-            _fsm.ChangeState(EPlayerState.Idle);
-        }
-    }
-
-    public override void Exit()
-    {
+        _animationFinished = true;
     }
 }

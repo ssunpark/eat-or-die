@@ -24,6 +24,14 @@
     {
         switch (itemID)
         {
+            case 100001:
+            case 100002:
+            case 100003:
+            case 100004:
+            case 100005:
+            case 100006:
+            case 100007:
+            case 100008: action = EUseAction.Plant; return true;
             case 500001: action = EUseAction.Plow; return true;
             case 500002: action = EUseAction.Water; return true;
             default: action = default; return false;
