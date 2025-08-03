@@ -16,7 +16,6 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
     private float _hitStunLength = 0.5f;
     private float _totalDamageMultiplier = 1f;
     private float _bossDamageMultiplier = 1f;
-    private bool _animationFinished;
     private float _attackSpeed = 1f;
     private float _animationTime;
     [Networked, Capacity(8)]
@@ -38,7 +37,6 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
             Debug.LogError("PlayerMoveState: Stat or Resource is null. Cannot enter state.");
             return;
         }
-        _animationFinished = false;
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _meleeDamage = _stat.GetStat(EStatType.MeleeDamage);

@@ -17,7 +17,6 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     private float _hitStunLength = 0.5f;
     private float _totalDamageMultiplier = 1f;
     private float _bossDamageMultiplier = 1f;
-    private bool _animationFinished;
     private float _attackSpeed = 1f;
     private float _animationTime;
     [Networked, Capacity(8)]
@@ -25,7 +24,6 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
     {
-        _animationFinished = false;
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         if (_stat == null)
@@ -39,7 +37,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
 
         if (_stat == null || _resource == null)
         {
-            Debug.LogError("PlayerMoveState: Stat or Resource is null. Cannot enter state.");
+            Debug.LogError("PlayerAttackState: Stat or Resource is null. Cannot enter state.");
             return;
         }
         _meleeDamage = _stat?.GetStat(EStatType.MeleeDamage)??1;

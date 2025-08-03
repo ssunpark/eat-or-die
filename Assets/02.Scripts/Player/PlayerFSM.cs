@@ -43,7 +43,6 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public PlayerAnimator PlayerAnimatorController { get; private set; }
     public PlayerInteractions Interact { get; private set; }
     public PlayerItemHolder ItemHolder { get; private set; }
-    public PlayerMove Movement { get; private set; }
     public CharacterStatNetworkSync StatNetworkSync { get; private set; }
 
     public LayerMask attackableLayerMask;
