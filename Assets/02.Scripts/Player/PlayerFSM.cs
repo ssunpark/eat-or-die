@@ -84,7 +84,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
 
-    public void Awake()
+
+    public void CollectStateMachines(List<IStateMachine> list)
+    {
+        InitializeFSM();
+        list.Add(_playerFSM);
+    }
+
+    public override void Spawned()
     {
         SimpleKCC = GetComponent<SimpleKCC>();
         PlayerAnimatorController = GetComponent<PlayerAnimator>();
@@ -92,12 +99,6 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         PlayerNetworkObject = GetComponent<Player>();
-    }
-
-    public void CollectStateMachines(List<IStateMachine> list)
-    {
-        InitializeFSM();
-        list.Add(_playerFSM);
     }
 
     private void InitializeFSM()
@@ -131,21 +132,25 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     public override void FixedUpdateNetwork()
     {
-        if (CanInteract)
+        if (HasInputAuthority)
         {
-            if(!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
+            if (CanInteract)
             {
-                InteractTarget = null;
+                if (!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
+                {
+                    InteractTarget = null;
+                }
             }
-        }
 
-        if (CanUseItem)
-        {
-            if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
+            if (CanUseItem)
             {
-                ItemUseTarget = null;
+                if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
+                {
+                    ItemUseTarget = null;
+                }
             }
         }
+        
     }
 
     private bool TestUseItem(bool usePressed)
@@ -254,25 +259,6 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         GUI.Label(new Rect(10, 70, 200, 20), $"UseItem: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)}");
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    
 
     public void SetInput(NetworkInputData input)
     {

@@ -234,7 +234,7 @@ public class Player : CharacterBase, IDamageable
     public void CacheAnimationLengths()
     {
         _animationClipLengths = new();
-
+        if(_animator==null) _animator = GetComponent<Animator>();
         var controller = _animator.runtimeAnimatorController;
 
         foreach (var clip in controller.animationClips)
