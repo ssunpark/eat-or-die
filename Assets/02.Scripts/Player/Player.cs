@@ -4,31 +4,8 @@ using Fusion.Addons.FSM;
 using UnityEngine;
 public class Player : CharacterBase, IDamageable
 {
-    public static Dictionary<NetworkRunner, Player> LocalPlayerDictionary { get; set; }
-
-    public static Dictionary<NetworkRunner, List<Player>> PlayerListDictionary { get; set; }
-
-    public static bool TryGetLocalPlayer(NetworkRunner runner, out Player player)
-    {
-        if (runner == null)
-        {
-            player = null;
-            return false;
-        }
-
-        if (LocalPlayerDictionary.TryGetValue(runner, out player))
-        {
-            return player != null;
-        }
-        return false;
-    }
-
-    public LayerMask collisionTestMask;
-
-    Collider[] _collisionTestColliders = new Collider[8];
-
-    [Networked]
-    public TickTimer DamagedTimer { get; set; }
+    [Networked] public NetworkButtons ButtonsPrevious { get; set; }
+    [Networked] public TickTimer DamagedTimer { get; set; }
     float _damageRecoveryTime;
 
     public PlayerFSM PlayerFSM;
@@ -37,8 +14,6 @@ public class Player : CharacterBase, IDamageable
 
     //private PlayerTracker _playerTrackerRef;
 
-    public NetworkInputData CurrentInput { get; private set; }
-    public NetworkInputData PreviousInput { get; private set; }
 
     private Dictionary<string, float> _animationClipLengths;
 
@@ -70,30 +45,6 @@ public class Player : CharacterBase, IDamageable
                 camera.SetTarget(followTarget);
             }
         }
-        if (HasStateAuthority)
-        {
-            if (LocalPlayerDictionary == null)
-                LocalPlayerDictionary = new Dictionary<NetworkRunner, Player>()
-                {
-                    {Runner,this },
-                };
-            else
-                LocalPlayerDictionary.Add(Runner, this);
-        }
-
-        if (PlayerListDictionary == null)
-        {
-            PlayerListDictionary = new Dictionary<NetworkRunner, List<Player>>();
-        }
-
-        if (PlayerListDictionary.ContainsKey(Runner))
-        {
-            PlayerListDictionary[Runner].Add(this);
-        }
-        else
-        {
-            PlayerListDictionary.Add(Runner, new List<Player>() { this });
-        }
 
         //_hasPlayerTrackerRef = PlayerTracker.GetPlayerTrackerRef(Runner, out _playerTrackerRef);
         Resource.OnHungerChanged += EvaluateCurrentHunger;
@@ -104,6 +55,7 @@ public class Player : CharacterBase, IDamageable
 
         _animator = GetComponent<Animator>();
         PlayerFSM = GetComponent<PlayerFSM>();
+
     }
 
 
@@ -111,23 +63,14 @@ public class Player : CharacterBase, IDamageable
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         base.Despawned(runner, hasState);
-        if (LocalPlayerDictionary.ContainsKey(runner))
-        {
-            if (LocalPlayerDictionary[runner] == this)
-            {
-                LocalPlayerDictionary.Remove(runner);
-            }
-        }
-
-        if (PlayerListDictionary != null && PlayerListDictionary.ContainsKey(runner))
-        {
-            PlayerListDictionary[runner].Remove(this);
-        }
     }
 
-    [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     public override void FixedUpdateNetwork()
     {
+        if(PlayerFSM == null)
+        {
+            PlayerFSM = GetComponent<PlayerFSM>();
+        }
         Stat.UpdateStats(Runner.DeltaTime);
 
         if (HasInputAuthority)
@@ -244,18 +187,7 @@ public class Player : CharacterBase, IDamageable
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
+    
     private void InitializePlayerHUD()
     {
         // 나중에 UIManager를 통해 HUD를 관리할 예정

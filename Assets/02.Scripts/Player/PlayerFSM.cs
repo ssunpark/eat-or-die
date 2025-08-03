@@ -138,7 +138,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 if (!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
                 {
-                    InteractTarget = null;
+                    RPC_SetInteractTarget(null);
                 }
             }
 
@@ -146,12 +146,25 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
                 {
-                    ItemUseTarget = null;
+                    RPC_SetItemUseTarget(null);
                 }
             }
         }
         
     }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_SetInteractTarget(NetworkObject obj)
+    {
+        InteractTarget = obj;
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_SetItemUseTarget(NetworkObject obj)
+    {
+        ItemUseTarget = obj;
+    }
+
 
     private bool TestUseItem(bool usePressed)
     {
@@ -190,7 +203,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (hitObject.TryGetComponent(out NetworkObject net))
         {
-            ItemUseTarget = net;
+            RPC_SetItemUseTarget(net);
             return true;
         }
         else
@@ -237,7 +250,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 // else {
                 if(_testColliders[closestIndex].TryGetComponent(out NetworkObject net))
                 {
-                    InteractTarget = net;
+                    RPC_SetInteractTarget(net);
                     return true;
                 }
                 else
