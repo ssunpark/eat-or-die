@@ -201,15 +201,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.806875
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0000009536743
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.156599
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -993,7 +993,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       propertyPath: m_Name
-      value: ElderDragon_Rd
+      value: Dragon
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       propertyPath: m_IsActive
@@ -1668,9 +1668,6 @@ PrefabInstance:
       addedObject: {fileID: 6117635654882981029}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2094763257902203596}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5109285465035089194}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       insertIndex: -1
@@ -1678,6 +1675,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5839903247064313073}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3651417241611533723}
   m_SourcePrefab: {fileID: 100100000, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
 --- !u!4 &2405983379442941629 stripped
 Transform:
@@ -1722,8 +1722,8 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 3940347917857073997}
   - {fileID: 6117635654882981029}
-  - {fileID: 2094763257902203596}
   - {fileID: 5839903247064313073}
+  - {fileID: 3651417241611533723}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &6117635654882981029
 MonoBehaviour:
@@ -1742,24 +1742,6 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &2094763257902203596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3037701649389904903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 8611984156815877319}
-  ApplyTiming: 2
-  SyncSettings: 127
-  StateHashes: 000000004050def884c378d619c253540b3cc3922e001b45d44663d46539b0b76f761dff417d3d9d46980c4f847e744ad8833fcad2cc9282b82418639ed8947f5d41e0d85c48f10ae50868cd7a29bdba5e26485bbf5210f5598a743989537929e3db7da0330270b075eb7ad7a53277c7
-  TriggerHashes: 00000000dede26c15198e5dc85193c795a14e8ac1ad85350
-  TotalWords: 9
 --- !u!195 &5109285465035089194
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1822,6 +1804,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enableLogging: 1
+--- !u!114 &3651417241611533723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3037701649389904903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Animator: {fileID: 8611984156815877319}
+  ApplyTiming: 2
+  SyncSettings: 127
+  StateHashes: 000000004050def884c378d619c253540b3cc3922e001b45d44663d46539b0b76f761dff417d3d9d46980c4f847e744ad8833fcad2cc9282b82418639ed8947f5d41e0d85c48f10ae50868cd7a29bdba5e26485bbf5210f5598a743989537929e3db7da0330270b075eb7ad7a53277c7
+  TriggerHashes: 00000000dede26c15198e5dc85193c795a14e8ac1ad85350
+  TotalWords: 9
 --- !u!95 &8611984156815877319 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
