@@ -1,6 +1,4 @@
-﻿using System;
-using Fusion.Addons.FSM;
-using UnityEditor.Rendering.LookDev;
+﻿using Fusion.Addons.FSM;
 using UnityEngine;
 
 public class HitBehaviour : AEnemyStateBehaviour
