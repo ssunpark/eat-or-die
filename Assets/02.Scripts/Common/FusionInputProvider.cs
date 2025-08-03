@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
@@ -40,12 +41,14 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (_inputReader == null) return;
+        if (_inputReader == null || !_inputReader.HaveControl()) return;
 
         var move = _inputReader.MoveInput;
         var currentButtons = new NetworkButtons();
 
-        currentButtons.Set(EButtons.Attack, _inputReader.InputActions.Player.Attack.IsPressed());
+        bool isOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+
+        currentButtons.Set(EButtons.Attack, !isOverUI && _inputReader.InputActions.Player.Attack.IsPressed());
         currentButtons.Set(EButtons.Interact, _inputReader.InputActions.Player.Interact.IsPressed());
         currentButtons.Set(EButtons.UseItem, _inputReader.InputActions.Player.UseItem.IsPressed());
         currentButtons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
