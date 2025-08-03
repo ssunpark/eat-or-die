@@ -8,20 +8,20 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAni
         StateId = (int)EPlayerState.UseItem;
 
     }
+    private bool _animationFinished;
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => _animationFinished
+        );
+    }
     protected override void OnEnterState()
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.UseItem);
-            _controller.RPC_SetMoveFlag(true);
-        }
+        _animationFinished = false;
+        _controller.PlayAnimTriggerNetwork(EAnimTrigger.UseItem);
     }
 
-    protected override void OnExitState()
-    {
-        if (_controller.Object.HasInputAuthority)
-            _controller.RPC_SetMoveFlag(false);
-    }
 
     void IAnimationActionNotify.OnActionMoment()
     {
@@ -33,6 +33,6 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAni
 
     void IAnimationActionEndNotify.OnAnimationFinished()
     {
-        Machine.ForceActivateState(_controller.FSMStateInstances.Idle);
+        _animationFinished = true;
     }
 }

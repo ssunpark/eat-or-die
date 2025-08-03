@@ -8,6 +8,11 @@ public class PlayerMove:NetworkBehaviour
     private PlayerController _controller;
     private ResourceManager _resource;
     private Vector3 _dir;
+
+    private float _moveSpeed;
+    private float _sprintMultipler;
+    private float _accelerationSpeed;
+    private float _jumpImpulse;
     public void Initialize(StatManager stat, NetworkCharacterController characterController, PlayerController playerController, ResourceManager resourceManager)
     {
         _characterController = characterController;
@@ -15,11 +20,29 @@ public class PlayerMove:NetworkBehaviour
         _controller = playerController;
         _resource = resourceManager;
 
-        _characterController.maxSpeed = stat.GetStat(EStatType.MoveSpeed);
-        _characterController.jumpImpulse = stat.GetStat(EStatType.JumpPower);
-        _characterController.acceleration = stat.GetStat(EStatType.Acceleration);
+        stat.RegisterModifierCallback(
+        EStatType.MoveSpeed,
+        (type, mod) => UpdateStatCache(),
+        (type, mod) => UpdateStatCache()
+    );
+        stat.RegisterModifierCallback(
+            EStatType.SprintingMultiplier,
+            (type, mod) => UpdateStatCache(),
+            (type, mod) => UpdateStatCache()
+        );
+        UpdateStatCache();
     }
+    private void UpdateStatCache()
+    {
+        _moveSpeed = _stat.GetStat(EStatType.MoveSpeed);
+        _sprintMultipler = _stat.GetStat(EStatType.SprintingMultiplier);
+        _jumpImpulse = _stat.GetStat(EStatType.JumpPower);
+        _accelerationSpeed = _stat.GetStat(EStatType.Acceleration);
 
+        _characterController.maxSpeed = _moveSpeed;
+        _characterController.jumpImpulse = _jumpImpulse;
+        _characterController.acceleration = _accelerationSpeed;
+    }
     public override void FixedUpdateNetwork()
     {
         if (_controller.MoveFlag)
@@ -38,56 +61,23 @@ public class PlayerMove:NetworkBehaviour
     {
         _dir = dir;
 
-        float baseSpeed = _stat.GetStat(EStatType.MoveSpeed);
         float sprintMultiplier = isRunning
-            ? _stat.GetStat(EStatType.SprintingMultiplier)
+            ? _sprintMultipler
             : 1f;
-        float moveSpeed = baseSpeed * sprintMultiplier;
+        float moveSpeed = _moveSpeed * sprintMultiplier;
 
         if (_characterController.maxSpeed != moveSpeed)
         {
             _characterController.maxSpeed = moveSpeed;
         }
-
-
-        //if (dir.sqrMagnitude > 0.01f)
-        //{
-
-        //    float baseSpeed = _stat.GetStat(EStatType.MoveSpeed);
-        //    float sprintMultiplier = isRunning
-        //        ? _stat.GetStat(EStatType.SprintingMultiplier)
-        //        : 1f;
-        //    float moveSpeed = baseSpeed * sprintMultiplier;
-
-        //    if (_characterController.maxSpeed != moveSpeed)
-        //    {
-        //        _characterController.maxSpeed = moveSpeed;
-        //    }
-        //    //if (moveSpeed > 0f)
-        //    //{
-        //    //    _resource.ConsumeHunger(_controller.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime));
-        //    //}
-
-
-        //    _characterController.Move(dir);
-        //}
-        //else
-        //{
-        //    _characterController.Move(Vector3.zero);
-        //}
     }
 
     private void HandleJump(NetworkInputData inputData)
     {
         if (inputData.isJumping && IsGrounded)
         {
-            float jumpPower = _stat.GetStat(EStatType.JumpPower);
-            _characterController.jumpImpulse = jumpPower;
             _characterController.Jump();
-            if (Object.HasInputAuthority)
-            {
-                _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Jump);
-            }
+            _controller.PlayAnimTriggerNetwork(EAnimTrigger.Jump);
         }
     }
 

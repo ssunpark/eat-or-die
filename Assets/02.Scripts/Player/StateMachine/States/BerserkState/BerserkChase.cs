@@ -6,10 +6,32 @@ public class BerserkChase : ABerserkSubStateBase
     private Transform _target;
 
     public BerserkChase(PlayerController controller) : base(controller) { }
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            Machine.GetState<BerserkAttack>(),
+            () => CanStartAttack()
+        );
+    }
 
+    private bool CanStartAttack()
+    {
+        if (_target == null) return false;
+
+        float distance = Vector3.Distance(_controller.transform.position, _target.position);
+        if (distance > _stat.GetStat(EStatType.AttackRange)) return false;
+
+        float cooldown = Mathf.Max(1f / _stat.GetStat(EStatType.AttackSpeed), 0.01f);
+        return _controller.LastAttackTime + cooldown < Machine.Runner.LocalRenderTime;
+    }
     protected override void OnEnterState()
     {
         _target = FindClosestEnemy();
+    }
+
+    protected override void OnExitState()
+    {
+        _controller.Movement.Move(Vector3.zero, false);
     }
 
     protected override void OnFixedUpdate()
@@ -25,11 +47,6 @@ public class BerserkChase : ABerserkSubStateBase
         Vector3 dir = (_target.position - _controller.transform.position).normalized;
         _controller.Movement.Move(dir, true);
 
-        float dist = Vector3.Distance(_controller.transform.position, _target.position);
-        if (dist < _controller.Stat.GetStat(EStatType.AttackRange))
-        {
-            Machine.ForceActivateState<BerserkAttack>();
-        }
     }
 
     // 일단 플레이어만 찾게

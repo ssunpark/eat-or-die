@@ -23,10 +23,11 @@ public class FSMStateInstances
     public PlayerDeadState Dead;
     public PlayerCookingState Cooking;
     public PlayerBerserkState Berserk;
+    public PlayerRecoverState Recover;
 }
 [RequireComponent(typeof(NetworkObject))]
 [RequireComponent(typeof(NetworkCharacterController))]
-public class PlayerController : CharacterBase, IStateMachineOwner
+public class PlayerController : CharacterBase, IStateMachineOwner, IDamageable
 {
     #region Networked Properties
 
@@ -42,14 +43,17 @@ public class PlayerController : CharacterBase, IStateMachineOwner
     public FSMStateInstances FSMStateInstances { get; private set; }
     public StateValues StateValues { get; set; } = new StateValues();
 
+    private StateChangeRequestQueue<APlayerStateBase> _stateRequestQueue = new StateChangeRequestQueue<APlayerStateBase>();
+
     #endregion
 
     #region Components & References
 
     private NetworkCharacterController _characterController;
-    [HideInInspector] public PlayerAnimator PlayerAnimatorController;
-    [HideInInspector] public PlayerInteractions Interact;
-    public PlayerMove Movement;
+    public PlayerAnimator PlayerAnimatorController { get; private set; }
+    public PlayerInteractions Interact {  get; private set; }
+    public PlayerMove Movement { get; private set; }
+    public CharacterStatNetworkSync StatNetworkSync { get; private set; }
 
     #endregion
 
@@ -85,8 +89,22 @@ public class PlayerController : CharacterBase, IStateMachineOwner
 
     #endregion
 
+    public void SetMoveFlagNetwork(bool flag)
+    {
+        if (HasInputAuthority)
+            RPC_SetMoveFlag_Input(flag);
+        else if (HasStateAuthority)
+            RPC_SetMoveFlag_State(flag);
+    }
+
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_SetMoveFlag(bool flag)
+    public void RPC_SetMoveFlag_Input(bool flag)
+    {
+        MoveFlag = flag;
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
+    public void RPC_SetMoveFlag_State(bool flag)
     {
         MoveFlag = flag;
     }
@@ -94,6 +112,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner
     public override void FixedUpdateNetwork()
     {
         Stat.UpdateStats(Runner.DeltaTime);
+        _stateRequestQueue.ExecuteAll(_playerFSM);
     }
 
     private void Awake()
@@ -113,7 +132,8 @@ public class PlayerController : CharacterBase, IStateMachineOwner
             Hit = new PlayerHitState(this),
             Dead = new PlayerDeadState(this),
             Cooking = new PlayerCookingState(this),
-            Berserk = new PlayerBerserkState(this)
+            Berserk = new PlayerBerserkState(this),
+            Recover = new PlayerRecoverState(this)
         };
 
         _playerFSM = new StateMachine<APlayerStateBase>("PlayerFSM",
@@ -149,6 +169,7 @@ public class PlayerController : CharacterBase, IStateMachineOwner
         _hungerEffectHandler = new HungerEffectHandler(Resource, Stat);
         Interact = GetComponent<PlayerInteractions>();
         Movement = GetComponent<PlayerMove>();
+        StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
         _isSpawned = true;
         TryInitialize();
     }
@@ -194,16 +215,28 @@ public class PlayerController : CharacterBase, IStateMachineOwner
         list.Add(_playerFSM);
     }
 
+    public void PlayAnimTriggerNetwork(EAnimTrigger trigger)
+    {
+        if (HasInputAuthority)
+            Rpc_PlayAnimTrigger_Input(trigger);
+        else if (HasStateAuthority)
+            Rpc_PlayAnimTrigger_State(trigger);
+    }
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    public void Rpc_PlayAnimTrigger(EAnimTrigger trigger)
+    public void Rpc_PlayAnimTrigger_Input(EAnimTrigger trigger)
     {
         PlayerAnimatorController.PlayTrigger(trigger);
     }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Rpc_PlayAnimTrigger_State(EAnimTrigger trigger)
+    {
+        PlayerAnimatorController.PlayTrigger(trigger);
+    }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
     public void RPC_DealDamage(NetworkObject target, float amount)
     {
-        if (target == null || !target.HasStateAuthority) return;
+        Debug.Log($"{target}");
+        if (target == null) return;
 
         if (target.TryGetComponent(out IDamageable damageable))
         {
@@ -212,13 +245,15 @@ public class PlayerController : CharacterBase, IStateMachineOwner
     }
     public void TakeDamage(float amount, PlayerRef attacker)
     {
-        if (!HasStateAuthority) return;
+        if (!HasStateAuthority)
+        {
+            return;
+        }
 
         float defense = Stat.GetStat(EStatType.Defense);
         float finalDmg = amount * (100 / (100 + defense));
-
+        RequestState(FSMStateInstances.Hit);
         Resource.ConsumeHunger(finalDmg);
-        _playerFSM.ForceActivateState(FSMStateInstances.Hit);
     }
 
     private void InitializePlayerHUD()
@@ -245,21 +280,37 @@ public class PlayerController : CharacterBase, IStateMachineOwner
 
     private void EvaluateCurrentHunger(float current, float max)
     {
-
-        if( current <= 0)
+        if (current <= 0)
         {
-            _playerFSM.ForceActivateState(FSMStateInstances.Dead);
+            RequestState(FSMStateInstances.Dead);
         }
-        else if (current < max * 0.1f && _prevHunger > current && _playerFSM.ActiveState != FSMStateInstances.Berserk)
+        else if (current < max * 0.1f && _prevHunger > current)
         {
-            _playerFSM.ForceActivateState(FSMStateInstances.Berserk);
+            if (_playerFSM.ActiveState != FSMStateInstances.Berserk)
+            {
+                RequestState(FSMStateInstances.Berserk);
+            }
         }
-        else if(_prevHunger < current && current >= max * 0.1f && _playerFSM.ActiveState == FSMStateInstances.Berserk)
+        else if (_prevHunger < current && current >= max * 0.1f)
         {
-            _playerFSM.ForceActivateState(FSMStateInstances.Idle);
+            // Berserk 상태면 Recover로 진입 시도
+            if (_playerFSM.ActiveState == FSMStateInstances.Berserk)
+            {
+                FSM.TryActivateState(FSMStateInstances.Recover);
+            }
         }
 
         _prevHunger = current;
+    }
+
+    public void RequestState(APlayerStateBase nextState)
+    {
+        _stateRequestQueue.Request(nextState);
+    }
+
+    public void ForceOverrideState(APlayerStateBase nextState)
+    {
+        _stateRequestQueue.ForceOverride(nextState);
     }
 
 }
