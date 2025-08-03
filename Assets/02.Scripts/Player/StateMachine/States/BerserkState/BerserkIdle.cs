@@ -9,7 +9,7 @@ public class BerserkIdle : ABerserkSubStateBase, IAnimationActionEndNotify
     {
         this.AddTransition(
             Machine.GetState<BerserkChase>(),
-            () => _animFinished && _controller.HasStateAuthority
+            () => _animFinished && _fsm.HasStateAuthority
         );
     }
 

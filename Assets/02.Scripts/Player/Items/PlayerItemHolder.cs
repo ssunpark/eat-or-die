@@ -9,6 +9,8 @@ public class PlayerItemHolder: NetworkBehaviour
     public Item HeldItem { get; private set; }
     private GameObject _heldItemObject;
     public string InteractionTag;
+
+    private Player _player;
     [System.Serializable]
     public class AnimatorOverrideEntry
     {
@@ -33,6 +35,7 @@ public class PlayerItemHolder: NetworkBehaviour
 
     public void UseItem(GameObject target)
     {
+        Debug.Log($"[PlayerItemHolder] UseItem Called. Target: {target.name}");
         HeldItem?.Use(target);
     }
     
@@ -50,6 +53,10 @@ public class PlayerItemHolder: NetworkBehaviour
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void RPC_RequestHoldItem(int itemId)
     {
+        if(_player == null)
+        {
+            _player = GetComponent<Player>();
+        }
         var heldItem = ItemManager.Instance.GetItem(itemId);
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
         Debug.Log($"[PlayerItemHolder] RPC_RequestHoldItem Called. ID: {itemId}");
@@ -62,6 +69,8 @@ public class PlayerItemHolder: NetworkBehaviour
         }
         _heldItemObject = changedHoldItem.GetHoldItemObject();
         changedHoldItem.HoldItem(gameObject);
+
+        _player.CacheAnimationLengths();
     }
 
     public void ApplyAnimatorOverride(string key)

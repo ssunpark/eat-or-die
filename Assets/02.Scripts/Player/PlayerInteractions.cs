@@ -18,7 +18,7 @@ public class PlayerInteractions : MonoBehaviour
         InteractionLayer = LayerMask.GetMask("Interactable");
         TagName = "Untagged";
     }
-    public void Interact(GameObject target)
+    public void Interact(NetworkObject target)
     {
         target.GetComponent<IInteractable>()?.Interact();
     }

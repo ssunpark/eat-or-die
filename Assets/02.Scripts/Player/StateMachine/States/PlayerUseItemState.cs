@@ -1,40 +1,35 @@
 ﻿using Fusion; // Add Fusion for NetworkInputData
 using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
 using UnityEngine;
-public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
+public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
 {
     public PlayerUseItemState(PlayerFSM controller) : base(controller)
     {
-        StateId = (int)EPlayerState.UseItem;
-
-    }
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished);
+        AnimState = "UseItem";
     }
     protected override void OnEnterStateRender()
     {
-        _animationFinished = false;
-        _controller.PlayAnimTrigger(EAnimTrigger.UseItem);
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
-    protected override bool CanExitState(IState nextState)
-    {
-        return _animationFinished;
-    }
 
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_controller.HasInputAuthority)
-            _controller.ItemHolder.UseItem(_controller.UseTarget);
+        if (_fsm.HasInputAuthority)
+        {
+            Debug.Log("PlayerUseItemState: Using item at action moment.");
+            _fsm.ItemHolder.UseItem(_fsm.ItemUseTarget.gameObject);
+        }
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
+    protected override void OnFixedUpdate()
     {
-        Debug.Log("PlayerUseItemState: Animation finished");
-        _animationFinished = true;
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            Machine.ForceActivateState<PlayerIdleState>();
+        }
     }
 }

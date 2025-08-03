@@ -20,7 +20,8 @@ public class PlayerAnimator : NetworkBehaviour
 {
     private InputReader _inputReader;
     private Animator _anim;
-    private PlayerFSM _controller;
+    private Player _player;
+    private PlayerFSM _fsm;
     private bool _shouldFinishState;
     private float _cachedWalkSpeed;
     private float _cachedRunSpeed;
@@ -28,12 +29,7 @@ public class PlayerAnimator : NetworkBehaviour
     private bool _initialized;
     private bool _isMoving;
 
-    [Networked, OnChangedRender(nameof(OnSpeedChanged))]
-    public float MoveSpeed { get; set; }
-    private void OnSpeedChanged()
-    {
-        SetSpeedParameter(MoveSpeed);
-    }
+    
     private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new()
     {
         { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
@@ -53,28 +49,20 @@ public class PlayerAnimator : NetworkBehaviour
 
     #region Unity Lifecycle
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_SetMoveSpeed(float moveSpeed)
-    {
-        MoveSpeed = MoveSpeed;
-    }
-
-    public void SetIsMoving(bool isMoving)
-    {
-        _isMoving = isMoving;
-        SetSpeedParameter(_cachedWalkSpeed);
-    }
     public override void Spawned()
     {
         _anim = GetComponent<Animator>();
+        _fsm = GetComponent<PlayerFSM>();
     }
 
     public void TryInitialize()
     {
-        TryGetComponent(out _controller);
-        if (_controller == null || _controller.Stat == null)
+        _anim = GetComponent<Animator>();
+        _fsm = GetComponent<PlayerFSM>();
+        TryGetComponent(out _player);
+        if (_player == null || _player.Stat == null)
             return;
-        _statManager = _controller.Stat;
+        _statManager = _player.Stat;
         _statManager.RegisterModifierCallback(
         EStatType.MoveSpeed,
         (type, mod) => UpdateStatCache(),
@@ -110,12 +98,12 @@ public class PlayerAnimator : NetworkBehaviour
 
     private void TryInitializeController()
     {
-        if (_controller == null)
-            _controller = GetComponent<PlayerFSM>();
+        if (_player == null)
+            _player = GetComponent<Player>();
     }
     public void OnActionMoment()
     {
-        if (_controller?.StateMachine?.ActiveState is IAnimationActionNotify notify)
+        if (_fsm?.StateMachine?.ActiveState is IAnimationActionNotify notify)
         {
             notify.OnActionMoment();
         }
@@ -125,7 +113,7 @@ public class PlayerAnimator : NetworkBehaviour
     {
         TryInitializeController();
 
-        if (_controller.StateMachine.ActiveState is IAnimationActionEndNotify notify)
+        if (_fsm?.StateMachine?.ActiveState is IAnimationActionEndNotify notify)
         {
             notify.OnAnimationFinished();
         }

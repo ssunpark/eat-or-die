@@ -19,7 +19,6 @@ public class EatEffect_StatModifier : IUseEffect
     
     public void Use(GameObject target)
     {
-        Debug.Log(Description);
-        target.GetComponent<PlayerFSM>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value, Food,true, _duration));
+        target.GetComponent<Player>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value, Food,true, _duration));
     }
 }

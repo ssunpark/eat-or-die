@@ -1,7 +1,9 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
+using Fusion.Addons.SimpleKCC;
 using UnityEngine;
 
 public class StateValues
@@ -23,19 +25,9 @@ public class FSMStateInstances
     public PlayerBerserkState Berserk;
     public PlayerRecoverState Recover;
 }
-[RequireComponent(typeof(NetworkObject))]
-[RequireComponent(typeof(NetworkCharacterController))]
 [RequireComponent(typeof(StateMachineController))]
-public class PlayerFSM : CharacterBase, IStateMachineOwner
+public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 {
-    #region Networked Properties
-
-    [Networked, OnChangedRender(nameof(MoveChanged))]
-    public bool MoveFlag { get; set; }
-
-    [Networked, OnChangedRender(nameof(MoveChanged))] public bool IsMoving { get; set; } = false;
-
-    #endregion
 
     #region FSM
 
@@ -44,30 +36,19 @@ public class PlayerFSM : CharacterBase, IStateMachineOwner
     public FSMStateInstances FSMStateInstances { get; private set; }
     public StateValues StateValues { get; set; } = new StateValues();
 
-    private StateChangeRequestQueue<APlayerStateBase> _stateRequestQueue = new StateChangeRequestQueue<APlayerStateBase>();
 
     #endregion
 
     #region Components & References
-
-    private NetworkCharacterController _characterController;
     public PlayerAnimator PlayerAnimatorController { get; private set; }
-    public PlayerInteractions Interact {  get; private set; }
+    public PlayerInteractions Interact { get; private set; }
     public PlayerItemHolder ItemHolder { get; private set; }
     public PlayerMove Movement { get; private set; }
     public CharacterStatNetworkSync StatNetworkSync { get; private set; }
 
-    #endregion
-
-    #region Hunger / Resource
-
-    private float _prevHunger = 0f;
-    private HungerEffectHandler _hungerEffectHandler;
-    public HungerEffectHandler HungerEffectHandler => _hungerEffectHandler;
+    public LayerMask attackableLayerMask;
 
     #endregion
-
-    #region Attack Tracking
 
     private float _lastAttackTime;
     public float LastAttackTime
@@ -75,21 +56,6 @@ public class PlayerFSM : CharacterBase, IStateMachineOwner
         get => _lastAttackTime;
         set => _lastAttackTime = value;
     }
-
-    #endregion
-
-    #region HUD
-
-    [SerializeField]
-    private string _playerHUDTagName = "PlayerHUD";
-
-    #endregion
-
-    #region State Flags
-
-    private bool _isSpawned = false;
-
-    #endregion
 
 
     public Player PlayerNetworkObject;
@@ -100,74 +66,38 @@ public class PlayerFSM : CharacterBase, IStateMachineOwner
     [Networked]
     public NetworkBool CanUseItem { get; set; } = false;
 
+    [Networked]
+    public NetworkObject ItemUseTarget { get; set; } = null;
+
+    [Networked]
+    public NetworkObject InteractTarget { get; set; } = null;
+
     Collider[] _testColliders = new Collider[8];
     public LayerMask InteractLayerMask;
-    //public SimpleKCC simpleKCC;
+    public SimpleKCC SimpleKCC;
+    private NetworkInputData _currentInput;
+    private NetworkInputData _previousInput;
+
+    public NetworkInputData CurrentInput => _currentInput;
+    public NetworkInputData PreviousInput => _previousInput;
 
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
-    private float _checkTimer;
 
-    private GameObject _useTarget = null;
-    public GameObject UseTarget => _useTarget;
-    private GameObject _interactTarget = null;
-    public GameObject InteractTarget => _interactTarget;
-    private void Update()
+    public void Awake()
     {
-        if (!HasInputAuthority) return;
-
-        _checkTimer += Time.deltaTime;
-        if (_checkTimer > 0.1f)
-        {
-            _checkTimer = 0f;
-            bool canUseItem = RaycastCheckForUsableItem(out _useTarget);
-            bool canInteract = RaycastCheckForInteractable(out _interactTarget);
-
-            RPC_SetFlags(canUseItem, canInteract);
-        }
+        SimpleKCC = GetComponent<SimpleKCC>();
+        PlayerAnimatorController = GetComponent<PlayerAnimator>();
+        Interact = GetComponent<PlayerInteractions>();
+        StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
+        ItemHolder = GetComponent<PlayerItemHolder>();
+        PlayerNetworkObject = GetComponent<Player>();
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    private void RPC_SetFlags(bool canUseItem, bool canInteract)
-    {
-        CanUseItem = canUseItem;
-        CanInteract = canInteract;
-    }
-
-    public void SetMoveFlagNetwork(bool flag)
-    {
-        if (HasInputAuthority)
-            RPC_SetMoveFlag_Input(flag);
-        else if (HasStateAuthority)
-            RPC_SetMoveFlag_State(flag);
-    }
-
-    private void MoveChanged()
-    {
-        PlayerAnimatorController.SetIsMoving(!MoveFlag && IsMoving);
-    }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_SetMoveFlag_Input(bool flag)
-    {
-        MoveFlag = flag;
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
-    public void RPC_SetMoveFlag_State(bool flag)
-    {
-        MoveFlag = flag;
-    }
-
-    public override void FixedUpdateNetwork()
-    {
-        Stat.UpdateStats(Runner.DeltaTime);
-        _stateRequestQueue.ExecuteAll(_playerFSM);
-    }
-
-    private void Awake()
+    public void CollectStateMachines(List<IStateMachine> list)
     {
         InitializeFSM();
+        list.Add(_playerFSM);
     }
 
     private void InitializeFSM()
@@ -186,7 +116,7 @@ public class PlayerFSM : CharacterBase, IStateMachineOwner
             Recover = new PlayerRecoverState(this)
         };
 
-        _playerFSM = new StateMachine<APlayerStateBase>("PlayerFSM",
+        _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
             FSMStateInstances.Idle,
             FSMStateInstances.Move,
             FSMStateInstances.Attack,
@@ -199,237 +129,154 @@ public class PlayerFSM : CharacterBase, IStateMachineOwner
         );
     }
 
-    public override void Spawned()
+    public override void FixedUpdateNetwork()
     {
-        if (Object.HasInputAuthority)
+        if (CanInteract)
         {
-            Room.Instance.SetLocalPlayer(gameObject);
-
-            var camera = Camera.main.GetComponent<FollowCamera>();
-            if (camera != null)
+            if(!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
             {
-                Transform followTarget = transform;
-                camera.SetTarget(followTarget);
-            }
-        }
-        //관전 모드에서 플레이어를 등록
-        //SpectatorManager.Instance?.RegisterPlayer(this);
-        _characterController = GetComponent<NetworkCharacterController>();
-        PlayerAnimatorController = GetComponent<PlayerAnimator>();
-        _hungerEffectHandler = new HungerEffectHandler(Resource, Stat);
-        Interact = GetComponent<PlayerInteractions>();
-        Movement = GetComponent<PlayerMove>();
-        StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
-        ItemHolder = GetComponent<PlayerItemHolder>();
-        _isSpawned = true;
-        TryInitialize();
-    }
-
-    private void OnDestroy()
-    {
-        //관전 모드에서 플레이어를 제거
-        //SpectatorManager.Instance?.UnregisterPlayer(this);
-    }
-
-    private void TryInitialize()
-    {
-        if (_isSpawned)
-        {
-            _characterController.maxSpeed = Stat.GetStat(EStatType.MoveSpeed);
-            _characterController.jumpImpulse = Stat.GetStat(EStatType.JumpPower);
-            _characterController.acceleration = Stat.GetStat(EStatType.Acceleration);
-
-            if (Object.HasInputAuthority)
-            {
-                InitializePlayerHUD();
-            }
-
-            if (TryGetComponent(out PlayerMove playerMove))
-            {
-                playerMove.Initialize(Stat, _characterController, this, Resource);
-            }
-            else
-            {
-                Debug.LogError("PlayerMove component not found!!");
-            }
-
-        }
-
-        
-        _playerFSM.SetDefaultState((int)EPlayerState.Idle);
-        Resource.OnHungerChanged += EvaluateCurrentHunger;
-    }
-
-
-    public void CollectStateMachines(List<IStateMachine> list)
-    {
-        list.Add(_playerFSM);
-    }
-
-    public void PlayAnimTrigger(EAnimTrigger trigger)
-    {
-        PlayerAnimatorController.PlayTrigger(trigger);
-    }
-
-    public void PlayAnimTriggerNetwork(EAnimTrigger trigger)
-    {
-        // 본인 즉시 실행 (지연 없이)
-        PlayAnimTrigger(trigger);
-
-        // 모든 클라에 전파
-        if (HasInputAuthority)
-            RPC_PlayTrigger(trigger);
-    }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    private void RPC_PlayTrigger(EAnimTrigger trigger)
-    {
-        if (HasInputAuthority) return; // 이미 실행했음
-        PlayAnimTrigger(trigger);
-    }
-
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.StateAuthority)]
-    public void RPC_DealDamage(NetworkObject target, float amount)
-    {
-        Debug.Log($"{target}");
-        if (target == null) return;
-
-        if (target.TryGetComponent(out IDamageable damageable))
-        {
-            damageable.TakeDamage(amount, Object.InputAuthority);
-        }
-    }
-    public void TakeDamage(float amount, PlayerRef attacker)
-    {
-        if (!HasStateAuthority)
-        {
-            return;
-        }
-
-        float defense = Stat.GetStat(EStatType.Defense);
-        float finalDmg = amount * (100 / (100 + defense));
-        RequestState(FSMStateInstances.Hit);
-        Resource.ConsumeHunger(finalDmg);
-    }
-
-    private void InitializePlayerHUD()
-    {
-        // 나중에 UIManager를 통해 HUD를 관리할 예정
-        GameObject hudObject = GameObject.FindGameObjectWithTag(_playerHUDTagName);
-        if (hudObject != null)
-        {
-            UI_HUDPlayerHP hudHP = hudObject.GetComponent<UI_HUDPlayerHP>();
-            if (hudHP != null)
-            {
-                hudHP.Initialize(Resource, Stat); // ResourceManager와 StatManager 전달
-            }
-            else
-            {
-                Debug.LogError($"HUD 오브젝트 '{_playerHUDTagName}'에 UI_HUDPlayerHP 스크립트가 없습니다.");
-            }
-        }
-        else
-        {
-            Debug.LogError($"씬에서 태그 '{_playerHUDTagName}'를 가진 HUD 오브젝트를 찾을 수 없습니다.");
-        }
-    }
-
-    private void EvaluateCurrentHunger(float current, float max)
-    {
-        if(current/max > 0.2)
-        {
-            _prevHunger = current;
-            return;
-        }
-        if (current <= 0)
-        {
-            RequestState(FSMStateInstances.Dead);
-        }
-        else if (current < max * 0.1f && _prevHunger > current)
-        {
-            if (_playerFSM.ActiveState != FSMStateInstances.Berserk)
-            {
-                RequestState(FSMStateInstances.Berserk);
-            }
-        }
-        else if (_prevHunger < current && current >= max * 0.1f)
-        {
-            // Berserk 상태면 Recover로 진입 시도
-            if (_playerFSM.ActiveState == FSMStateInstances.Berserk)
-            {
-                StateMachine.TryActivateState(FSMStateInstances.Recover);
+                InteractTarget = null;
             }
         }
 
-        _prevHunger = current;
+        if (CanUseItem)
+        {
+            if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
+            {
+                ItemUseTarget = null;
+            }
+        }
     }
 
-    public void RequestState(APlayerStateBase nextState)
+    private bool TestUseItem(bool usePressed)
     {
-        _stateRequestQueue.Request(nextState);
-    }
-
-    public void ForceOverrideState(APlayerStateBase nextState)
-    {
-        _stateRequestQueue.ForceOverride(nextState);
-    }
-
-    public bool RaycastCheckForUsableItem(out GameObject target)
-    {
-        target = null;
         if (ItemHolder.HeldItem == null)
             return false;
-
         string requiredTag = ItemHolder.InteractionTag;
+        Vector3 interactionPoint = transform.position + transform.forward;
+
         if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Undefined")
         {
-            Debug.Log($"[PlayerController] requiredTag is {requiredTag}.");
+            //Debug.Log($"[PlayerController] requiredTag is {requiredTag}.");
             // 사용아이템의 상호작용가능한 물체가 Untagged일 수도 있어서 임시로 Undefined일때 체크
             return false;
         }
-        
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, MAX_RAYCAST_DISTANCE, LayerMask.GetMask("Interactable")))
+
+        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, MAX_RAYCAST_DISTANCE, InteractLayerMask))
         {
-            Debug.Log($"[PlayerController] Raycast에서 검출된 오브젝트 없음.");
+            //Debug.Log($"[PlayerController] Raycast에서 검출된 오브젝트 없음.");
             return false;
         }
 
         GameObject hitObject = hit.collider.gameObject;
         if (!hitObject.CompareTag(requiredTag))
         {
-            Debug.Log($"[PlayerController] hitObject: {hitObject.name}, {hitObject.tag}");
+            //Debug.Log($"[PlayerController] hitObject: {hitObject.name}, {hitObject.tag}");
             return false;
         }
-
         float dist = Vector3.Distance(transform.position, hitObject.transform.position);
         if (dist > INTERACTABLE_DISTANCE)
         {
-            Debug.Log($"[PlayerController] 거리 초과: {dist} > {INTERACTABLE_DISTANCE}");
+            //Debug.Log($"[PlayerController] 거리 초과: {dist} > {INTERACTABLE_DISTANCE}");
             return false;
         }
 
-        target = hitObject;
-        Debug.Log($"[PlayerController] CanUseHeldItem 성공: {hitObject.name}, 거리: {dist}");
-        return true;
+        //Debug.Log($"[PlayerController] CanUseHeldItem 성공: {hitObject.name}, 거리: {dist}");
+
+        if (hitObject.TryGetComponent(out NetworkObject net))
+        {
+            ItemUseTarget = net;
+            return true;
+        }
+        else
+        {
+            Debug.LogWarning($"[PlayerController] Hit object {hitObject.name} does not have a NetworkObject component.");
+            return false;
+        }
     }
-    public bool RaycastCheckForInteractable(out GameObject target)
+
+    private bool TestInteraction(bool interactPressed)
     {
-        target = null;
+        Vector3 interactionPoint = transform.position + transform.forward;
 
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, MAX_RAYCAST_DISTANCE, LayerMask.GetMask("Interactable")))
-            return false;
+        int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, 2f, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
 
-        GameObject hitObject = hit.collider.gameObject;
+        int closestIndex = -1;
+        float shortestDistance = float.MaxValue;
+        for (int i = 0; i < result; i++)
+        {
+            float distance = Vector3.Distance(_testColliders[i].transform.position, interactionPoint);
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closestIndex = i;
+            }
+        }
 
-        float dist = Vector3.Distance(transform.position, hitObject.transform.position);
-        if (dist > INTERACTABLE_DISTANCE)
+        if (closestIndex < 0)
         {
             return false;
         }
 
-        target = hitObject;
-        return true;
+        if (_testColliders[closestIndex].TryGetComponent<IInteractable>(out var interactable))
+        {
+            if (interactPressed)
+            {
+                // 즉시 상호작용가능한 오브젝트라면
+                if (false) // IInteractable에서 즉시 상호작용 가능한지 여부를 확인하는 필드 필요
+                {
+                    interactable.Interact();
+                    return false;
+                    // 애니메이션 없이 상호작용할거라 InteractState로 안빠질겁니다
+                }
+                // else {
+                if(_testColliders[closestIndex].TryGetComponent(out NetworkObject net))
+                {
+                    InteractTarget = net;
+                    return true;
+                }
+                else
+                {
+                    Debug.LogWarning($"[PlayerController] Hit object {_testColliders[closestIndex].name} does not have a NetworkObject component.");
+                    return false;
+                }
+                //}
+            }
+        }
+        return false;
     }
 
+    void OnGUI()
+    {
+        GUI.Label(new Rect(10, 10, 200, 20), $"Attack: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Attack)}");
+        GUI.Label(new Rect(10, 30, 200, 20), $"Move: {CurrentInput.buttons.WasReleased(PreviousInput.buttons,EButtons.Attack)}");
+        GUI.Label(new Rect(10, 50, 200, 20), $"Interact: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)}");
+        GUI.Label(new Rect(10, 70, 200, 20), $"UseItem: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)}");
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+
+    public void SetInput(NetworkInputData input)
+    {
+        _previousInput = _currentInput;
+        _currentInput = input;
+    }
 }

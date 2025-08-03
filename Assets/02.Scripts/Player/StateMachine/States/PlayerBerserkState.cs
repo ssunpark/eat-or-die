@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Fusion.Addons.FSM;
 using UnityEngine;
-public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
+using UnityEngine.InputSystem.XR;
+public class PlayerBerserkState : APlayerStateBase
 {
     private StateMachine<ABerserkSubStateBase> _subFSM;
     private readonly BerserkChase _chase;
@@ -9,13 +10,14 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
 
     public PlayerBerserkState(PlayerFSM controller) : base(controller)
     {
-        _subFSM = new StateMachine<ABerserkSubStateBase>("BerserkFSM",
+        _subFSM = new StateMachine<ABerserkSubStateBase>("Berserk FSM",
             new BerserkIdle(controller), // 초기 상태
             new BerserkChase(controller),
             new BerserkAttack(controller)
         );
         _subFSM.SetDefaultState(0);
-        StateId = (int)EPlayerState.Berserk;
+        AnimState = "Berserk";
+
     }
     protected override void CollectChildStateMachines(List<IStateMachine> list)
     {
@@ -27,15 +29,14 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
     }
     protected override void OnEnterState()
     {
-        _controller.Movement.Move(Vector3.zero, false); // 이동 멈춤
+
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        KCC.Move(Vector3.zero); // 이동 멈춤
 
         _subFSM.Reset(); // 내부 상태머신 초기화
 
-        if (_controller.Object.HasInputAuthority)
-        {
-            InputReader.playerControllerInputBlocked = true;
-        }
-        _controller.PlayAnimTrigger(EAnimTrigger.Berserk);
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()
@@ -43,13 +44,7 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
         _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 5);
     }
 
-    protected override void OnExitState()
-    {
-        if (_controller.Object.HasInputAuthority)
-        {
-            InputReader.playerControllerInputBlocked = false;
-        }
-    }
+    
 
     public void OnAnimationFinished()
     {

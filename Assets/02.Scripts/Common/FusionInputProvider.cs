@@ -44,21 +44,21 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
         var move = _inputReader.MoveInput;
         var currentButtons = new NetworkButtons();
+
         currentButtons.Set(EButtons.Attack, _inputReader.InputActions.Player.Attack.IsPressed());
-        currentButtons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
-        currentButtons.Set(EButtons.Jump, _inputReader.InputActions.Player.Jump.IsPressed());
         currentButtons.Set(EButtons.Interact, _inputReader.InputActions.Player.Interact.IsPressed());
         currentButtons.Set(EButtons.UseItem, _inputReader.InputActions.Player.UseItem.IsPressed());
+        currentButtons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
 
         var data = new NetworkInputData
         {
-            direction = new Vector3(move.x, 0, move.y),
+            direction = new Vector2(move.x, move.y),
             buttons = currentButtons,
-            previousButtons = _prevButtons,
+            previousButtons = _prevButtons
         };
 
-        input.Set(data);
         _prevButtons = currentButtons;
+        input.Set(data);
     }
 
     public void SpawnPlayer(NetworkRunner runner, PlayerRef player)
@@ -82,14 +82,12 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     }
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason) { }
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) { }
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
-    public void OnConnectedToServer(NetworkRunner runner) { }
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
@@ -101,6 +99,14 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     }
 
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+    {
+    }
+
+    void INetworkRunnerCallbacks.OnConnectedToServer(NetworkRunner runner)
+    {
+    }
+
+    void INetworkRunnerCallbacks.OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
     }
 }

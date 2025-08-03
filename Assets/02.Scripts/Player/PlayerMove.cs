@@ -43,26 +43,7 @@ public class PlayerMove:NetworkBehaviour
         _ncc.jumpImpulse = _jumpImpulse;
         _ncc.acceleration = _accelerationSpeed;
     }
-    public override void FixedUpdateNetwork()
-    {
-        if (_controller.MoveFlag)
-        {
-            return;
-        }
-        if (_controller.IsMoving)
-        {
-
-            _ncc.Move(_dir);
-        }
-        else
-        {
-            _ncc.Move(Vector3.zero);
-        }
-        if (GetInput(out NetworkInputData inputData))
-        {
-            HandleJump(inputData);
-        }
-    }
+    
 
     public void Move(Vector3 dir, bool isRunning)
     {
@@ -90,7 +71,6 @@ public class PlayerMove:NetworkBehaviour
         if (inputData.buttons.IsSet(EButtons.Jump) && IsGrounded)
         {
             _ncc.Jump();
-            _controller.PlayAnimTrigger(EAnimTrigger.Jump);
         }
     }
 

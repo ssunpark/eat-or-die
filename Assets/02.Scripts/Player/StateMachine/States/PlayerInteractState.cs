@@ -1,42 +1,29 @@
 ﻿using Fusion.Addons.FSM;
 using UnityEngine; // Add Fusion FSM for PlayerStateMachine
-public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
+public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
 {
     public PlayerInteractState(PlayerFSM controller) : base(controller)
     {
-        StateId = (int)EPlayerState.Interact;
-    }
-
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished && _controller.HasStateAuthority
-        );
+        AnimState = "Interact";
     }
 
     protected override void OnEnterStateRender()
     {
-        _animationFinished = false;
-        _controller.PlayAnimTrigger(EAnimTrigger.Interact);
-    }
-    protected override bool CanExitState(IState nextState)
-    {
-        return _animationFinished;
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()
     {
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            Machine.ForceActivateState<PlayerIdleState>();
+        }
     }
     void IAnimationActionNotify.OnActionMoment()
     {
-        if(_controller.HasInputAuthority)
-            _controller.Interact.Interact(_controller.InteractTarget);
+        if(_fsm.HasInputAuthority)
+            _fsm.Interact.Interact(_fsm.InteractTarget);
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
-    {
-        _animationFinished = true;
-    }
 }

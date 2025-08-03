@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputReader : BehaviourSingleton<InputReader>
+public class InputReader : MonoBehaviour
 {
     public Vector2 MoveInput { get; private set; }
     public bool IsAttackDown { get; private set; }
@@ -34,7 +34,6 @@ public class InputReader : BehaviourSingleton<InputReader>
         _inputActions.Player.Sprint.performed += OnSprintPerformed;
 
     }
-
     private void HandleMovePerformed(InputAction.CallbackContext context)
     {
         MoveInput = context.ReadValue<Vector2>();
