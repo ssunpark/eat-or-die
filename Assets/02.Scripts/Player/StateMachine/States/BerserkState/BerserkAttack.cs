@@ -3,8 +3,6 @@ using Fusion.Addons.FSM;
 using UnityEngine;
 public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
 {
-    private float _damage;
-    private bool _animFinished;
     public BerserkAttack(PlayerFSM fsm) : base(fsm) {
         AnimState = "Attack";
         _positionOffset = new Vector3(0f, 0.2f, 0.5f);
@@ -71,7 +69,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
 
             // If no enemy has been hit or this target has already been hit, we continue.
-            if (target == null || hitTargets.Contains(target.NetworkObject))
+            if (target == null || _fsm.HitTargets.Contains(target.NetworkObject))
                 continue;
 
             AttackInfo attackState = new AttackInfo()
@@ -85,10 +83,10 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
             };
             target.OnHitLocal(attackState, _fsm.PlayerNetworkObject?.Object);
 
-            if (i >= hitTargets.Count)
-                hitTargets.Add(target.NetworkObject);
+            if (i >= _fsm.HitTargets.Count)
+                _fsm.HitTargets.Add(target.NetworkObject);
             else
-                hitTargets.Set(i, target.NetworkObject);
+                _fsm.HitTargets.Set(i, target.NetworkObject);
         }
 
     }
