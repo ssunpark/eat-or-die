@@ -7,7 +7,6 @@ using UnityEngine.EventSystems;
 
 public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
-    private InputReader _inputReader;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private NetworkRunner _runner;
 
@@ -22,7 +21,6 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     public SpawnPosition SpawnPos;
     private void Awake()
     {
-        _inputReader = FindAnyObjectByType<InputReader>();
 
         SpawnPoint = new Vector3[2];
         SpawnPoint[(int)SpawnPosition.DemoScene] = new Vector3(30, 0, 171);
@@ -41,17 +39,17 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (_inputReader == null || !_inputReader.HaveControl()) return;
+        if (InputReader.Instance == null || InputReader.Instance.HaveControl()) return;
 
-        var move = _inputReader.MoveInput;
+        var move = InputReader.Instance.MoveInput;
         var currentButtons = new NetworkButtons();
 
         bool isOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
-        currentButtons.Set(EButtons.Attack, !isOverUI && _inputReader.InputActions.Player.Attack.IsPressed());
-        currentButtons.Set(EButtons.Interact, _inputReader.InputActions.Player.Interact.IsPressed());
-        currentButtons.Set(EButtons.UseItem, _inputReader.InputActions.Player.UseItem.IsPressed());
-        currentButtons.Set(EButtons.Run, _inputReader.InputActions.Player.Sprint.IsPressed());
+        currentButtons.Set(EButtons.Attack, !isOverUI && InputReader.Instance.InputActions.Player.Attack.IsPressed());
+        currentButtons.Set(EButtons.Interact, InputReader.Instance.InputActions.Player.Interact.IsPressed());
+        currentButtons.Set(EButtons.UseItem, InputReader.Instance.InputActions.Player.UseItem.IsPressed());
+        currentButtons.Set(EButtons.Run, InputReader.Instance.InputActions.Player.Sprint.IsPressed());
 
         var data = new NetworkInputData
         {

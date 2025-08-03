@@ -9,6 +9,6 @@ public class CraftingTableInteractable : MonoBehaviour, IInteractable
     {
         Debug.Log("E키 상호작용");
         CraftingTablePanel.Open();
-        InputReader.playerControllerInputBlocked = true;
+        InputReader.Instance.GainControl();
     }
 }
