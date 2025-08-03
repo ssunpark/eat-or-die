@@ -18,8 +18,6 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
     private float _bossDamageMultiplier = 1f;
     private float _attackSpeed = 1f;
     private float _animationTime;
-    [Networked, Capacity(8)]
-    public NetworkLinkedList<NetworkObject> hitTargets => default;
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
     {
