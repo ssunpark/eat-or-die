@@ -22,6 +22,8 @@ public class PlantObject : NetworkBehaviour, IInteractable
     private FarmingGround _farmingGround;
     private SeedGround _seedGround;
 
+    public bool IsImmediate => false;
+
     public override void Spawned()
     {
         _farmingGround = GetComponentInParent<FarmingGround>();

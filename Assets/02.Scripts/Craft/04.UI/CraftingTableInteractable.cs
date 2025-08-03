@@ -2,6 +2,7 @@
 
 public class CraftingTableInteractable : MonoBehaviour, IInteractable
 {
+    public bool IsImmediate => true;
     public UI_CraftingTablePanel CraftingTablePanel;
     
     public void Interact()
