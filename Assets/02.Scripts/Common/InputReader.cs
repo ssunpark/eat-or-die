@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputReader : MonoBehaviour
+public class InputReader : BehaviourSingleton<InputReader>
 {
     public Vector2 MoveInput { get; private set; }
     public bool IsAttackDown { get; private set; }

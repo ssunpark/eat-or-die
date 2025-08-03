@@ -1388,6 +1388,8 @@ GameObject:
   - component: {fileID: 2501606717301605354}
   - component: {fileID: 3800296615300579642}
   - component: {fileID: 3574199287370598432}
+  - component: {fileID: 8675212434150357728}
+  - component: {fileID: 3793461721603525244}
   m_Layer: 0
   m_Name: Campfire Light
   m_TagString: Untagged
@@ -1514,59 +1516,38 @@ MonoBehaviour:
   Components:
   - {fileID: 2501606717301605354}
   _guid: b97887c9-716d-4b36-
---- !u!1 &3533485350822800350
-GameObject:
+--- !u!114 &8675212434150357728
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7264615953060569875}
-  - component: {fileID: 5011884099801989500}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7264615953060569875
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533485350822800350}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8544988928212992837}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5011884099801989500
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533485350822800350}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_GameObject: {fileID: 3476211124214544968}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.75, y: 1, z: 0.8}
-  m_Center: {x: 0, y: 0.47, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2501606717301605354}
+  _guid: b97887c9-716d-4b36-
+--- !u!114 &3793461721603525244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3476211124214544968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2501606717301605354}
+  _guid: b97887c9-716d-4b36-
 --- !u!1 &3676246765860157869
 GameObject:
   m_ObjectHideFlags: 0
@@ -2322,7 +2303,6 @@ Transform:
   - {fileID: 4138744785420263616}
   - {fileID: 7328551189046772757}
   - {fileID: 5243660396637419214}
-  - {fileID: 7264615953060569875}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!205 &5272701463208274043
@@ -4140,7 +4120,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4308928679544578848}
+      addedObject: {fileID: 6786693292838318373}
     - targetCorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7292220467144474010}
@@ -4158,7 +4138,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
   m_PrefabInstance: {fileID: 2144285964442888696}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4308928679544578848
+--- !u!114 &6786693292838318373
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4186,7 +4166,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -4204,9 +4184,11 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 2223625450
+  SortKey: 3889278698
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours: []
+  NetworkedBehaviours:
+  - {fileID: 6786693292838318373}
+  - {fileID: 0}
   ForceRemoteRenderTimeframe: 0
