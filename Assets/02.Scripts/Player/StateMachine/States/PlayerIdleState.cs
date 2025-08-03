@@ -37,7 +37,7 @@ public class PlayerIdleState : APlayerStateBase
         }
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Interact))
         {
-            if (CanInteract())
+            if (IsInteractTargetExists())
             {
                 Machine.ForceActivateState<PlayerInteractState>();
                 return;
@@ -45,7 +45,7 @@ public class PlayerIdleState : APlayerStateBase
         }
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.UseItem))
         {
-            if (CanUseItem())
+            if (IsUseItemTargetExists())
             {
                 Machine.ForceActivateState<PlayerUseItemState>();
                 return;

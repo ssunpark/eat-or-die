@@ -24,12 +24,12 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
         Anim = fsm.GetComponent<Animator>();
     }
 
-    protected bool CanInteract()
+    protected bool IsInteractTargetExists()
     {
         return _fsm.InteractTarget != null;
     }
 
-    protected bool CanUseItem()
+    protected bool IsUseItemTargetExists()
     {
         return _fsm.ItemUseTarget != null;
     }
