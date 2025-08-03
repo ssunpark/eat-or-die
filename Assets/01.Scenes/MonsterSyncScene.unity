@@ -7765,26 +7765,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 923405158065730987, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5004887119945514408, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: m_Name
       value: CookingWorkbench
       objectReference: {fileID: 0}
-    - target: {fileID: 5004887119945514408, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-      propertyPath: m_TagString
-      value: CookingPot
+    - target: {fileID: 6692593929899003812, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
+      propertyPath: SortKey
+      value: 371969705
       objectReference: {fileID: 0}
-    - target: {fileID: 6838807907691656287, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-      propertyPath: m_Layer
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 7292220467144474010, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-      propertyPath: m_Enabled
+    - target: {fileID: 6692593929899003812, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
+      propertyPath: NetworkedBehaviours.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6786693292838318373, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
+      propertyPath: CookingPanelUI
+      value: 
+      objectReference: {fileID: 7417058676010598485}
     - target: {fileID: 8544988928212992837, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.37
@@ -7825,62 +7821,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 923405158065730987, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6838807907691656287, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 7130107830771272537}
-    - targetCorrespondingSourceObject: {fileID: 3476211124214544968, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7130107830771272535}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
---- !u!1 &7130107830771272533 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3476211124214544968, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-  m_PrefabInstance: {fileID: 7130107830771272532}
-  m_PrefabAsset: {fileID: 0}
---- !u!108 &7130107830771272534 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 2501606717301605354, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-  m_PrefabInstance: {fileID: 7130107830771272532}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7130107830771272535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7130107830771272533}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PreferredRunner: 0
-  Components:
-  - {fileID: 7130107830771272534}
-  _guid: b97887c9-716d-4b36-
---- !u!1 &7130107830771272536 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6838807907691656287, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
-  m_PrefabInstance: {fileID: 7130107830771272532}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7130107830771272537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7130107830771272536}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56f9c7015a78be84db8896cbd139446a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CookingPanelUI: {fileID: 7417058676010598485}
 --- !u!1001 &7417058676010598483
 PrefabInstance:
   m_ObjectHideFlags: 0
