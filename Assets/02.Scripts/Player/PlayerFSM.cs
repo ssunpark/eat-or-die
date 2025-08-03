@@ -69,6 +69,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public NetworkBool CanUseItem { get; set; } = false;
 
     [Networked]
+    public NetworkBool IsDead { get; set; } = false;
+
+    [Networked]
     public NetworkObject ItemUseTarget { get; set; } = null;
 
     [Networked]
