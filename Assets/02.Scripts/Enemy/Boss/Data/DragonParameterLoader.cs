@@ -21,11 +21,18 @@ public class DragonParameterLoader
 
         _parameters = JsonUtility.FromJson<DragonStateParameterSet>(json);
     }
-    
+
     public async Task LoadAddressablesAsync()
     {
-        var breathPrefabHandle = Addressables.LoadAssetAsync<GameObject>(_parameters.Breath.BreathAddress);
-        _parameters.Breath.BreathPrefab = await breathPrefabHandle.Task;
+        if (_parameters.Breath != null)
+        {
+            // TODO: 비동기로 수정
+            _parameters.Breath.BreathHitboxPrefab = Addressables
+                .LoadAssetAsync<GameObject>(_parameters.Breath.BreathAddress).WaitForCompletion();
+
+            _parameters.Breath.LocalBreathParticle = Addressables
+                .LoadAssetAsync<GameObject>(_parameters.Breath.LocalParticleAddress).WaitForCompletion();
+        }
     }
 
     public DragonStateParameterSet.BaseParams Base => _parameters.Base;

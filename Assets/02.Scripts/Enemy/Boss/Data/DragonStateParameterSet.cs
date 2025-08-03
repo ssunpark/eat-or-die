@@ -125,11 +125,14 @@ public class DragonStateParameterSet
     [Serializable]
     public class BreathParams
     {
-        public float FireTime;       // 발사 타이밍
-        public float TotalDuration;  // 전체 지속 시간
-        public string BreathAddress; // 어드레서블 키
-        
+        public float FireTime;              // 발사 타이밍
+        public float TotalDuration;         // 전체 지속 시간
+        public string BreathAddress;        // Addressables 키 (충돌체 Prefab용)
+        public string LocalParticleAddress; // Addressables 키 (파티클용)
+
         [NonSerialized]
-        public GameObject BreathPrefab;
+        public GameObject BreathHitboxPrefab;      // 네트워크 히트박스 오브젝트
+        [NonSerialized]
+        public GameObject LocalBreathParticle;     // 로컬 이펙트 파티클 (하나만)
     }
 }

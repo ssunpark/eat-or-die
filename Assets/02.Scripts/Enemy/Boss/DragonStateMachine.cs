@@ -10,6 +10,8 @@ public class DragonStateMachine
     {
         ParamLoader = new DragonParameterLoader();
 
+        ParamLoader.LoadAddressablesAsync();
+
         var idle = new DragonState_Idle(controller, ParamLoader);
         var alert = new DragonState_Alert(controller, ParamLoader);
         var attack = new DragonState_MeleeAttack(controller, ParamLoader);

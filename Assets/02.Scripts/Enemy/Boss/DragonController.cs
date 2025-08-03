@@ -16,6 +16,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private GameObject _target;
     public GameObject Target => _target;
+    
+    [Networked]
+    private bool _isFightMode {get; set;}
 
     private Animator _animator;
     public Animator Animator => _animator;
@@ -48,9 +51,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
-    public override async void Spawned()
+    public override void Spawned()
     {
-        await _dragonStateMachine.ParamLoader.LoadAddressablesAsync();
         if (!HasStateAuthority)
         {
             GetComponent<NavMeshAgent>().enabled = false;
@@ -63,6 +65,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
 
         _navMeshAgent.speed = _baseParams.MoveSpeed;
         _navMeshAgent.angularSpeed = _baseParams.RotationSpeed;
+        
+        FightMode(_isFightMode);
     }
 
     public void Lock()
@@ -169,8 +173,21 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     public void FightMode(bool active)
     {
         int layerIndex = _animator.GetLayerIndex(ANIMATION_LAYER_FIGHT);
-        float targetWeight = active ? 1f : 0f;
-        _animator.SetLayerWeight(layerIndex, targetWeight);
+        float weight = active ? 1f : 0f;
+        _animator.SetLayerWeight(layerIndex, weight);
+        
+        if (HasStateAuthority)
+        {
+            _isFightMode = active;
+            RPC_SetFightLayerWeight(weight);
+        }
+    }
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void RPC_SetFightLayerWeight(float weight)
+    {
+        int layerIndex = _animator.GetLayerIndex(ANIMATION_LAYER_FIGHT);
+        _animator.SetLayerWeight(layerIndex, weight);
     }
 
     public void SetSightDetector(float fullAwarenessRadius, float detectRadius, float detectAngle)
