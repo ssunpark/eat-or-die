@@ -7,11 +7,40 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
     {
         AnimState = "UseItem";
     }
+
+    private NetworkObject _target;
+    protected override void OnEnterState()
+    {
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
+        if (_fsm.ItemUseTarget == null)
+        {
+            Debug.LogError("PlayerUseItemState: ItemUseTarget is null. Cannot enter state.");
+            return;
+        }
+
+    }
     protected override void OnEnterStateRender()
     {
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+        if (_fsm.ItemUseTarget == null)
+        {
+            Debug.LogError("PlayerUseItemState: ItemUseTarget is null. Cannot enter state.");
+            return;
+        }
+        _target = _fsm.ItemUseTarget;
     }
 
 
@@ -20,7 +49,12 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         if (_fsm.HasInputAuthority)
         {
             Debug.Log("PlayerUseItemState: Using item at action moment.");
-            _fsm.ItemHolder.UseItem(_fsm.ItemUseTarget.gameObject);
+            if (_target == null)
+            {
+                Debug.LogWarning("PlayerUseItemState: Target is null. Cannot use item.");
+                return;
+            }
+            _fsm.ItemHolder.UseItem(_target.gameObject);
         }
     }
 
