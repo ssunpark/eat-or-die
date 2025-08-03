@@ -23,27 +23,38 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         {
             _resource = _fsm.PlayerNetworkObject.Resource;
         }
-        if (_fsm.ItemUseTarget == null)
+        if (!ValidateItemUseTarget())
         {
-            Debug.LogError("PlayerUseItemState: ItemUseTarget is null. Cannot enter state.");
             return;
         }
 
     }
+
     protected override void OnEnterStateRender()
     {
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
-        if (_fsm.ItemUseTarget == null)
+        if (!ValidateItemUseTarget())
         {
-            Debug.LogError("PlayerUseItemState: ItemUseTarget is null. Cannot enter state.");
             return;
         }
         _target = _fsm.ItemUseTarget;
     }
 
-
+    /// <summary>
+    /// Checks if ItemUseTarget is not null, logs error if it is.
+    /// </summary>
+    /// <returns>True if ItemUseTarget is not null, false otherwise.</returns>
+    private bool ValidateItemUseTarget()
+    {
+        if (_fsm.ItemUseTarget == null)
+        {
+            Debug.LogError("PlayerUseItemState: ItemUseTarget is null. Cannot enter state.");
+            return false;
+        }
+        return true;
+    }
     void IAnimationActionNotify.OnActionMoment()
     {
         if (_fsm.HasInputAuthority)
