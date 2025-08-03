@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using Fusion; // Add Fusion for NetworkInputData
-using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
+﻿using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
 public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
 {
     public PlayerInteractState(PlayerController controller) : base(controller)
@@ -8,14 +6,18 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAn
         StateId = (int)EPlayerState.Interact;
     }
 
+    private bool _animationFinished;
+    protected override void OnInitialize()
+    {
+        this.AddTransition(
+            _controller.FSMStateInstances.Idle,
+            () => _animationFinished
+        );
+    }
     protected override void OnEnterState()
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            _controller.Rpc_PlayAnimTrigger(EAnimTrigger.Interact);
-
-            _controller.RPC_SetMoveFlag(true);
-        }
+        _animationFinished = false;
+        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Interact);
     }
 
     void IAnimationActionNotify.OnActionMoment()
@@ -30,7 +32,6 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAn
 
     void IAnimationActionEndNotify.OnAnimationFinished()
     {
-        Machine.ForceActivateState(_controller.FSMStateInstances.Idle);
-        _controller.RPC_SetMoveFlag(false);
+        _animationFinished = true;
     }
 }
