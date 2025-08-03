@@ -79,7 +79,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
 
             // If no enemy has been hit or this target has already been hit, we continue.
-            if (target == null || _fsm.HitTargets.Contains(target.NetworkObject) || target.NetworkObject == _fsm.PlayerNetworkObject.NetworkObject)
+            if (target == null || _fsm.HitTargets.Contains(target.NetworkObject) || target.NetworkObject == _fsm.PlayerNetworkObject?.Object)
             {
                 continue;
             }
