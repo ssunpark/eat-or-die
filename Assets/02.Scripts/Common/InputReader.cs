@@ -12,14 +12,13 @@ public class InputReader : MonoBehaviour
     private PlayerInputActions _inputActions;
     public PlayerInputActions InputActions => _inputActions;
 
-    [HideInInspector]
-    public static bool playerControllerInputBlocked;
     protected bool _externalInputBlocked;
     private bool _paused;
 
     private void Awake()
     {
         _inputActions = new PlayerInputActions();
+        _externalInputBlocked = false;
     }
 
     private void OnEnable()
