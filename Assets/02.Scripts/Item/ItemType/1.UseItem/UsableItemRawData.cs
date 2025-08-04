@@ -10,10 +10,10 @@ public class UsableItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
-    
+
     [Name("MaxStack")]
     public int MaxQuantity { get; set; }
-    
+
     [Name("Duration")]
     public float? MaxDuration { get; set; }
 
@@ -25,4 +25,7 @@ public class UsableItemRawData
 
     [Name("IconPath(Addressable)")]
     public string AddressablePath { get; set; }
+    
+    [Name("PrefabPath(Addressable)")]
+    public string PrefabPath { get; set; }
 }

@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using Redcode.Pools;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemFactory
 {
     private readonly Transform _itemPoolParent;
+    
+    private readonly Dictionary<string, Pool<Transform>> _sharedPools = new();
 
     public ItemFactory(Transform itemPoolParent)
     {
@@ -13,13 +16,6 @@ public class ItemFactory
 
     // 음식 아이템 효과 설명 factory
     private EatEffectManager _eatEffectManager = new();
-
-    private Transform GetItemPoolParent(int itemID)
-    {
-        GameObject itemPoolParent = new GameObject($"{itemID}_Pool");
-        itemPoolParent.transform.SetParent(_itemPoolParent);
-        return itemPoolParent.transform;
-    }
 
     // 주어진 데이터에 맞게 아이템 생성 후 반환
     public AItemInfo CreateItem(EatItemRawData rawData)
@@ -59,8 +55,10 @@ public class ItemFactory
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
 
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
-            rawData.MaxQuantity, 1f, rawData.IconPath, "");
-        return new AItemInfo(itemData, holdEffectList, effectList, GetItemPoolParent(rawData.ID), extraDescription);
+            rawData.MaxQuantity, 1f, rawData.IconPath, rawData.PrefabPath);
+        
+        var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
+        return new AItemInfo(itemData, holdEffectList, effectList, pool, poolParent, extraDescription);
     }
 
     public AItemInfo CreateItem(WeaponItemRawData rawData)
@@ -74,14 +72,15 @@ public class ItemFactory
         var holdAnimatorEffect = new ItemHoldEffect_Animator(rawData.ActionName);
         var holdEffectList = new List<IItemHoldEffect>() { holdStatEffect, holdAnimatorEffect };
         
-        return new AItemInfo(itemData, holdEffectList, null, GetItemPoolParent(rawData.ID));
+        var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
+        return new AItemInfo(itemData, holdEffectList, null, pool, poolParent);
     }
 
     public AItemInfo CreateItem(UsableItemRawData rawData)
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity,
             rawData.MaxDuration ?? 1f,
-            rawData.AddressablePath, "");
+            rawData.AddressablePath, rawData.PrefabPath);
         
         IUseEffect useEffect = rawData.ActionName switch
         {
@@ -96,6 +95,19 @@ public class ItemFactory
         var holdInteractionEffect = new ItemHoldEffect_InteractionTag(rawData.InteractionTag);
         var holdEffectList = new List<IItemHoldEffect>() { holdAnimatorEffect, holdInteractionEffect };
         
-        return new AItemInfo(itemData, holdEffectList, effectList, GetItemPoolParent(rawData.ID));
+        var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
+        return new AItemInfo(itemData, holdEffectList, effectList, pool, poolParent);
+    }
+    
+    private (Pool<Transform>, Transform) GetOrCreateSharedPool(string key, GameObject prefab, Transform poolParent)
+    {
+        if (_sharedPools.TryGetValue(key, out var existingPool))
+            return (existingPool, existingPool.Container);
+
+        GameObject parent = new GameObject(key);
+        parent.transform.SetParent(poolParent);
+        var newPool = Pool.Create(prefab.transform, 0, parent.transform);
+        _sharedPools[key] = newPool;
+        return (newPool, parent.transform);
     }
 }
