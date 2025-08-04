@@ -13,11 +13,11 @@ public class PopupManager : BehaviourSingleton<PopupManager>
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			CloseLast();
-
-			if (!HasOpenedPopup)
-			{
-				InputReader.Instance.GainControl();
-			}
+		}
+		
+		if (!HasOpenedPopup)
+		{
+			InputReader.Instance.GainControl();
 		}
 	}
 

@@ -4,10 +4,10 @@ using UnityEngine;
 public class CookingPotInteractable : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate => true;
-    public GameObject CookingPanelUI;
+    public UI_CookingPanel CookingPanelUI;
     public void Interact()
     {
-        CookingPanelUI.SetActive(true);
+        CookingPanelUI.Open();
         InputReader.Instance.ReleaseControl();
     }
 }

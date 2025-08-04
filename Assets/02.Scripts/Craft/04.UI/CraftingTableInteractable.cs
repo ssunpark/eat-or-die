@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Fusion;
+using UnityEngine;
 
-public class CraftingTableInteractable : MonoBehaviour, IInteractable
+public class CraftingTableInteractable : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate => true;
     public UI_CraftingTablePanel CraftingTablePanel;
