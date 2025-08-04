@@ -11,6 +11,8 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
 
     private Dictionary<EStatType, float> _statInputs = new();
+    private static Dictionary<PlayerRef, Player> _playerControllers = new();
+    public static IDictionary<PlayerRef, Player> PlayerControllers => _playerControllers;
     [HideInInspector]public Vector3[] SpawnPoint;
 
     public enum SpawnPosition
@@ -72,6 +74,7 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
             //new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0)
             var playerObj = runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
             runner.SetPlayerObject(player, playerObj);
+            _playerControllers[player] = playerObj.GetComponent<Player>();
         }
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)

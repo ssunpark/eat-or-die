@@ -100,6 +100,11 @@ public class Player : CharacterBase, IDamageable, IAttackable
     }
 
 
+    public void RequestState(EPlayerState state)
+    {
+        if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
+            _nextState = PlayerFSM.StateMachine.GetState((int)state);
+    }
     public void TakeDamage(float amount, PlayerRef attacker)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))

@@ -4,7 +4,7 @@ public class PlayerCorpseState : APlayerStateBase
     public PlayerCorpseState(PlayerFSM fsm) : base(fsm)
     {
         AnimState = "Die";
-        
+        StateId = (int)EPlayerState.Corpse;
     }
     private Renderer[] _rendererObjects;
     protected override void OnEnterState()

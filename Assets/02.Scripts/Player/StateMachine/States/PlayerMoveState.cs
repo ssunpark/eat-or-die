@@ -10,6 +10,7 @@ public class PlayerMoveState : APlayerStateBase
     public PlayerMoveState(PlayerFSM fsm) : base(fsm)
     {
         AnimState = "Move";
+        StateId = (int)EPlayerState.Move;
     }
 
 
