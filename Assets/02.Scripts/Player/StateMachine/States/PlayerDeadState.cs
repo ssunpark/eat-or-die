@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Fusion.Addons.FSM;
 public class PlayerDeadState : APlayerStateBase
 {
     public PlayerDeadState(PlayerFSM fsm) : base(fsm) {
@@ -30,7 +31,7 @@ public class PlayerDeadState : APlayerStateBase
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
         {
-
+            Machine.ForceActivateState<PlayerCorpseState>();
             return;
         }
     }
