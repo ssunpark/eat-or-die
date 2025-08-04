@@ -115,5 +115,15 @@ public class TraitManager
         }
     }
 
+    public void ResetTraits()
+    {
+        foreach (var kvp in _traitDict)
+        {
+            kvp.Value.SetLevel(0);
+            _statManager.RemoveModifiersFrom(kvp.Key);
+        }
+        _skillPoints.Clear();
+    }
+
 
 }

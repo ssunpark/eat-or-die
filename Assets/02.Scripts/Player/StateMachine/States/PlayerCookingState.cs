@@ -1,36 +1,33 @@
 ﻿using Fusion.Addons.FSM;
-public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, IAnimationActionNotify
+using Fusion.Addons.SimpleKCC;
+using UnityEngine;
+public class PlayerCookingState : APlayerStateBase
 {
-    public PlayerCookingState(PlayerController controller) : base(controller) 
+    public PlayerCookingState(PlayerFSM controller) : base(controller) 
     {
-        StateId = (int)EPlayerState.Cooking;
-    }
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
+        AnimState = "Cooking";
     }
     protected override void OnEnterState()
     {
-        _animationFinished = false;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Cook);
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+
+    }
+    protected override void OnEnterStateRender()
+    {
+        Anim.CrossFadeInFixedTime("Cooking", AnimTransitionLength);
     }
 
-    void IAnimationActionNotify.OnActionMoment()
+    protected override void OnFixedUpdate()
     {
-        
-    }
-
-    void IAnimationActionEndNotify.OnAnimationFinished()
-    {
-        if (_controller.Object.HasInputAuthority)
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
-            CookingManager.Instance.OnCookingCompleted();
+            if (_fsm.Object.HasInputAuthority)
+            {
+                // 요리 완료 처리 CookingManager.Instance.OnCookingCompleted();
+            }
+            Machine.ForceActivateState<PlayerIdleState>();
         }
-
-        _animationFinished = true;
     }
 }

@@ -1,75 +1,94 @@
-﻿using UnityEngine;
+﻿using Fusion;
 using Fusion.Addons.FSM;
+using Fusion.Addons.SimpleKCC;
+using UnityEngine;
 public class PlayerMoveState : APlayerStateBase
 {
-    private float _hungerConsumptionOvertime;
-    public PlayerMoveState(PlayerController controller) : base(controller)
+    private float _hungerConsumptionOvertime; 
+    private float _moveSpeed;
+    private float _sprintMultipler;
+    public PlayerMoveState(PlayerFSM fsm) : base(fsm)
     {
-        StateId = (int)EPlayerState.Move;
+        AnimState = "Move";
     }
 
-    protected override void OnInitialize()
-    {
-        // 전이: 방향 입력이 없으면 Idle로
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _controller.GetInput(out NetworkInputData input) && input.direction.sqrMagnitude <= 0.01f
-        );
 
-        // 전이: 공격 키
-        this.AddTransition(
-            _controller.FSMStateInstances.Attack,
-            () => CanStartAttack()
-        );
-
-        // 전이: 인터랙션 키 누르면 Interact로
-        this.AddTransition(
-            _controller.FSMStateInstances.Interact,
-            () => _controller.GetInput(out NetworkInputData input) && input.isInteracting && _controller.Interact.TryInteract(out var interactable)
-        );
-
-        // 전이: 아이템 사용
-        this.AddTransition(
-            _controller.FSMStateInstances.UseItem,
-            () => _controller.GetInput(out NetworkInputData input) && input.isUsing && _controller.Interact.TryUseItem(out var usable)
-        );
-    }
     protected override void OnEnterState()
     {
-        _hungerConsumptionOvertime = _stat.GetStat(EStatType.HungerConsumptionOverTime);
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
+
+        if(_stat == null || _resource == null)
+        {
+            Debug.LogError("PlayerMoveState: Stat or Resource is null. Cannot enter state.");
+            return;
+        }
+        _hungerConsumptionOvertime = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.HungerConsumptionOverTime);
+        _moveSpeed = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.MoveSpeed);
+        _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
+        _fsm.CanInteract = true;
+        _fsm.CanUseItem = true;
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()
     {
-        if (!_controller.GetInput(out NetworkInputData inputData))
-        {
-            return;
-        }
-        Vector3 dir = inputData.direction;
-        if (dir.magnitude <= 0.01)
-        {
-            return;
-        }
-        _controller.Movement?.Move(dir, inputData.isRunning);
+        float multiplier = _fsm.CurrentInput.buttons.IsSet(EButtons.Run) ? _sprintMultipler : 1f;
 
+        var moveInput = _fsm.CurrentInput.direction;
+
+        if (moveInput.sqrMagnitude < 0.01f)
+        {
+            Machine.ForceActivateState<PlayerIdleState>();
+            KCC.Move(Vector3.zero);
+            return;
+        }
+
+        Vector2 normalized = moveInput.normalized;
+        Vector3 movementDirection = new Vector3(normalized.x, 0, normalized.y);
+
+        if (movementDirection.sqrMagnitude > 0.001f)
+        {
+            KCC.SetLookRotation(Quaternion.LookRotation(movementDirection));
+        }
+
+        KCC.Move(movementDirection * _moveSpeed * multiplier, 0);
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
+        {
+            Machine.ForceActivateState<PlayerAttackState>();
+            return;
+        }
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Interact))
+        {
+            if (IsInteractTargetExists())
+            {
+                Machine.ForceActivateState<PlayerInteractState>();
+                return;
+            }
+        }
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.UseItem))
+        {
+            if (IsUseItemTargetExists())
+            {
+                Machine.ForceActivateState<PlayerUseItemState>();
+                return;
+            }
+        }
         _resource.ConsumeHunger(_hungerConsumptionOvertime * Machine.Runner.DeltaTime);
+
     }
 
     protected override void OnExitState()
     {
-        _controller.Movement.Move(Vector3.zero, false);
-    }
-
-    private bool CanStartAttack()
-    {
-        if (!_controller.GetInput(out NetworkInputData input))
-        {
-            return false;
-        }
-
-        if (!input.isAttacking) return false;
-
-        float cooldown = Mathf.Max(1f / _stat.GetStat(EStatType.AttackSpeed), 0.01f);
-        return _controller.LastAttackTime + cooldown < Machine.Runner.LocalRenderTime;
     }
 }

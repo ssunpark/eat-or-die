@@ -1387,6 +1387,9 @@ GameObject:
   - component: {fileID: 7421743082750194453}
   - component: {fileID: 2501606717301605354}
   - component: {fileID: 3800296615300579642}
+  - component: {fileID: 3574199287370598432}
+  - component: {fileID: 8675212434150357728}
+  - component: {fileID: 3793461721603525244}
   m_Layer: 0
   m_Name: Campfire Light
   m_TagString: Untagged
@@ -1497,59 +1500,54 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &3533485350822800350
-GameObject:
+--- !u!114 &3574199287370598432
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7264615953060569875}
-  - component: {fileID: 5011884099801989500}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7264615953060569875
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533485350822800350}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8544988928212992837}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5011884099801989500
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3533485350822800350}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_GameObject: {fileID: 3476211124214544968}
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.75, y: 1, z: 0.8}
-  m_Center: {x: 0, y: 0.47, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2501606717301605354}
+  _guid: b97887c9-716d-4b36-
+--- !u!114 &8675212434150357728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3476211124214544968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2501606717301605354}
+  _guid: b97887c9-716d-4b36-
+--- !u!114 &3793461721603525244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3476211124214544968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2501606717301605354}
+  _guid: b97887c9-716d-4b36-
 --- !u!1 &3676246765860157869
 GameObject:
   m_ObjectHideFlags: 0
@@ -2282,7 +2280,7 @@ GameObject:
   - component: {fileID: 5272701463208274043}
   m_Layer: 0
   m_Name: CookingWorkbench
-  m_TagString: Untagged
+  m_TagString: CookingPot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2297,15 +2295,14 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.08, y: -0.002, z: -0.54}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 5.14, y: 5.14, z: 5.14}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4160379159535241404}
   - {fileID: 6529973283980630677}
   - {fileID: 4138744785420263616}
   - {fileID: 7328551189046772757}
   - {fileID: 5243660396637419214}
-  - {fileID: 7264615953060569875}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!205 &5272701463208274043
@@ -4113,16 +4110,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: CookingPot
       objectReference: {fileID: 0}
+    - target: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 923405158065730987}
+      addedObject: {fileID: 6786693292838318373}
     - targetCorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7292220467144474010}
+    - targetCorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6692593929899003812}
   m_SourcePrefab: {fileID: 100100000, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
 --- !u!4 &4160379159535241404 stripped
 Transform:
@@ -4134,7 +4138,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4839781044539268519, guid: f72b7f3fde93b7845849d387189d4f56, type: 3}
   m_PrefabInstance: {fileID: 2144285964442888696}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &923405158065730987
+--- !u!114 &6786693292838318373
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4143,9 +4147,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6838807907691656287}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b29783f221ea8c14984bc3a36917a713, type: 3}
+  m_Script: {fileID: 11500000, guid: 56f9c7015a78be84db8896cbd139446a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CookingPanelUI: {fileID: 0}
 --- !u!135 &7292220467144474010
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4161,9 +4166,29 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 0.6
   m_Center: {x: 0, y: -0.15, z: 0}
+--- !u!114 &6692593929899003812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6838807907691656287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3889278698
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 6786693292838318373}
+  - {fileID: 0}
+  ForceRemoteRenderTimeframe: 0

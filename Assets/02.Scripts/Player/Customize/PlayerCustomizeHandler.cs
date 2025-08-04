@@ -23,19 +23,23 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     private Dictionary<ECustomizationPart, int> _customizeSelections = new();
     public override void Spawned()
     {
-        ApplyCustomization();
+
+        if (Object.HasInputAuthority)
+        {
+            var holder = CustomizationDataHolder.Instance;
+            Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
+        }
+        else
+        {
+            //후입장 플레이어를 위해 한 번 강제 적용
+            ApplyCustomization();
+        }
     }
 
     private void Awake()
     {
         if (_customizeSelections.Count == 0)
         {
-            //======================임시 초기화 ========================
-            _classType = ECharacterType.Warrior;
-            _nickname = "Player";
-            //=========================================================
-
-
             foreach (ECustomizationPart part in Enum.GetValues(typeof(ECustomizationPart)))
             {
                 _customizeSelections[part] = 0;
@@ -146,7 +150,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     }
 
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     public void Rpc_SetCharacterInfo(ECharacterType classType, string nickname, CustomizationData data)
     {
         _classType = classType;
