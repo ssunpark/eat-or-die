@@ -17,8 +17,8 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
         : base(controller, parentState)
     {
         _breathParams = breathParams;
-        _hitTargetPool = Pool.Create(_breathParams.BreathHitboxPrefab.transform, 0, Controller.transform);
-        _particlePool = Pool.Create(_breathParams.LocalBreathParticle.transform, 0, Controller.transform);
+        _hitTargetPool = Pool.Create(_breathParams.BreathHitboxPrefab.transform, 3, Controller.transform).NonLazy();
+        _particlePool = Pool.Create(_breathParams.LocalBreathParticle.transform, 3, Controller.transform).NonLazy();
     }
 
     protected override bool CanEnterState()
@@ -78,7 +78,7 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
             var localVfx = _particlePool.Get();
             localVfx.transform.position = spawnPos;
             localVfx.transform.rotation = rot;
-            localVfx.GetComponent<BreathParticle>()?.Init(()=>_particlePool.Take(localVfx));
+            localVfx.GetComponent<BreathParticle>()?.Init(_breathParams.TotalDuration, ()=>_particlePool.Take(localVfx));
         }
     }
 

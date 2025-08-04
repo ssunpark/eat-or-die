@@ -60,7 +60,7 @@ public class DragonState_Patrol : DragonSubStateBase
 
     private void SetNewDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(5f, _patrolParams.WalkRadius);
+        Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(_patrolParams.MinWalkRadius, _patrolParams.WalkRadius);
         randomDirection += Controller.transform.position;
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _patrolParams.WalkRadius, NavMesh.AllAreas))

@@ -20,7 +20,6 @@ public class DragonState_Alert : DragonStateBase
     {
         Controller.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
         
-        Controller.FightMode(true);
         _hasDestination = false;
         
         Controller.Animator.SetBool("IsMove", true);
@@ -45,8 +44,6 @@ public class DragonState_Alert : DragonStateBase
 
     private void HandleAlertDecision()
     {
-        Machine.TryActivateState<DragonState_MagicAttack>(true);
-        return;
         float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
         
         if (distance <= _baseParams.MeleeAttackDistance)
@@ -61,7 +58,7 @@ public class DragonState_Alert : DragonStateBase
             Machine.TryActivateState<DragonState_Chase>(true);
             return;
         }
-        else if (rand < _alertParams.ChaseProbability + _alertParams.RangedProbability)
+        else if (rand < _alertParams.ChaseProbability + _alertParams.MagicProbability)
         {
             Machine.TryActivateState<DragonState_MagicAttack>(true);
             return;

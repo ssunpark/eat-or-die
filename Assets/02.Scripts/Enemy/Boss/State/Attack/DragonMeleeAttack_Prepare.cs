@@ -61,7 +61,6 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
     protected override void OnExitState()
     {
         Controller.NavMeshAgent.enabled = true;
-        Controller.Animator.SetBool("IsMove", true);
         Controller.Animator.SetBool("IsBackStep", false);
     }
 }
