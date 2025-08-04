@@ -115,6 +115,10 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
 	{
+		if (HasStateAuthority)
+		{
+			_hit = true;
+		}
 	}
 
 	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
