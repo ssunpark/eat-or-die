@@ -28,7 +28,7 @@ public class TraitTooltipGUI : MonoBehaviour
             };
         }
     }
-
+#if UNITY_EDITOR
     private void OnGUI()
     {
         if (_traitManager == null || _traitDataList == null) return;
@@ -59,4 +59,5 @@ public class TraitTooltipGUI : MonoBehaviour
             pos.y += boxSize.y + 4;
         }
     }
+#endif
 }

@@ -1,4 +1,4 @@
-using Fusion;
+﻿using Fusion;
 using UnityEngine;
 // 수현
 public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
@@ -8,6 +8,6 @@ public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
     public void Interact()
     {
         UI_SeedShopPanel.Open();
-        InputReader.playerControllerInputBlocked = true;
+        InputReader.Instance.GainControl();
     }
 }

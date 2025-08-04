@@ -27,6 +27,7 @@ public class FSMStateInstances
     public PlayerCookingState Cooking;
     public PlayerBerserkState Berserk;
     public PlayerRecoverState Recover;
+    public PlayerCorpseState Corpse;
 }
 [RequireComponent(typeof(StateMachineController))]
 public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
@@ -67,6 +68,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public NetworkBool CanAttack { get; set; } = true;
     [Networked]
     public NetworkBool CanUseItem { get; set; } = false;
+
+    [Networked]
+    public NetworkBool IsDead { get; set; } = false;
 
     [Networked]
     public NetworkObject ItemUseTarget { get; set; } = null;
@@ -117,7 +121,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Dead = new PlayerDeadState(this),
             Cooking = new PlayerCookingState(this),
             Berserk = new PlayerBerserkState(this),
-            Recover = new PlayerRecoverState(this)
+            Recover = new PlayerRecoverState(this),
+            Corpse = new PlayerCorpseState(this)
         };
 
         _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
@@ -129,7 +134,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             FSMStateInstances.Hit,
             FSMStateInstances.Dead,
             FSMStateInstances.Cooking,
-            FSMStateInstances.Berserk
+            FSMStateInstances.Berserk,
+            FSMStateInstances.Recover,
+            FSMStateInstances.Corpse
         );
     }
 
@@ -153,7 +160,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 }
             }
         }
-        
+
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
@@ -173,47 +180,44 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     {
         if (ItemHolder.HeldItem == null)
             return false;
+
         string requiredTag = ItemHolder.InteractionTag;
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Undefined")
+            return false;
+
         Vector3 interactionPoint = transform.position + transform.forward;
 
-        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Undefined")
+        int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, INTERACTABLE_DISTANCE, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
+
+        GameObject closest = null;
+        float shortestDistance = float.MaxValue;
+
+        for (int i = 0; i < result; i++)
         {
-            //Debug.Log($"[PlayerController] requiredTag is {requiredTag}.");
-            // 사용아이템의 상호작용가능한 물체가 Untagged일 수도 있어서 임시로 Undefined일때 체크
-            return false;
+            GameObject obj = _testColliders[i].gameObject;
+
+            if (!obj.CompareTag(requiredTag))
+                continue;
+
+            float distance = Vector3.Distance(transform.position, obj.transform.position);
+            if (distance < shortestDistance)
+            {
+                shortestDistance = distance;
+                closest = obj;
+            }
         }
 
-        if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, MAX_RAYCAST_DISTANCE, InteractLayerMask))
-        {
-            //Debug.Log($"[PlayerController] Raycast에서 검출된 오브젝트 없음.");
+        if (closest == null)
             return false;
-        }
 
-        GameObject hitObject = hit.collider.gameObject;
-        if (!hitObject.CompareTag(requiredTag))
-        {
-            //Debug.Log($"[PlayerController] hitObject: {hitObject.name}, {hitObject.tag}");
-            return false;
-        }
-        float dist = Vector3.Distance(transform.position, hitObject.transform.position);
-        if (dist > INTERACTABLE_DISTANCE)
-        {
-            //Debug.Log($"[PlayerController] 거리 초과: {dist} > {INTERACTABLE_DISTANCE}");
-            return false;
-        }
-
-        //Debug.Log($"[PlayerController] CanUseHeldItem 성공: {hitObject.name}, 거리: {dist}");
-
-        if (hitObject.TryGetComponent(out NetworkObject net))
+        if (closest.TryGetComponent(out NetworkObject net))
         {
             RPC_SetItemUseTarget(net);
             return true;
         }
-        else
-        {
-            Debug.LogWarning($"[PlayerController] Hit object {hitObject.name} does not have a NetworkObject component.");
-            return false;
-        }
+
+        Debug.LogWarning($"[PlayerController] Closest usable object has no NetworkObject: {closest.name}");
+        return false;
     }
 
     private bool TestInteraction(bool interactPressed)
@@ -222,60 +226,44 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, 2f, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
 
-        int closestIndex = -1;
+        IInteractable closestInteractable = null;
         float shortestDistance = float.MaxValue;
+
         for (int i = 0; i < result; i++)
         {
-            float distance = Vector3.Distance(_testColliders[i].transform.position, interactionPoint);
-            if (distance < shortestDistance)
+            if (_testColliders[i].TryGetComponent<IInteractable>(out var interactable))
             {
-                shortestDistance = distance;
-                closestIndex = i;
+                float distance = Vector3.Distance(_testColliders[i].transform.position, interactionPoint);
+                if (distance < shortestDistance)
+                {
+                    shortestDistance = distance;
+                    closestInteractable = interactable;
+                }
             }
         }
 
-        if (closestIndex < 0)
-        {
+        if (closestInteractable == null)
             return false;
-        }
 
-        if (_testColliders[closestIndex].TryGetComponent<IInteractable>(out var interactable))
+        if (interactPressed)
         {
-            if (interactPressed)
+            if (closestInteractable.IsImmediate)
             {
-                // 즉시 상호작용가능한 오브젝트라면
-                if (interactable.IsImmediate)
-                {
-                    interactable.Interact();
-                    return false;
-                    // 애니메이션 없이 상호작용할거라 InteractState로 안빠질겁니다
-                }
-                else
-                {
-                    if (_testColliders[closestIndex].TryGetComponent(out NetworkObject net))
-                    {
-                        RPC_SetInteractTarget(net);
-                        return true;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"[PlayerController] Hit object {_testColliders[closestIndex].name} does not have a NetworkObject component.");
-                        return false;
-                    }
-                }
+                closestInteractable.Interact();
+                return false;
             }
         }
+        if (closestInteractable is Component comp && comp.TryGetComponent(out NetworkObject net))
+        {
+            RPC_SetInteractTarget(net);
+            return true;
+        }
+        Debug.LogWarning($"[PlayerController] Interactable object does not have NetworkObject.");
+
         return false;
-    }
-
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 200, 20), $"Attack: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Attack)}");
-        GUI.Label(new Rect(10, 30, 200, 20), $"Move: {CurrentInput.buttons.WasReleased(PreviousInput.buttons,EButtons.Attack)}");
-        GUI.Label(new Rect(10, 50, 200, 20), $"Interact: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)}");
-        GUI.Label(new Rect(10, 70, 200, 20), $"UseItem: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)}");
 
     }
+
 
     public void SetInput(NetworkInputData input)
     {

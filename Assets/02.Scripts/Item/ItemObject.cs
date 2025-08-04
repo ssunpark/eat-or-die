@@ -41,19 +41,19 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     private Transform _target;
     private Collider _collider;
-    private SpriteRenderer _spriteRenderer;
+
+    private GameObject _itemObject;
 
     private void Awake()
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
         _collider = GetComponent<Collider>();
     }
 
     public override void Spawned()
     {
         transform.position = SpawnPosition;
-        var icon = ItemManager.Instance.GetItem(ItemID).ItemData.Icon;
-        ApplyVisual(icon);
+        _itemObject = ItemManager.Instance.GetItem(ItemID).GetHoldItemObject();
+        ApplyVisual();
     }
 
     private void Update()
@@ -76,6 +76,7 @@ public class ItemObject : NetworkBehaviour, IPickable
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
                     var itemData = ItemManager.Instance.GetItem(ItemID);
+                    itemData.ReturnHoldItemToPool(_itemObject);
                     var item = new Item(itemData, Quantity, Durability, ExtraInfo);
                     InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
@@ -103,8 +104,28 @@ public class ItemObject : NetworkBehaviour, IPickable
         _target = Runner.FindObject(targetNetworkId)?.transform;
     }
 
-    private void ApplyVisual(Sprite icon)
+    private void ApplyVisual()
     {
-        _spriteRenderer.sprite = icon;
+        _itemObject.transform.SetParent(transform);
+        _itemObject.transform.localPosition = new Vector3(0f, 0.7f, 0f);
+        // _itemObject.transform.localRotation = Quaternion.identity;
+        
+        NormalizeVisualScale(_itemObject, 1f);
+    }
+    
+    private void NormalizeVisualScale(GameObject obj, float targetSize)
+    {
+        var renderers = obj.GetComponentsInChildren<Renderer>();
+        Bounds combinedBounds = new Bounds(obj.transform.position, Vector3.zero);
+
+        foreach (var renderer in renderers)
+        {
+            combinedBounds.Encapsulate(renderer.bounds);
+        }
+
+        float largestDimension = Mathf.Max(combinedBounds.size.x, combinedBounds.size.y, combinedBounds.size.z);
+        float scaleFactor = targetSize / largestDimension;
+
+        obj.transform.localScale *= scaleFactor;
     }
 }

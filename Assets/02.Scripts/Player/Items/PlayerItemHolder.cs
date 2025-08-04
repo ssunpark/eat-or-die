@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerItemHolder: NetworkBehaviour
 {
     [SerializeField] private Animator _animator;
+    [SerializeField] private Transform _handTransform;
     private PlayerFSM _playerController;
     public Item HeldItem { get; private set; }
     private GameObject _heldItemObject;
@@ -47,7 +48,25 @@ public class PlayerItemHolder: NetworkBehaviour
         HeldItem = item;
 
         if (HasInputAuthority)
-            RPC_RequestHoldItem(item.ID);
+        {
+            if(item == null)
+            {
+                RPC_RequestUnholdItem();
+            }
+            else
+                RPC_RequestHoldItem(item.ID);
+        }
+    }
+    private void RPC_RequestUnholdItem()
+    {
+        if (_player == null)
+        {
+            _player = GetComponent<Player>();
+        }
+        var heldItem = ItemManager.Instance.GetItem(HoldItemID);
+        heldItem?.UnHoldItem(gameObject, _heldItemObject);
+        HoldItemID = -1;
+        _player.CacheAnimationLengths();
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
@@ -57,8 +76,11 @@ public class PlayerItemHolder: NetworkBehaviour
         {
             _player = GetComponent<Player>();
         }
-        var heldItem = ItemManager.Instance.GetItem(itemId);
-        heldItem?.UnHoldItem(gameObject, _heldItemObject);
+        if (HoldItemID > 0)
+        {
+            var heldItem = ItemManager.Instance.GetItem(HoldItemID);
+            heldItem?.UnHoldItem(gameObject, _heldItemObject);
+        }
         Debug.Log($"[PlayerItemHolder] RPC_RequestHoldItem Called. ID: {itemId}");
         HoldItemID = itemId;
         AItemInfo changedHoldItem = ItemManager.Instance.GetItem(itemId);
@@ -67,8 +89,16 @@ public class PlayerItemHolder: NetworkBehaviour
             Debug.LogError($"[PlayerItemHolder] 아이템 정보가 없습니다. ID: {itemId}");
             return;
         }
-        _heldItemObject = changedHoldItem.GetHoldItemObject();
+        
         changedHoldItem.HoldItem(gameObject);
+        _heldItemObject = changedHoldItem.GetHoldItemObject();
+        _heldItemObject.transform.SetParent(_handTransform);
+
+        // 손 위치와 회전 설정
+        _heldItemObject.transform.localPosition = new Vector3(0.07f, 0.14f, -0.02f);
+        _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
+        _heldItemObject.transform.localScale = Vector3.one;
+        // 계속 이 방식으로 손에 붙인다면 이 정보도 노가다로 csv에 저장해야할듯...
 
         _player.CacheAnimationLengths();
     }

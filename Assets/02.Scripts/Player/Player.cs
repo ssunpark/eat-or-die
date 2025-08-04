@@ -2,6 +2,9 @@
 using Fusion;
 using Fusion.Addons.FSM;
 using UnityEngine;
+using RaycastPro.Detectors;
+
+[RequireComponent(typeof(RangeDetector))]
 public class Player : CharacterBase, IDamageable, IAttackable
 {
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
@@ -9,7 +12,6 @@ public class Player : CharacterBase, IDamageable, IAttackable
     float _damageRecoveryTime = 0.5f;
 
     public PlayerFSM PlayerFSM;
-
     private bool _hasPlayerTrackerRef;
 
     //private PlayerTracker _playerTrackerRef;
@@ -18,7 +20,7 @@ public class Player : CharacterBase, IDamageable, IAttackable
     private Dictionary<string, float> _animationClipLengths;
 
     private Animator _animator;
-
+    bool _isReset;
     public IDictionary<string, float> AnimationClipLengths
     {
         get
@@ -245,4 +247,21 @@ public class Player : CharacterBase, IDamageable, IAttackable
             _takedDamage = true;
         }
     }
+
+    public void Revive()
+    {
+        GetComponent<ItemMagnet>().enabled = true;
+        Resource.ResetAll();
+        _animator.Play("Idle");
+        _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
+
+        if (_isReset)
+        {
+            _isReset = false;
+            Trait.ResetTraits();
+            Stat.ClearAllModifiers();
+        }
+    }
+
+
 }
