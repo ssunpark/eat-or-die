@@ -1390,6 +1390,7 @@ GameObject:
   - component: {fileID: 3574199287370598432}
   - component: {fileID: 8675212434150357728}
   - component: {fileID: 3793461721603525244}
+  - component: {fileID: 5595787394745368529}
   m_Layer: 0
   m_Name: Campfire Light
   m_TagString: Untagged
@@ -1533,6 +1534,22 @@ MonoBehaviour:
   - {fileID: 2501606717301605354}
   _guid: b97887c9-716d-4b36-
 --- !u!114 &3793461721603525244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3476211124214544968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d73b0a95be81246699cf0d9ecdc01863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PreferredRunner: 0
+  Components:
+  - {fileID: 2501606717301605354}
+  _guid: b97887c9-716d-4b36-
+--- !u!114 &5595787394745368529
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4184,10 +4201,11 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 3185026411
+  SortKey: 2979538924
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
+  - {fileID: 0}
   - {fileID: 6786693292838318373}
   ForceRemoteRenderTimeframe: 0

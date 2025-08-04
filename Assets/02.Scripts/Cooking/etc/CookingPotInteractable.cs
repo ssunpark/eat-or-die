@@ -8,6 +8,6 @@ public class CookingPotInteractable : NetworkBehaviour, IInteractable
     public void Interact()
     {
         CookingPanelUI.SetActive(true);
-        InputReader.Instance.GainControl();
+        InputReader.Instance.ReleaseControl();
     }
 }
