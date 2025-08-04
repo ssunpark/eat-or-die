@@ -39,7 +39,7 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (InputReader.Instance == null || InputReader.Instance.HaveControl()) return;
+        if (InputReader.Instance == null || !InputReader.Instance.HaveControl()) return;
 
         var move = InputReader.Instance.MoveInput;
         var currentButtons = new NetworkButtons();

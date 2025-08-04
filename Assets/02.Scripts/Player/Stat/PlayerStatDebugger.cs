@@ -8,7 +8,7 @@ public class PlayerStatDebugger : MonoBehaviour
     {
         _statManager = statManager;
     }
-
+#if UNITY_EDITOR
     private void OnGUI()
     {
         if (_statManager == null) return;
@@ -23,4 +23,5 @@ public class PlayerStatDebugger : MonoBehaviour
 
         GUI.EndGroup();
     }
+#endif
 }
