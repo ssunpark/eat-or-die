@@ -107,8 +107,8 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void ApplyVisual()
     {
         _itemObject.transform.SetParent(transform);
-        _itemObject.transform.localPosition = Vector3.zero;
-        _itemObject.transform.localRotation = Quaternion.identity;
+        _itemObject.transform.localPosition = new Vector3(0f, 0.7f, 0f);
+        // _itemObject.transform.localRotation = Quaternion.identity;
         
         NormalizeVisualScale(_itemObject, 1f);
     }
@@ -126,6 +126,6 @@ public class ItemObject : NetworkBehaviour, IPickable
         float largestDimension = Mathf.Max(combinedBounds.size.x, combinedBounds.size.y, combinedBounds.size.z);
         float scaleFactor = targetSize / largestDimension;
 
-        obj.transform.localScale = obj.transform.localScale * scaleFactor;
+        obj.transform.localScale *= scaleFactor;
     }
 }
