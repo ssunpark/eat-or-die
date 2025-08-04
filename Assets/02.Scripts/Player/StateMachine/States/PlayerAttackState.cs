@@ -68,6 +68,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
 
     public void OnActionMoment()
     {
+        if (!_fsm.HasStateAuthority) return;
         Vector3 attackOrigin = _fsm.transform.position + _fsm.transform.rotation * _positionOffset;
         Vector3 direction = _fsm.transform.forward;
 
