@@ -1,4 +1,6 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
+using Redcode.Pools;
 using UnityEngine;
 
 public class LavaProjectile : MonoBehaviour
@@ -9,37 +11,39 @@ public class LavaProjectile : MonoBehaviour
 
     private Tween _moveTween;
 
-    /// <summary>
-    /// 포물선 이동 시작을 위한 초기화 함수
-    /// </summary>
-    /// <param name="targetPosition">목표 지점</param>
-    /// <param name="duration">도달 시간</param>
-    /// <param name="height">포물선 높이</param>
-    public void Fire(Vector3 targetPosition, float duration, float height)
+    private Pool<Transform> _lavaFloorPool;
+    
+    private Action _onDespawnCallback;
+
+    public void Fire(Vector3 targetPosition, float speed, float height, Action OnDespawnCallback, Pool<Transform> floorPool)
     {
         _targetPosition = targetPosition;
-        _duration = duration;
         _height = height;
+        _lavaFloorPool = floorPool;
+        _onDespawnCallback = OnDespawnCallback;
 
-        StartParabolaMove();
+        StartParabolaMove(speed);
     }
 
-    private void StartParabolaMove()
+    private void StartParabolaMove(float speed)
     {
         Vector3 startPos = transform.position;
 
-        // 포물선 정점
-        Vector3 midPoint = (startPos + _targetPosition) / 2;
+        // 중간 정점 계산
+        Vector3 midPoint = (startPos + _targetPosition) / 2f;
         midPoint.y += _height;
 
-        // 경로: 중간 → 목표
+        // 전체 경로
         Vector3[] path = new Vector3[] { midPoint, _targetPosition };
 
-        // 기존 Tween 정리
+        // 거리 계산 (CatmullRom은 곡선이라 근사)
+        float totalDistance = Vector3.Distance(startPos, midPoint) + Vector3.Distance(midPoint, _targetPosition);
+        float duration = totalDistance / speed;
+
         _moveTween?.Kill();
 
         _moveTween = transform
-            .DOPath(path, _duration, PathType.CatmullRom)
+            .DOPath(path, duration, PathType.CatmullRom)
             .SetEase(Ease.Linear)
             .OnComplete(OnArrived);
     }
@@ -48,5 +52,6 @@ public class LavaProjectile : MonoBehaviour
     {
         Debug.Log("도착 완료!");
         // 이펙트나 데미지 처리 등 추가 가능
+        _onDespawnCallback?.Invoke();
     }
 }

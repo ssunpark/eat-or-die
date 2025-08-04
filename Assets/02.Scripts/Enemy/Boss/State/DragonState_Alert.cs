@@ -44,6 +44,8 @@ public class DragonState_Alert : DragonStateBase
 
     private void HandleAlertDecision()
     {
+        Machine.TryActivateState<DragonState_MagicAttack>(true);
+        return;
         float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
         
         if (distance <= _baseParams.MeleeAttackDistance)

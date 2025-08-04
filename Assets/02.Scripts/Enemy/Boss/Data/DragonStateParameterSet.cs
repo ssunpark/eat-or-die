@@ -36,6 +36,9 @@ public class DragonStateParameterSet
 
     // 브레스 공격 관련 파라미터
     public BreathParams Breath;
+    
+    // Lava 공격 관련 파라미터
+    public LavaParams Lava;
 
     [Serializable]
     public class BaseParams
@@ -144,5 +147,25 @@ public class DragonStateParameterSet
         public GameObject BreathHitboxPrefab;   // 실제 히트박스 오브젝트 (런타임 로드)
         [NonSerialized]
         public GameObject LocalBreathParticle;  // 클라이언트용 이펙트 파티클 오브젝트
+    }
+    
+    [Serializable]
+    public class LavaParams
+    {
+        public float StartDelay;
+        public float Interval;
+        public float MinDistance;
+        public float MaxDistance;
+        public float LavaSpeed;
+        public float LavaHeight;
+        public string LavaAddress;
+        public string LavaFloorAddress;
+
+        public float[] AngleList; // ← 추가
+
+        [NonSerialized]
+        public GameObject LavaPrefab;
+        [NonSerialized]
+        public GameObject LavaFloorPrefab;
     }
 }

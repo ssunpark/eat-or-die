@@ -20,7 +20,7 @@
   "Alert": {
     "ChaseProbability": 0.3,
     "MagicProbability": 0.3,
-    "LookDuration": 3.0,
+    "LookDuration": 4.0,
     "AngleRange": 50.0,
     "MinAngleRange": 20.0,
     "WalkRange": 10.0,
@@ -59,5 +59,16 @@
     "TotalDuration": 3.0,
     "BreathAddress": "Dragon_BreathHitBox_Prefab",
     "LocalParticleAddress": "Dragon_Breath_Particle"
+  },
+  "Lava": {
+    "StartDelay": 1.0,
+    "Interval": 0.3,
+    "MinDistance": 5.0,
+    "MaxDistance": 10.0,
+    "LavaSpeed": 5.0,
+    "LavaHeight": 5.0,
+    "LavaAddress": "Dragon_LavaProjectile_prefab",
+    "LavaFloorAddress": "Dragon_LavaFloor_prefab",
+    "AngleList": [-30, 0, 30]
   }
 }

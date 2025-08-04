@@ -33,6 +33,14 @@ public class DragonParameterLoader
             _parameters.Breath.LocalBreathParticle = Addressables
                 .LoadAssetAsync<GameObject>(_parameters.Breath.LocalParticleAddress).WaitForCompletion();
         }
+
+        if (_parameters.Lava != null)
+        {
+            _parameters.Lava.LavaPrefab = Addressables
+                .LoadAssetAsync<GameObject>(_parameters.Lava.LavaAddress).WaitForCompletion();
+            _parameters.Lava.LavaFloorPrefab = Addressables
+                .LoadAssetAsync<GameObject>(_parameters.Lava.LavaFloorAddress).WaitForCompletion();
+        }
     }
 
     public DragonStateParameterSet.BaseParams Base => _parameters.Base;
@@ -48,4 +56,5 @@ public class DragonParameterLoader
     public DragonStateParameterSet.BiteParams Bite => _parameters.Bite;
     public DragonStateParameterSet.MagicParams Magic => _parameters.Magic;
     public DragonStateParameterSet.BreathParams Breath => _parameters.Breath;
+    public DragonStateParameterSet.LavaParams Lava => _parameters.Lava;
 }
