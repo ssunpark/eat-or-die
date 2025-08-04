@@ -6,7 +6,7 @@ using RaycastPro.Detectors;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
-public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IDamageable
+public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
 {
 	[SerializeField] private int _enemyId;
 
@@ -110,9 +110,19 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		}
 	}
 
-	public void TakeDamage(float amount, PlayerRef attacker)
+	// IAttackable Interface Implementation
+	public NetworkObject NetworkObject { get; }
+	
+	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
 	{
-		Debug.Log("Take damage");
-		_hit = true;
+	}
+
+	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+	{
+	}
+
+	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
+	{
 	}
 }
