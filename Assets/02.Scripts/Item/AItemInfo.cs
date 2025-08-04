@@ -7,7 +7,7 @@ public class AItemInfo
 {
     public readonly ItemData ItemData;
     private readonly Transform _poolParent;
-    private Pool<Transform> _holdItemPool;
+    private Pool<Transform> _itemPrefabPool;
     
     // 장착 시 효과
     // 스텟 변경, 상호작용 태그 변경
@@ -17,11 +17,12 @@ public class AItemInfo
     // 먹기, 설치, 상호작용
     private readonly List<IUseEffect> _useEffect;
 
-    public AItemInfo(ItemData itemData, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Transform poolParent, List<string> extraDescription = null)
+    public AItemInfo(ItemData itemData, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Pool<Transform> prefabPool, Transform poolParent, List<string> extraDescription = null)
     {
         ItemData = itemData;
         _useEffect = useEffect;
         _holdEffect = holdEffect;
+        _itemPrefabPool = prefabPool;
         _poolParent = poolParent;
 
         if (extraDescription != null)
@@ -33,7 +34,7 @@ public class AItemInfo
         }
 
         // 풀링
-        _holdItemPool = Pool.Create(ItemData.Prefab.transform, 10, _poolParent.transform);
+        _itemPrefabPool = Pool.Create(ItemData.Prefab.transform, 0, _poolParent.transform);
     }
 
     public void HoldItem(GameObject target)
@@ -55,16 +56,16 @@ public class AItemInfo
         ReturnHoldItemToPool(item);
     }
 
-    public GameObject GetHoldItemObject() => _holdItemPool.Get().gameObject;
+    public GameObject GetHoldItemObject() => _itemPrefabPool.Get().gameObject;
 
-    private void ReturnHoldItemToPool(GameObject item)
+    public void ReturnHoldItemToPool(GameObject item)
     {
         if (item == null)
         {
             return;
         }
         
-        _holdItemPool.Take(item.transform);
+        _itemPrefabPool.Take(item.transform);
         item.transform.SetParent(_poolParent);
     }
 
