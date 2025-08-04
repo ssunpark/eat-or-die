@@ -9,7 +9,7 @@ public class UI_CraftingTablePanel : AUI_PopupBase
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Close();
-            InputReader.playerControllerInputBlocked = false;
+            InputReader.Instance.ReleaseControl();
         }
     }
 }
