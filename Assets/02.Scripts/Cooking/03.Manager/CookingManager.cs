@@ -8,23 +8,23 @@ public class CookingManager : NetworkBehaviour
 {
     public static CookingManager Instance { get; private set; }
 
-    public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
-    public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
-    
     public Inventory FoodInventory = new Inventory(1);
-    public event Action OnCookOutputUpdated;
-    
+    public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
     private Inventory _inputIngredientInventory;
+    public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
+    public event Action OnCookOutputUpdated;
+    public static event Action<string> OnAlertMessage; // 문자열 알림용
+    public static event Action<Item> CookingFinished; // 결과 아이템 전체달용
+    
     
     // Networked 변수는 이름에 추가했으면 좋겠다
+    public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
     [Networked] private PlayerRef _currentRequester { get; set; }
     [Networked] private NetworkBool _isCooking { get; set; }
-    private float _cookTime = 4f;
-    
-    private float _t;
-    public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
-    
     private bool _amICooking;
+    private float _cookTime = 4f;
+    private float _t;
+    
     private void Awake()
     {
         if (Instance == null)
@@ -104,6 +104,7 @@ public class CookingManager : NetworkBehaviour
         else
         {
             ReturnRecipesToInventory();
+            OnAlertMessage?.Invoke("요리가 취소되었습니다.");
         }
         
         _t = 0; // _t 초기화
@@ -138,7 +139,24 @@ public class CookingManager : NetworkBehaviour
                 return recipe.ResultID;
             }
         }
-        return 200044; // 애매한 요리 ID
+        
+        Dictionary<int, int> specialIngredientResultMap = new Dictionary<int, int>
+        {
+            { 200013, 200121 }, // 강철 -> 단단한 요리
+            { 200015, 200122 }, // 드래곤 고기 -> 드래곤 스테이크
+            // 추가 가능
+        };
+
+        HashSet<int> inputSet = new HashSet<int> { id1, id2 };
+        foreach (int id in inputSet)
+        {
+            if (specialIngredientResultMap.TryGetValue(id, out int result))
+            {
+                return result;
+            }
+        }
+        
+        return 200120; // 애매한 요리 ID
     }
     
     public void ProcessCookingResult()
@@ -187,6 +205,7 @@ public class CookingManager : NetworkBehaviour
 
         InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1));
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        CookingFinished?.Invoke(new Item(resultItem, 1));
     }
     
     private void TransferItemToInventory(Item item)
@@ -217,6 +236,7 @@ public class CookingManager : NetworkBehaviour
     {
         if (_isCooking)
         {
+            OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
             Debug.Log("[CookingManager] 서버에서 이미 요리 중입니다.");
             return;
         }
@@ -231,6 +251,7 @@ public class CookingManager : NetworkBehaviour
     {
         if (_isCooking)
         {
+            OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
             Debug.Log("[CookingManager] 이미 요리 중입니다.");
             // ReturnRecipesToInventory(); // 만약 이미 요리 중일때 인벤토리로 보내고 싶은 경우.
             return;
@@ -242,6 +263,7 @@ public class CookingManager : NetworkBehaviour
             return;
         }
 
+        OnAlertMessage?.Invoke("요리를 시작합니다! 재료들이 보글보글 끓고 있어요.");
         RPC_RequestStartCook(Runner.LocalPlayer); // 서버에게 요리 시작 요청
     }
 
