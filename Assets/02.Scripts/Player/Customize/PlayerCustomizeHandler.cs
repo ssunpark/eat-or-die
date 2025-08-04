@@ -24,10 +24,16 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     public override void Spawned()
     {
 
-        if(!Object.HasInputAuthority)
-            return;
-        var holder = CustomizationDataHolder.Instance;
-        Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
+        if (Object.HasInputAuthority)
+        {
+            var holder = CustomizationDataHolder.Instance;
+            Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
+        }
+        else
+        {
+            //후입장 플레이어를 위해 한 번 강제 적용
+            ApplyCustomization();
+        }
     }
 
     private void Awake()

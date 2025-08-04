@@ -264,14 +264,6 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     }
 
-    void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 200, 20), $"Attack: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Attack)}");
-        GUI.Label(new Rect(10, 30, 200, 20), $"Move: {CurrentInput.buttons.WasReleased(PreviousInput.buttons, EButtons.Attack)}");
-        GUI.Label(new Rect(10, 50, 200, 20), $"Interact: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)}");
-        GUI.Label(new Rect(10, 70, 200, 20), $"UseItem: {CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)}");
-
-    }
 
     public void SetInput(NetworkInputData input)
     {
