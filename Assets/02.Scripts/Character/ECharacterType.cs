@@ -1,8 +1,8 @@
 ﻿public enum ECharacterType
 {
-    Farmer,
     Warrior,
     Mage,
+    Farmer,
     Chef,
 
 
