@@ -8,7 +8,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(StateMachineController))]
 public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
 {
-	[SerializeField] private int _enemyId;
+	[SerializeField] private int _enemyId; // 몬스터 ID
 
 	public int HitCountTemp = 0;
 	
