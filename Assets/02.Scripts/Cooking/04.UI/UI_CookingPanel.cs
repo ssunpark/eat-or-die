@@ -9,8 +9,6 @@ public class UI_CookingPanel : AUI_PopupBase
     public GameObject CookingPanel;
     public GameObject RecipePanel;
 
-    private bool isOpen = false;
-
     private void Start()
     {
         CookingPanel.SetActive(false);
@@ -19,15 +17,13 @@ public class UI_CookingPanel : AUI_PopupBase
 
     public void OnClickRecipeButton()
     {
-        isOpen = !isOpen;
-
-        if (isOpen)
+        if (PopupManager.Instance.IsOpen(EPopupType.Recipe))
         {
-            RecipePanel.GetComponent<UI_RecipePanel>().Open();
+            PopupManager.Instance.GetOpenPopup(EPopupType.Recipe)?.Close();
         }
         else
         {
-            RecipePanel.GetComponent<UI_RecipePanel>().Close();
+            RecipePanel.GetComponent<UI_RecipePanel>().Open();
         }
     }
 
@@ -35,7 +31,6 @@ public class UI_CookingPanel : AUI_PopupBase
     {
         bool isActive = CookingPanel.activeSelf;
         CookingPanel.SetActive(!isActive);
-        // InputReader.playerControllerInputBlocked = true;
     }
 
     public void OnClickCookingButton()
@@ -49,18 +44,11 @@ public class UI_CookingPanel : AUI_PopupBase
         // 플레이어 Cooking FSM 호출!
        
         CookingManager.Instance.TryStartCookRPC();
+        PopupManager.Instance.CloseAll();
         
         // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
         //CookingPanelManager.Instance.OnCookingCompleted(true);
         // CookingPanelManager.Instance.ProcessCookingResult(); // 수현 테스트 코드
-        CloseTab();
-    }
-
-    private void CloseTab()
-    {
-        isOpen = false;
-        CookingPanel.SetActive(false);
-        RecipePanel.SetActive(false);
     }
 
 }

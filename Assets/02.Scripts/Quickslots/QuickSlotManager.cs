@@ -21,11 +21,21 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		_selectedSlotIndex = slotIndex;
 		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
 	}
-	
-	public void UpdateSelectedSlot()
-	{
-		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
-	}
+
+    public void UseItem(GameObject target, Action removeCallback)
+    {
+        var currentItem = GetItemInSlot(_selectedSlotIndex);
+        currentItem.Use(target); 
+        
+        // 아이템 전부 소진
+        if (currentItem.IsDepleted)
+        {
+            _quickSlots.SlotList[_selectedSlotIndex].RemoveItem();
+            removeCallback?.Invoke();
+        }
+        
+        OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
+    }
 
 	public Item GetItemInSlot(int slotIndex)
 	{

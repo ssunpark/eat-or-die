@@ -7,7 +7,7 @@ public class UseEffectHoe : IUseEffect
         if (target.TryGetComponent(out FarmingGround farmingGround))
         {
             // 밭 갈기
-            farmingGround.RPC_Plow();
+            farmingGround.RPC_Hoe();
         }
     }
 }

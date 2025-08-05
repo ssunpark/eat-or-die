@@ -11,8 +11,8 @@ public class WeaponItemRawData
     [Name("Description")]
     public string Description { get; set; }
 
-    [Name("Cookable")]
-    public bool Cookable { get; set; }
+    [Name("IsIngredient")]
+    public bool IsIngredient { get; set; }
 
     [Name("HasDurability")]
     public bool HasDurability { get; set; }
