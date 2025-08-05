@@ -9,8 +9,6 @@ public class UI_CookingPanel : AUI_PopupBase
     public GameObject CookingPanel;
     public GameObject RecipePanel;
 
-    private bool isOpen = false;
-
     private void Start()
     {
         CookingPanel.SetActive(false);
@@ -19,15 +17,13 @@ public class UI_CookingPanel : AUI_PopupBase
 
     public void OnClickRecipeButton()
     {
-        isOpen = !isOpen;
-
-        if (isOpen)
+        if (PopupManager.Instance.IsOpen(EPopupType.Recipe))
         {
-            RecipePanel.GetComponent<UI_RecipePanel>().Open();
+            PopupManager.Instance.GetOpenPopup(EPopupType.Recipe)?.Close();
         }
         else
         {
-            RecipePanel.GetComponent<UI_RecipePanel>().Close();
+            RecipePanel.GetComponent<UI_RecipePanel>().Open();
         }
     }
 
@@ -58,7 +54,6 @@ public class UI_CookingPanel : AUI_PopupBase
 
     private void CloseTab()
     {
-        isOpen = false;
         CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
