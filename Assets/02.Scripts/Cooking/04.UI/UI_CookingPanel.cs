@@ -3,8 +3,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 //수현
-public class UI_CookingPanel : MonoBehaviour
+public class UI_CookingPanel : AUI_PopupBase
 {
+    public override EPopupType Type => EPopupType.Cook;
     public GameObject CookingPanel;
     public GameObject RecipePanel;
 
@@ -61,4 +62,5 @@ public class UI_CookingPanel : MonoBehaviour
         CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
+
 }

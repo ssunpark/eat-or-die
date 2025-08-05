@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Fusion;
+using UnityEngine;
 
-public class CraftingTableInteractable : MonoBehaviour, IInteractable
+public class CraftingTableInteractable : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate => true;
     public UI_CraftingTablePanel CraftingTablePanel;
@@ -9,6 +10,6 @@ public class CraftingTableInteractable : MonoBehaviour, IInteractable
     {
         Debug.Log("E키 상호작용");
         CraftingTablePanel.Open();
-        InputReader.Instance.GainControl();
+        InputReader.Instance.ReleaseControl();
     }
 }
