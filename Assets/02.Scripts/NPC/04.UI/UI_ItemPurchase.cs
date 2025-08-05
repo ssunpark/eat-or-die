@@ -22,7 +22,7 @@ public class UI_ItemPurchase : MonoBehaviour
     private bool _isUpdatingSlider = false;
 
     private int TotalPrice => _unitPrice * _selectedCount;
-
+    
     private void Start()
     {
         QuantitySlider.minValue = 1;
@@ -33,11 +33,13 @@ public class UI_ItemPurchase : MonoBehaviour
 
     private void OnEnable()
     {
+        NpcDataManager.Instance.OnCurrencyUpdated += OnGoldAmountChanged;
         CurrencyManager.Instance.OnCurrencyChanged += OnGoldAmountChanged;
     }
 
     private void OnDisable()
     {
+        NpcDataManager.Instance.OnCurrencyUpdated -= OnGoldAmountChanged;
         CurrencyManager.Instance.OnCurrencyChanged -= OnGoldAmountChanged;
     }
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 {
+    private AItemInfo _itemInfo;
     private AItemInfo[] _seedItems;
     public AItemInfo[] SeedItems => _seedItems;
     public event Action OnSeedListUpdated;
@@ -17,21 +18,14 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         // NpcItemList가 이미 로드되어 있으면 바로 실행
         if (NpcDataManager.Instance != null && NpcDataManager.Instance.NpcItemList != null)
         {
-            LoadSeedItemsFromNpc(npcId);
-            UpdateNpcDialogue(npcId);
-        }
-        else
-        {
-            // 아니라면 로딩 완료 이벤트 구독
-            NpcDataManager.Instance.OnNpcItemListLoaded += HandleNpcItemListLoaded;
+            HandleNpcItemListLoaded();
         }
     }
 
     private void HandleNpcItemListLoaded()
     {
-        // 한 번만 실행되도록 구독 해제
-        NpcDataManager.Instance.OnNpcItemListLoaded -= HandleNpcItemListLoaded;
         LoadSeedItemsFromNpc(npcId);
+        UpdateSeedDetail(_itemInfo.ItemData.ID);
     }
     
     public void LoadSeedItemsFromNpc(int npcId)

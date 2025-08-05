@@ -5,7 +5,6 @@ using UnityEngine;
 public class CurrencyManager : BehaviourSingleton<CurrencyManager>
 {
     private Dictionary<ECurrencyType, int> _currencies = new();
-
     public event Action<ECurrencyType, int> OnCurrencyChanged;
 
     private void Start()
