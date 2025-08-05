@@ -17,6 +17,7 @@ public class PlayerBerserkState : APlayerStateBase
         _subFSM.SetDefaultState(0);
         AnimState = "Berserk";
 
+        StateId = (int)EPlayerState.Berserk;
     }
     protected override void CollectChildStateMachines(List<IStateMachine> list)
     {

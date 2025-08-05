@@ -7,6 +7,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     {
         AnimState = "Attack";
         _positionOffset = new Vector3(0f, 0.2f, 0.5f);
+        StateId = (int)EPlayerState.Attack;
     }
     private Vector3 _positionOffset;
     private float _meleeDamage;

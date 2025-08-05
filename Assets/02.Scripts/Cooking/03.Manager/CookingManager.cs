@@ -244,6 +244,7 @@ public class CookingManager : NetworkBehaviour
         //상태들만 바꿈
         _isCooking = true;
         _currentRequester = player;
+        FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
     }
     
     // 패널에서 이 코드 실행
