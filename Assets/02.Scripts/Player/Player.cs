@@ -143,8 +143,24 @@ public class Player : CharacterBase, IDamageable, IAttackable
     public void RequestState(EPlayerState state)
     {
         if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
-            _nextState = PlayerFSM.StateMachine.GetState((int)state);
+        {
+            if (HasStateAuthority)
+            {
+                _nextState = PlayerFSM.StateMachine.GetState((int)state);
+            }
+            else
+            {
+                Rpc_RequestState(state);
+            }
+        }
     }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void Rpc_RequestState(EPlayerState state)
+    {
+        _nextState = PlayerFSM.StateMachine.GetState((int)state);
+    }
+    
     public void TakeDamage(float amount, PlayerRef attacker)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
