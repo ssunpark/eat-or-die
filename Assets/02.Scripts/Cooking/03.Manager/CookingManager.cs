@@ -25,7 +25,7 @@ public class CookingManager : NetworkBehaviour
     // [Networked] private NetworkBool _isCooking { get; set; }
     private bool _isCooking;
     
-    private bool _amICooking;
+    // private bool _amICooking;
     private float _cookTime = 4f;
     private float _t;
     
@@ -99,6 +99,7 @@ public class CookingManager : NetworkBehaviour
     
     public void OnCookingCompleted()
     {
+        // 실제로는 PlayerState의 OnEndState 메서드 내부에서 이 함수가 호출됨
         Debug.Log("OnCookingCompleted 진입!!!");
         
         if (!_isCooking)
@@ -109,6 +110,7 @@ public class CookingManager : NetworkBehaviour
         
         // RPC_IsCookingCheck();
         _currentCookingPot.Rpc_EndCooking();
+        _isCooking = false;
         
         if (_t >= _cookTime)
         {
@@ -121,7 +123,7 @@ public class CookingManager : NetworkBehaviour
         }
         
         _t = 0; // _t 초기화
-        _amICooking = false;
+        // _amICooking = false;
     }
     
     // RPC가 _isCooking을 false로 만들어주는데 1프레임정도의 딜레이가 생겨서 1프레임도안 TryCook이 2번실행
@@ -292,6 +294,7 @@ public class CookingManager : NetworkBehaviour
             
             if (_t >= _cookTime)
             {
+                // 실제로는 여기서 PlayerState Idle로 전환 요청
                 OnCookingCompleted();
             }
         }
@@ -306,7 +309,8 @@ public class CookingManager : NetworkBehaviour
     public void Rpc_StartCooking([RpcTarget] PlayerRef player)
     {
         _isCooking = true;
-        FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+        // FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+        Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
