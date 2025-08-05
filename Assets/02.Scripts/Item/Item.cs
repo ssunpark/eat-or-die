@@ -20,6 +20,8 @@ public class Item
     // 추가적인 아이템 정보
     private string _extraInfo;
     public string ExtraInfo { get => _extraInfo; set => _extraInfo = value; }
+    
+    public bool IsDepleted => _quantity <= 0 || _durability <= 0;
 
     public Item(AItemInfo itemInfo, int initialQuantity = 0, float initialDurability = 1, string extraInfo = "")
     {
@@ -47,10 +49,23 @@ public class Item
         _extraInfo = extraInfo;
     }
 
-    public void Use(GameObject target)
+    public void Use(GameObject target, float amount = 1)
     {
-        ItemInfo.UseItem(target);
-        TryRemove(1);
+        if (!ItemInfo.TryUseItem(target))
+        {
+            return;
+        }
+
+        if (ItemInfo.ItemData.HasDurability)
+        {
+            TryReduceDurability(amount);
+            Debug.Log(_durability);
+        }
+        else
+        {
+            TryRemove((int)amount);
+            Debug.Log(_quantity);
+        }
     }
 
     // 수량 제어 함수

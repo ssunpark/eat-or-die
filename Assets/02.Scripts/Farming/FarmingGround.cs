@@ -3,21 +3,24 @@ using UnityEngine;
 
 public class FarmingGround : NetworkBehaviour
 {
+    private const string HOE_TAG = "Hoe";
+    private const string WATER_TAG = "WateringCan";
+
     [Networked, OnChangedRender(nameof(OnStateChanged))]
     public EFarmingGroundState State { get; set; }
-    
+
     [SerializeField]
     private GameObject _baseGround;
-    
+
     [SerializeField]
     private GameObject _plowedGround;
-    
+
     [SerializeField]
     private GameObject _plowedSubGround;
-    
+
     [SerializeField]
     private Material _waterMaterial;
-    
+
     private MeshRenderer _plowedGroundRenderer;
     private MeshRenderer _plowedSubGroundRenderer;
 
@@ -35,9 +38,17 @@ public class FarmingGround : NetworkBehaviour
     public void OnStateChanged()
     {
         _baseGround.SetActive(State == EFarmingGroundState.None);
-        _plowedGround.SetActive(State == EFarmingGroundState.Plowed);
+        _plowedGround.SetActive(State == EFarmingGroundState.Hoe);
 
-        if (State == EFarmingGroundState.Watered)
+        tag = State switch
+        {
+            EFarmingGroundState.None => HOE_TAG,
+            EFarmingGroundState.Hoe => WATER_TAG,
+            _ => "Untagged"
+        };
+        gameObject.tag = tag;
+
+        if (State == EFarmingGroundState.WateringCan)
         {
             _baseGround.SetActive(false);
             _plowedGround.SetActive(true);
@@ -47,31 +58,31 @@ public class FarmingGround : NetworkBehaviour
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_Plow()
+    public void RPC_Hoe()
     {
         if (State != EFarmingGroundState.None)
         {
             return;
         }
-        
+
         // 밭 갈기
         if (Runner.IsServer)
         {
-            State = EFarmingGroundState.Plowed;
+            State = EFarmingGroundState.Hoe;
         }
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_Water()
+    public void RPC_WateringCan()
     {
-        if (State != EFarmingGroundState.Plowed)
+        if (State != EFarmingGroundState.Hoe)
         {
             return;
         }
-        
+
         if (Runner.IsServer)
         {
-            State = EFarmingGroundState.Watered;
+            State = EFarmingGroundState.WateringCan;
         }
     }
 }

@@ -7,7 +7,7 @@ public class UseEffectWateringCan : IUseEffect
         if (target.TryGetComponent(out FarmingGround farmingGround))
         {
             // 물 주기
-            farmingGround.RPC_Water();
+            farmingGround.RPC_WateringCan();
         }
     }
 }

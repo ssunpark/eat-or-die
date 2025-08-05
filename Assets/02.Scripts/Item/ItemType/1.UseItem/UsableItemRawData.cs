@@ -10,6 +10,9 @@ public class UsableItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
+    
+    [Name("HasDurability")]
+    public bool HasDurability { get; set; }
 
     [Name("MaxStack")]
     public int MaxQuantity { get; set; }
