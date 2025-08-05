@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class DragonMagicAttack_Lava : DragonSubStateBase
 {
+    private const string RAYCAST_MASK = "Floor";
+    
     private DragonStateParameterSet.LavaParams _lavaParams;
 
     private int _spawnCount = 0;
@@ -52,7 +54,7 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             Vector3 targetPosition = Controller.BreathPoint.position + direction * distance;
 
             Debug.DrawRay(targetPosition + Vector3.up * 5f, Vector3.down * 10f, Color.cyan, 10f);
-            if (Physics.Raycast(targetPosition + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f, LayerMask.GetMask("Default")))
+            if (Physics.Raycast(targetPosition + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f, LayerMask.GetMask(RAYCAST_MASK)))
             {
                 targetPosition = hit.point;
             }
