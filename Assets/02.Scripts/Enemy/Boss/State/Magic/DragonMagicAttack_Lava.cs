@@ -18,8 +18,10 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
         : base(controller, parentState)
     {
         _lavaParams = lavaParams;
-        _lavaPool = Pool.Create(_lavaParams.LavaPrefab.transform, 0, Controller.transform);
-        _lavaFloorPool = Pool.Create(_lavaParams.LavaFloorPrefab.transform, 0, Controller.transform);
+        
+        GameObject lavaPool = new GameObject("LavaPool");
+        _lavaPool = Pool.Create(_lavaParams.LavaPrefab.transform, 0, lavaPool.transform);
+        _lavaFloorPool = Pool.Create(_lavaParams.LavaFloorPrefab.transform, 0, lavaPool.transform);
     }
 
     protected override void OnEnterState()
@@ -49,7 +51,8 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             Vector3 direction = rot * Controller.transform.forward;
             Vector3 targetPosition = Controller.BreathPoint.position + direction * distance;
 
-            if (Physics.Raycast(targetPosition + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 10f))
+            Debug.DrawRay(targetPosition + Vector3.up * 5f, Vector3.down * 10f, Color.cyan, 10f);
+            if (Physics.Raycast(targetPosition + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f, LayerMask.GetMask("Default")))
             {
                 targetPosition = hit.point;
             }
@@ -57,6 +60,7 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             lava.GetComponent<LavaProjectile>().Fire(
                 targetPosition,
                 _lavaParams.LavaSpeed,
+                _lavaParams.FloorDuration,
                 _lavaParams.LavaHeight,
                 () => _lavaPool.Take(lava),
                 _lavaFloorPool

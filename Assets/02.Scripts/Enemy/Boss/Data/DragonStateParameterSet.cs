@@ -152,16 +152,17 @@ public class DragonStateParameterSet
     [Serializable]
     public class LavaParams
     {
-        public float StartDelay;
-        public float Interval;
-        public float MinDistance;
-        public float MaxDistance;
-        public float LavaSpeed;
-        public float LavaHeight;
-        public string LavaAddress;
-        public string LavaFloorAddress;
+        public float StartDelay;        // 애니메이션 시작 후 딜레이
+        public float Interval;          // 발사 인터벌
+        public float MinDistance;       // 최소 거리
+        public float MaxDistance;       // 최대 거리
+        public float LavaSpeed;         // 투사체 이동 속도
+        public float LavaHeight;        // 투사체 포물선 높이
+        public float FloorDuration;     // 바닥 지속 시간
+        public string LavaAddress;      // Lava 투사체 Addressable 주소
+        public string LavaFloorAddress; // Lava 바닥 Addressable 주소
 
-        public float[] AngleList; // ← 추가
+        public float[] AngleList;
 
         [NonSerialized]
         public GameObject LavaPrefab;

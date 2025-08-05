@@ -9816,6 +9816,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5806663815303536093}
   - component: {fileID: 1635828186724294182}
+  - component: {fileID: 4560508798471847427}
   m_Layer: 0
   m_Name: Dragon_LavaFloor_prefab
   m_TagString: Untagged
@@ -9855,12 +9856,24 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Radius: 8
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4560508798471847427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4335515881596931616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bcedf97ef900f6469e80c9f617b1195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4582637253372544753
 GameObject:
   m_ObjectHideFlags: 0
@@ -14812,7 +14825,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 0
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -29518,8 +29531,6 @@ GameObject:
   - component: {fileID: 8427599990535084319}
   - component: {fileID: 3431268664570868268}
   - component: {fileID: 7693929624795696476}
-  - component: {fileID: 1840642277792938729}
-  - component: {fileID: 2221982820096477361}
   m_Layer: 0
   m_Name: Effect_21_Decal
   m_TagString: Untagged
@@ -29536,7 +29547,7 @@ Transform:
   m_GameObject: {fileID: 7093659471061361382}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 30, y: 2, z: 30}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -29595,44 +29606,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1840642277792938729
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7093659471061361382}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2221982820096477361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7093659471061361382}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f875761d9a11f1b448dda0f9ee26e0f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isParticleSystem: 0
-  m_inputMaterial: {fileID: 2100000, guid: ec56cfb5c44dde9498ae3f10743f8897, type: 2}
-  m_timeToReduce: 5
-  m_reduceFactor: 1
-  m_upFactor: 1
 --- !u!1 &7861679818073421428
 GameObject:
   m_ObjectHideFlags: 0
@@ -34621,7 +34594,7 @@ ParticleSystem:
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 0
-  looping: 0
+  looping: 1
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
