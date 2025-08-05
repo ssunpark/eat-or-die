@@ -39,7 +39,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "AlphaAlphaTestScene",
+            SessionName = "CraftTestScene",
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });

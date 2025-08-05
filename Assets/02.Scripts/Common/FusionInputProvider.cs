@@ -39,7 +39,12 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (InputReader.Instance == null || !InputReader.Instance.HaveControl()) return;
+        NetworkInputData data = new NetworkInputData();
+        if (InputReader.Instance == null || !InputReader.Instance.HaveControl())
+        {
+            input.Set(data);
+            return;
+        }
 
         var move = InputReader.Instance.MoveInput;
         var currentButtons = new NetworkButtons();
@@ -51,12 +56,9 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
         currentButtons.Set(EButtons.UseItem, InputReader.Instance.InputActions.Player.UseItem.IsPressed());
         currentButtons.Set(EButtons.Run, InputReader.Instance.InputActions.Player.Sprint.IsPressed());
 
-        var data = new NetworkInputData
-        {
-            direction = new Vector2(move.x, move.y),
-            buttons = currentButtons,
-            previousButtons = _prevButtons
-        };
+        data.previousButtons = _prevButtons;
+        data.direction = new Vector2(move.x, move.y);
+        data.buttons = currentButtons;
 
         _prevButtons = currentButtons;
         input.Set(data);
