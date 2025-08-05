@@ -3,10 +3,10 @@ using System.Linq;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
 using UnityEngine;
-using static Unity.Collections.Unicode;
-
+using Fusion;
 public class BerserkChase : ABerserkSubStateBase
 {
+    [Networked] private Vector3 pos { get; set; }
     private Transform _target;
     private float _moveSpeed;
     private float _sprintMultipler;
@@ -17,12 +17,10 @@ public class BerserkChase : ABerserkSubStateBase
         _rangeDetector = _fsm.GetComponent<RangeDetector>();
     }
 
-    private List<PlayerFSM> _allPlayers;
 
     private bool CanStartAttack()
     {
         if (_target == null) return false;
-        if (!_fsm.HasStateAuthority) return false;
 
         float distance = Vector3.Distance(_fsm.transform.position, _target.position);
         if (distance > _stat.GetStat(EStatType.AttackRange)) return false;
@@ -32,34 +30,22 @@ public class BerserkChase : ABerserkSubStateBase
     }
     protected override void OnEnterState()
     {
-        if (_stat == null)
-        {
-            _stat = _fsm.PlayerNetworkObject.Stat;
-        }
-        if (_resource == null)
-        {
-            _resource = _fsm.PlayerNetworkObject.Resource;
-        }
-        if (_stat == null || _resource == null)
-        {
-            Debug.LogError("PlayerMoveState: Stat or Resource is null. Cannot enter state.");
-            return;
-        }
+        LazySet();
+        _testColliders = new Collider[16];
         _moveSpeed = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.MoveSpeed);
         _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
+        _enemySearchTimer = 0f;
         _target = FindClosestEnemy();
     }
 
     protected override void OnEnterStateRender()
     {
+        LazySet();
         Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
     protected override void OnFixedUpdate()
     {
-        if(_fsm.HasStateAuthority == false)
-        {
-            return;
-        }
+        if (!_fsm.HasStateAuthority) return;
         _enemySearchTimer += _fsm.Runner.DeltaTime;
 
         if (_enemySearchTimer > 1.0f && (_target == null || !IsValid(_target)))
@@ -74,19 +60,18 @@ public class BerserkChase : ABerserkSubStateBase
             }
         }
 
-        if (_target == null)
-        {
-            KCC.Move(Vector3.zero);
-            return;
-        }
-
         if (CanStartAttack())
         {
             Machine.ForceActivateState<BerserkAttack>();
             return;
         }
 
-        Vector3 dir = (_target.position - _fsm.transform.position).normalized;
+        Vector3 dir = ((_target?.position?? _fsm.transform.position) - _fsm.transform.position).normalized;
+        if (dir.sqrMagnitude < 0.01f)
+        {
+            KCC.Move(Vector3.zero);
+            return;
+        }
         KCC.SetLookRotation(Quaternion.LookRotation(dir));
         KCC.Move(dir * _moveSpeed * _sprintMultipler);
     }
@@ -104,6 +89,7 @@ public class BerserkChase : ABerserkSubStateBase
             if (_testColliders[i].TryGetComponent<PlayerFSM>(out var player))
             {
                 if (player.IsDead) continue;
+                if(player == _fsm) continue;
                 float distance = Vector3.Distance(_testColliders[i].transform.position, origin);
                 if (distance < shortestDistance)
                 {
@@ -131,5 +117,10 @@ public class BerserkChase : ABerserkSubStateBase
     private bool IsValid(Transform t)
     {
         return t != null;
+    }
+
+    public override void OnActionMoment()
+    {
+        Debug.Log("뿡");
     }
 }

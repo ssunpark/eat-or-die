@@ -279,7 +279,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         if (!EditorApplication.isPlaying)
             return;
 
-        if (StateMachine?.ActiveState is PlayerAttackState attackState)
+        if (StateMachine?.ActiveState is PlayerAttackState attackState || StateMachine?.ActiveState is PlayerBerserkState berserkState)
         {
             Vector3 origin = transform.position + transform.rotation * new Vector3(0f, 0.2f, 0.5f);
             float range = AttackRange;

@@ -2,7 +2,7 @@
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
 
-public abstract class ABerserkSubStateBase : State<ABerserkSubStateBase>
+public abstract class ABerserkSubStateBase : State<ABerserkSubStateBase>, IAnimationActionNotify
 {
     protected PlayerFSM _fsm;
 
@@ -20,4 +20,23 @@ public abstract class ABerserkSubStateBase : State<ABerserkSubStateBase>
         KCC = fsm.GetComponent<SimpleKCC>();
         Anim = fsm.GetComponent<Animator>();
     }
+
+    protected void LazySet()
+    {
+        if (_fsm == null)
+        {
+            Debug.LogError("PlayerFSM is null. Cannot set state.");
+            return;
+        }
+        if (_stat == null)
+        {
+            _stat = _fsm.PlayerNetworkObject.Stat;
+        }
+        if (_resource == null)
+        {
+            _resource = _fsm.PlayerNetworkObject.Resource;
+        }
+    }
+
+    public abstract void OnActionMoment();
 }

@@ -9,18 +9,19 @@ public class PlayerDeadState : APlayerStateBase
 
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
     }
 
     protected override void OnEnterStateRender()
     {
-        _fsm.GetComponent<ItemMagnet>().enabled = false;
+        base.OnEnterStateRender();
         if (_fsm.HasInputAuthority)
         {
+            _fsm.GetComponent<ItemMagnet>().enabled = false;
             DropAllItems();
         }
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnExitStateRender()
@@ -29,6 +30,7 @@ public class PlayerDeadState : APlayerStateBase
 
     protected override void OnFixedUpdate()
     {
+        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
         {

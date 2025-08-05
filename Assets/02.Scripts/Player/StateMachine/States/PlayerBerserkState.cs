@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
 using Fusion.Addons.FSM;
 using UnityEngine;
-public class PlayerBerserkState : APlayerStateBase
+public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
 {
     private StateMachine<ABerserkSubStateBase> _subFSM;
     private readonly BerserkChase _chase;
     private readonly BerserkAttack _attack;
 
-    public PlayerBerserkState(PlayerFSM controller) : base(controller)
+    public PlayerBerserkState(PlayerFSM fsm) : base(fsm)
     {
         _subFSM = new StateMachine<ABerserkSubStateBase>("Berserk FSM",
-            new BerserkIdle(controller), // 초기 상태
-            new BerserkChase(controller),
-            new BerserkAttack(controller)
+            new BerserkIdle(fsm), // 초기 상태
+            new BerserkChase(fsm),
+            new BerserkAttack(fsm)
         );
         _subFSM.SetDefaultState(0);
-        AnimState = "Berserk";
 
         StateId = (int)EPlayerState.Berserk;
     }
@@ -25,43 +24,25 @@ public class PlayerBerserkState : APlayerStateBase
     }
     protected override void OnEnterState()
     {
-        if (_stat == null)
-        {
-            _stat = _fsm.PlayerNetworkObject.Stat;
-        }
-        if (_resource == null)
-        {
-            _resource = _fsm.PlayerNetworkObject.Resource;
-        }
-
-        if (_stat == null || _resource == null)
-        {
-            Debug.LogError("PlayerBerserkState: Stat or Resource is null. Cannot enter state.");
-            return;
-        }
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         KCC.Move(Vector3.zero); // 이동 멈춤
-
+        Debug.Log("PlayerBerserkState: Entering Berserk state.");
         _subFSM.Reset(); // 내부 상태머신 초기화
-
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+    }
+    protected override void OnEnterStateRender()
+    {
+        base.OnEnterStateRender();
     }
 
     protected override void OnFixedUpdate()
     {
-
-        _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 5);
+        _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 2);
     }
 
-    
-
-    public void OnAnimationFinished()
+    public void OnActionMoment()
     {
-        if (_subFSM.ActiveState is IAnimationActionEndNotify notify)
-        {
-            Debug.Log("Berserk State: OnAnimationFinished Called");
-            notify.OnAnimationFinished();
-        }
+        _subFSM.ActiveState?.OnActionMoment();
     }
 }
