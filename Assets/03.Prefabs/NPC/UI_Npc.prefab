@@ -384,8 +384,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickPlus
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickPlusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1351,7 +1351,7 @@ RectTransform:
   m_Father: {fileID: 7878705233056199357}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1467,7 +1467,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &8158837522107142645
 MonoBehaviour:
@@ -1642,7 +1642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e6c47e214bd4941914f1ff98383b63d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_SeedItemPurchase: {fileID: 7960116685333467047}
+  uiItemPurchase: {fileID: 7960116685333467047}
   IconImage: {fileID: 7502542000657914415}
   NameText: {fileID: 8231446749646395006}
   DescriptionText: {fileID: 6669286849223607536}
@@ -2195,7 +2195,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 85}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1266696493059239398
 MonoBehaviour:
@@ -2539,9 +2539,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7204224598088245885}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200, y: -25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &503187338779606862
@@ -3474,8 +3474,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickBuy
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickBuyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3607,8 +3607,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickMinus
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickMinusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3898,7 +3898,7 @@ RectTransform:
   m_Father: {fileID: 3655597239043670833}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3958,7 +3958,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2418268326491506609
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4064,9 +4064,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7204224598088245885}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200, y: -75}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2892402994828347945
@@ -4232,6 +4232,7 @@ MonoBehaviour:
   BuyButton: {fileID: 3544566744123719885}
   QuantityText: {fileID: 8802145139737927748}
   TotalPriceText: {fileID: 2209850026687693993}
+  CurrentGoldText: {fileID: 7307490804423488931}
 --- !u!222 &1253224251303459386
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4302,9 +4303,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7204224598088245885}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200, y: -125}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &741343090321478551

@@ -46,6 +46,7 @@ public class CookingManager : NetworkBehaviour
         }
         else
         {
+            if (!HandEntity.Instance.GetItem().ItemInfo.ItemData.IsIngredient) return;
             HandEntity.Instance.PickUpItem(IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
@@ -72,6 +73,7 @@ public class CookingManager : NetworkBehaviour
             }
             else
             {
+                if (!HandEntity.Instance.GetItem().ItemInfo.ItemData.IsIngredient) return;
                 var temp = IngredientInventory.PopItemInSlot(slotIndex);
                 IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
                 HandEntity.Instance.PickUpItem(temp);

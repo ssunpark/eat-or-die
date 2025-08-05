@@ -31,7 +31,6 @@ public class UI_CookingPanel : AUI_PopupBase
     {
         bool isActive = CookingPanel.activeSelf;
         CookingPanel.SetActive(!isActive);
-        // InputReader.playerControllerInputBlocked = true;
     }
 
     public void OnClickCookingButton()
