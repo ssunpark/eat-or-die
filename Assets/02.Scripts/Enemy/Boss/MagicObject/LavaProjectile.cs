@@ -25,12 +25,12 @@ public class LavaProjectile : MonoBehaviour
 
     private Tween _moveTween;
 
-    private Pool<Transform> _lavaFloorPool;
+    private Pool<LavaFloor> _lavaFloorPool;
 
     private Action _onDespawnCallback;
 
     public void Fire(LavaProjectileData projectileData, Action OnDespawnCallback,
-        Pool<Transform> floorPool)
+        Pool<LavaFloor> floorPool)
     {
         _lavaProjectileData = projectileData;
         _lavaFloorPool = floorPool;
@@ -67,10 +67,9 @@ public class LavaProjectile : MonoBehaviour
     {
         // 이펙트나 데미지 처리 등 추가 가능
         var floor = _lavaFloorPool.Get();
-        floor.position = _lavaProjectileData.TargetPosition;
-        var lavaFloor = floor.GetComponent<LavaFloor>();
-        lavaFloor.Lava.SetCallBack(() => _lavaFloorPool.Take(floor));
-        lavaFloor.Init(_lavaProjectileData.Duration);
+        floor.transform.position = _lavaProjectileData.TargetPosition;
+        floor.Lava.SetCallBack(() => _lavaFloorPool.Take(floor));
+        floor.Init(_lavaProjectileData.Duration);
 
         _onDespawnCallback?.Invoke();
     }

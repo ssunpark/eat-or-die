@@ -10,9 +10,6 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
     private int _spawnCount = 0;
     private float _nextSpawnTime;
 
-    public Pool<Transform> _lavaPool;
-    public Pool<Transform> _lavaFloorPool;
-
     public DragonMagicAttack_Lava(
         DragonController controller,
         IParentState parentState,
@@ -20,10 +17,6 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
         : base(controller, parentState)
     {
         _lavaParams = lavaParams;
-        
-        GameObject lavaPool = new GameObject("LavaPool");
-        _lavaPool = Pool.Create(_lavaParams.LavaPrefab.transform, 0, lavaPool.transform);
-        _lavaFloorPool = Pool.Create(_lavaParams.LavaFloorPrefab.transform, 0, lavaPool.transform);
     }
 
     protected override void OnEnterState()
@@ -42,7 +35,7 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
 
         if (_spawnCount < _lavaParams.AngleList.Length && t >= _nextSpawnTime)
         {
-            var lava = _lavaPool.Get();
+            var lava = Controller.LavaProjectilePool.Get();
             lava.transform.position = Controller.BreathPoint.position;
 
             // 각도/거리 계산
@@ -59,13 +52,13 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
                 targetPosition = hit.point;
             }
 
-            lava.GetComponent<LavaProjectile>().Fire(
+            lava.Fire(
                 new LavaProjectileData(targetPosition,
                     _lavaParams.LavaSpeed,
                     _lavaParams.FloorDuration,
                     _lavaParams.LavaHeight),
-                () => _lavaPool.Take(lava),
-                _lavaFloorPool
+                () => Controller.LavaProjectilePool.Take(lava),
+                Controller.LavaFloorPool
             );
 
             Debug.Log($"Lava {_spawnCount + 1} 생성 (각도 {angle}, 거리 {distance})");

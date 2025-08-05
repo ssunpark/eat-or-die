@@ -7,9 +7,6 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
     private bool _hasFired;
     private bool _hasPlayedRenderEffect;
 
-    private Pool<Transform> _hitTargetPool;
-    private Pool<Transform> _particlePool;
-
     public DragonMagicAttack_Breath(
         DragonController controller,
         IParentState parentState,
@@ -17,13 +14,6 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
         : base(controller, parentState)
     {
         _breathParams = breathParams;
-        _hitTargetPool = Pool.Create(_breathParams.BreathHitboxPrefab.transform, 3, Controller.transform).NonLazy();
-        _particlePool = Pool.Create(_breathParams.LocalBreathParticle.transform, 3, Controller.transform).NonLazy();
-    }
-
-    protected override bool CanEnterState()
-    {
-        return _breathParams.BreathHitboxPrefab != null;
     }
 
     protected override void OnEnterState()
@@ -69,16 +59,13 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
         {
             _hasPlayedRenderEffect = true;
 
-            if (_breathParams.LocalBreathParticle == null)
-                return;
-
             Vector3 spawnPos = Controller.BreathPoint.position;
             Quaternion rot = Quaternion.LookRotation(Controller.transform.forward);
 
-            var localVfx = _particlePool.Get();
+            var localVfx = Controller.BreathParticlePool.Get();
             localVfx.transform.position = spawnPos;
             localVfx.transform.rotation = rot;
-            localVfx.GetComponent<BreathParticle>()?.Init(_breathParams.TotalDuration, ()=>_particlePool.Take(localVfx));
+            localVfx.Init(_breathParams.TotalDuration, ()=>Controller.BreathParticlePool.Take(localVfx));
         }
     }
 
@@ -90,9 +77,9 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
         Vector3 spawnPos = Controller.BreathPoint.position;
         Quaternion rot = Quaternion.LookRotation(Controller.transform.forward);
 
-        var hitBoxObj = _hitTargetPool.Get();
+        var hitBoxObj = Controller.BreathHitBoxPool.Get();
         hitBoxObj.transform.position = spawnPos;
         hitBoxObj.transform.rotation = rot;
-        hitBoxObj.GetComponent<DragonBreathHitBox>()?.Init(_breathParams.TotalDuration, ()=>_hitTargetPool.Take(hitBoxObj));
+        hitBoxObj.Init(_breathParams.TotalDuration, ()=>Controller.BreathHitBoxPool.Take(hitBoxObj));
     }
 }

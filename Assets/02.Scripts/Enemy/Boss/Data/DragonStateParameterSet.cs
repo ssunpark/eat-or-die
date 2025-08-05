@@ -140,13 +140,6 @@ public class DragonStateParameterSet
     {
         public float FireTime;                  // 브레스 시작 시점 (예: 준비 동작 후)
         public float TotalDuration;             // 브레스 전체 지속 시간
-        public string BreathAddress;            // 히트박스 Prefab Addressables 주소
-        public string LocalParticleAddress;     // 로컬 이펙트 파티클 Addressables 주소
-
-        [NonSerialized]
-        public GameObject BreathHitboxPrefab;   // 실제 히트박스 오브젝트 (런타임 로드)
-        [NonSerialized]
-        public GameObject LocalBreathParticle;  // 클라이언트용 이펙트 파티클 오브젝트
     }
     
     [Serializable]
@@ -159,14 +152,7 @@ public class DragonStateParameterSet
         public float LavaSpeed;         // 투사체 이동 속도
         public float LavaHeight;        // 투사체 포물선 높이
         public float FloorDuration;     // 바닥 지속 시간
-        public string LavaAddress;      // Lava 투사체 Addressable 주소
-        public string LavaFloorAddress; // Lava 바닥 Addressable 주소
 
         public float[] AngleList;
-
-        [NonSerialized]
-        public GameObject LavaPrefab;
-        [NonSerialized]
-        public GameObject LavaFloorPrefab;
     }
 }

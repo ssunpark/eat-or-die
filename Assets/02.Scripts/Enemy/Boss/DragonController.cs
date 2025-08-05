@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
+using Redcode.Pools;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +13,26 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private Transform _breathPoint;
     public Transform BreathPoint => _breathPoint;
+
+    [SerializeField]
+    private DragonBreathHitBox _breathHitBoxPrefab;
+    private Pool<DragonBreathHitBox> _breathHitBoxPool;
+    public Pool<DragonBreathHitBox> BreathHitBoxPool => _breathHitBoxPool;
+    
+    [SerializeField]
+    private BreathParticle _breathParticle;
+    private Pool<BreathParticle> _breathParticlePool;
+    public Pool<BreathParticle> BreathParticlePool => _breathParticlePool;
+    
+    [SerializeField]
+    private LavaProjectile _lavaProjectilePrefab;
+    private Pool<LavaProjectile> _lavaProjectilePool;
+    public Pool<LavaProjectile> LavaProjectilePool => _lavaProjectilePool;
+    
+    [SerializeField]
+    private LavaFloor _lavaFloorPrefab;
+    private Pool<LavaFloor> _lavaFloorPool;
+    public Pool<LavaFloor> LavaFloorPool => _lavaFloorPool;
 
     [SerializeField]
     private GameObject _target;
@@ -49,6 +70,13 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _sightDetector = GetComponentInChildren<SightDetector>();
         _animator = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        
+        // 풀링
+        GameObject lavaPool = new GameObject("LavaPool");
+        _breathHitBoxPool = Pool.Create(_breathHitBoxPrefab, 3, transform).NonLazy();
+        _breathParticlePool = Pool.Create(_breathParticle, 3, transform).NonLazy();
+        _lavaProjectilePool = Pool.Create(_lavaProjectilePrefab, 0, lavaPool.transform);
+        _lavaFloorPool = Pool.Create(_lavaFloorPrefab, 0, lavaPool.transform);
     }
 
     public override void Spawned()

@@ -22,27 +22,6 @@ public class DragonParameterLoader
         _parameters = JsonUtility.FromJson<DragonStateParameterSet>(json);
     }
 
-    public async Task LoadAddressablesAsync()
-    {
-        if (_parameters.Breath != null)
-        {
-            // TODO: 비동기로 수정
-            _parameters.Breath.BreathHitboxPrefab = Addressables
-                .LoadAssetAsync<GameObject>(_parameters.Breath.BreathAddress).WaitForCompletion();
-
-            _parameters.Breath.LocalBreathParticle = Addressables
-                .LoadAssetAsync<GameObject>(_parameters.Breath.LocalParticleAddress).WaitForCompletion();
-        }
-
-        if (_parameters.Lava != null)
-        {
-            _parameters.Lava.LavaPrefab = Addressables
-                .LoadAssetAsync<GameObject>(_parameters.Lava.LavaAddress).WaitForCompletion();
-            _parameters.Lava.LavaFloorPrefab = Addressables
-                .LoadAssetAsync<GameObject>(_parameters.Lava.LavaFloorAddress).WaitForCompletion();
-        }
-    }
-
     public DragonStateParameterSet.BaseParams Base => _parameters.Base;
     public DragonStateParameterSet.PatrolParams Patrol => _parameters.Patrol;
     public DragonStateParameterSet.WaitParams Wait => _parameters.Wait;
