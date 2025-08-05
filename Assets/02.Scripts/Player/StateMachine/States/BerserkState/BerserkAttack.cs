@@ -62,7 +62,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
         Vector3 direction = _fsm.transform.forward;
 
         int result = Machine.Runner.GetPhysicsScene().OverlapSphere(attackOrigin, _stat.GetStat(EStatType.AttackRange), _hitsColliders,
-                    _fsm.attackableLayerMask, QueryTriggerInteraction.Collide);
+                    _fsm.BerserkLayerMask, QueryTriggerInteraction.Collide);
 
         for (int i = 0; i < result; i++)
         {

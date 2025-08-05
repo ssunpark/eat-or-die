@@ -80,6 +80,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     Collider[] _testColliders = new Collider[8];
     public LayerMask InteractLayerMask;
+    public LayerMask BerserkLayerMask;
     public SimpleKCC SimpleKCC;
     private NetworkInputData _currentInput;
     private NetworkInputData _previousInput;
