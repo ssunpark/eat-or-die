@@ -11,7 +11,18 @@ public class StatManager
 
     public StatManager(IStatDataRepository statRepo)
     {
-        foreach (var data in statRepo.GetCharacterStatData())
+        ECharacterType characterType;
+        if (CustomizationDataHolder.Instance != null)
+        {
+            characterType = CustomizationDataHolder.Instance.ClassType;
+        }
+        else
+        {
+            Debug.LogWarning("[StatManager] CustomizationDataHolder가 없네요.. 캐릭터 생성 후 이 경고를 본다면 남경민에게 말해주세요");
+            Debug.LogWarning("[StatManager] 기본 캐릭터 타입을 Warrior로 설정합니다.");
+            characterType = ECharacterType.Warrior; // 기본값 설정
+        }
+        foreach (var data in statRepo.GetCharacterStatData(characterType))
         {
             _stats[data.StatType] = new Stat(data.StatType, data.BaseAmount);
 

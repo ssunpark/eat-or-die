@@ -4,6 +4,7 @@ public class PlayerDeadState : APlayerStateBase
 {
     public PlayerDeadState(PlayerFSM fsm) : base(fsm) {
         AnimState = "Die";
+        StateId = (int)EPlayerState.Dead;
     }
 
     protected override void OnEnterState()

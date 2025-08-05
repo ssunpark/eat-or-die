@@ -2,7 +2,7 @@
 {
     public static string GenerateTooltip(CharacterTraitData data)
     {
-        string statName = data.AffectedStat.ToString(); // 혹은 한글로 변환 매핑
+        string statName = data.StatType.ToString();
 
         string format = data.ModifierType switch
         {

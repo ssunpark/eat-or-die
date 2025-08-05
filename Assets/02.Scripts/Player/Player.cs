@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
-using UnityEngine;
 using RaycastPro.Detectors;
+using UnityEngine;
 
 [RequireComponent(typeof(RangeDetector))]
 public class Player : CharacterBase, IDamageable, IAttackable
 {
+    public TraitExpHandler ExpHandler { get; private set; }
+    public List<CharacterTraitData> TraitDataList { get; private set; }
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
     float _damageRecoveryTime = 0.5f;
@@ -21,6 +24,12 @@ public class Player : CharacterBase, IDamageable, IAttackable
 
     private Animator _animator;
     bool _isReset;
+
+    public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
+    {
+        TraitDataList = dataList;
+        ExpHandler = expHandler;
+    }
     public IDictionary<string, float> AnimationClipLengths
     {
         get
@@ -53,14 +62,45 @@ public class Player : CharacterBase, IDamageable, IAttackable
         Resource.OnHungerChanged += EvaluateCurrentHunger;
         if (HasInputAuthority)
         {
-            InitializePlayerHUD();
+            if (ExpHandler != null && TraitDataList != null)
+            {
+                LoadTraitsFromStorage();
+            }
+            else
+            {
+                StartCoroutine(WaitAndLoadTraits());
+            }
+                InitializePlayerHUD();
         }
 
         _animator = GetComponent<Animator>();
         PlayerFSM = GetComponent<PlayerFSM>();
 
     }
+    private IEnumerator WaitAndLoadTraits()
+    {
+        while (ExpHandler == null || TraitDataList == null)
+        {
+            yield return null;
+        }
 
+        LoadTraitsFromStorage();
+    }
+    public void LoadTraitsFromStorage()
+    {
+        foreach (var data in Trait.GetTraitSnapshot())
+        {
+            ETraitType type = data.Key;
+            int level = TraitLevelStorage.GetLevel(type);
+            float exp = TraitLevelStorage.GetExperience(type);
+
+            var trait = Trait.GetTrait(type); // 내부 딕셔너리에서 가져오기
+            trait?.SetLevel(level);
+            trait?.AddExp(exp);
+        }
+
+        Trait.ReapplyAllTraitEffects(TraitDataList);
+    }
 
 
     public override void Despawned(NetworkRunner runner, bool hasState)
@@ -100,6 +140,11 @@ public class Player : CharacterBase, IDamageable, IAttackable
     }
 
 
+    public void RequestState(EPlayerState state)
+    {
+        if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
+            _nextState = PlayerFSM.StateMachine.GetState((int)state);
+    }
     public void TakeDamage(float amount, PlayerRef attacker)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
