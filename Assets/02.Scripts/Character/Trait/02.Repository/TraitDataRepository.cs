@@ -14,7 +14,7 @@ public class TraitDataRepository : ITraitDataRepository
             if (_cachedData != null)
                 return _cachedData;
 
-            string fullPath = $"{Application.streamingAssetsPath}{TRAIT_CSV_PATH}";
+            string fullPath = Path.Combine(Application.streamingAssetsPath, TRAIT_CSV_PATH);
             var rawList = CSVLoader<CharacterTraitRawData>.LoadCSV(fullPath);
 
             _cachedData = rawList

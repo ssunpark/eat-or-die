@@ -14,12 +14,12 @@ public class TraitExpHandler
             .ToDictionary(d => d.ActionName, d => d);
     }
 
-    public void GrantExp(string actionName, int expAmountOverride = -1)
+    public void GrantExp(string actionName, int? expAmountOverride = null)
     {
         //Debug.Log($"[TraitExpHandler] GrantExp Called. Action: {actionName}, Override: {expAmountOverride}");
         if (_actionToTraitMap.TryGetValue(actionName, out var trait))
         {
-            int expToAdd = expAmountOverride >= 0 ? expAmountOverride : trait.ExpValue;
+            int expToAdd = expAmountOverride.HasValue ? expAmountOverride.Value : trait.ExpValue;
             //Debug.Log($"[TraitExpHandler] {actionName} 특성에 경험치 추가: {expToAdd}");
             _traitManager.AddExp(trait.TraitType, expToAdd, trait);
         }
