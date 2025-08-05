@@ -17,7 +17,7 @@ public class NicknameBillboard : MonoBehaviour
     {
         if (_camTransform == null) return;
 
-        // 카메라를 바라보게 회전
-        transform.rotation = Quaternion.LookRotation(transform.position - _camTransform.position);
+        // 카메라가 바라보는 곳을 바라보게 회전
+        transform.forward = _camTransform.forward;
     }
 }
