@@ -34,6 +34,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         {
             //후입장 플레이어를 위해 한 번 강제 적용
             ApplyCustomization();
+            ApplyNickname();
         }
     }
 
