@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,19 @@ public class PopupManager : BehaviourSingleton<PopupManager>
 {
 	private readonly List<AUI_PopupBase> openedPopups = new();
 	public bool HasOpenedPopup => openedPopups.Count > 0;
+
+	private void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			CloseLast();
+		}
+		
+		if (!HasOpenedPopup)
+		{
+			InputReader.Instance.GainControl();
+		}
+	}
 
 	public void Register(AUI_PopupBase popup)
 	{

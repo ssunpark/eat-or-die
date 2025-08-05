@@ -3,30 +3,27 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 //수현
-public class UI_CookingPanel : MonoBehaviour
+public class UI_CookingPanel : AUI_PopupBase
 {
+    public override EPopupType Type => EPopupType.Cook;
     public GameObject CookingPanel;
     public GameObject RecipePanel;
 
-    private bool isOpen = false;
-
     private void Start()
     {
-        // CookingPanel.SetActive(false);
+        CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
 
     public void OnClickRecipeButton()
     {
-        isOpen = !isOpen;
-
-        if (isOpen)
+        if (PopupManager.Instance.IsOpen(EPopupType.Recipe))
         {
-            RecipePanel.GetComponent<UI_RecipePanel>().Open();
+            PopupManager.Instance.GetOpenPopup(EPopupType.Recipe)?.Close();
         }
         else
         {
-            RecipePanel.GetComponent<UI_RecipePanel>().Close();
+            RecipePanel.GetComponent<UI_RecipePanel>().Open();
         }
     }
 
@@ -57,8 +54,8 @@ public class UI_CookingPanel : MonoBehaviour
 
     private void CloseTab()
     {
-        isOpen = false;
         CookingPanel.SetActive(false);
         RecipePanel.SetActive(false);
     }
+
 }
