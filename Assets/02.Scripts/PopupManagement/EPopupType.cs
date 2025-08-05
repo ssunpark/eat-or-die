@@ -5,5 +5,5 @@ public enum EPopupType
 	Cook,
 	Recipe,
 	Shop,
-	Craft,
+	Craft
 }
