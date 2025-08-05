@@ -10,6 +10,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 {
 	[SerializeField] private int _enemyId; // 몬스터 ID
 
+	public EnemyStatManager EnemyStatManager;
+
 	public int HitCountTemp = 0;
 	
 	private RangeDetector _rangeDetector;
@@ -37,6 +39,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
+		EnemyStatManager = new EnemyStatManager(_enemyId);
+		
 		Context = new EnemyContext()
 		{
 			Target = null,
