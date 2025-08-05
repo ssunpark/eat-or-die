@@ -58,10 +58,10 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             }
 
             lava.GetComponent<LavaProjectile>().Fire(
-                targetPosition,
-                _lavaParams.LavaSpeed,
-                _lavaParams.FloorDuration,
-                _lavaParams.LavaHeight,
+                new LavaProjectileData(targetPosition,
+                    _lavaParams.LavaSpeed,
+                    _lavaParams.FloorDuration,
+                    _lavaParams.LavaHeight),
                 () => _lavaPool.Take(lava),
                 _lavaFloorPool
             );

@@ -3,17 +3,27 @@ using UnityEngine;
 
 public class LavaFloor : MonoBehaviour
 {
+    private const float REDUCE_FACTOR = 5f;
+    private const float UP_FACTOR = 2f;
+    
     private float _timer;
     private float _duration;
-    private Action _onDespawnCallback;
     private bool _isActive;
+    
+    private LavaVisual _lava;
+    public LavaVisual Lava => _lava;
 
-    public void Init(float duration, Action onDespawnCallback)
+    private void Awake()
+    {
+        _lava = GetComponentInChildren<LavaVisual>();
+    }
+
+    public void Init(float duration)
     {
         _duration = duration;
-        _onDespawnCallback = onDespawnCallback;
         _timer = 0f;
         _isActive = true;
+        _lava.Reset(duration, REDUCE_FACTOR, UP_FACTOR);
     }
 
     private void Update()
@@ -25,7 +35,6 @@ public class LavaFloor : MonoBehaviour
         if (_timer >= _duration)
         {
             _isActive = false;
-            _onDespawnCallback?.Invoke();
         }
     }
 }
