@@ -7,10 +7,13 @@ public class PlayerMoveState : APlayerStateBase
     private float _hungerConsumptionOvertime; 
     private float _moveSpeed;
     private float _sprintMultipler;
+    private float _moveExpTimer;
+    private TraitExpHandler _expHandler;
     public PlayerMoveState(PlayerFSM fsm) : base(fsm)
     {
         AnimState = "Move";
         StateId = (int)EPlayerState.Move;
+        
     }
 
 
@@ -35,6 +38,10 @@ public class PlayerMoveState : APlayerStateBase
         _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
         _fsm.CanInteract = true;
         _fsm.CanUseItem = true;
+        if(_expHandler == null)
+        {
+            _expHandler = _fsm.PlayerNetworkObject.ExpHandler;
+        }
     }
 
     protected override void OnEnterStateRender()
@@ -53,6 +60,13 @@ public class PlayerMoveState : APlayerStateBase
             Machine.ForceActivateState<PlayerIdleState>();
             KCC.Move(Vector3.zero);
             return;
+        }
+        _moveExpTimer += Machine.Runner.DeltaTime;
+        if (_moveExpTimer >= 1f)
+        {
+            //Debug.Log("[PlayerMoveState] Granting MovePerSecond experience.");
+            _expHandler.GrantExp("MovePerSecond");
+            _moveExpTimer = 0f;
         }
 
         Vector2 normalized = moveInput.normalized;
