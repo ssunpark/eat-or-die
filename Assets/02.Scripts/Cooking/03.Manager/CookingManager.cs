@@ -302,6 +302,12 @@ public class CookingManager : NetworkBehaviour
     
     public void TryStartCook()
     {
+        if (HasEmptySlot())
+        {
+            Debug.Log("[CookingManager] 빈 슬롯이 있어 요리를 시작할 수 없습니다.");
+            return;
+        }
+
         _currentCookingPot?.Rpc_StartCooking();
     }
 
@@ -310,6 +316,7 @@ public class CookingManager : NetworkBehaviour
     {
         _isCooking = true;
         // FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+        OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
         Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
     }
 
