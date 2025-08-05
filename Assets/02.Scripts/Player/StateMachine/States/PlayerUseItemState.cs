@@ -6,6 +6,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
     public PlayerUseItemState(PlayerFSM controller) : base(controller)
     {
         AnimState = "UseItem";
+        StateId = (int)EPlayerState.UseItem;
     }
 
     private NetworkObject _target;

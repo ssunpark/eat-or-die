@@ -7,6 +7,7 @@ public class PlayerIdleState : APlayerStateBase
     public PlayerIdleState(PlayerFSM controller) : base(controller)
     {
         AnimState = "Idle";
+        StateId = (int)EPlayerState.Idle;
     }
 
     protected override void OnEnterStateRender()
