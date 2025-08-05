@@ -54,7 +54,7 @@ public class ItemFactory
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, false,
             rawData.MaxQuantity, 1f, rawData.IconPath, rawData.PrefabPath);
         
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
@@ -63,7 +63,7 @@ public class ItemFactory
 
     public AItemInfo CreateItem(WeaponItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, true,
             rawData.MaxStack, rawData.MaxDuration,
             rawData.IconPath, rawData.PrefabPath);
         
@@ -78,7 +78,7 @@ public class ItemFactory
 
     public AItemInfo CreateItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.HasDurability, rawData.MaxQuantity,
             rawData.MaxDuration ?? 1f,
             rawData.AddressablePath, rawData.PrefabPath);
         

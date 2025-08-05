@@ -69,11 +69,18 @@ public class AItemInfo
         item.transform.SetParent(_poolParent);
     }
 
-    public void UseItem(GameObject target)
+    public bool TryUseItem(GameObject target)
     {
+        if (_useEffect.Count <= 0)
+        {
+            return false;
+        }
+
         foreach (var effect in _useEffect)
         {
             effect.Use(target);
         }
+        
+        return true;
     }
 }

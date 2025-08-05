@@ -8,6 +8,6 @@ public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
     public void Interact()
     {
         UI_SeedShopPanel.Open();
-        InputReader.Instance.GainControl();
+        InputReader.Instance.ReleaseControl();
     }
 }

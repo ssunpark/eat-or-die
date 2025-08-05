@@ -49,7 +49,7 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     public override void FixedUpdateNetwork()
     {
-        if (!Runner.IsServer || _farmingGround.State != EFarmingGroundState.Watered)
+        if (!Runner.IsServer || _farmingGround.State != EFarmingGroundState.WateringCan)
         {
             return;
         }
