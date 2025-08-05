@@ -5,7 +5,7 @@ using UnityEngine.UI;
 // 재배 모종 아이템 세부사항의 정적 데이터 UI
 public class UI_SeedItemDetail : MonoBehaviour
 {
-    [SerializeField] private UI_SeedItemPurchase UI_SeedItemPurchase;
+    [SerializeField] private UI_ItemPurchase uiItemPurchase;
     [Header("아이템 세부 사항 표시")]
     public Image IconImage;
     public TextMeshProUGUI NameText;
@@ -28,9 +28,9 @@ public class UI_SeedItemDetail : MonoBehaviour
         StockText.text = npcItem.IsInfinite ? "재고수량: 무한" : $"재고수량: {npcItem.StockQuantity}";
         
         
-        int myGold = 1000; // 임시 골드
+        int myGold = CurrencyManager.Instance.Get(ECurrencyType.Gold); // 임시 골드
         int maxCount = CalcMaxPurchasableCount(npcItem, myGold);
-        UI_SeedItemPurchase.Init(itemInfo, npcItem, maxCount);
+        uiItemPurchase.Init(itemInfo, npcItem, maxCount);
     }
     
     private int CalcMaxPurchasableCount(NpcItem npcItem, int myGold)

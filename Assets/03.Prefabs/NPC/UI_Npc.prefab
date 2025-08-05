@@ -384,8 +384,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickPlus
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickPlusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1467,7 +1467,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &8158837522107142645
 MonoBehaviour:
@@ -1642,7 +1642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e6c47e214bd4941914f1ff98383b63d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_SeedItemPurchase: {fileID: 7960116685333467047}
+  uiItemPurchase: {fileID: 7960116685333467047}
   IconImage: {fileID: 7502542000657914415}
   NameText: {fileID: 8231446749646395006}
   DescriptionText: {fileID: 6669286849223607536}
@@ -3474,8 +3474,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickBuy
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickBuyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3607,8 +3607,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickMinus
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickMinusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4232,6 +4232,7 @@ MonoBehaviour:
   BuyButton: {fileID: 3544566744123719885}
   QuantityText: {fileID: 8802145139737927748}
   TotalPriceText: {fileID: 2209850026687693993}
+  CurrentGoldText: {fileID: 7307490804423488931}
 --- !u!222 &1253224251303459386
 CanvasRenderer:
   m_ObjectHideFlags: 0
