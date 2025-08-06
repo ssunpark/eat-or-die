@@ -6,7 +6,7 @@ public class PlayerCookingState : APlayerStateBase
 {
     public PlayerCookingState(PlayerFSM controller) : base(controller) 
     {
-        AnimState = "Cooking";
+        AnimState = "Cook";
         StateId = (int)EPlayerState.Cooking;
     }
     protected override void OnEnterState()
