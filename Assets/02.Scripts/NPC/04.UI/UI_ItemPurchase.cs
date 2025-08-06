@@ -33,13 +33,11 @@ public class UI_ItemPurchase : MonoBehaviour
 
     private void OnEnable()
     {
-        NpcDataManager.Instance.OnCurrencyUpdated += OnGoldAmountChanged;
         CurrencyManager.Instance.OnCurrencyChanged += OnGoldAmountChanged;
     }
 
     private void OnDisable()
     {
-        NpcDataManager.Instance.OnCurrencyUpdated -= OnGoldAmountChanged;
         CurrencyManager.Instance.OnCurrencyChanged -= OnGoldAmountChanged;
     }
 

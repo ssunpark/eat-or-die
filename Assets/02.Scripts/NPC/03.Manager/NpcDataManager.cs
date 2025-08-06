@@ -13,7 +13,6 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
     public List<NpcDialogue> NpcDialogueList { get; private set; }
     public event Action OnDataLoaded;
     public event Action OnNpcItemListLoaded;
-    public event Action<ECurrencyType, int> OnCurrencyUpdated;
 
 
     private void Awake()
@@ -30,6 +29,5 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
         Debug.Log($"로드 완료 - NpcList: {NpcList.Count}, NpcItemList: {NpcItemList.Count}, NpcDialogueList: {NpcDialogueList.Count}");
         OnNpcItemListLoaded?.Invoke();
         OnDataLoaded?.Invoke();
-        OnCurrencyUpdated?.Invoke(ECurrencyType.Gold, CurrencyManager.Instance.Get(ECurrencyType.Gold));
     }
 }
