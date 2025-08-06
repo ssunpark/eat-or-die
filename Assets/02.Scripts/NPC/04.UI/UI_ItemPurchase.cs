@@ -22,7 +22,7 @@ public class UI_ItemPurchase : MonoBehaviour
     private bool _isUpdatingSlider = false;
 
     private int TotalPrice => _unitPrice * _selectedCount;
-
+    
     private void Start()
     {
         QuantitySlider.minValue = 1;
