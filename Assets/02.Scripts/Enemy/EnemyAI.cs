@@ -97,9 +97,10 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void Move()
 	{
-		if (!Context.Agent.hasPath) return;
+		if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
 		
-		Vector3 direction = Context.Agent.nextPosition - transform.position;
+		Context.Agent.nextPosition = transform.position;
+		Vector3 direction = Context.Agent.path.corners[1] - transform.position;
 		transform.forward = direction;
 		
 		if (direction.sqrMagnitude < 0.01f) return;
@@ -107,6 +108,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		direction.Normalize();
 		
 		transform.position += direction * Context.StatManager.GetStat(EStatType.EnemyMoveSpeed) * Runner.DeltaTime;
+		Context.Agent.nextPosition = transform.position;
 	}
 
 	public void Detect()

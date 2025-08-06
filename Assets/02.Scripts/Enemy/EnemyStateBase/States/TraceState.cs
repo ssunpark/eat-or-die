@@ -13,19 +13,15 @@ public class TraceState : AEnemyState
     protected override void OnEnterState()
     {
         Debug.Log("Trace...");
+        Context.Agent.isStopped = false;
         Context.Animator.SetTrigger(MoveForward);
     }
 
     protected override void OnFixedUpdate()
     {
-        Vector3 toTarget = Context.Target.transform.position - ParentBehaviour.transform.position;
-        float distance = toTarget.magnitude;
-
-        if (distance <= Context.StatManager.GetStat(EStatType.EnemyAttackRange)
-            && Vector3.Angle(toTarget, ParentBehaviour.transform.forward)
-            <= Context.StatManager.GetStat(EStatType.EnemyAttackAngle))
+        if (ParentBehaviour.Machine.TryActivateState<AttackBehaviour>())
         {
-            ParentBehaviour.Machine.TryActivateState<AttackBehaviour>();
+            return;
         }
         
         Context.Agent.SetDestination(Context.Target.transform.position);
@@ -34,5 +30,10 @@ public class TraceState : AEnemyState
         {
             Context.Mover.Move();
         }
+    }
+
+    protected override void OnExitState()
+    {
+        Context.Agent.isStopped = true;
     }
 }
