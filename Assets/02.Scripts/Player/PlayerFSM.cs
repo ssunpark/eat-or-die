@@ -130,12 +130,12 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
             FSMStateInstances.Idle,
             FSMStateInstances.Move,
-            FSMStateInstances.Attack,
-            FSMStateInstances.UseItem,
+            FSMStateInstances.Attack, 
             FSMStateInstances.Interact,
+            FSMStateInstances.UseItem, 
+            FSMStateInstances.Cooking,
             FSMStateInstances.Hit,
             FSMStateInstances.Dead,
-            FSMStateInstances.Cooking,
             FSMStateInstances.Berserk,
             FSMStateInstances.Recover,
             FSMStateInstances.Corpse
@@ -224,6 +224,10 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     private bool TestInteraction(bool interactPressed)
     {
+        if (!InputReader.Instance.HaveControl())
+        {
+            return false;
+        }
         Vector3 interactionPoint = transform.position + transform.forward;
 
         int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, 2f, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
