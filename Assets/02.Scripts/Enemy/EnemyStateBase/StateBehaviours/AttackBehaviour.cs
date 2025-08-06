@@ -1,7 +1,7 @@
 using UnityEngine;
 using Fusion.Addons.FSM;
 
-public class AttackBehaviour : AEnemyStateBehaviour
+public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 {
 	private static readonly int Attack = Animator.StringToHash("Attack");
 	private bool _isAttackFinished = false;
@@ -11,6 +11,7 @@ public class AttackBehaviour : AEnemyStateBehaviour
 		Debug.Log("Attacking...");
 		_isAttackFinished = false;
 		Machine.Context.Animator.SetTrigger(Attack);
+		Machine.Context.AnimationRelay.SetReceiver(this);
 	}
 
 	protected override void OnFixedUpdate()
@@ -28,6 +29,7 @@ public class AttackBehaviour : AEnemyStateBehaviour
 	{
 		_isAttackFinished = false;
 		Machine.Context.Animator.ResetTrigger(Attack);
+		Machine.Context.AnimationRelay.RemoveReceiver();
 	}
 
 	protected override bool CanExitState(AEnemyStateBehaviour nextState)
@@ -37,5 +39,12 @@ public class AttackBehaviour : AEnemyStateBehaviour
 
 	protected override void OnEnterStateRender()
 	{
-	}	
+	}
+
+	public void OnActionMoment()
+	{
+		if (!HasStateAuthority) return;
+		
+		Debug.Log("Attack Moment Triggered");
+	}
 }

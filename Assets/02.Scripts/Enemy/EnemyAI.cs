@@ -51,6 +51,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			Target = null,
 			StatManager = EnemyStatManager,
 			Animator = GetComponent<Animator>(),
+			AnimationRelay = GetComponent<EnemyAnimationRelay>(),
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
 			Detector = this,
