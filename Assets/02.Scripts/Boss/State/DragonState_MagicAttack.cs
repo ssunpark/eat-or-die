@@ -20,7 +20,7 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     private void TryActivateRandomMagicSkill()
     {
-        int rand = Random.Range(0, 3); // 확장 가능
+        int rand = 2;//Random.Range(0, 3); // 확장 가능
 
         switch (rand)
         {
