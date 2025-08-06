@@ -7,6 +7,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     {
         AnimState = "Attack";
         _positionOffset = new Vector3(0f, 0.2f, 0.5f);
+        StateId = (int)EPlayerState.Attack;
     }
     private Vector3 _positionOffset;
     private float _meleeDamage;
@@ -68,6 +69,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
 
     public void OnActionMoment()
     {
+        if (!_fsm.HasStateAuthority) return;
         Vector3 attackOrigin = _fsm.transform.position + _fsm.transform.rotation * _positionOffset;
         Vector3 direction = _fsm.transform.forward;
 

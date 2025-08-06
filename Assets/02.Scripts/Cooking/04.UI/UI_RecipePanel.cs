@@ -1,18 +1,19 @@
 using System;
 using UnityEngine;
 
-public class UI_RecipePanel : MonoBehaviour
+public class UI_RecipePanel : AUI_PopupBase
 {
+    public override EPopupType Type =>  EPopupType.Recipe;
     public UI_RecipeIngredient UIRecipeIngredient;
     public UI_RecipeList UIRecipeList;
     
     private bool _isInitialized = false;
-    
+
+
 
     public void Open()
     {
-        gameObject.SetActive(true);
-
+        base.Open();
         if (!_isInitialized)
         {
             Init();
@@ -22,7 +23,7 @@ public class UI_RecipePanel : MonoBehaviour
 
     public void Close()
     {
-        gameObject.SetActive(false);
+        base.Close();
     }
 
     private void Init()

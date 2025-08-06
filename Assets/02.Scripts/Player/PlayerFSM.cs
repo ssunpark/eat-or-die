@@ -89,6 +89,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
+
     [Networked, Capacity(8)]
     public NetworkLinkedList<NetworkObject> HitTargets { get; }
 

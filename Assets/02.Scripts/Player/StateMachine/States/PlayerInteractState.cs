@@ -6,6 +6,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     public PlayerInteractState(PlayerFSM controller) : base(controller)
     {
         AnimState = "Interact";
+        StateId = (int)EPlayerState.Interact;
     }
     private NetworkObject _target;
     protected override void OnEnterStateRender()

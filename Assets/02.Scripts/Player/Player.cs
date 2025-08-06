@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
-using UnityEngine;
 using RaycastPro.Detectors;
+using UnityEngine;
 
 [RequireComponent(typeof(RangeDetector))]
 public class Player : CharacterBase, IDamageable, IAttackable
 {
+    public TraitExpHandler ExpHandler { get; private set; }
+    public List<CharacterTraitData> TraitDataList { get; private set; }
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
     float _damageRecoveryTime = 0.5f;
@@ -21,6 +24,12 @@ public class Player : CharacterBase, IDamageable, IAttackable
 
     private Animator _animator;
     bool _isReset;
+
+    public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
+    {
+        TraitDataList = dataList;
+        ExpHandler = expHandler;
+    }
     public IDictionary<string, float> AnimationClipLengths
     {
         get
@@ -53,14 +62,45 @@ public class Player : CharacterBase, IDamageable, IAttackable
         Resource.OnHungerChanged += EvaluateCurrentHunger;
         if (HasInputAuthority)
         {
-            InitializePlayerHUD();
+            if (ExpHandler != null && TraitDataList != null)
+            {
+                LoadTraitsFromStorage();
+            }
+            else
+            {
+                StartCoroutine(WaitAndLoadTraits());
+            }
+                InitializePlayerHUD();
         }
 
         _animator = GetComponent<Animator>();
         PlayerFSM = GetComponent<PlayerFSM>();
 
     }
+    private IEnumerator WaitAndLoadTraits()
+    {
+        while (ExpHandler == null || TraitDataList == null)
+        {
+            yield return null;
+        }
 
+        LoadTraitsFromStorage();
+    }
+    public void LoadTraitsFromStorage()
+    {
+        foreach (var data in Trait.GetTraitSnapshot())
+        {
+            ETraitType type = data.Key;
+            int level = TraitLevelStorage.GetLevel(type);
+            float exp = TraitLevelStorage.GetExperience(type);
+
+            var trait = Trait.GetTrait(type); // 내부 딕셔너리에서 가져오기
+            trait?.SetLevel(level);
+            trait?.AddExp(exp);
+        }
+
+        Trait.ReapplyAllTraitEffects(TraitDataList);
+    }
 
 
     public override void Despawned(NetworkRunner runner, bool hasState)
@@ -100,6 +140,64 @@ public class Player : CharacterBase, IDamageable, IAttackable
     }
 
 
+    public void RequestState(EPlayerState state)
+    {
+        if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
+        {
+            if (HasStateAuthority)
+            {
+                _nextState = PlayerFSM.StateMachine.GetState((int)state);
+            }
+            else
+            {
+                Rpc_RequestState(state);
+            }
+        }
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void Rpc_RequestState(EPlayerState state)
+    {
+        if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
+        {
+            switch (state)
+            {
+                case EPlayerState.Idle:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
+                    break;
+                case EPlayerState.Move:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerMoveState>();
+                    break;
+                case EPlayerState.Attack:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerAttackState>();
+                    break;
+                case EPlayerState.Interact:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerInteractState>();
+                    break;
+                case EPlayerState.UseItem:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerUseItemState>();
+                    break;
+                case EPlayerState.Cooking:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerCookingState>();
+                    break;
+                case EPlayerState.Berserk:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
+                    break;
+                case EPlayerState.Hit:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerHitState>();
+                    break;
+                case EPlayerState.Recover:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
+                    break;
+                case EPlayerState.Dead:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
+                    break;
+                case EPlayerState.CarryingCorpse:
+                    break;
+            }
+        }
+    }
+    
     public void TakeDamage(float amount, PlayerRef attacker)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))

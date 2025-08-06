@@ -11,6 +11,8 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     private NetworkRunner _runner;
 
     private Dictionary<EStatType, float> _statInputs = new();
+    private static Dictionary<PlayerRef, Player> _playerControllers = new();
+    public static IDictionary<PlayerRef, Player> PlayerControllers => _playerControllers;
     [HideInInspector]public Vector3[] SpawnPoint;
 
     public enum SpawnPosition
@@ -39,7 +41,12 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (InputReader.Instance == null || !InputReader.Instance.HaveControl()) return;
+        NetworkInputData data = new NetworkInputData();
+        if (InputReader.Instance == null || !InputReader.Instance.HaveControl())
+        {
+            input.Set(data);
+            return;
+        }
 
         var move = InputReader.Instance.MoveInput;
         var currentButtons = new NetworkButtons();
@@ -51,12 +58,9 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
         currentButtons.Set(EButtons.UseItem, InputReader.Instance.InputActions.Player.UseItem.IsPressed());
         currentButtons.Set(EButtons.Run, InputReader.Instance.InputActions.Player.Sprint.IsPressed());
 
-        var data = new NetworkInputData
-        {
-            direction = new Vector2(move.x, move.y),
-            buttons = currentButtons,
-            previousButtons = _prevButtons
-        };
+        data.previousButtons = _prevButtons;
+        data.direction = new Vector2(move.x, move.y);
+        data.buttons = currentButtons;
 
         _prevButtons = currentButtons;
         input.Set(data);
@@ -72,6 +76,7 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
             //new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0)
             var playerObj = runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
             runner.SetPlayerObject(player, playerObj);
+            _playerControllers[player] = playerObj.GetComponent<Player>();
         }
     }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)

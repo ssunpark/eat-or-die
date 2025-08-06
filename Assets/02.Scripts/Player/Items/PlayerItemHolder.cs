@@ -37,7 +37,7 @@ public class PlayerItemHolder: NetworkBehaviour
     public void UseItem(GameObject target)
     {
         Debug.Log($"[PlayerItemHolder] UseItem Called. Target: {target.name}");
-        HeldItem?.Use(target);
+        QuickSlotManager.Instance.UseItem(target, RPC_RequestUnholdItem);
     }
     
 
@@ -57,6 +57,8 @@ public class PlayerItemHolder: NetworkBehaviour
                 RPC_RequestHoldItem(item.ID);
         }
     }
+    
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void RPC_RequestUnholdItem()
     {
         if (_player == null)
@@ -65,6 +67,7 @@ public class PlayerItemHolder: NetworkBehaviour
         }
         var heldItem = ItemManager.Instance.GetItem(HoldItemID);
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
+        _heldItemObject = null;
         HoldItemID = -1;
         _player.CacheAnimationLengths();
     }

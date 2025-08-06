@@ -6,9 +6,11 @@ using RaycastPro.Detectors;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
-public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IDamageable
+public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
 {
-	[SerializeField] private int _enemyId;
+	[SerializeField] private int _enemyId; // 몬스터 ID
+
+	public EnemyStatManager EnemyStatManager;
 
 	public int HitCountTemp = 0;
 	
@@ -37,6 +39,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
+		EnemyStatManager = new EnemyStatManager(_enemyId);
+		
 		Context = new EnemyContext()
 		{
 			Target = null,
@@ -110,9 +114,23 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		}
 	}
 
-	public void TakeDamage(float amount, PlayerRef attacker)
+	// IAttackable Interface Implementation
+	public NetworkObject NetworkObject { get; }
+	
+	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
 	{
-		Debug.Log("Take damage");
-		_hit = true;
+		if (HasStateAuthority)
+		{
+			_hit = true;
+		}
+	}
+
+	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+	{
+	}
+
+	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
+	{
 	}
 }
