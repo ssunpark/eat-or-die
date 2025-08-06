@@ -14,7 +14,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
     {
         if (_resourceManager != null)
         {
-            _resourceManager.OnHungerChanged -= _resourceManager_OnSatietyChanged;
+            _resourceManager.OnHungerChanged -= _resourceManager_OnHungerChanged;
         }
 
         _resourceManager = resourceManager;
@@ -22,8 +22,8 @@ public class UI_HUDPlayerHP : MonoBehaviour
         if (_resourceManager != null && statManager != null)
         {
             // 이벤트 구독
-            _resourceManager.OnHungerChanged += _resourceManager_OnSatietyChanged;
-            _resourceManager_OnSatietyChanged(statManager.GetStat(EStatType.MaxHunger), statManager.GetStat(EStatType.MaxHunger));
+            _resourceManager.OnHungerChanged += _resourceManager_OnHungerChanged;
+            _resourceManager_OnHungerChanged(statManager.GetStat(EStatType.MaxHunger), statManager.GetStat(EStatType.MaxHunger));
         }
         else
         {
@@ -31,8 +31,8 @@ public class UI_HUDPlayerHP : MonoBehaviour
         }
     }
 
-    private void _resourceManager_OnSatietyChanged(float currentHealth, float maxHealth)
-    {
+    private void _resourceManager_OnHungerChanged(float currentHealth, float maxHealth)
+    { 
         // 배고픔 UI 업데이트
         if (_hpSlider != null)
         {
@@ -58,7 +58,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
         // Unsubscribe to prevent memory leaks when the HUD element is destroyed
         if (_resourceManager != null)
         {
-            _resourceManager.OnHungerChanged -= _resourceManager_OnSatietyChanged;
+            _resourceManager.OnHungerChanged -= _resourceManager_OnHungerChanged;
         }
     }
 }

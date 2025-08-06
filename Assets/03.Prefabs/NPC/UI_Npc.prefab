@@ -191,7 +191,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 99/99
+  m_text: 1/99
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
   m_sharedMaterial: {fileID: 5994777029685468024, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
@@ -384,8 +384,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickPlus
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickPlusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -460,20 +460,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30 \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0.
-    \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30
-    \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0. \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D
-    \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30 \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0.
-    \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30
-    \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0. \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D
-    \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30 \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0.
-    \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30
-    \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0. \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D
-    \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30 \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0.
-    \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D \uD574.\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30
-    \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0. \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D
-    \uD574.. \uC880\uCC98\uB7FC \uAD6C\uD558\uAE30 \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0.
-    \uCC9C\uCC9C\uD788 \uC0B4\uD3B4\uBCF4\uB3C4\uB85D \uD574."
+  m_text: "\uC880\uCC98\uB7FC \uAD6C\uD558\uAE30 \uD798\uB4E0 \uBB3C\uAC74\uB4E4\uC774\uC9C0."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
   m_sharedMaterial: {fileID: 5994777029685468024, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
@@ -1308,7 +1295,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 1f7e7bcb3daa75341bf8e0448c80b459, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1467,7 +1454,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &8158837522107142645
 MonoBehaviour:
@@ -1642,7 +1629,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e6c47e214bd4941914f1ff98383b63d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UI_SeedItemPurchase: {fileID: 7960116685333467047}
+  uiItemPurchase: {fileID: 7960116685333467047}
   IconImage: {fileID: 7502542000657914415}
   NameText: {fileID: 8231446749646395006}
   DescriptionText: {fileID: 6669286849223607536}
@@ -2783,7 +2770,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 20700000000000
+  m_text: 1000
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
   m_sharedMaterial: {fileID: 5994777029685468024, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
@@ -2919,7 +2906,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uD544\uC694\uD55C \uACE8\uB4DC: 100"
+  m_text: "\uD544\uC694\uD55C \uACE8\uB4DC: 10"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
   m_sharedMaterial: {fileID: 5994777029685468024, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
@@ -3474,8 +3461,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickBuy
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickBuyButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3607,8 +3594,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7960116685333467047}
-        m_TargetAssemblyTypeName: UI_SeedItemPurchase, Assembly-CSharp
-        m_MethodName: OnClickMinus
+        m_TargetAssemblyTypeName: UI_ItemPurchase, Assembly-CSharp
+        m_MethodName: OnClickMinusButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3653,7 +3640,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 80, y: 0}
-  m_SizeDelta: {x: 110, y: 110}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2236967550524871518
 CanvasRenderer:
@@ -3683,7 +3670,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: f3274a9dcaf0e4f498090804f289ba59, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4097,7 +4084,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC18C\uC9C0\uAC1C\uC218: 18\uAC1C"
+  m_text: "\uC18C\uC9C0\uAC1C\uC218: 0\uAC1C"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
   m_sharedMaterial: {fileID: 5994777029685468024, guid: a4905dc22096b6a4e831fc90530e7a8e, type: 2}
@@ -4232,6 +4219,7 @@ MonoBehaviour:
   BuyButton: {fileID: 3544566744123719885}
   QuantityText: {fileID: 8802145139737927748}
   TotalPriceText: {fileID: 2209850026687693993}
+  CurrentGoldText: {fileID: 7307490804423488931}
 --- !u!222 &1253224251303459386
 CanvasRenderer:
   m_ObjectHideFlags: 0

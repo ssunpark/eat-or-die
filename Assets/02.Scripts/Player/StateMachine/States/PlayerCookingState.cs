@@ -5,7 +5,8 @@ public class PlayerCookingState : APlayerStateBase
 {
     public PlayerCookingState(PlayerFSM controller) : base(controller) 
     {
-        AnimState = "Cooking";
+        AnimState = "Cook";
+        StateId = (int)EPlayerState.Cooking;
     }
     protected override void OnEnterState()
     {
@@ -15,7 +16,7 @@ public class PlayerCookingState : APlayerStateBase
     }
     protected override void OnEnterStateRender()
     {
-        Anim.CrossFadeInFixedTime("Cooking", AnimTransitionLength);
+        Anim.CrossFadeInFixedTime("Cook", AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()

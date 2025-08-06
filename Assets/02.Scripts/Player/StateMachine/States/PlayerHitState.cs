@@ -7,6 +7,7 @@ public class PlayerHitState : APlayerStateBase
     {
         AnimState = "Hit";
         delayTime = 0.33333f;
+        StateId = (int)EPlayerState.Hit;
     }
     public float delayTime;
     protected override void OnEnterState()

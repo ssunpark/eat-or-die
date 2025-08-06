@@ -5,6 +5,7 @@ public class PlayerRecoverState : APlayerStateBase
     public PlayerRecoverState(PlayerFSM controller) : base(controller)
     {
         AnimState = "Recover";
+        StateId = (int)EPlayerState.Recover;
     }
 
 
