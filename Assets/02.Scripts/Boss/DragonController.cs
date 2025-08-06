@@ -40,6 +40,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private RoarExplosion _roarExplosion;
     public RoarExplosion RoarExplosion => _roarExplosion;
+    
+    [SerializeField]
+    private GameObject _roarEffect;
+    public GameObject RoarEffect => _roarEffect;
 
     [SerializeField]
     private GameObject _target;
