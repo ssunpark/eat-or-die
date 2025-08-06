@@ -37,6 +37,11 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private LavaFloor _lavaFloorPrefab;
     public LavaFloor LavaFloorPrefab => _lavaFloorPrefab;
+    
+    [Header("연출 오브젝트")]
+    [SerializeField]
+    private GameObject _phaseEffect;
+    public GameObject PhaseEffect => _phaseEffect;
 
     [Header("테스트")]
     [SerializeField]

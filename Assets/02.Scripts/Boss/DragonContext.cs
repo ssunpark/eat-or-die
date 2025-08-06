@@ -8,6 +8,7 @@ public class DragonContext
     public DragonObjectPool Pool { get; private set; }
     public DragonParameterLoader Parameter { get; private set; }
     public DragonStats Stats { get; private set; }
+    public DragonPhase Phase { get; private set; }
     public Animator Animator { get; private set; }
     public Transform Transform { get; private set; }
 
@@ -19,8 +20,11 @@ public class DragonContext
         Pool = new DragonObjectPool(controller);
         Parameter = new DragonParameterLoader();
         Stats = new DragonStats(Parameter.Base);
+        Phase = new DragonPhase(controller, Parameter.Base);
         Animator = controller.GetComponent<Animator>();
         Transform = controller.transform;
+
+        Stats.OnHealthChanged += Phase.EvaluatePhase;
     }
 
     public void OnSpawned()
