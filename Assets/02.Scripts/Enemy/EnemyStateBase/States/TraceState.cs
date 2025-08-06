@@ -29,5 +29,10 @@ public class TraceState : AEnemyState
         }
         
         Context.Agent.SetDestination(Context.Target.transform.position);
+        
+        if (!Context.Animator.IsInTransition(0))
+        {
+            Context.Mover.Move();
+        }
     }
 }
