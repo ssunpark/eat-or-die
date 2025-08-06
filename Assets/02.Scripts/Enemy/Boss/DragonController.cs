@@ -10,6 +10,9 @@ using UnityEngine.AI;
 public class DragonController : NetworkBehaviour, IStateMachineOwner
 {
     private const string ANIMATION_LAYER_FIGHT = "Fight Layer";
+    
+    // 사용 생성 이펙트
+    [Header("프리팹")]
     [SerializeField]
     private Transform _breathPoint;
     public Transform BreathPoint => _breathPoint;
@@ -33,6 +36,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     private LavaFloor _lavaFloorPrefab;
     private Pool<LavaFloor> _lavaFloorPool;
     public Pool<LavaFloor> LavaFloorPool => _lavaFloorPool;
+    
+    [SerializeField]
+    private RoarExplosion _roarExplosion;
+    public RoarExplosion RoarExplosion => _roarExplosion;
 
     [SerializeField]
     private GameObject _target;

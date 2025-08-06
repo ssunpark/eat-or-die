@@ -36,4 +36,5 @@ public class DragonParameterLoader
     public DragonStateParameterSet.MagicParams Magic => _parameters.Magic;
     public DragonStateParameterSet.BreathParams Breath => _parameters.Breath;
     public DragonStateParameterSet.LavaParams Lava => _parameters.Lava;
+    public DragonStateParameterSet.RoarParams Roar => _parameters.Roar;
 }

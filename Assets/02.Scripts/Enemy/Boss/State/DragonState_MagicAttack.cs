@@ -20,7 +20,7 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     private void TryActivateRandomMagicSkill()
     {
-        int rand = Random.Range(0, 2); // 확장 가능
+        int rand = Random.Range(0, 3); // 확장 가능
 
         switch (rand)
         {
@@ -30,6 +30,9 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
             case 1:
                 _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
                 break;
+            case 2:
+                _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
+                break;
         }
     }
 
@@ -37,7 +40,8 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("MagicAttackSubFSM",
             new DragonMagicAttack_Breath(Controller, this, ParameterLoader.Breath),
-            new DragonMagicAttack_Lava(Controller, this, ParameterLoader.Lava)
+            new DragonMagicAttack_Lava(Controller, this, ParameterLoader.Lava),
+            new DragonMagicAttack_Roar(Controller, this, ParameterLoader.Roar)
         );
 
         stateMachines.Add(_subStateMachine);

@@ -35,7 +35,7 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
             _hasFired = true;
         }
 
-        if (t >= _breathParams.FireTime + _breathParams.TotalDuration)
+        if (t >= _breathParams.FireTime + _breathParams.Duration)
         {
             Controller.Animator.SetBool("Attack_Breath", false);
         }
@@ -65,7 +65,7 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
             var localVfx = Controller.BreathParticlePool.Get();
             localVfx.transform.position = spawnPos;
             localVfx.transform.rotation = rot;
-            localVfx.Init(_breathParams.TotalDuration, ()=>Controller.BreathParticlePool.Take(localVfx));
+            localVfx.Init(_breathParams.Duration, ()=>Controller.BreathParticlePool.Take(localVfx));
         }
     }
 
@@ -80,6 +80,6 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
         var hitBoxObj = Controller.BreathHitBoxPool.Get();
         hitBoxObj.transform.position = spawnPos;
         hitBoxObj.transform.rotation = rot;
-        hitBoxObj.Init(_breathParams.TotalDuration, ()=>Controller.BreathHitBoxPool.Take(hitBoxObj));
+        hitBoxObj.Init(_breathParams.Duration, ()=>Controller.BreathHitBoxPool.Take(hitBoxObj));
     }
 }
