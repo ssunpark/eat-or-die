@@ -39,7 +39,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context.Agent.updatePosition = false;
 		Context.Agent.updateRotation = false;
 	}
-	
+
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
 		EnemyStatManager = new EnemyStatManager(_enemyId);
@@ -99,7 +99,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	{
 		if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
 		
-		Context.Agent.nextPosition = transform.position;
 		Vector3 direction = Context.Agent.path.corners[1] - transform.position;
 		transform.forward = direction;
 		
@@ -108,7 +107,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		direction.Normalize();
 		
 		transform.position += direction * Context.StatManager.GetStat(EStatType.EnemyMoveSpeed) * Runner.DeltaTime;
-		Context.Agent.nextPosition = transform.position;
 	}
 
 	public void Detect()
