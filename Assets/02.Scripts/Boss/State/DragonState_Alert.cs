@@ -44,28 +44,28 @@ public class DragonState_Alert : DragonStateBase
 
     private void HandleAlertDecision()
     {
-        Machine.TryActivateState<DragonState_MagicAttack>(true);
-        return;
+        // Machine.TryActivateState<DragonState_MagicAttack>(true);
+        // return;
         float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
-        
-        if (distance <= _baseParams.MeleeAttackDistance)
-        {
-            Machine.TryActivateState<DragonState_MeleeAttack>(true);
-            return;
-        }
-        
         float rand = Random.value;
-        if (rand < _alertParams.ChaseProbability)
+
+        // 너무 멀면 Chase
+        if (distance > _baseParams.MeleeAttackDistance * 2f && rand < _alertParams.ChaseProbability)
         {
             Machine.TryActivateState<DragonState_Chase>(true);
             return;
         }
-        else if (rand < _alertParams.ChaseProbability + _alertParams.MagicProbability)
+        
+        // 아닌 경우 확률에 따라 마법 or 근접 공격
+        rand = Random.value;
+        if (rand < _alertParams.MagicProbability)
         {
             Machine.TryActivateState<DragonState_MagicAttack>(true);
-            return;
         }
-        Machine.TryActivateState<DragonState_Alert>(true);
+        else
+        {
+            Machine.TryActivateState<DragonState_MeleeAttack>(true);
+        }
     }
 
     protected override void OnExitState()
