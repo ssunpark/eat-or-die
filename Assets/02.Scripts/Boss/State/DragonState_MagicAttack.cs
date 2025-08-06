@@ -20,8 +20,15 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     private void TryActivateRandomMagicSkill()
     {
-        int rand = Random.Range(0, 3); // 확장 가능
+        float randProbability = Random.value;
+        if (Context.Sight.Distance < Context.Parameter.Base.MeleeAttackDistance
+            && randProbability < Context.Parameter.Magic.NearMagicProbability)
+        {
+            _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
+            return;
+        }
 
+        int rand = Random.Range(0, 3); // 확장 가능
         switch (rand)
         {
             case 0:
@@ -29,9 +36,6 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
                 break;
             case 1:
                 _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
-                break;
-            case 2:
-                _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
                 break;
         }
     }

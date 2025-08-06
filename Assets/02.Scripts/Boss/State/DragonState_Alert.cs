@@ -46,12 +46,20 @@ public class DragonState_Alert : DragonStateBase
         // return;
         float distance = Context.Sight.Distance;
         float rand = Random.value;
-
-        // 너무 멀면 Chase
-        if (distance > _baseParams.MeleeAttackDistance * 2f && rand < _alertParams.ChaseProbability
-            && Machine.TryActivateState<DragonState_Chase>(true))
+        
+        // 너무 멀면 Chase or 원거리 마법 시도
+        if (distance > _baseParams.MeleeAttackDistance)
         {
-            return;
+            if (rand < _alertParams.ChaseProbability)
+            {
+                Machine.TryActivateState<DragonState_Chase>(true);
+                return;
+            }
+            else if (rand < _alertParams.ChaseProbability + _alertParams.MagicProbability)
+            {
+                Machine.TryActivateState<DragonState_MagicAttack>(true);
+                return;
+            }
         }
 
         // 아닌 경우 확률에 따라 마법 or 근접 공격

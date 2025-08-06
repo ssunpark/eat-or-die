@@ -136,6 +136,7 @@ public class DragonStateParameterSet
     public class MagicParams
     {
         public float ContinueMagicProbability; // 연속 마법 사용 확률
+        public float NearMagicProbability;     // 근접 마법 사용 확률
     }
 
     [Serializable]
@@ -165,6 +166,6 @@ public class DragonStateParameterSet
         public float FireTime; // 기술 시작 시점 (예: 준비 동작 후)
         public float Duration; // 기술 전체 지속 시간
         public float Radius;   // 기술 반경
-        public int Count;    // 폭발 생성 갯수
+        public int Count;      // 폭발 생성 갯수
     }
 }
