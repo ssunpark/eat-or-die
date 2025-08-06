@@ -28,5 +28,14 @@
     ManaRecoveryOverTime,
 
     HarvestBonusChance,
-    CookBonusChance
+    CookBonusChance,
+    
+    EnemyHunger,
+    EnemyMoveSpeed,
+    EnemyDamage,
+    EnemyAttackSpeed,
+    EnemyAttackRange,
+    EnemyAttackAngle,
+    EnemyMeleeDefense,
+    EnemyMagicDefense,
 }

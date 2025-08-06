@@ -43,7 +43,8 @@ public class UI_CookingPanel : AUI_PopupBase
         }
         // 플레이어 Cooking FSM 호출!
        
-        CookingManager.Instance.TryStartCookRPC();
+        // CookingManager.Instance.TryStartCookRPC();
+        CookingManager.Instance.TryStartCook();
         PopupManager.Instance.CloseAll();
         
         // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
