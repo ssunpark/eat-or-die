@@ -11,12 +11,11 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
     private float _nextSpawnTime;
 
     public DragonMagicAttack_Lava(
-        DragonController controller,
-        IParentState parentState,
-        DragonStateParameterSet.LavaParams lavaParams)
-        : base(controller, parentState)
+        DragonContext context,
+        IParentState parentState)
+        : base(context, parentState)
     {
-        _lavaParams = lavaParams;
+        _lavaParams = Context.Parameter.Lava;
     }
 
     protected override void OnEnterState()
@@ -24,9 +23,9 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
         _spawnCount = 0;
         _nextSpawnTime = _lavaParams.StartDelay;
 
-        Controller.Lock();
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetTrigger("Attack_Lava");
+        Context.Movement.Lock();
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger("Attack_Lava");
     }
 
     protected override void OnFixedUpdate()
@@ -35,30 +34,21 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
 
         if (_spawnCount < _lavaParams.AngleList.Length && t >= _nextSpawnTime)
         {
-            var lava = Controller.LavaProjectilePool.Get();
-            lava.transform.position = Controller.BreathPoint.position;
-
-            // 각도/거리 계산
             float angle = _lavaParams.AngleList[_spawnCount];
             float distance = Random.Range(_lavaParams.MinDistance, _lavaParams.MaxDistance);
 
-            Quaternion rot = Quaternion.AngleAxis(angle, Vector3.up);
-            Vector3 direction = rot * Controller.transform.forward;
-            Vector3 targetPosition = Controller.BreathPoint.position + direction * distance;
+            var data = new LavaProjectileData(
+                Vector3.zero, // targetPos는 Combat 내부에서 계산
+                _lavaParams.LavaSpeed,
+                _lavaParams.FloorDuration,
+                _lavaParams.LavaHeight
+            );
 
-            Debug.DrawRay(targetPosition + Vector3.up * 5f, Vector3.down * 10f, Color.cyan, 10f);
-            if (Physics.Raycast(targetPosition + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f, LayerMask.GetMask(RAYCAST_MASK)))
-            {
-                targetPosition = hit.point;
-            }
-
-            lava.Fire(
-                new LavaProjectileData(targetPosition,
-                    _lavaParams.LavaSpeed,
-                    _lavaParams.FloorDuration,
-                    _lavaParams.LavaHeight),
-                () => Controller.LavaProjectilePool.Take(lava),
-                Controller.LavaFloorPool
+            Context.Combat.FireLava(
+                Context.Transform.forward,
+                angle,
+                distance,
+                data
             );
 
             Debug.Log($"Lava {_spawnCount + 1} 생성 (각도 {angle}, 거리 {distance})");
@@ -67,12 +57,8 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             _nextSpawnTime = t + _lavaParams.Interval;
         }
 
-        if (Controller.IsLocked)
-        {
-            return;
-        }
-
-        if (_spawnCount >= _lavaParams.AngleList.Length &&
+        if (!Context.Movement.IsLocked && 
+            _spawnCount >= _lavaParams.AngleList.Length &&
             t >= _lavaParams.StartDelay + (_lavaParams.Interval * _lavaParams.AngleList.Length))
         {
             ParentState.OnSubStateComplete();

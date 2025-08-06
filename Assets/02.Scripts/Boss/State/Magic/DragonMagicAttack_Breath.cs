@@ -8,21 +8,20 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
     private bool _hasPlayedRenderEffect;
 
     public DragonMagicAttack_Breath(
-        DragonController controller,
-        IParentState parentState,
-        DragonStateParameterSet.BreathParams breathParams)
-        : base(controller, parentState)
+        DragonContext context,
+        IParentState parentState)
+        : base(context, parentState)
     {
-        _breathParams = breathParams;
+        _breathParams = Context.Parameter.Breath;
     }
 
     protected override void OnEnterState()
     {
         _hasFired = false;
 
-        Controller.Lock();
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetBool("Attack_Breath", true);
+        Context.Movement.Lock();
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetBool("Attack_Breath", true);
     }
 
     protected override void OnFixedUpdate()
@@ -31,19 +30,15 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
 
         if (!_hasFired && t >= _breathParams.FireTime)
         {
-            FireBreath();
             _hasFired = true;
+            Context.Combat.PerformBreathAttack(_breathParams.Duration);
         }
 
         if (t >= _breathParams.FireTime + _breathParams.Duration)
-        {
-            Controller.Animator.SetBool("Attack_Breath", false);
-        }
+            Context.Animator.SetBool("Attack_Breath", false);
 
-        if (!Controller.IsLocked)
-        {
+        if (!Context.Movement.IsLocked)
             ParentState.OnSubStateComplete();
-        }
     }
 
     protected override void OnEnterStateRender()
@@ -58,28 +53,7 @@ public class DragonMagicAttack_Breath : DragonSubStateBase
         if (!_hasPlayedRenderEffect && t >= _breathParams.FireTime)
         {
             _hasPlayedRenderEffect = true;
-
-            Vector3 spawnPos = Controller.BreathPoint.position;
-            Quaternion rot = Quaternion.LookRotation(Controller.transform.forward);
-
-            var localVfx = Controller.BreathParticlePool.Get();
-            localVfx.transform.position = spawnPos;
-            localVfx.transform.rotation = rot;
-            localVfx.Init(_breathParams.Duration, ()=>Controller.BreathParticlePool.Take(localVfx));
+            Context.Combat.PlayBreathVFX(_breathParams.Duration);
         }
-    }
-
-    private void FireBreath()
-    {
-        if (!Controller.HasStateAuthority)
-            return;
-
-        Vector3 spawnPos = Controller.BreathPoint.position;
-        Quaternion rot = Quaternion.LookRotation(Controller.transform.forward);
-
-        var hitBoxObj = Controller.BreathHitBoxPool.Get();
-        hitBoxObj.transform.position = spawnPos;
-        hitBoxObj.transform.rotation = rot;
-        hitBoxObj.Init(_breathParams.Duration, ()=>Controller.BreathHitBoxPool.Take(hitBoxObj));
     }
 }

@@ -10,28 +10,26 @@ public class DragonState_Idle : DragonStateBase, IParentState
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.BaseParams _baseParams;
 
-    public DragonState_Idle(DragonController controller, DragonParameterLoader paramLoader) : base(controller, paramLoader)
+    public DragonState_Idle(DragonContext context) : base(context)
     {
-        _baseParams = paramLoader.Base;
+        _baseParams = Context.Parameter.Base;
     }
 
     protected override void OnEnterState()
     {
-        Controller.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
-        
-        Controller.FightMode(false);
-        
-        Controller.SetSightDetector(_baseParams.FullAwarenessRadius, _baseParams.DetectRadius, _baseParams.FOVAngle);
+        Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
+
+        Context.Combat.SetFightMode(false);
+
+        Context.Sight.SetSightDetector(_baseParams.FullAwarenessRadius, _baseParams.DetectRadius, _baseParams.FOVAngle);
 
         TryActiveRandomSubState();
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked) return;
-
         // 이미 타겟 있으면 Alert 전환
-        if (Controller.Target != null)
+        if (Context.Sight.HasTarget)
         {
             Machine.TryActivateState<DragonState_Alert>(true);
             return;
@@ -40,15 +38,15 @@ public class DragonState_Idle : DragonStateBase, IParentState
         GameObject found = FindTargetInFOV();
         if (found != null)
         {
-            Controller.SetTarget(found);
+            Context.Sight.SetTarget(found);
             Machine.TryActivateState<DragonState_Alert>(true);
         }
     }
 
     protected override void OnExitState()
     {
-        Controller.FightMode(true);
-        Controller.Animator.SetTrigger("Roar");
+        Context.Combat.SetFightMode(true);
+        Context.Animator.SetTrigger("Roar");
     }
 
     private void TryActiveRandomSubState()
@@ -72,8 +70,8 @@ public class DragonState_Idle : DragonStateBase, IParentState
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("DragonIdleSubStateMachine",
-            new DragonState_Wait(Controller, this, ParameterLoader.Wait), 
-            new DragonState_Patrol(Controller, this, ParameterLoader.Patrol));
+            new DragonState_Wait(Context, this),
+            new DragonState_Patrol(Context, this));
 
         stateMachines.Add(_subStateMachine);
     }
@@ -82,13 +80,14 @@ public class DragonState_Idle : DragonStateBase, IParentState
     {
         TryActiveRandomSubState();
     }
-    
+
     private GameObject FindTargetInFOV()
     {
-        foreach (var collider in Controller.SightDetector.DetectedColliders)
+        foreach (var collider in Context.Sight.SightDetector.DetectedColliders)
         {
             return collider.gameObject;
         }
+
         return null;
     }
 }

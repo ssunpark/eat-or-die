@@ -3,15 +3,12 @@ using UnityEngine;
 
 public class DragonSubStateBase : State<DragonSubStateBase>
 {
-    [HideInInspector]
-    public DragonController Controller;
+    public DragonContext Context { get; private set; }
+    public IParentState ParentState { get; private set; }
 
-    [HideInInspector]
-    public IParentState ParentState;
-
-    public DragonSubStateBase(DragonController controller, IParentState parentState)
+    public DragonSubStateBase(DragonContext context, IParentState parentState)
     {
-        Controller = controller;
+        Context = context;
         ParentState = parentState;
     }
 }

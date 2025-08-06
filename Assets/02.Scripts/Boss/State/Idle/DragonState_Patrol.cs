@@ -9,33 +9,28 @@ public class DragonState_Patrol : DragonSubStateBase
 
     private DragonStateParameterSet.PatrolParams _patrolParams;
 
-    public DragonState_Patrol(DragonController controller, IParentState parent, DragonStateParameterSet.PatrolParams patrolParams) : base(controller, parent)
+    public DragonState_Patrol(DragonContext context, IParentState parent) : base(context, parent)
     {
-        _patrolParams = patrolParams;
+        _patrolParams = Context.Parameter.Patrol;
     }
 
     protected override void OnEnterState()
     {
         _hasDestination = false;
 
-        Controller.Animator.SetBool("IsMove", true);
+        Context.Animator.SetBool("IsMove", true);
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked)
-        {
-            return; // 잠금 상태면 아무 것도 안 함
-        }
-
-        if (!_hasDestination || Arrived())
+        if (!_hasDestination || Context.Movement.Arrived())
         {
             SetNewDestination();
         }
 
-        if (_hasDestination && !Controller.NavMeshAgent.pathPending)
+        if (_hasDestination)
         {
-            Controller.Move(Machine.Runner.DeltaTime);
+            Context.Movement.Move(Machine.Runner.DeltaTime);
         }
 
         if (Machine.StateTime >= _patrolParams.PatrolDuration)
@@ -46,27 +41,20 @@ public class DragonState_Patrol : DragonSubStateBase
 
     protected override void OnExitState()
     {
-        Controller.NavMeshAgent.ResetPath();
-        Controller.NavMeshAgent.velocity = Vector3.zero;
+        Context.Movement.ResetNavMeshAgent();
 
-        Controller.Animator.SetBool("IsMove", false);
-    }
-
-    private bool Arrived()
-    {
-        return !Controller.NavMeshAgent.pathPending &&
-               Controller.NavMeshAgent.remainingDistance <= Controller.NavMeshAgent.stoppingDistance;
+        Context.Animator.SetBool("IsMove", false);
     }
 
     private void SetNewDestination()
     {
         Vector3 randomDirection = Random.insideUnitSphere.normalized * Random.Range(_patrolParams.MinWalkRadius, _patrolParams.WalkRadius);
-        randomDirection += Controller.transform.position;
+        randomDirection += Context.Transform.position;
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, _patrolParams.WalkRadius, NavMesh.AllAreas))
         {
             _destination = hit.position;
-            Controller.SetDestination(_destination);
+            Context.Movement.SetDestination(_destination);
             _hasDestination = true;
         }
     }

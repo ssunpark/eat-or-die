@@ -7,10 +7,10 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.MagicParams _magicParams;
 
-    public DragonState_MagicAttack(DragonController controller, DragonParameterLoader loader)
-        : base(controller, loader)
+    public DragonState_MagicAttack(DragonContext context)
+        : base(context)
     {
-        _magicParams = ParameterLoader.Magic;
+        _magicParams = Context.Parameter.Magic;
     }
 
     protected override void OnEnterState()
@@ -20,7 +20,7 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     private void TryActivateRandomMagicSkill()
     {
-        int rand = 2;//Random.Range(0, 3); // 확장 가능
+        int rand = Random.Range(0, 3); // 확장 가능
 
         switch (rand)
         {
@@ -39,9 +39,9 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("MagicAttackSubFSM",
-            new DragonMagicAttack_Breath(Controller, this, ParameterLoader.Breath),
-            new DragonMagicAttack_Lava(Controller, this, ParameterLoader.Lava),
-            new DragonMagicAttack_Roar(Controller, this, ParameterLoader.Roar)
+            new DragonMagicAttack_Breath(Context, this),
+            new DragonMagicAttack_Lava(Context, this),
+            new DragonMagicAttack_Roar(Context, this)
         );
 
         stateMachines.Add(_subStateMachine);
@@ -49,12 +49,9 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     public void OnSubStateComplete()
     {
-        float distance = Vector3.Distance(
-            Controller.transform.position,
-            Controller.Target.transform.position
-        );
+        float distance = Context.Sight.Distance;
 
-        bool inSight = Controller.SightDetector.DetectedColliders.Count > 0;
+        bool inSight = Context.Sight.SightDetector.DetectedColliders.Count > 0;
         float rand = Random.value;
 
         if (inSight && rand < _magicParams.ContinueMagicProbability)

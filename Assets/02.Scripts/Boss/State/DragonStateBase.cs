@@ -3,15 +3,10 @@ using UnityEngine;
 
 public class DragonStateBase : State<DragonStateBase>
 {
-    [HideInInspector]
-    public DragonController Controller;
-    
-    [HideInInspector]
-    public DragonParameterLoader ParameterLoader;
+    public DragonContext Context { get; private set; }
 
-    public DragonStateBase(DragonController controller, DragonParameterLoader parameterLoader)
+    public DragonStateBase(DragonContext context)
     {
-        Controller = controller;
-        ParameterLoader = parameterLoader;
+        Context = context;
     }
 }

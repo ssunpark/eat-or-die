@@ -3,18 +3,15 @@ using Fusion.Addons.FSM;
 
 public class DragonStateMachine
 {
-    public readonly DragonParameterLoader ParamLoader;
     public StateMachine<DragonStateBase> Machine { get; private set; }
 
-    public DragonStateMachine(DragonController controller)
+    public DragonStateMachine(DragonContext context)
     {
-        ParamLoader = new DragonParameterLoader();
-
-        var idle = new DragonState_Idle(controller, ParamLoader);
-        var alert = new DragonState_Alert(controller, ParamLoader);
-        var attack = new DragonState_MeleeAttack(controller, ParamLoader);
-        var chase = new DragonState_Chase(controller, ParamLoader);
-        var magic = new DragonState_MagicAttack(controller, ParamLoader);
+        var idle = new DragonState_Idle(context);
+        var alert = new DragonState_Alert(context);
+        var attack = new DragonState_MeleeAttack(context);
+        var chase = new DragonState_Chase(context);
+        var magic = new DragonState_MagicAttack(context);
 
         Machine = new StateMachine<DragonStateBase>("DragonStateMachine", idle, alert, attack, chase, magic);
     }

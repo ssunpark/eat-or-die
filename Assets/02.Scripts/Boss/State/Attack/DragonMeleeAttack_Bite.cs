@@ -4,29 +4,28 @@
     private bool _hasAttacked;
 
     public DragonMeleeAttack_Bite(
-        DragonController controller,
-        IParentState parent,
-        DragonStateParameterSet.BiteParams bite)
-        : base(controller, parent)
+        DragonContext context,
+        IParentState parent)
+        : base(context, parent)
     {
-        _biteParams = bite;
+        _biteParams = Context.Parameter.Bite;
     }
 
     protected override void OnEnterState()
     {
         _hasAttacked = false;
 
-        Controller.ResetNavMeshAgent();
+        Context.Movement.ResetNavMeshAgent();
         
-        Controller.Lock();
+        Context.Movement.Lock();
         
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetTrigger("Attack_Bite");
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger("Attack_Bite");
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked)
+        if (Context.Movement.IsLocked)
         {
             return;
         }

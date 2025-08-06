@@ -1,5 +1,4 @@
 ﻿using DG.Tweening;
-using UnityEngine;
 
 public class DragonMagicAttack_Roar : DragonSubStateBase
 {
@@ -9,32 +8,18 @@ public class DragonMagicAttack_Roar : DragonSubStateBase
     private Sequence effectsSequence;
 
     public DragonMagicAttack_Roar(
-        DragonController controller,
-        IParentState parentState,
-        DragonStateParameterSet.RoarParams roarParams)
-        : base(controller, parentState)
+        DragonContext context,
+        IParentState parentState)
+        : base(context, parentState)
     {
-        _roarParams = roarParams;
-
-        effectsSequence = DOTween.Sequence();
-        effectsSequence.SetAutoKill(false)
-            .AppendCallback(() =>
-            {
-                Controller.RoarEffect.SetActive(true);
-            })
-            .Append(Controller.RoarEffect.transform.DOScale(Vector3.zero, 0f))
-            .Append(Controller.RoarEffect.transform.DOScale(Vector3.one * 0.8f, _roarParams.Duration / 4f))
-            .AppendInterval(_roarParams.Duration / 2f)
-            .Append(Controller.RoarEffect.transform.DOScale(Vector3.zero, _roarParams.Duration / 4f))
-            .AppendCallback(() => Controller.RoarEffect.SetActive(false));
-        effectsSequence.Pause();
+        _roarParams = Context.Parameter.Roar;
     }
 
     protected override void OnEnterState()
     {
-        Controller.Lock();
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetBool("Attack_Roar", true);
+        Context.Movement.Lock();
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetBool("Attack_Roar", true);
     }
 
     protected override void OnFixedUpdate()
@@ -42,24 +27,25 @@ public class DragonMagicAttack_Roar : DragonSubStateBase
         if (!_onFired && Machine.StateTime >= _roarParams.FireTime)
         {
             _onFired = true;
-            // 발사
-            float interval = _roarParams.Duration / _roarParams.Count;
-            Controller.RoarExplosion.Reset(_roarParams.Radius, _roarParams.Count, interval);
-            effectsSequence.Restart();
+
+            Context.Combat.PerformRoarAttack(
+                _roarParams.Radius,
+                _roarParams.Count,
+                _roarParams.Duration
+            );
+
             return;
         }
 
         if (Machine.StateTime >= _roarParams.FireTime + _roarParams.Duration)
         {
-            Controller.Animator.SetBool("Attack_Roar", false);
+            Context.Animator.SetBool("Attack_Roar", false);
         }
 
-        if (!Controller.IsLocked)
+        if (!Context.Movement.IsLocked)
         {
             ParentState.OnSubStateComplete();
         }
-
-        return;
     }
 
     protected override void OnExitState()

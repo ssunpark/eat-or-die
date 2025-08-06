@@ -7,10 +7,10 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.AttackParams _attackParams;
 
-    public DragonState_MeleeAttack(DragonController controller, DragonParameterLoader loader)
-        : base(controller, loader)
+    public DragonState_MeleeAttack(DragonContext context)
+        : base(context)
     {
-        _attackParams = ParameterLoader.Attack;
+        _attackParams = Context.Parameter.Attack;
     }
 
     protected override void OnEnterState()
@@ -42,11 +42,11 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
-            new DragonMeleeAttack_Prepare(Controller, this, ParameterLoader.Prepare),
-            new DragonMeleeAttack_Swipe(Controller, this, ParameterLoader.Swipe),
-            new DragonMeleeAttack_RightScratch(Controller, this, ParameterLoader.RightScratch),
-            new DragonMeleeAttack_LeftScratch(Controller, this, ParameterLoader.LeftScratch),
-            new DragonMeleeAttack_Bite(Controller, this, ParameterLoader.Bite)
+            new DragonMeleeAttack_Prepare(Context, this),
+            new DragonMeleeAttack_Swipe(Context, this),
+            new DragonMeleeAttack_RightScratch(Context, this),
+            new DragonMeleeAttack_LeftScratch(Context, this),
+            new DragonMeleeAttack_Bite(Context, this)
         );
 
         stateMachines.Add(_subStateMachine);
@@ -54,15 +54,12 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     public void OnSubStateComplete()
     {
-        bool inSight = Controller.SightDetector.DetectedColliders.Count > 0;
-        float distance = Vector3.Distance(
-            Controller.transform.position,
-            Controller.Target.transform.position
-        );
+        bool inSight = Context.Sight.SightDetector.DetectedColliders.Count > 0;
+        float distance = Context.Sight.Distance;
         // 시야에 있고 사거리 안이고 연속 공격 확률에 성공이면 공격
         float continueAttackRandom = Random.Range(0f, 1f);
         if (inSight &&
-            distance < ParameterLoader.Base.MeleeAttackDistance &&
+            distance < Context.Parameter.Base.MeleeAttackDistance &&
             continueAttackRandom < _attackParams.ContinueAttackChance)
         {
             TryActiveRandomAttackSubState();

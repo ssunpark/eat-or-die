@@ -4,29 +4,28 @@
     private bool _hasAttacked;
 
     public DragonMeleeAttack_LeftScratch(
-        DragonController controller,
-        IParentState parent,
-        DragonStateParameterSet.LeftScratchParams leftScratch)
-        : base(controller, parent)
+        DragonContext context,
+        IParentState parent)
+        : base(context, parent)
     {
-        _leftScratchParams = leftScratch;
+        _leftScratchParams = Context.Parameter.LeftScratch;
     }
 
     protected override void OnEnterState()
     {
         _hasAttacked = false;
         
-        Controller.ResetNavMeshAgent();
+        Context.Movement.ResetNavMeshAgent();
         
-        Controller.Lock();
+        Context.Movement.Lock();
         
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetTrigger("Attack_LeftScratch");
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger("Attack_LeftScratch");
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked)
+        if (Context.Movement.IsLocked)
         {
             return;
         }

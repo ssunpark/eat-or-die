@@ -9,32 +9,30 @@ public class DragonState_Alert : DragonStateBase
 
     private bool _hasDestination;
 
-    public DragonState_Alert(DragonController controller, DragonParameterLoader paramLoader)
-        : base(controller, paramLoader)
+    public DragonState_Alert(DragonContext context)
+        : base(context)
     {
-        _alertParams = paramLoader.Alert;
-        _baseParams = paramLoader.Base;
+        _alertParams = Context.Parameter.Alert;
+        _baseParams = Context.Parameter.Base;
     }
 
     protected override void OnEnterState()
     {
-        Controller.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
-        
+        Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
+
         _hasDestination = false;
-        
-        Controller.Animator.SetBool("IsMove", true);
+
+        Context.Animator.SetBool("IsMove", true);
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked) return;
-
-        if (!_hasDestination || Arrived())
+        if (!_hasDestination || Context.Movement.Arrived())
         {
             ChooseNewLookDestination();
         }
 
-        Controller.Move(Machine.Runner.DeltaTime);
+        Context.Movement.Move(Machine.Runner.DeltaTime);
 
         if (Machine.StateTime >= _alertParams.LookDuration)
         {
@@ -46,16 +44,16 @@ public class DragonState_Alert : DragonStateBase
     {
         // Machine.TryActivateState<DragonState_MagicAttack>(true);
         // return;
-        float distance = Vector3.Distance(Controller.transform.position, Controller.Target.transform.position);
+        float distance = Context.Sight.Distance;
         float rand = Random.value;
 
         // 너무 멀면 Chase
-        if (distance > _baseParams.MeleeAttackDistance * 2f && rand < _alertParams.ChaseProbability)
+        if (distance > _baseParams.MeleeAttackDistance * 2f && rand < _alertParams.ChaseProbability
+            && Machine.TryActivateState<DragonState_Chase>(true))
         {
-            Machine.TryActivateState<DragonState_Chase>(true);
             return;
         }
-        
+
         // 아닌 경우 확률에 따라 마법 or 근접 공격
         rand = Random.value;
         if (rand < _alertParams.MagicProbability)
@@ -70,36 +68,29 @@ public class DragonState_Alert : DragonStateBase
 
     protected override void OnExitState()
     {
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.ResetNavMeshAgent();
+        Context.Animator.SetBool("IsMove", false);
+        Context.Movement.ResetNavMeshAgent();
     }
 
     private void ChooseNewLookDestination()
     {
-        Vector3 center = Controller.Target.transform.position;
-        Vector3 dir = (Controller.transform.position - center).normalized;
+        Vector3 center = Context.Sight.Target.transform.position;
+        Vector3 dir = (Context.Sight.Target.transform.position - center).normalized;
 
         int randomSign = Random.value < 0.5f ? -1 : 1;
         float offsetAngle = randomSign * Random.Range(_alertParams.MinAngleRange, _alertParams.AngleRange);
         Vector3 rotatedDir = Quaternion.Euler(0f, offsetAngle, 0f) * dir;
 
-        float distance = Vector3.Distance(center, Controller.transform.position)
-                         + Random.Range(-_alertParams.WalkRange, _alertParams.WalkRange);
-        
+        float distance = Context.Sight.Distance + Random.Range(-_alertParams.WalkRange, _alertParams.WalkRange);
+
         distance = Mathf.Max(_alertParams.MinDistance, distance);
-        
+
         Vector3 destination = center + rotatedDir * distance;
 
         if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
-            Controller.SetDestination(hit.position);
+            Context.Movement.SetDestination(hit.position);
             _hasDestination = true;
         }
-    }
-
-    private bool Arrived()
-    {
-        return !Controller.NavMeshAgent.pathPending &&
-               Controller.NavMeshAgent.remainingDistance <= Controller.NavMeshAgent.stoppingDistance;
     }
 }

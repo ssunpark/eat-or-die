@@ -6,29 +6,28 @@ public class DragonMeleeAttack_Swipe : DragonSubStateBase
     private bool _hasAttacked;
 
     public DragonMeleeAttack_Swipe(
-        DragonController controller,
-        IParentState parent,
-        DragonStateParameterSet.SwipeParams swipe)
-        : base(controller, parent)
+        DragonContext context,
+        IParentState parent)
+        : base(context, parent)
     {
-        _swipeParams = swipe;
+        _swipeParams = Context.Parameter.Swipe;
     }
 
     protected override void OnEnterState()
     {
         _hasAttacked = false;
 
-        Controller.ResetNavMeshAgent();
+        Context.Movement.ResetNavMeshAgent();
         
-        Controller.Lock();
+        Context.Movement.Lock();
 
-        Controller.Animator.SetBool("IsMove", false);
-        Controller.Animator.SetTrigger("Attack_Swipe");
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger("Attack_Swipe");
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Controller.IsLocked)
+        if (Context.Movement.IsLocked)
         {
             return;
         }
