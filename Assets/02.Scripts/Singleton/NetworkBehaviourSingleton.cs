@@ -1,5 +1,6 @@
 using Fusion;
 using UnityEngine;
+
 // 수현
 public abstract class NetworkBehaviourSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
 {
