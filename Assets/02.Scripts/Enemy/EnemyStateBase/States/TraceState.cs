@@ -21,8 +21,9 @@ public class TraceState : AEnemyState
         Vector3 toTarget = Context.Target.transform.position - ParentBehaviour.transform.position;
         float distance = toTarget.magnitude;
 
-        if (distance <= Context.Stat.AttackRange
-            && Vector3.Angle(toTarget, ParentBehaviour.transform.forward) <= Context.Stat.AttackAngle)
+        if (distance <= Context.StatManager.GetStat(EStatType.EnemyAttackRange)
+            && Vector3.Angle(toTarget, ParentBehaviour.transform.forward)
+            <= Context.StatManager.GetStat(EStatType.EnemyAttackAngle))
         {
             ParentBehaviour.Machine.TryActivateState<AttackBehaviour>();
         }

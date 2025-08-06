@@ -1,5 +1,7 @@
-﻿using CsvHelper.Configuration.Attributes;
+﻿using System;
+using CsvHelper.Configuration.Attributes;
 
+[Serializable]
 public class EnemyRawData
 {
     [Name("ID")]
@@ -57,5 +59,5 @@ public class EnemyRawData
     public int DropItem2Count { get; set; }
     
     [Name("PrefabPath(Addressable)")]
-    public string PrefabPath { get; set; }
+    public string? PrefabPath { get; set; }
 }
