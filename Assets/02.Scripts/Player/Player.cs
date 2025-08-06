@@ -143,8 +143,61 @@ public class Player : CharacterBase, IDamageable, IAttackable
     public void RequestState(EPlayerState state)
     {
         if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
-            _nextState = PlayerFSM.StateMachine.GetState((int)state);
+        {
+            if (HasStateAuthority)
+            {
+                _nextState = PlayerFSM.StateMachine.GetState((int)state);
+            }
+            else
+            {
+                Rpc_RequestState(state);
+            }
+        }
     }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    private void Rpc_RequestState(EPlayerState state)
+    {
+        if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
+        {
+            switch (state)
+            {
+                case EPlayerState.Idle:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
+                    break;
+                case EPlayerState.Move:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerMoveState>();
+                    break;
+                case EPlayerState.Attack:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerAttackState>();
+                    break;
+                case EPlayerState.Interact:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerInteractState>();
+                    break;
+                case EPlayerState.UseItem:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerUseItemState>();
+                    break;
+                case EPlayerState.Cooking:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerCookingState>();
+                    break;
+                case EPlayerState.Berserk:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
+                    break;
+                case EPlayerState.Hit:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerHitState>();
+                    break;
+                case EPlayerState.Recover:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
+                    break;
+                case EPlayerState.Dead:
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
+                    break;
+                case EPlayerState.CarryingCorpse:
+                    break;
+            }
+        }
+    }
+    
     public void TakeDamage(float amount, PlayerRef attacker)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))

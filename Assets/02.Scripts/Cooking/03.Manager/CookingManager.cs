@@ -8,6 +8,8 @@ public class CookingManager : NetworkBehaviour
 {
     public static CookingManager Instance { get; private set; }
 
+    private CookingPotInteractable _currentCookingPot;
+
     public Inventory FoodInventory = new Inventory(1);
     public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
     private Inventory _inputIngredientInventory;
@@ -20,8 +22,10 @@ public class CookingManager : NetworkBehaviour
     // Networked 변수는 이름에 추가했으면 좋겠다
     public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
     [Networked] private PlayerRef _currentRequester { get; set; }
-    [Networked] private NetworkBool _isCooking { get; set; }
-    private bool _amICooking;
+    // [Networked] private NetworkBool _isCooking { get; set; }
+    private bool _isCooking;
+    
+    // private bool _amICooking;
     private float _cookTime = 4f;
     private float _t;
     
@@ -36,6 +40,12 @@ public class CookingManager : NetworkBehaviour
             Destroy(gameObject);
         }
     }
+
+    public void SetCurrentCookingPot(CookingPotInteractable cookingPot)
+    {
+        _currentCookingPot = cookingPot;
+    }
+    
     public void OnClickMouseLeft(int slotIndex)
     {
         if (HandEntity.Instance.IsHandEmpty)
@@ -89,6 +99,7 @@ public class CookingManager : NetworkBehaviour
     
     public void OnCookingCompleted()
     {
+        // 실제로는 PlayerState의 OnEndState 메서드 내부에서 이 함수가 호출됨
         Debug.Log("OnCookingCompleted 진입!!!");
         
         if (!_isCooking)
@@ -97,7 +108,9 @@ public class CookingManager : NetworkBehaviour
             return;
         }
         
-        RPC_IsCookingCheck();
+        // RPC_IsCookingCheck();
+        _currentCookingPot.Rpc_EndCooking();
+        _isCooking = false;
         
         if (_t >= _cookTime)
         {
@@ -110,7 +123,7 @@ public class CookingManager : NetworkBehaviour
         }
         
         _t = 0; // _t 초기화
-        _amICooking = false;
+        // _amICooking = false;
     }
     
     // RPC가 _isCooking을 false로 만들어주는데 1프레임정도의 딜레이가 생겨서 1프레임도안 TryCook이 2번실행
@@ -216,58 +229,104 @@ public class CookingManager : NetworkBehaviour
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
     
+    // private void Update()
+    // {
+    //     // 네트워크 연결 이후 작동하게 하기 위함
+    //     if(!IsSpawned) return;
+    //     
+    //     if (_isCooking && _currentRequester == Runner.LocalPlayer && !_amICooking)
+    //     {
+    //         _t += Time.deltaTime;
+    //         
+    //         if (_t >= _cookTime)
+    //         {
+    //             _amICooking = true;
+    //             OnCookingCompleted();
+    //         }
+    //     }
+    // }
+    // 요리 진행 _isCooking만 트루로 바꾸고 나머지는 로컬에서 진행
+    // [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    // public void RPC_RequestStartCook(PlayerRef player)
+    // {
+    //     if (_isCooking)
+    //     {
+    //         OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
+    //         Debug.Log("[CookingManager] 서버에서 이미 요리 중입니다.");
+    //         return;
+    //     }
+    //     
+    //     //상태들만 바꿈
+    //     _isCooking = true;
+    //     _currentRequester = player;
+    //     FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+    // }
+    
+    // 패널에서 이 코드 실행
+    // public void TryStartCookRPC()
+    // {
+    //     if (_isCooking)
+    //     {
+    //         OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
+    //         Debug.Log("[CookingManager] 이미 요리 중입니다.");
+    //         // ReturnRecipesToInventory(); // 만약 이미 요리 중일때 인벤토리로 보내고 싶은 경우.
+    //         return;
+    //     }
+    //
+    //     if (HasEmptySlot())
+    //     {
+    //         Debug.Log("[CookingManager] 빈 슬롯이 있어 요리를 시작할 수 없습니다.");
+    //         return;
+    //     }
+    //
+    //     OnAlertMessage?.Invoke("요리를 시작합니다! 재료들이 보글보글 끓고 있어요.");
+    //     RPC_RequestStartCook(Runner.LocalPlayer); // 서버에게 요리 시작 요청
+    // }
+
     private void Update()
     {
         // 네트워크 연결 이후 작동하게 하기 위함
         if(!IsSpawned) return;
         
-        if (_isCooking && _currentRequester == Runner.LocalPlayer && !_amICooking)
+        if (_isCooking)
         {
             _t += Time.deltaTime;
             
             if (_t >= _cookTime)
             {
-                _amICooking = true;
+                // 실제로는 여기서 PlayerState Idle로 전환 요청
                 OnCookingCompleted();
             }
         }
     }
-    // 요리 진행 _isCooking만 트루로 바꾸고 나머지는 로컬에서 진행
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_RequestStartCook(PlayerRef player)
-    {
-        if (_isCooking)
-        {
-            OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
-            Debug.Log("[CookingManager] 서버에서 이미 요리 중입니다.");
-            return;
-        }
-        
-        //상태들만 바꿈
-        _isCooking = true;
-        _currentRequester = player;
-        FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
-    }
     
-    // 패널에서 이 코드 실행
-    public void TryStartCookRPC()
+    public void TryStartCook()
     {
-        if (_isCooking)
-        {
-            OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
-            Debug.Log("[CookingManager] 이미 요리 중입니다.");
-            // ReturnRecipesToInventory(); // 만약 이미 요리 중일때 인벤토리로 보내고 싶은 경우.
-            return;
-        }
-
         if (HasEmptySlot())
         {
             Debug.Log("[CookingManager] 빈 슬롯이 있어 요리를 시작할 수 없습니다.");
             return;
         }
 
-        OnAlertMessage?.Invoke("요리를 시작합니다! 재료들이 보글보글 끓고 있어요.");
-        RPC_RequestStartCook(Runner.LocalPlayer); // 서버에게 요리 시작 요청
+        _currentCookingPot?.Rpc_StartCooking();
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Rpc_StartCooking([RpcTarget] PlayerRef player)
+    {
+        _isCooking = true;
+        // FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+        OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
+        Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Rpc_CookingPotAlreadyUse([RpcTarget] PlayerRef player)
+    {
+        OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
+        
+        // 만약 재료를 다시 인벤토리로 보내고 싶으면 
+        // ReturnRecipesToInventory();
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
