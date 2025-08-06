@@ -12,66 +12,42 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
     private NetworkObject _target;
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        
-        if (_stat == null)
+        if(_fsm.ItemUseTarget == null)
         {
-            _stat = _fsm.PlayerNetworkObject.Stat;
-        }
-        
-        if (_resource == null)
-        {
-            _resource = _fsm.PlayerNetworkObject.Resource;
-        }
-        if (!ValidateItemUseTarget())
-        {
-            return;
+            Machine.ForceActivateState<PlayerIdleState>();
         }
 
     }
 
     protected override void OnEnterStateRender()
     {
+        base.OnEnterStateRender();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
-        if (!ValidateItemUseTarget())
-        {
-            return;
-        }
-        _target = _fsm.ItemUseTarget;
     }
 
-    /// <summary>
-    /// Checks if ItemUseTarget is not null, logs error if it is.
-    /// </summary>
-    /// <returns>True if ItemUseTarget is not null, false otherwise.</returns>
-    private bool ValidateItemUseTarget()
-    {
-        if (_fsm.ItemUseTarget == null)
-        {
-            Debug.LogError("PlayerUseItemState: ItemUseTarget is null. Cannot enter state.");
-            return false;
-        }
-        return true;
-    }
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_fsm.HasInputAuthority)
-        {
-            Debug.Log("PlayerUseItemState: Using item at action moment.");
-            if (_target == null)
-            {
-                Debug.LogWarning("PlayerUseItemState: Target is null. Cannot use item.");
-                return;
-            }
-            _fsm.ItemHolder.UseItem(_target.gameObject);
-        }
+        if (!_fsm.HasStateAuthority) return;
+        RPC_UseItemOrder(_target);
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    protected void RPC_UseItemOrder(NetworkObject target)
+    {
+        if (target == null)
+        {
+            Debug.LogWarning("PlayerUseItemState: Target is null. Cannot use item.");
+            return;
+        }
+        _fsm.ItemHolder.UseItem(target.gameObject);
+    }
     protected override void OnFixedUpdate()
     {
+        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
