@@ -27,7 +27,7 @@ public class PlayerCookingState : APlayerStateBase
 
         KCC.Move(Vector3.zero);
 
-        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]*3)
         {
             RPC_NotifyCookingComplete();
 
