@@ -4,12 +4,11 @@ using UnityEngine;
 public class UI_RecipePanel : AUI_PopupBase
 {
     public override EPopupType Type =>  EPopupType.Recipe;
+    
     public UI_RecipeIngredient UIRecipeIngredient;
     public UI_RecipeList UIRecipeList;
     
     private bool _isInitialized = false;
-
-
 
     public void Open()
     {
