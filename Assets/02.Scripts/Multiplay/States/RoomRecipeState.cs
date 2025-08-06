@@ -5,11 +5,6 @@ using UnityEngine;
 public class RoomRecipeState : IRoomState
 {
     private HashSet<int> _unlockedRecipes = new HashSet<int>();
-
-    public RoomRecipeState()
-    {
-        RoomStateManager.Instance.Register(this);
-    }
     
     public void OnRegister()
     {
@@ -20,7 +15,6 @@ public class RoomRecipeState : IRoomState
     {
         _unlockedRecipes.Clear();
     }
-
 
     public void UnlockRecipe(int recipeID)
     {

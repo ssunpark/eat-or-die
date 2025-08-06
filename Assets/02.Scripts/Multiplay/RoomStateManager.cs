@@ -8,6 +8,26 @@ public class RoomStateManager : NetworkBehaviourSingleton<RoomStateManager>
 {
     private List<IRoomState> _roomStates = new List<IRoomState>();
     
+    [Header("RoomState List")]
+    public RoomIngredientState IngredientState { get; private set; }
+    public RoomRecipeState RecipeState { get; private set; }
+    
+    public bool IsSpawned => Object != null && Object.IsValid;
+
+    private void Update()
+    {
+        if (!IsSpawned) return;
+    }
+    
+    public override void Spawned()
+    {
+        IngredientState = new RoomIngredientState();
+        RecipeState = new RoomRecipeState();
+
+        Register(IngredientState);
+        Register(RecipeState);
+    }
+    
     public void Register(IRoomState state)
     {
         if (!_roomStates.Contains(state))

@@ -5,11 +5,6 @@ using UnityEngine;
 public class RoomIngredientState : IRoomState
 {
     private HashSet<int> _knownIngredients = new HashSet<int>();
-
-    public RoomIngredientState()
-    {
-        RoomStateManager.Instance.Register(this);
-    }
     
     public void OnRegister()
     {
