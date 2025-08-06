@@ -49,6 +49,7 @@ public class DragonStateParameterSet
         public float MoveSpeed;           // 이동 속도
         public float RotationSpeed;       // 회전 속도
         public float HP;                  // 체력
+        public float PhaseThreshold;
         public float DetectRadius;        // 기본 감지 범위 (FOV 포함)
         public float FullAwarenessRadius; // 전방향 감지 거리
         public float FOVAngle;            // 시야각

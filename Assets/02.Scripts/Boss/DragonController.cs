@@ -37,6 +37,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private LavaFloor _lavaFloorPrefab;
     public LavaFloor LavaFloorPrefab => _lavaFloorPrefab;
+
+    [Header("테스트")]
+    [SerializeField]
+    private float _testDamage;
     
     private DragonContext _context;
     private DragonStateMachine _stateMachine;
@@ -87,5 +91,11 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     public void AnimationEndEvent()
     {
         _context.Movement.Unlock();
+    }
+
+    [ContextMenu("TakeDamage")]
+    public void TakeDamage()
+    {
+        _context.Stats.TakeDamage(_testDamage);
     }
 }

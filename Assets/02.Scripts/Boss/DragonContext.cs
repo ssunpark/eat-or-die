@@ -7,6 +7,7 @@ public class DragonContext
     public DragonSight Sight { get; private set; }
     public DragonObjectPool Pool { get; private set; }
     public DragonParameterLoader Parameter { get; private set; }
+    public DragonStats Stats { get; private set; }
     public Animator Animator { get; private set; }
     public Transform Transform { get; private set; }
 
@@ -17,6 +18,7 @@ public class DragonContext
         Sight = new DragonSight(controller);
         Pool = new DragonObjectPool(controller);
         Parameter = new DragonParameterLoader();
+        Stats = new DragonStats(Parameter.Base);
         Animator = controller.GetComponent<Animator>();
         Transform = controller.transform;
     }
