@@ -44,7 +44,14 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private GameObject _roarEffect;
     public GameObject RoarEffect => _roarEffect;
+    
+    [SerializeField]
+    private List<DirectionalProjectile> _directionalProjectiles;
+    private Dictionary<string, Pool<DirectionalProjectile>> _directionalProjectilePoolDictionary;
 
+    [SerializeField]
+    private GameObject _phaseEffect;
+    
     [SerializeField]
     private GameObject _target;
     public GameObject Target => _target;
@@ -88,6 +95,12 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _breathParticlePool = Pool.Create(_breathParticle, 3, transform).NonLazy();
         _lavaProjectilePool = Pool.Create(_lavaProjectilePrefab, 0, lavaPool.transform);
         _lavaFloorPool = Pool.Create(_lavaFloorPrefab, 0, lavaPool.transform);
+
+        foreach (var projectile in _directionalProjectiles)
+        {
+            GameObject pool = new GameObject(projectile.name);
+            _directionalProjectilePoolDictionary.TryAdd(projectile.name, Pool.Create(projectile, 0, pool.transform));
+        }
     }
 
     public override void Spawned()
