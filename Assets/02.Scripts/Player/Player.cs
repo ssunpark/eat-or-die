@@ -6,7 +6,7 @@ using RaycastPro.Detectors;
 using UnityEngine;
 
 [RequireComponent(typeof(RangeDetector))]
-public class Player : CharacterBase, IDamageable, IAttackable
+public class Player : CharacterBase, IAttackable
 {
     public TraitExpHandler ExpHandler { get; private set; }
     public List<CharacterTraitData> TraitDataList { get; private set; }
@@ -129,14 +129,16 @@ public class Player : CharacterBase, IDamageable, IAttackable
             {
                 PlayerFSM.SetInput(input);
             }
+            
         }
-
-        if (_nextState != null)
+        if(HasStateAuthority)
         {
-            PlayerFSM.StateMachine.ForceActivateState(_nextState);
-            _nextState = null;
+            if (_nextState != null)
+            {
+                PlayerFSM.StateMachine.ForceActivateState(_nextState);
+                _nextState = null;
+            }
         }
-
     }
 
 
@@ -150,67 +152,24 @@ public class Player : CharacterBase, IDamageable, IAttackable
             }
             else
             {
-                Rpc_RequestState(state);
+                Debug.Log("[Client] Requesting state change to: " + state);
+                Debug.Log($"[Client] input: {HasInputAuthority}, id: {Object.Id}");
+                Rpc_RequestState(state); 
             }
         }
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    private void Rpc_RequestState(EPlayerState state)
+    public void Rpc_RequestState(EPlayerState state)
     {
+        Debug.Log("[Host] Requesting state change to: " + state);
+        
         if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
         {
-            switch (state)
-            {
-                case EPlayerState.Idle:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
-                    break;
-                case EPlayerState.Move:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerMoveState>();
-                    break;
-                case EPlayerState.Attack:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerAttackState>();
-                    break;
-                case EPlayerState.Interact:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerInteractState>();
-                    break;
-                case EPlayerState.UseItem:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerUseItemState>();
-                    break;
-                case EPlayerState.Cooking:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerCookingState>();
-                    break;
-                case EPlayerState.Berserk:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
-                    break;
-                case EPlayerState.Hit:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerHitState>();
-                    break;
-                case EPlayerState.Recover:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
-                    break;
-                case EPlayerState.Dead:
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
-                    break;
-                case EPlayerState.CarryingCorpse:
-                    break;
-            }
+            _nextState = PlayerFSM.StateMachine.GetState((int)state);
         }
     }
-    
-    public void TakeDamage(float amount, PlayerRef attacker)
-    {
-        if (DamagedTimer.ExpiredOrNotRunning(Runner))
-        {
-            //Todo: 이펙트 처리
 
-            float defense = Stat.GetStat(EStatType.Defense);
-            float finalDmg = amount * (100 / (100 + defense));
-
-            Resource.ConsumeHunger(finalDmg);
-            _takedDamage = true;
-        }
-    }
     bool _takedDamage = false;
     float _prevHunger;
 
@@ -238,7 +197,7 @@ public class Player : CharacterBase, IDamageable, IAttackable
                 return;
             }
         }
-        _prevHunger = current;
+        
         if (current / max > 0.2)
         {
             return;
@@ -252,11 +211,13 @@ public class Player : CharacterBase, IDamageable, IAttackable
                 return;
             }
         }
-        else if (current < max * 0.1f && _prevHunger > current)
+        else if (current < max * 0.1f)
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerBerserkState)
             {
+                Debug.Log("[Player] Entering Berserk State due to low hunger.");
                 _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
+                _prevHunger = current;
                 return;
             }
         }
@@ -264,7 +225,9 @@ public class Player : CharacterBase, IDamageable, IAttackable
         {
             if (PlayerFSM.StateMachine.ActiveState is PlayerBerserkState)
             {
+                Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
                 _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
+                _prevHunger = current;
                 return;
             }
         }
@@ -322,6 +285,8 @@ public class Player : CharacterBase, IDamageable, IAttackable
 
     public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
     {
+        if (PlayerFSM.IsDead) return;
+
         RPC_HitByAttack(attack, attacker);
         
         //Todo: 맞는 이펙트? 재생
@@ -361,5 +326,20 @@ public class Player : CharacterBase, IDamageable, IAttackable
         }
     }
 
+
+    public void OnGUI()
+    {
+        if (GUILayout.Button("Hit"))
+        {
+            AttackInfo attack = new AttackInfo
+            {
+                MeleeDamage = 73,
+                MagicDamage = 0,
+                TotalDamageMultiplier = 1.0f
+            };
+            NetworkObject attacker = Object;
+            OnHitStateAuthority(attack, attacker);
+        }
+    }
 
 }
