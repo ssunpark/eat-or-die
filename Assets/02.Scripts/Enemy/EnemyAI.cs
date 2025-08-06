@@ -44,7 +44,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context = new EnemyContext()
 		{
 			Target = null,
-			Stat = GetComponent<EnemyStat>(),
+			StatManager = EnemyStatManager,
 			Animator = GetComponent<Animator>(),
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
@@ -99,7 +99,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		direction.Normalize();
 		
-		transform.position += direction * Context.Stat.MoveSpeed * Runner.DeltaTime;
+		transform.position += direction * Context.StatManager.GetStat(EStatType.EnemyMoveSpeed) * Runner.DeltaTime;
 	}
 
 	public void Detect()

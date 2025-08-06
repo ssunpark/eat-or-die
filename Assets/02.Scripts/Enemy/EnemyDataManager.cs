@@ -6,11 +6,12 @@ public class EnemyDataManager : BehaviourSingleton<EnemyDataManager>
 {
     public const string ENEMY_CSV_PATH = "/EnemyCSV/Enemy.csv";
     
-    private List<EnemyRawData> _enemyRawDataList;
+    [SerializeField] private List<EnemyRawData> _enemyRawDataList;
     public Dictionary<int, EnemyRawData> EnemyRawDataDictionary;
 
     private void Awake()
     {
+        Debug.Log("EnemyDataManager Awake");
         Init();
     }
     
