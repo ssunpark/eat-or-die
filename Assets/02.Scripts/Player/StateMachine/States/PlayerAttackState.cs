@@ -22,32 +22,17 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        if (_stat == null)
-        {
-            _stat = _fsm.PlayerNetworkObject.Stat;
-        }
-        if (_resource == null)
-        {
-            _resource = _fsm.PlayerNetworkObject.Resource;
-        }
 
-        if (_stat == null || _resource == null)
-        {
-            Debug.LogError("PlayerAttackState: Stat or Resource is null. Cannot enter state.");
-            return;
-        }
         _meleeDamage = _stat?.GetStat(EStatType.MeleeDamage)??1;
         _magicDamage = _stat?.GetStat(EStatType.MagicDamage)??0;
-        //_knockbackStrength = _stat.GetStat(EStatType.KnockbackStrength);
-        //_hitStunLength = _stat.GetStat(EStatType.HitStunLength);
         _totalDamageMultiplier = _stat?.GetStat(EStatType.TotalDamage)??1;
         _bossDamageMultiplier = _stat?.GetStat(EStatType.BossDamage)??1;
         
         _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
         _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed)??1f;
-        Anim.SetFloat("AttackSpeed", _attackSpeed);
         
         float baseClipLength = _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState];
         _animationTime = Mathf.Max(baseClipLength / _attackSpeed, 0.06f);
@@ -56,9 +41,9 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
 
     protected override void OnEnterStateRender()
     {
+        base.OnEnterStateRender();
         _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
         Anim.SetFloat("AttackSpeed", _attackSpeed);
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnExitState()
@@ -106,6 +91,7 @@ public class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     }
     protected override void OnFixedUpdate()
     {
+        if(!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
 
         if (Machine.StateTime >= _animationTime)

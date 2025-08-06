@@ -1,6 +1,7 @@
 ﻿using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
+using Fusion;
 public class PlayerHitState : APlayerStateBase
 {
     public PlayerHitState(PlayerFSM controller) : base(controller)
@@ -12,36 +13,24 @@ public class PlayerHitState : APlayerStateBase
     public float delayTime;
     protected override void OnEnterState()
     {
-        if (_stat == null)
-        {
-            _stat = _fsm.PlayerNetworkObject.Stat;
-        }
-        if (_resource == null)
-        {
-            _resource = _fsm.PlayerNetworkObject.Resource;
-        }
-
-        if (_stat == null || _resource == null)
-        {
-            Debug.LogError("PlayerHitState: Stat or Resource is null. Cannot enter state.");
-            return;
-        }
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
     }
 
     protected override void OnEnterStateRender()
     {
+        base.OnEnterStateRender();
+
         if (!_fsm.HasStateAuthority)
         {
             //_fsm.PlayerNetworkObject.damageFX.PlayFX();
         }
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     protected override void OnFixedUpdate()
     {
-
+        if (!_fsm.HasStateAuthority) return;
         if (Machine.StateTime >= delayTime)
         {
             if(_resource.GetHungerPercent() <= 0.1f)
