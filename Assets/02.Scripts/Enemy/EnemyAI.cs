@@ -15,6 +15,9 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	public int HitCountTemp = 0;
 	
 	private RangeDetector _rangeDetector;
+
+	[SerializeField] private float _currentHunger;
+	private float _takenDamage = 0f;
 	
 	public EnemyContext Context { get; private set; }
 
@@ -40,6 +43,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
 		EnemyStatManager = new EnemyStatManager(_enemyId);
+
+		_currentHunger = EnemyStatManager.GetStat(EStatType.EnemyHunger);
 		
 		Context = new EnemyContext()
 		{
@@ -72,14 +77,15 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		if (_hit)
 		{
-			HitCountTemp++;
-			if (HitCountTemp >= 3)
+			_currentHunger -= _takenDamage;
+			if (_currentHunger <= 0)
 			{
 				_behaviourMachine.ForceActivateState<DieBehaviour>();
 				return;
 			}
 			_behaviourMachine.ForceActivateState<HitBehaviour>();
 			_hit = false;
+			_takenDamage = 0f;
 		}
 		
 		if (_rangeDetector.Cast())
@@ -119,10 +125,13 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
 	{
-		if (HasStateAuthority)
-		{
-			_hit = true;
-		}
+		if (!HasStateAuthority) return;
+		
+		float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+		float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+		_takenDamage += amount * (100 / (100 + defense));
+		
+		_hit = true;
 	}
 
 	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -132,5 +141,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
 	{
+		//Todo: 이펙트 처리
+
 	}
 }
