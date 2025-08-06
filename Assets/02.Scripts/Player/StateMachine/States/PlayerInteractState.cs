@@ -11,8 +11,8 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     private NetworkObject _target;
     protected override void OnEnterStateRender()
     {
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
-        
+        base.OnEnterStateRender();
+
         if (_fsm.InteractTarget == null)
         {
             return;
@@ -21,6 +21,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     }
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         if (_fsm.InteractTarget == null)
@@ -33,6 +34,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     }
     protected override void OnFixedUpdate()
     {
+        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
@@ -41,7 +43,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     }
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_fsm.HasInputAuthority)
+        if (_fsm.HasStateAuthority)
         {
             if (_fsm.InteractTarget == null)
             {

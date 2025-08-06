@@ -1,4 +1,5 @@
-﻿using Fusion.Addons.FSM;
+﻿using Fusion;
+using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
 public class PlayerCookingState : APlayerStateBase
@@ -10,25 +11,34 @@ public class PlayerCookingState : APlayerStateBase
     }
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
 
     }
     protected override void OnEnterStateRender()
     {
-        Anim.CrossFadeInFixedTime("Cook", AnimTransitionLength);
+        base.OnEnterStateRender();
     }
 
     protected override void OnFixedUpdate()
     {
+        if (!_fsm.HasStateAuthority) return;
+
         KCC.Move(Vector3.zero);
-        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]*3)
         {
-            if (_fsm.Object.HasInputAuthority)
-            {
-                // 요리 완료 처리 CookingManager.Instance.OnCookingCompleted();
-            }
+            RPC_NotifyCookingComplete();
+
             Machine.ForceActivateState<PlayerIdleState>();
         }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    private void RPC_NotifyCookingComplete()
+    {
+        // 요리 완료 처리
+        CookingManager.Instance.OnCookingCompleted();
     }
 }
