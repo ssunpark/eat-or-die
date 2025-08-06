@@ -1,12 +1,16 @@
 ﻿using System;
 using UnityEngine;
 
-public class LavaVisual : MonoBehaviour
+public class EffectVisual : MonoBehaviour
 {
+    [SerializeField]
+    private bool _isParticleSystem;
+    
     [SerializeField]
     private Material _inputMaterial;
     private Material _objectMaterial;
     private MeshRenderer _meshRenderer;
+    private ParticleSystemRenderer _particleRenderer;
 
     [SerializeField]
     private float _stayDuration = 5; // 사라지기 시작까지 대기 시간
@@ -26,9 +30,21 @@ public class LavaVisual : MonoBehaviour
 
     private void Awake()
     {
-        _meshRenderer = GetComponent<MeshRenderer>();
-        _meshRenderer.material = _inputMaterial;
-        _objectMaterial = _meshRenderer.material;
+        if (_isParticleSystem)
+        {
+            _particleRenderer = gameObject.GetComponent<ParticleSystemRenderer>();
+            _particleRenderer.material = _inputMaterial;
+            _objectMaterial = _particleRenderer.material;
+        }
+        else
+        {
+            _meshRenderer = gameObject.GetComponent<MeshRenderer>();
+            _meshRenderer.material = _inputMaterial;
+            _objectMaterial = _meshRenderer.material;
+        }
+        
+        // 테스트
+        // Reset(_stayDuration,  _reduceFactor, _upFactor);
     }
 
     public void Reset(float duration, float reduceFactor, float upFactor)

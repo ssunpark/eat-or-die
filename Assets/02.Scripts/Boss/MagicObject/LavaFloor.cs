@@ -10,12 +10,12 @@ public class LavaFloor : MonoBehaviour
     private float _duration;
     private bool _isActive;
     
-    private LavaVisual _lava;
-    public LavaVisual Lava => _lava;
+    private EffectVisual _effect;
+    public EffectVisual Effect => _effect;
 
     private void Awake()
     {
-        _lava = GetComponentInChildren<LavaVisual>();
+        _effect = GetComponentInChildren<EffectVisual>();
     }
 
     public void Init(float duration)
@@ -23,7 +23,7 @@ public class LavaFloor : MonoBehaviour
         _duration = duration;
         _timer = 0f;
         _isActive = true;
-        _lava.Reset(duration, REDUCE_FACTOR, UP_FACTOR);
+        _effect.Reset(duration, REDUCE_FACTOR, UP_FACTOR);
     }
 
     private void Update()
