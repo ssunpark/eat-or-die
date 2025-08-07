@@ -2,8 +2,6 @@
 using UnityEngine;
 public class RoomInfoRepository
 {
-    private RoomInfo _roomInfo;
-
     public static string SaveKey = "RoomInfo";
     
     public void Save(RoomInfo roomInfo)
@@ -15,12 +13,13 @@ public class RoomInfoRepository
         PlayerPrefs.Save();
     }
 
-    public RoomInfo Load(RoomInfo roomInfo)
+    public RoomInfo Load()
     {
         string jsonData = PlayerPrefs.GetString(SaveKey, null);
         if (string.IsNullOrEmpty(jsonData))
         {
-            return new RoomInfo(new HashSet<int>());
+            Debug.Log("");
+            return new RoomInfo();
         }
         RoomInfoDTO dto = JsonUtility.FromJson<RoomInfoDTO>(jsonData);
         return dto.ToDomain();
