@@ -54,8 +54,8 @@ public class ItemFactory
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, true, rawData.IsIngredient,
-            rawData.MaxQuantity, 1f, rawData.IconPath, rawData.PrefabPath);
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, false,
+            rawData.MaxQuantity, 1f, EAttackType.MeleeWeapon, rawData.IconPath, rawData.PrefabPath);
         
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
         return new AItemInfo(itemData, holdEffectList, effectList, pool, poolParent, extraDescription);
@@ -63,12 +63,12 @@ public class ItemFactory
 
     public AItemInfo CreateItem(WeaponItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.Cookable, false,
-            rawData.MaxStack, rawData.MaxDuration,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, true,
+            rawData.MaxStack, rawData.MaxDuration, rawData.AttackType,
             rawData.IconPath, rawData.PrefabPath);
         
         // HOld 효과 정의
-        var holdStatEffect = new ItemHoldEffect_Weapon(rawData.Damage, rawData.AttackSpeed, rawData.Range);
+        var holdStatEffect = new ItemHoldEffect_Weapon(rawData.MeleeDamage, rawData.MagicDamage, rawData.AttackSpeed, rawData.Range);
         var holdAnimatorEffect = new ItemHoldEffect_Animator(rawData.ActionName);
         var holdEffectList = new List<IItemHoldEffect>() { holdStatEffect, holdAnimatorEffect };
         
@@ -78,8 +78,8 @@ public class ItemFactory
 
     public AItemInfo CreateItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, false, rawData.MaxQuantity,
-            rawData.MaxDuration ?? 1f,
+        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.HasDurability, rawData.MaxQuantity,
+            rawData.MaxDuration ?? 1f, EAttackType.MeleeWeapon,
             rawData.AddressablePath, rawData.PrefabPath);
         
         IUseEffect useEffect = rawData.ActionName switch

@@ -8,7 +8,6 @@ using UnityEngine.EventSystems;
 public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkPrefabRef _playerPrefab;
-    private NetworkRunner _runner;
 
     private Dictionary<EStatType, float> _statInputs = new();
     private static Dictionary<PlayerRef, Player> _playerControllers = new();
@@ -31,9 +30,8 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void SetRunner(NetworkRunner runner)
     {
-        _runner = runner;
-        _runner.ProvideInput = true;
-        _runner.AddCallbacks(this);
+        runner.ProvideInput = true;
+        runner.AddCallbacks(this);
     }
 
 

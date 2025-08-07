@@ -1,18 +1,13 @@
-﻿using Fusion.Addons.FSM;
+﻿using UnityEngine;
+using Fusion.Addons.FSM;
 public class BerserkIdle : ABerserkSubStateBase
 {
-    private bool _animFinished;
 
     public BerserkIdle(PlayerFSM controller) : base(controller) { }
 
-    protected override bool CanExitState(IState nextState)
+    public override void OnActionMoment()
     {
-        return _animFinished;
-    }
-
-    protected override void OnEnterState()
-    {
-        _animFinished = false;
+        Debug.Log("뿡");
     }
 
     protected override void OnEnterStateRender()
@@ -22,6 +17,7 @@ public class BerserkIdle : ABerserkSubStateBase
 
     protected override void OnFixedUpdate()
     {
+        if (!_fsm.HasStateAuthority) return;
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Berserk Start"])
         {
             Machine.ForceActivateState<BerserkChase>();

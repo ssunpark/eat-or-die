@@ -20,7 +20,7 @@ public class UI_IngredientButton : MonoBehaviour
     {
         if (itemData == null)
         {
-            Debug.LogWarning("[UI_IngredientButton] 전달된 아이템 정보가 null입니다.");
+            Debug.Log("[UI_IngredientButton] 전달된 아이템 정보가 null입니다.");
             IconImage.gameObject.SetActive(false);
             return;
         }
@@ -34,7 +34,7 @@ public class UI_IngredientButton : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"[UI_IngredientButton] 아이콘이 비어 있음 - ID: {IngredientID}");
+            Debug.Log($"[UI_IngredientButton] 아이콘이 비어 있음 - ID: {IngredientID}");
             IconImage.gameObject.SetActive(false);
         }
     }

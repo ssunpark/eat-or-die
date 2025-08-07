@@ -12,6 +12,7 @@ public class PlayerRecoverState : APlayerStateBase
 
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _resource.RestoreHunger(_resource.MaxHunger / 20);
@@ -19,7 +20,7 @@ public class PlayerRecoverState : APlayerStateBase
 
     protected override void OnEnterStateRender()
     {
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+        base.OnEnterStateRender();
     }
     protected override void OnExitState()
     {

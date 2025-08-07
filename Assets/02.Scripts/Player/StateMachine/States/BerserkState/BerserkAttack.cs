@@ -1,7 +1,7 @@
 ﻿using Fusion;
 using Fusion.Addons.FSM;
 using UnityEngine;
-public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
+public class BerserkAttack : ABerserkSubStateBase
 {
     public BerserkAttack(PlayerFSM fsm) : base(fsm) {
         AnimState = "Attack";
@@ -19,20 +19,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
     {
-        if (_stat == null)
-        {
-            _stat = _fsm.PlayerNetworkObject.Stat;
-        }
-        if (_resource == null)
-        {
-            _resource = _fsm.PlayerNetworkObject.Resource;
-        }
-
-        if (_stat == null || _resource == null)
-        {
-            Debug.LogError("PlayerMoveState: Stat or Resource is null. Cannot enter state.");
-            return;
-        }
+        LazySet();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _meleeDamage = _stat.GetStat(EStatType.MeleeDamage);
@@ -51,25 +38,29 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
 
     protected override void OnEnterStateRender()
     {
+        LazySet();
         _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
         Anim.SetFloat("AttackSpeed", _attackSpeed);
         Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
-    public void OnActionMoment()
+    public override void OnActionMoment()
     {
+        if(!_fsm.HasStateAuthority) return;
         Vector3 attackOrigin = _fsm.transform.position + _fsm.transform.rotation * _positionOffset;
         Vector3 direction = _fsm.transform.forward;
 
         int result = Machine.Runner.GetPhysicsScene().OverlapSphere(attackOrigin, _stat.GetStat(EStatType.AttackRange), _hitsColliders,
-                    _fsm.attackableLayerMask, QueryTriggerInteraction.Collide);
+                    _fsm.BerserkLayerMask, QueryTriggerInteraction.Collide);
 
         for (int i = 0; i < result; i++)
         {
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
+            Debug.Log($"BerserkAttack - {target.NetworkObject.InputAuthority} detected");
 
             if (target == null || _fsm.HitTargets.Contains(target.NetworkObject) || target.NetworkObject == _fsm.PlayerNetworkObject?.Object)
             {
+                Debug.Log($"BerserkAttack - {target.NetworkObject.InputAuthority} is not attackable or already hit or is the player itself.");
                 continue;
             }
 
@@ -83,7 +74,7 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
                 HitRecoveryTime = _hitStunLength,
             };
             target.OnHitLocal(attackState, _fsm.PlayerNetworkObject?.Object);
-
+            Debug.Log($"BerserkAttack - {target.NetworkObject.InputAuthority} hit with damage: {attackState.MeleeDamage}");
             if (i >= _fsm.HitTargets.Count)
                 _fsm.HitTargets.Add(target.NetworkObject);
             else
@@ -91,9 +82,13 @@ public class BerserkAttack : ABerserkSubStateBase, IAnimationActionNotify
         }
 
     }
-
+    protected override void OnExitState()
+    {
+        _fsm.HitTargets.Clear();
+    }
     protected override void OnFixedUpdate()
     {
+        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
 
         if (Machine.StateTime >= _animationTime)

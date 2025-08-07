@@ -11,11 +11,14 @@ public class WeaponItemRawData
     [Name("Description")]
     public string Description { get; set; }
 
-    [Name("Cookable")]
-    public bool Cookable { get; set; }
+    [Name("IsIngredient")]
+    public bool IsIngredient { get; set; }
 
     [Name("HasDurability")]
     public bool HasDurability { get; set; }
+    
+    [Name("EAttackType")]
+    public EAttackType AttackType { get; set; }
 
     [Name("MaxStack")]
     public int MaxStack { get; set; }
@@ -26,8 +29,11 @@ public class WeaponItemRawData
     [Name("Duration")]
     public float MaxDuration { get; set; }
 
-    [Name("Damage")]
-    public float Damage { get; set; }
+    [Name("MeleeDamage")]
+    public float MeleeDamage { get; set; }
+    
+    [Name("MagicDamage")]
+    public float MagicDamage { get; set; }
 
     [Name("AttackSpeed")]
     public float AttackSpeed { get; set; }

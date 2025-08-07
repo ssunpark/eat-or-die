@@ -80,6 +80,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     Collider[] _testColliders = new Collider[8];
     public LayerMask InteractLayerMask;
+    public LayerMask BerserkLayerMask;
     public SimpleKCC SimpleKCC;
     private NetworkInputData _currentInput;
     private NetworkInputData _previousInput;
@@ -129,12 +130,12 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
             FSMStateInstances.Idle,
             FSMStateInstances.Move,
-            FSMStateInstances.Attack,
-            FSMStateInstances.UseItem,
+            FSMStateInstances.Attack, 
             FSMStateInstances.Interact,
+            FSMStateInstances.UseItem, 
+            FSMStateInstances.Cooking,
             FSMStateInstances.Hit,
             FSMStateInstances.Dead,
-            FSMStateInstances.Cooking,
             FSMStateInstances.Berserk,
             FSMStateInstances.Recover,
             FSMStateInstances.Corpse
@@ -223,6 +224,10 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     private bool TestInteraction(bool interactPressed)
     {
+        if (!InputReader.Instance.HaveControl())
+        {
+            return false;
+        }
         Vector3 interactionPoint = transform.position + transform.forward;
 
         int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, 2f, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
@@ -278,7 +283,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         if (!EditorApplication.isPlaying)
             return;
 
-        if (StateMachine?.ActiveState is PlayerAttackState attackState)
+        if (StateMachine?.ActiveState is PlayerAttackState attackState || StateMachine?.ActiveState is PlayerBerserkState berserkState)
         {
             Vector3 origin = transform.position + transform.rotation * new Vector3(0f, 0.2f, 0.5f);
             float range = AttackRange;
