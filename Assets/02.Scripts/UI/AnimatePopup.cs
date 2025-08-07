@@ -7,21 +7,31 @@ public class AnimatePopup : MonoBehaviour
 {
     public Color BackgroundColor = new Color(10.0f / 255.0f, 10.0f / 255.0f, 10.0f / 255.0f, 0.6f);
     public float DestroyTime = 0.5f;
+    public bool BlockBackgroundInput = true;
     private GameObject _background;
+    private Animator _animator;
+    
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+        if (_animator == null)
+        {
+            Debug.LogError("AnimatePopup requires an Animator component.");
+        }
+    }
     
     public void Open()
     {
         gameObject.SetActive(true);
-        GetComponent<Animator>().Play("Open");
+        _animator.Play("Open");
         AddBackground();
     }
     
     public void Close()
     {
-        var animator = GetComponent<Animator>();
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Open"))
+        if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Open"))
         {
-            animator.Play("Close");
+            _animator.Play("Close");
         }
         RemoveBackground();
         StartCoroutine(RunPopupDeactivate());
@@ -53,6 +63,7 @@ public class AnimatePopup : MonoBehaviour
         image.color = newColor;
         image.canvasRenderer.SetAlpha(0.0f);
         image.CrossFadeAlpha(1.0f, 0.4f, false);
+        image.raycastTarget = BlockBackgroundInput;
         
         Canvas canvas = GetComponentInParent<Canvas>();
         _background.transform.localScale = new Vector3(1, 1, 1);
