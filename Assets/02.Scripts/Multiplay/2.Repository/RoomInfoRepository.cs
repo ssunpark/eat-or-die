@@ -2,7 +2,7 @@
 using UnityEngine;
 public class RoomInfoRepository
 {
-    public static string SaveKey = "RoomInfoTest";
+    public static string SaveKey = "RoomTest";
     
     public void Save(RoomInfo roomInfo)
     {

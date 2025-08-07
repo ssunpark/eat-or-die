@@ -11,6 +11,7 @@ public class RoomInfo
 
     [Header("요리 시스템")]
     public HashSet<int> KnownIngredients;
+
     public HashSet<int> KnownRecipes;
 
     // 기본 생성자 (빈 상태로 초기화)
