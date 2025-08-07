@@ -4,14 +4,12 @@ using UnityEngine;
 public class DragonCombat
 {
     private readonly DragonController _controller;
-    private readonly DragonContext _context;
 
     public Transform BreathPoint => _controller.BreathPoint;
 
-    public DragonCombat(DragonController controller, DragonContext context)
+    public DragonCombat(DragonController controller)
     {
         _controller = controller;
-        _context = context;
     }
 
     public void OnSpawned()
@@ -21,9 +19,9 @@ public class DragonCombat
 
     public void SetFightMode(bool active)
     {
-        int index = _context.Animator.GetLayerIndex("Fight Layer");
+        int index = _controller.Animator.GetLayerIndex("Fight Layer");
         float weight = active ? 1f : 0f;
-        _context.Animator.SetLayerWeight(index, weight);
+        _controller.Animator.SetLayerWeight(index, weight);
 
         if (_controller.HasStateAuthority)
         {
@@ -34,10 +32,10 @@ public class DragonCombat
     // 브레스
     public void PlayBreath(float duration)
     {
-        var vfx = _context.Pool.BreathParticlePool.Get();
+        var vfx = _controller.Pool.BreathParticlePool.Get();
         vfx.transform.position = BreathPoint.position;
-        vfx.transform.rotation = Quaternion.LookRotation(_context.Transform.forward);
-        vfx.Init(duration, () => _context.Pool.BreathParticlePool.Take(vfx));
+        vfx.transform.rotation = Quaternion.LookRotation(_controller.transform.forward);
+        vfx.Init(duration, () => _controller.Pool.BreathParticlePool.Take(vfx));
     }
     
     // Lava
@@ -56,7 +54,7 @@ public class DragonCombat
             targetPos = hit.point;
         }
 
-        var lava = _context.Pool.LavaProjectilePool.Get();
+        var lava = _controller.Pool.LavaProjectilePool.Get();
         lava.transform.position = spawnPoint;
 
         lava.Fire(
@@ -65,8 +63,8 @@ public class DragonCombat
                 data.Speed,
                 data.Duration,
                 data.Height),
-            () => _context.Pool.LavaProjectilePool.Take(lava),
-            _context.Pool.LavaFloorPool
+            () => _controller.Pool.LavaProjectilePool.Take(lava),
+            _controller.Pool.LavaFloorPool
         );
     }
     

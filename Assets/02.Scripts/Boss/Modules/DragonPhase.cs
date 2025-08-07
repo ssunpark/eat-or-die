@@ -11,10 +11,10 @@ public class DragonPhase
 
     private float _phaseThreshold;
 
-    public DragonPhase(DragonController controller, DragonStateParameterSet.BaseParams baseParams)
+    public DragonPhase(DragonController controller)
     {
         _dragonController = controller;
-        _phaseThreshold = baseParams.PhaseThreshold;
+        _phaseThreshold = controller.ParamLoader.Base.PhaseThreshold;
         _dragonController.PhaseEffect.SetActive(false);
     }
 

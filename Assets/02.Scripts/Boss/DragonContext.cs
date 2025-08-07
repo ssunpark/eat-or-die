@@ -5,7 +5,6 @@ public class DragonContext
     public DragonMovement Movement { get; private set; }
     public DragonCombat Combat { get; private set; }
     public DragonSight Sight { get; private set; }
-    public DragonObjectPool Pool { get; private set; }
     public DragonParameterLoader Parameter { get; private set; }
     public DragonStats Stats { get; private set; }
     public DragonPhase Phase { get; private set; }
@@ -14,15 +13,15 @@ public class DragonContext
 
     public DragonContext(DragonController controller)
     {
-        Movement = new DragonMovement(controller);
-        Combat = new DragonCombat(controller, this);
-        Sight = new DragonSight(controller);
-        Pool = new DragonObjectPool(controller);
-        Parameter = new DragonParameterLoader();
-        Stats = new DragonStats(Parameter.Base);
-        Phase = new DragonPhase(controller, Parameter.Base);
+        Parameter = controller.ParamLoader;
         Animator = controller.GetComponent<Animator>();
         Transform = controller.transform;
+        
+        Movement = new DragonMovement(controller);
+        Combat = new DragonCombat(controller);
+        Sight = new DragonSight(controller);
+        Phase = new DragonPhase(controller);
+        Stats = new DragonStats(controller);
     }
 
     public void OnSpawned()

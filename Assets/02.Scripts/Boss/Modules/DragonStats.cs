@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class DragonStats
 {
+    private readonly DragonController _controller;
     public float MaxHP { get; private set; }
     public float CurrentHP { get; private set; }
 
-    public DragonStats(DragonStateParameterSet.BaseParams baseParams)
+    public DragonStats(DragonController controller)
     {
-        MaxHP = baseParams.HP;
+        _controller = controller;
+        MaxHP = _controller.ParamLoader.Base.HP;
         CurrentHP = MaxHP;
     }
 

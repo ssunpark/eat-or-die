@@ -56,9 +56,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     private DragonContext _context;
     private DragonStateMachine _stateMachine;
     
-    public Animator Animator => _context.Animator;
-    public GameObject Target => _context.Sight.Target;
-    public DragonParameterLoader ParamLoader => _context.Parameter;
+    public Animator Animator { get; private set; }
+    public GameObject Target { get; private set; }
+    public DragonParameterLoader ParamLoader { get; private set; }
+    public DragonObjectPool Pool { get; private set; }
 
     [Networked]
     private bool _isFightMode { get; set; }
@@ -69,6 +70,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     {
         _context = new DragonContext(this);
         _stateMachine = new DragonStateMachine(_context);
+        Pool = new DragonObjectPool(this);
+        ParamLoader = new DragonParameterLoader();
+        Animator = GetComponent<Animator>();
     }
 
     public override void Spawned()
