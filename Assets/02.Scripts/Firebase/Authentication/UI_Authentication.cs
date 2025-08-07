@@ -4,8 +4,8 @@ using TMPro;
 
 public class UI_Authentication : MonoBehaviour
 {
-    [SerializeField] private GameObject _loginPanel;
-    [SerializeField] private GameObject _registerPanel;
+    [SerializeField] private AnimatePopup _loginPanel;
+    [SerializeField] private AnimatePopup _registerPanel;
     
     [SerializeField] private TMP_InputField _loginEmailInputField;
     [SerializeField] private TMP_InputField _loginPasswordInputField;
@@ -38,8 +38,8 @@ public class UI_Authentication : MonoBehaviour
         _passwordInputField = _loginPasswordInputField;
         _feedbackText = _loginFeedbackText;
 
-        _registerPanel.SetActive(false);
-        _loginPanel.SetActive(true);
+        _registerPanel.Close();
+        _loginPanel.Open();
     }
     
     public void ShowRegisterPanel()
@@ -48,8 +48,8 @@ public class UI_Authentication : MonoBehaviour
         _passwordInputField = _registerPasswordInputField;
         _feedbackText = _registerFeedbackText;
         
-        _loginPanel.SetActive(false);
-        _registerPanel.SetActive(true);
+        _loginPanel.Close();
+        _registerPanel.Open();
     }
     
     public void CreateAccount()

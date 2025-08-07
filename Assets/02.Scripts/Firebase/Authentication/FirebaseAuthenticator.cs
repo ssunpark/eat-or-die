@@ -64,8 +64,6 @@ public class FirebaseAuthenticator : IAuthenticator
             {
                 case AuthError.EmailAlreadyInUse:
                     return "이미 사용 중인 이메일입니다.";
-                case AuthError.WrongPassword:
-                    return "비밀번호가 틀렸습니다.";
                 case AuthError.InvalidEmail:
                     return "유효하지 않은 이메일 형식입니다.";
                 case AuthError.UserNotFound:
@@ -73,7 +71,7 @@ public class FirebaseAuthenticator : IAuthenticator
                 case AuthError.WeakPassword:
                     return "보안 수준이 낮은 비밀번호입니다.";
                 default:
-                    return "알 수 없는 오류가 발생했습니다.";
+                    return "아이디 또는 비밀번호가 일치하지 않습니다.";
             }
         }
         return "인증 처리 중 오류가 발생했습니다.";
