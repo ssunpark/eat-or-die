@@ -1,9 +1,8 @@
 ﻿using DG.Tweening;
 
-public class DragonMagicAttack_Roar : DragonSubStateBase
+public class DragonMagicAttack_Roar : DragonSubStateBase, IAnimationEntryActionNotify, IAnimationExitActionNotify
 {
     private DragonStateParameterSet.RoarParams _roarParams;
-    private bool _onFired;
 
     private Sequence effectsSequence;
 
@@ -34,23 +33,18 @@ public class DragonMagicAttack_Roar : DragonSubStateBase
             ParentState.OnSubStateComplete();
         }
     }
-    
-    protected override void OnEnterStateRender()
+
+    public void OnExitMoment()
     {
-        _onFired = false;
+        Context.Movement.Unlock();
     }
 
-    protected override void OnRender()
+    public void OnEntryMoment()
     {
-        if (!_onFired && Machine.StateTime >= _roarParams.FireTime)
-        {
-            _onFired = true;
-
-            Context.Combat.PerformRoarAttack(
-                _roarParams.Radius,
-                _roarParams.Count,
-                _roarParams.Duration
-            );
-        }
+        Context.Combat.PerformRoarAttack(
+            _roarParams.Radius,
+            _roarParams.Count,
+            _roarParams.Duration
+        );
     }
 }

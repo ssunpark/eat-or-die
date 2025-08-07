@@ -1,14 +1,12 @@
-﻿using Redcode.Pools;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class DragonMagicAttack_Lava : DragonSubStateBase
+public class DragonMagicAttack_Lava : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
     private const string RAYCAST_MASK = "Floor";
     
     private DragonStateParameterSet.LavaParams _lavaParams;
 
     private int _spawnCount = 0;
-    private float _nextSpawnTime;
 
     public DragonMagicAttack_Lava(
         DragonContext context,
@@ -37,13 +35,12 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
 
     protected override void OnEnterStateRender()
     {
-        _nextSpawnTime = _lavaParams.StartDelay;
         _spawnCount = 0;
     }
 
-    protected override void OnRender()
+    public void OnActionMoment()
     {
-        if (_spawnCount < _lavaParams.AngleList.Length && Machine.StateTime >= _nextSpawnTime)
+        if (_spawnCount < _lavaParams.AngleList.Length)
         {
             float angle = _lavaParams.AngleList[_spawnCount];
             float distance = Random.Range(_lavaParams.MinDistance, _lavaParams.MaxDistance);
@@ -65,7 +62,11 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             Debug.Log($"Lava {_spawnCount + 1} 생성 (각도 {angle}, 거리 {distance})");
 
             _spawnCount++;
-            _nextSpawnTime = Machine.StateTime + _lavaParams.Interval;
         }
+    }
+
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
     }
 }

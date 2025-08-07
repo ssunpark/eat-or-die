@@ -5,12 +5,12 @@ public class DragonSight
 {
     private readonly DragonController _controller;
     
-    public GameObject Target { get; private set; }
-    public bool HasTarget => Target != null;
+    public GameObject Target => _controller.Target;
+    public bool HasTarget => _controller.Target != null;
     
     public SightDetector SightDetector { get; private set; }
     
-    public float Distance => Vector3.Distance(_controller.transform.position, Target.transform.position);
+    public float Distance => Vector3.Distance(_controller.transform.position, _controller.Target.transform.position);
 
     public DragonSight(DragonController controller)
     {
@@ -30,6 +30,6 @@ public class DragonSight
 
     public void SetTarget(GameObject target)
     {
-        Target = target;
+        _controller.SetTarget(target);
     }
 }

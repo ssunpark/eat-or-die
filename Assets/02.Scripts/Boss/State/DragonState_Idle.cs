@@ -5,10 +5,13 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 [Serializable]
-public class DragonState_Idle : DragonStateBase, IParentState
+public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitActionNotify
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.BaseParams _baseParams;
+    
+    private bool _alerted;
+    private bool _roared;
 
     public DragonState_Idle(DragonContext context) : base(context)
     {
@@ -29,24 +32,30 @@ public class DragonState_Idle : DragonStateBase, IParentState
     protected override void OnFixedUpdate()
     {
         // 이미 타겟 있으면 Alert 전환
-        if (Context.Sight.HasTarget)
+        if (!_roared && Context.Sight.HasTarget)
         {
-            Machine.TryActivateState<DragonState_Alert>(true);
+            Context.Combat.SetFightMode(true);
+            Context.Animator.SetTrigger("Roar");
+            Context.Movement.Lock();
+            _roared = true;
             return;
         }
 
         GameObject found = FindTargetInFOV();
-        if (found != null)
+        if (!_roared && found != null)
         {
             Context.Sight.SetTarget(found);
+            Context.Combat.SetFightMode(true);
+            Context.Animator.SetTrigger("Roar");
+            Context.Movement.Lock();
+            _roared = true;
+            return;
+        }
+
+        if (_alerted)
+        {
             Machine.TryActivateState<DragonState_Alert>(true);
         }
-    }
-
-    protected override void OnExitState()
-    {
-        Context.Combat.SetFightMode(true);
-        Context.Animator.SetTrigger("Roar");
     }
 
     private void TryActiveRandomSubState()
@@ -89,5 +98,11 @@ public class DragonState_Idle : DragonStateBase, IParentState
         }
 
         return null;
+    }
+
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
+        _alerted = true;
     }
 }

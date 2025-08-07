@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
 using UnityEngine;
 
-public class DragonController : NetworkBehaviour, IStateMachineOwner
+public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimationEntryActionNotify, IAnimationExitActionNotify
 {
     [SerializeField]
     private Transform _breathPoint;
@@ -52,6 +53,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [Header("테스트")]
     [SerializeField]
     private float _testDamage;
+    public bool IsLock;
     
     private DragonContext _context;
     private DragonStateMachine _stateMachine;
@@ -68,11 +70,11 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
 
     private void Awake()
     {
+        Animator = GetComponent<Animator>();
+        ParamLoader = new DragonParameterLoader();
+        Pool = new DragonObjectPool(this);
         _context = new DragonContext(this);
         _stateMachine = new DragonStateMachine(_context);
-        Pool = new DragonObjectPool(this);
-        ParamLoader = new DragonParameterLoader();
-        Animator = GetComponent<Animator>();
     }
 
     public override void Spawned()
@@ -86,6 +88,11 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
         _context.OnSpawned();
     }
 
+    private void Update()
+    {
+        IsLock = _context.Movement.IsLocked;
+    }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SetFightLayerWeight(float weight)
     {
@@ -97,15 +104,37 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     {
         _stateMachine.CollectStateMachines(stateMachines);
     }
-
-    public void AnimationStartEvent()
+    
+    public void OnEntryMoment()
     {
-        _context.Movement.Lock();
+        if (_stateMachine.Machine.ActiveState is IAnimationEntryActionNotify notify)
+        {
+            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
+            notify.OnEntryMoment();
+        }
+    }
+    
+    public void OnActionMoment()
+    {
+        if (_stateMachine.Machine.ActiveState is IAnimationActionNotify notify)
+        {
+            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
+            notify.OnActionMoment();
+        }
+    }
+    
+    public void OnExitMoment()
+    {
+        if (_stateMachine.Machine.ActiveState is IAnimationExitActionNotify notify)
+        {
+            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
+            notify.OnExitMoment();
+        }
     }
 
-    public void AnimationEndEvent()
+    public void SetTarget(GameObject target)
     {
-        _context.Movement.Unlock();
+        Target = target;
     }
 
     [ContextMenu("TakeDamage")]

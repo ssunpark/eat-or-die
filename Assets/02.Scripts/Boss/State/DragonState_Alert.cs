@@ -21,7 +21,7 @@ public class DragonState_Alert : DragonStateBase
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         _hasDestination = false;
-
+        
         Context.Animator.SetBool("IsMove", true);
         
         float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
@@ -86,7 +86,7 @@ public class DragonState_Alert : DragonStateBase
     private void ChooseNewLookDestination()
     {
         Vector3 center = Context.Sight.Target.transform.position;
-        Vector3 dir = (Context.Sight.Target.transform.position - center).normalized;
+        Vector3 dir = (Context.Transform.position - center).normalized;
 
         int randomSign = Random.value < 0.5f ? -1 : 1;
         float offsetAngle = randomSign * Random.Range(_alertParams.MinAngleRange, _alertParams.AngleRange);

@@ -2,7 +2,7 @@
 using Fusion.Addons.FSM;
 using UnityEngine;
 
-public class DragonState_MagicAttack : DragonStateBase, IParentState
+public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimationEntryActionNotify, IAnimationExitActionNotify, IAnimationActionNotify
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.MagicParams _magicParams;
@@ -20,8 +20,8 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     private void TryActivateRandomMagicSkill()
     {
-        // _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
-        // return;
+        _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
+        return;
         float randProbability = Random.value;
         if (Context.Sight.Distance < Context.Parameter.Base.MeleeAttackDistance
             && randProbability < Context.Parameter.Magic.NearMagicProbability)
@@ -67,5 +67,32 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
         }
 
         Machine.TryActivateState<DragonState_Alert>(true);
+    }
+
+    public void OnEntryMoment()
+    {
+        if (_subStateMachine.ActiveState is IAnimationEntryActionNotify notify)
+        {
+            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
+            notify.OnEntryMoment();
+        }
+    }
+
+    public void OnExitMoment()
+    {
+        if (_subStateMachine.ActiveState is IAnimationExitActionNotify notify)
+        {
+            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
+            notify.OnExitMoment();
+        }
+    }
+
+    public void OnActionMoment()
+    {
+        if (_subStateMachine.ActiveState is IAnimationActionNotify notify)
+        {
+            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
+            notify.OnActionMoment();
+        }
     }
 }
