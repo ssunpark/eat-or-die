@@ -333,19 +333,5 @@ public class Player : CharacterBase, IAttackable
     }
 
 
-    public void OnGUI()
-    {
-        if (GUILayout.Button("Hit"))
-        {
-            AttackInfo attack = new AttackInfo
-            {
-                MeleeDamage = 73,
-                MagicDamage = 0,
-                TotalDamageMultiplier = 1.0f
-            };
-            NetworkObject attacker = Object;
-            OnHitStateAuthority(attack, attacker);
-        }
-    }
 
 }
