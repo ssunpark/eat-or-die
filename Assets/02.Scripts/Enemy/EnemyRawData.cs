@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using CsvHelper.Configuration.Attributes;
 
 [Serializable]
@@ -8,10 +9,10 @@ public class EnemyRawData
     public int ID { get; set; }
     
     [Name("Name")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
     
     [Name("Description")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
     
     [Name("EncounterLayer")]
     public int EncounterLayer { get; set; }
