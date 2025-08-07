@@ -104,7 +104,6 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             HitRecoveryTime = _hitStunLength,
             Attacker = _fsm.PlayerNetworkObject.Object
         };
-        Debug.Log($"[PlayerAttackState] Performing attack of type: {attackType} at origin: {attackOrigin} with direction: {_direction}");
         string projectileKey = _fsm.PlayerNetworkObject.ItemHolder.ProjectileKey;
         switch (attackType)
         {
@@ -128,7 +127,6 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             Debug.LogWarning("[PlayerAttackState] ProjectileKey is null or empty. Using default.");
             projectileKey = "DefaultProjectile";
         }
-        Debug.Log($"[PlayerAttackState] Performing ranged attack with projectile key: {projectileKey}");
         GameObject projectilePrefab = ProjectileManager.Instance.GetProjectile(projectileKey);
         if (projectilePrefab == null)
         {

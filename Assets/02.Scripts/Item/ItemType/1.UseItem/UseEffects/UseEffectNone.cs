@@ -9,6 +9,6 @@ public class UseEffectNone : IUseEffect
 
     public void Use(GameObject target)
     {
-        Debug.Log("[UseEffectNone] No effect applied.");
+        Debug.LogWarning("[UseEffectNone] No effect applied.");
     }
 }

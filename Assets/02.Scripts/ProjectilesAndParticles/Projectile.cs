@@ -26,7 +26,10 @@ public class Projectile : NetworkBehaviour
             LifeTimer = TickTimer.CreateFromSeconds(Runner, Lifetime);
         }
         _collider = GetComponent<Collider>();
-        _pool = ProjectileManager.Instance.ExplodeEffectPool[_explodeEffect];
+        if (!ProjectileManager.Instance.ExplodeEffectPool.TryGetValue(_explodeEffect, out _pool))
+        {
+            Debug.LogWarning($"[Projectile] ExplodeEffectPool does not contain the specified _explodeEffect for {gameObject.name}. Particle effects will not play.");
+        }
     }
 
     public override void FixedUpdateNetwork()
