@@ -1,14 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 public class RoomInfoRepository
 {
     private RoomInfo _roomInfo;
 
     public static string SaveKey = "RoomInfo";
-
-    // 방장 기준으로 저장 (추후 데베)
+    
     public void Save(RoomInfo roomInfo)
     {
-        string data = JsonUtility.ToJson(roomInfo);
+        RoomInfoDTO dto = RoomInfoDTO.FromDomain(roomInfo);
+        string data = JsonUtility.ToJson(dto);
 
         PlayerPrefs.SetString(SaveKey, data);
         PlayerPrefs.Save();
@@ -17,8 +18,11 @@ public class RoomInfoRepository
     public RoomInfo Load(RoomInfo roomInfo)
     {
         string jsonData = PlayerPrefs.GetString(SaveKey, null);
-        _roomInfo = JsonUtility.FromJson<RoomInfo>(jsonData);
-
-        return _roomInfo;
+        if (string.IsNullOrEmpty(jsonData))
+        {
+            return new RoomInfo(new HashSet<int>());
+        }
+        RoomInfoDTO dto = JsonUtility.FromJson<RoomInfoDTO>(jsonData);
+        return dto.ToDomain();
     }
 }
