@@ -8,4 +8,11 @@ public class AuthResultWrapper
     public bool IsSuccess { get; set; }
     public string Message { get; set; }
     public FirebaseUser User { get; set; }
+    
+    public AuthResultWrapper(bool isSuccess, string message, FirebaseUser user = null)
+    {
+        IsSuccess = isSuccess;
+        Message = message;
+        User = user;
+    }
 }

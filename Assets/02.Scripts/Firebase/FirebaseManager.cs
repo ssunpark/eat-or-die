@@ -2,7 +2,7 @@
 using UnityEngine;
 using Firebase.Auth;
 using System.Threading.Tasks;
-// using Firebase.Firestore;
+using Firebase.Firestore;
 
 public class FirebaseManager : BehaviourSingleton<FirebaseManager>
 {
@@ -12,11 +12,11 @@ public class FirebaseManager : BehaviourSingleton<FirebaseManager>
     private FirebaseAuth _auth;
     public FirebaseAuth Auth => _auth;
 
-    // private FirebaseFirestore _db;
-    // public FirebaseFirestore DB => _db;
+    private FirebaseFirestore _db;
+    public FirebaseFirestore DB => _db;
     
     // Game을 실행하고 로딩할 때 확인 할 변수. Instance가 null이 아니고 IsInitialized가 true면 Firebase가 초기화된 상태.
-    public bool IsInitialized => _app != null && _auth != null; // && _db != null;
+    public bool IsInitialized => _app != null && _auth != null && _db != null;
     
     private async void Awake()
     {
@@ -31,9 +31,9 @@ public class FirebaseManager : BehaviourSingleton<FirebaseManager>
         if (dependencyStatus == Firebase.DependencyStatus.Available)
         {
             Debug.Log("파이어베이스 연결에 성공했습니다.");
-            _app = Firebase.FirebaseApp.DefaultInstance;
+            _app = FirebaseApp.DefaultInstance;
             _auth = FirebaseAuth.DefaultInstance;
-            // _db = FirebaseFirestore.DefaultInstance;
+            _db = FirebaseFirestore.DefaultInstance;
         }
         else
         {

@@ -1,8 +1,76 @@
-﻿using UnityEngine;
+﻿using Ricimi;
+using UnityEngine;
 using TMPro;
 
 public class UI_Authentication : MonoBehaviour
 {
+    [SerializeField] private GameObject _loginPanel;
+    [SerializeField] private GameObject _registerPanel;
     
+    [SerializeField] private TMP_InputField _loginEmailInputField;
+    [SerializeField] private TMP_InputField _loginPasswordInputField;
+    [SerializeField] private TextMeshProUGUI _loginFeedbackText;
     
+    [SerializeField] private TMP_InputField _registerEmailInputField;
+    [SerializeField] private TMP_InputField _registerPasswordInputField;
+    [SerializeField] private TextMeshProUGUI _registerFeedbackText;
+    
+    private TMP_InputField _emailInputField;
+    private TMP_InputField _passwordInputField;
+    
+    [SerializeField] private TMP_InputField _passwordConfirmInputField;
+    
+    private TMP_Text _feedbackText;
+
+    private void Start()
+    {
+        AuthenticationManager.Instance.OnAuthenticated += HandleAuthenticationResult;
+        _emailInputField = _loginEmailInputField;
+        _passwordInputField = _loginPasswordInputField;
+        _feedbackText = _loginFeedbackText;
+
+        ShowRegisterPanel();
+    }
+    
+    public void ShowLoginPanel()
+    {
+        _emailInputField = _loginEmailInputField;
+        _passwordInputField = _loginPasswordInputField;
+        _feedbackText = _loginFeedbackText;
+
+        _registerPanel.SetActive(false);
+        _loginPanel.SetActive(true);
+    }
+    
+    public void ShowRegisterPanel()
+    {
+        _emailInputField = _registerEmailInputField;
+        _passwordInputField = _registerPasswordInputField;
+        _feedbackText = _registerFeedbackText;
+        
+        _loginPanel.SetActive(false);
+        _registerPanel.SetActive(true);
+    }
+    
+    public void CreateAccount()
+    {
+        string email = _emailInputField.text;
+        string password = _passwordInputField.text;
+        string passwordConfirm = _passwordConfirmInputField.text;
+
+        AuthenticationManager.Instance.CreateAccountAsync(email, password, passwordConfirm);
+    }
+
+    public void SignIn()
+    {
+        string email = _emailInputField.text;
+        string password = _passwordInputField.text;
+
+        AuthenticationManager.Instance.SignInAsync(email, password);
+    }
+
+    private void HandleAuthenticationResult(string message)
+    {
+        _feedbackText.text = message;
+    }
 }
