@@ -32,12 +32,16 @@ public class DragonBreathEffect : MonoBehaviour
         _currentLength = 0f;
         _despawnTime = particleDuration;
 
+        
         // 콜라이더 초기화
-        _collider.enabled = true;
-        var size = _collider.size;
-        size.z = 0f;
-        _collider.size = size;
-        _collider.center = new Vector3(0f, 0f, 0f);
+        if (Room.Instance.Runner.IsServer)
+        {
+            _collider.enabled = true;
+            var size = _collider.size;
+            size.z = 0f;
+            _collider.size = size;
+            _collider.center = new Vector3(0f, 0f, 0f);
+        }
 
         // 파티클 재생
         var main1 = _mainParticle.main;
@@ -54,6 +58,11 @@ public class DragonBreathEffect : MonoBehaviour
 
     private void Update()
     {
+        if (!Room.Instance.Runner.IsServer)
+        {
+            return;
+        }
+        
         _timer += Time.deltaTime;
 
         // 히트박스 점점 커지게
@@ -74,6 +83,11 @@ public class DragonBreathEffect : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (!Room.Instance.Runner.IsServer)
+        {
+            return;
+        }
+        
         if (!other.CompareTag("Player"))
             return;
 
