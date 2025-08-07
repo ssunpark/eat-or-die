@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 public class DragonObjectPool
 {
-    public Pool<DragonBreathHitBox> BreathHitBoxPool { get; private set; }
-    public Pool<BreathParticle> BreathParticlePool { get; private set; }
+    public Pool<DragonBreathEffect> BreathParticlePool { get; private set; }
     public Pool<LavaProjectile> LavaProjectilePool { get; private set; }
     public Pool<LavaFloor> LavaFloorPool { get; private set; }
 
@@ -15,9 +14,8 @@ public class DragonObjectPool
     {
         Transform root = controller.transform;
         GameObject lavaPool = new("LavaPool");
-
-        BreathHitBoxPool = Pool.Create(controller.BreathHitBoxPrefab, 3, root).NonLazy();
-        BreathParticlePool = Pool.Create(controller.BreathParticlePrefab, 3, root).NonLazy();
+        
+        BreathParticlePool = Pool.Create(controller.DragonBreathEffectPrefab, 0, root);
         LavaProjectilePool = Pool.Create(controller.LavaProjectile, 0, lavaPool.transform);
         LavaFloorPool = Pool.Create(controller.LavaFloorPrefab, 0, lavaPool.transform);
 

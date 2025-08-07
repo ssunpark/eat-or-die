@@ -31,17 +31,8 @@ public class DragonCombat
         }
     }
 
-    // 브레스 HitBox
-    public void PerformBreathAttack(float duration)
-    {
-        var hitbox = _context.Pool.BreathHitBoxPool.Get();
-        hitbox.transform.position = BreathPoint.position;
-        hitbox.transform.rotation = Quaternion.LookRotation(_context.Transform.forward);
-        hitbox.Init(duration, () => _context.Pool.BreathHitBoxPool.Take(hitbox));
-    }
-
-    // 브레스 VFX
-    public void PlayBreathVFX(float duration)
+    // 브레스
+    public void PlayBreath(float duration)
     {
         var vfx = _context.Pool.BreathParticlePool.Get();
         vfx.transform.position = BreathPoint.position;

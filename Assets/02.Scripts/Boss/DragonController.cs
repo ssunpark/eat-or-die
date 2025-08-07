@@ -23,12 +23,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     
     [Header("스킬 오브젝트 (풀링)")]
     [SerializeField]
-    private BreathParticle _breathParticlePrefab;
-    public BreathParticle BreathParticlePrefab => _breathParticlePrefab;
-    
-    [SerializeField]
-    private DragonBreathHitBox _breathHitBoxPrefab;
-    public DragonBreathHitBox BreathHitBoxPrefab => _breathHitBoxPrefab;
+    private DragonBreathEffect _dragonBreathEffectPrefab;
+    public DragonBreathEffect DragonBreathEffectPrefab => _dragonBreathEffectPrefab;
     
     [SerializeField]
     private LavaProjectile _lavaProjectilePrefab;
