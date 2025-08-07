@@ -2,7 +2,7 @@
 using UnityEngine;
 public class RoomInfoRepository
 {
-    public static string SaveKey = "RoomInfo";
+    public static string SaveKey = "RoomInfoTest";
     
     public void Save(RoomInfo roomInfo)
     {
@@ -13,15 +13,18 @@ public class RoomInfoRepository
         PlayerPrefs.Save();
     }
 
-    public RoomInfo Load()
+    public bool TryLoad(out RoomInfo roomInfo)
     {
         string jsonData = PlayerPrefs.GetString(SaveKey, null);
+        
         if (string.IsNullOrEmpty(jsonData))
         {
-            Debug.Log("RoomInfoRepository: 저장된 RoomInfo가 없어 기본 상태로 초기화합니다.");
-            return new RoomInfo();
+            roomInfo = new RoomInfo();
+            return false; // 저장된 게 없으므로 return false
         }
+        
         RoomInfoDTO dto = JsonUtility.FromJson<RoomInfoDTO>(jsonData);
-        return dto.ToDomain();
+        roomInfo = dto.ToDomain();
+        return true; // 저장된 값 정상 로드
     }
 }
