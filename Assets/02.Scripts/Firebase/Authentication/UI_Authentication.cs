@@ -25,10 +25,6 @@ public class UI_Authentication : MonoBehaviour
     private void Start()
     {
         AuthenticationManager.Instance.OnAuthenticated += HandleAuthenticationResult;
-        _emailInputField = _loginEmailInputField;
-        _passwordInputField = _loginPasswordInputField;
-        _feedbackText = _loginFeedbackText;
-
         ShowRegisterPanel();
     }
     
