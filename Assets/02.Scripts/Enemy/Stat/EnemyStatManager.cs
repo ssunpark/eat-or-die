@@ -6,8 +6,8 @@ public class EnemyStatManager
 {
     private readonly Dictionary<EStatType, Stat> _statDictionary = new();
 
-    public event Action<EStatType, StatModifier> OnModifierAdded;
-    public event Action<EStatType, StatModifier> OnModifierRemoved;
+    // public event Action<EStatType, StatModifier> OnModifierAdded;
+    // public event Action<EStatType, StatModifier> OnModifierRemoved;
 
     public EnemyStatManager(int id)
     {
