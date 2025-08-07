@@ -16,8 +16,8 @@ public class CookingManager : NetworkBehaviour
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
     public event Action OnCookOutputUpdated;
     public static event Action<string> OnAlertMessage; // 문자열 알림용
-    public static event Action<Item> CookingFinished; // 결과 아이템 전체달용
-    
+    public static event Action<Item> CookingFinished; // 결과 아이템 전체 전달용
+    public static event Action CookFinished;
     
     // Networked 변수는 이름에 추가했으면 좋겠다
     public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
@@ -221,6 +221,7 @@ public class CookingManager : NetworkBehaviour
         InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1));
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         CookingFinished?.Invoke(new Item(resultItem, 1));
+        CookFinished?.Invoke();
     }
     
     private void TransferItemToInventory(Item item)
