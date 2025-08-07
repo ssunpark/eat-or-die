@@ -35,7 +35,7 @@ public class UI_CookingPanel : AUI_PopupBase
 
     public void OnClickCookingButton()
     {
-        NetworkRunner Runner = FindObjectOfType<NetworkRunner>();
+        NetworkRunner Runner = FindAnyObjectByType<NetworkRunner>();
         if (Runner == null)
         {
             Debug.Log("NetworkRunner를 찾을 수 없습니다!");

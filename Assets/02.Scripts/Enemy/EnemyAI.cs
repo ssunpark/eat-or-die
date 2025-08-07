@@ -15,6 +15,9 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	public int HitCountTemp = 0;
 	
 	private RangeDetector _rangeDetector;
+
+	[SerializeField] private float _currentHunger;
+	private float _takenDamage = 0f;
 	
 	public EnemyContext Context { get; private set; }
 
@@ -36,16 +39,19 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context.Agent.updatePosition = false;
 		Context.Agent.updateRotation = false;
 	}
-	
+
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
 		EnemyStatManager = new EnemyStatManager(_enemyId);
+
+		_currentHunger = EnemyStatManager.GetStat(EStatType.EnemyHunger);
 		
 		Context = new EnemyContext()
 		{
 			Target = null,
-			Stat = GetComponent<EnemyStat>(),
+			StatManager = EnemyStatManager,
 			Animator = GetComponent<Animator>(),
+			AnimationRelay = GetComponent<EnemyAnimationRelay>(),
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
 			Detector = this,
@@ -63,6 +69,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, stateList);
 		
+		Context.Agent.speed = Context.StatManager.GetStat(EStatType.EnemyMoveSpeed);
+		
 		stateMachines.Add(_behaviourMachine);
 	}
 
@@ -72,14 +80,15 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		if (_hit)
 		{
-			HitCountTemp++;
-			if (HitCountTemp >= 3)
+			_currentHunger -= _takenDamage;
+			if (_currentHunger <= 0)
 			{
 				_behaviourMachine.ForceActivateState<DieBehaviour>();
 				return;
 			}
 			_behaviourMachine.ForceActivateState<HitBehaviour>();
 			_hit = false;
+			_takenDamage = 0f;
 		}
 		
 		if (_rangeDetector.Cast())
@@ -90,16 +99,16 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void Move()
 	{
-		if (!Context.Agent.hasPath) return;
+		if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
 		
 		Vector3 direction = Context.Agent.nextPosition - transform.position;
-		transform.forward = direction;
+		transform.forward = direction.normalized;
 		
 		if (direction.sqrMagnitude < 0.01f) return;
 		
 		direction.Normalize();
-		
-		transform.position += direction * Context.Stat.MoveSpeed * Runner.DeltaTime;
+
+		transform.position += direction * Context.Agent.speed * Runner.DeltaTime;
 	}
 
 	public void Detect()
@@ -121,13 +130,26 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	{
 		if (HasStateAuthority)
 		{
+			float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+			float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+			_takenDamage += amount * (100 / (100 + defense));
+		
 			_hit = true;
+		}
+		else
+		{
+			RPC_HitByAttack(attack, attacker);
 		}
 	}
 
 	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
 	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
 	{
+		float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+		float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+		_takenDamage += amount * (100 / (100 + defense));
+		
+		_hit = true;
 	}
 
 	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)

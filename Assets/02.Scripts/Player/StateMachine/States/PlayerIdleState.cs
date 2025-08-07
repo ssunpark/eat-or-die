@@ -12,24 +12,31 @@ public class PlayerIdleState : APlayerStateBase
 
     protected override void OnEnterStateRender()
     {
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+        base.OnEnterStateRender();
     }
 
     protected override void OnEnterState()
     {
+        base.OnEnterState();
         _fsm.CanInteract = true;
         _fsm.CanUseItem = true;
     }
 
     protected override void OnFixedUpdate()
     {
-        KCC.Move(Vector3.zero);
-
-        
-        if (!Mathf.Approximately(_fsm.CurrentInput.direction.sqrMagnitude, 0f))
+        if (!_fsm.HasStateAuthority) return;
+        var input = _fsm.CurrentInput.direction;
+        if (!Mathf.Approximately(input.sqrMagnitude, 0f))
         {
+            Vector3 dir = new Vector3(input.x, 0, input.y);
+            KCC.SetLookRotation(Quaternion.LookRotation(dir));
+            KCC.Move(dir * _stat.GetStat(EStatType.MoveSpeed));
             Machine.ForceActivateState<PlayerMoveState>();
             return;
+        }
+        else
+        {
+            KCC.Move(Vector3.zero);
         }
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
         {
@@ -52,6 +59,7 @@ public class PlayerIdleState : APlayerStateBase
                 return;
             }
         }
+
     }
 
 

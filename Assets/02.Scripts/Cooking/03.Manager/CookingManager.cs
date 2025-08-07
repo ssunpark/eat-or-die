@@ -308,7 +308,7 @@ public class CookingManager : NetworkBehaviour
             return;
         }
 
-        _currentCookingPot?.Rpc_StartCooking();
+        _currentCookingPot?.Rpc_StartCooking(Runner.LocalPlayer);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
@@ -317,7 +317,7 @@ public class CookingManager : NetworkBehaviour
         _isCooking = true;
         // FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
         OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
-        Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
+        // Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]

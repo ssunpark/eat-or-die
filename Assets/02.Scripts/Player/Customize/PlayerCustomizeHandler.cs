@@ -27,6 +27,12 @@ public class PlayerCustomizeHandler : NetworkBehaviour
 
         if (Object.HasInputAuthority)
         {
+            if(CustomizationDataHolder.Instance == null)
+            {
+                Debug.LogWarning("[PlayerCustomizeHandler] CustomizationDataHolder가 없어용");
+                Debug.LogWarning("캐릭터 커스터마이징이 안되니 참고하세용");
+                return;
+            }
             var holder = CustomizationDataHolder.Instance;
             Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
         }
