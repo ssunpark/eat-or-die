@@ -19,9 +19,4 @@ public class IdleBehaviour : AEnemyStateBehaviour
 	protected override void OnEnterStateRender()
 	{
 	}
-
-	protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
-	{
-		return Machine.StateTime >= 0.1f;
-	}
 }

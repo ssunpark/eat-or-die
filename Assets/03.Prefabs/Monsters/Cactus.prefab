@@ -971,6 +971,7 @@ GameObject:
   - component: {fileID: 2659134971517239456}
   - component: {fileID: 2594665345068873379}
   - component: {fileID: 171160205553937881}
+  - component: {fileID: 321923788496403324}
   m_Layer: 11
   m_Name: Cactus
   m_TagString: Untagged
@@ -1091,6 +1092,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemyId: 800001
   HitCountTemp: 0
+  _currentHunger: 0
   _spawnBehaviour: {fileID: 5266104994893125905}
   _idleBehaviour: {fileID: 8098781592835120505}
   _moveBehaviour: {fileID: 6476991057249426944}
@@ -1186,7 +1188,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.8
-  m_Speed: 10
+  m_Speed: 20
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 60
@@ -1239,6 +1241,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &321923788496403324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8788173875354196848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b686ca064f4ffa873b505b0441a774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8807479332320497351
 GameObject:
   m_ObjectHideFlags: 0
