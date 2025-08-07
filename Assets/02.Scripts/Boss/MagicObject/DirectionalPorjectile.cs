@@ -44,4 +44,21 @@ public class DirectionalProjectile : MonoBehaviour
             }
         }
     }
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        var hit = other.GetComponent<IAttackable>();
+        if (hit != null)
+        {
+            var attackinfo = new AttackInfo
+            {
+                MeleeDamage = 10f,
+                TotalDamageMultiplier = 1f
+            };
+            hit.OnHitLocal(attackinfo, null);
+        }
+    }
 }

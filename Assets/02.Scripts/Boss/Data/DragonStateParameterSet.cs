@@ -23,10 +23,10 @@ public class DragonStateParameterSet
     public PrepareParams Prepare;
 
     // 근거리 공격 패턴들
-    public SwipeParams Swipe;
-    public RightScratchParams RightScratch;
-    public LeftScratchParams LeftScratch;
-    public BiteParams Bite;
+    public NormalAttackParams Swipe;
+    public NormalAttackParams RightScratch;
+    public NormalAttackParams LeftScratch;
+    public NormalAttackParams Bite;
 
     // 추격 상태 파라미터
     public ChaseParams Chase;
@@ -107,6 +107,13 @@ public class DragonStateParameterSet
         public float PrepareDuration;            // 준비 상태 지속 시간
         public float MinDistanceToFinishPrepare; // 준비 종료를 위한 최소 거리
         public float PrepareChance;              // 준비 상태 진입 확률
+    }
+    
+    [Serializable]
+    public class NormalAttackParams
+    {
+        public float DetectRadius;
+        public float Angle;
     }
 
     [Serializable]

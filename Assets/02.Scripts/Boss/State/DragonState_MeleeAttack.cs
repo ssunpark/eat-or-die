@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimationActionNotify, IAnimationExitActionNotify
 {
-    private StateMachine<DragonSubStateBase> _subStateMachine;
+    private StateMachine<DragonSubStateBase> _phase1SubStateMachine;
+    private StateMachine<DragonSubStateBase> _phase2SubStateMachine;
+    private StateMachine<DragonSubStateBase> _currentSubStateMachine;
+    
     private DragonStateParameterSet.AttackParams _attackParams;
 
     public DragonState_MeleeAttack(DragonContext context)
@@ -20,36 +23,30 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActiveRandomAttackSubState()
     {
-        int random = 3;//Random.Range(0, 4); // 0~3
-
-        switch (random)
-        {
-            case 0:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_Swipe>(true);
-                break;
-            case 1:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_RightScratch>(true);
-                break;
-            case 2:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_LeftScratch>(true);
-                break;
-            case 3:
-                _subStateMachine.TryActivateState<DragonMeleeAttack_Bite>(true);
-                break;
-        }
+        // 1번은 Prepare라고 약속, 하드코딩이지만 일단 진행
+        int random = Random.Range(1, _currentSubStateMachine.States.Length);
+        var nextState = _currentSubStateMachine.States[random];
+        _currentSubStateMachine.TryActivateState(nextState, true);
     }
 
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
-        _subStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
+        _phase1SubStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
             new DragonMeleeAttack_Prepare(Context, this),
-            new DragonMeleeAttack_Swipe(Context, this),
-            new DragonMeleeAttack_RightScratch(Context, this),
-            new DragonMeleeAttack_LeftScratch(Context, this),
-            new DragonMeleeAttack_Bite(Context, this)
+            new DragonMeleeAttack_Normal(Context, this, "Attack_Bite", Context.Parameter.Bite),
+            new DragonMeleeAttack_Normal(Context, this, "Attack_LeftScratch", Context.Parameter.LeftScratch),
+            new DragonMeleeAttack_Normal(Context, this, "Attack_RightScratch", Context.Parameter.RightScratch),
+            new DragonMeleeAttack_Normal(Context, this, "Attack_Swipe", Context.Parameter.Swipe)
         );
 
-        stateMachines.Add(_subStateMachine);
+        _phase2SubStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
+            new DragonMeleeAttack_Prepare(Context, this),
+            new DragonMeleeAttack_Special_LeftScratch(Context, this)
+        );
+        
+        _currentSubStateMachine = _phase1SubStateMachine;
+
+        stateMachines.Add(_phase1SubStateMachine);
     }
 
     public void OnSubStateComplete()
@@ -67,7 +64,7 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
         }
 
         // 너무 가까우면 후진
-        if (_subStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true))
+        if (_currentSubStateMachine.TryActivateState<DragonMeleeAttack_Prepare>(true))
         {
             return;
         }
@@ -78,15 +75,15 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
 
     public void OnActionMoment()
     {
-        if (_subStateMachine.ActiveState is IAnimationActionNotify notify)
+        if (_currentSubStateMachine.ActiveState is IAnimationActionNotify notify)
         {
             notify.OnActionMoment();
         }
     }
-    
+
     public void OnExitMoment()
     {
-        if (_subStateMachine.ActiveState is IAnimationExitActionNotify notify)
+        if (_currentSubStateMachine.ActiveState is IAnimationExitActionNotify notify)
         {
             notify.OnExitMoment();
         }

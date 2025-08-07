@@ -29,10 +29,10 @@ public class DragonParameterLoader
     public DragonStateParameterSet.ChaseParams Chase => _parameters.Chase;
     public DragonStateParameterSet.AttackParams Attack => _parameters.Attack;
     public DragonStateParameterSet.PrepareParams Prepare => _parameters.Prepare;
-    public DragonStateParameterSet.SwipeParams Swipe => _parameters.Swipe;
-    public DragonStateParameterSet.RightScratchParams RightScratch => _parameters.RightScratch;
-    public DragonStateParameterSet.LeftScratchParams LeftScratch => _parameters.LeftScratch;
-    public DragonStateParameterSet.BiteParams Bite => _parameters.Bite;
+    public DragonStateParameterSet.NormalAttackParams Swipe => _parameters.Swipe;
+    public DragonStateParameterSet.NormalAttackParams RightScratch => _parameters.RightScratch;
+    public DragonStateParameterSet.NormalAttackParams LeftScratch => _parameters.LeftScratch;
+    public DragonStateParameterSet.NormalAttackParams Bite => _parameters.Bite;
     public DragonStateParameterSet.MagicParams Magic => _parameters.Magic;
     public DragonStateParameterSet.BreathParams Breath => _parameters.Breath;
     public DragonStateParameterSet.LavaParams Lava => _parameters.Lava;

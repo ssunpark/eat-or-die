@@ -1,26 +1,27 @@
-﻿public class DragonMeleeAttack_Bite : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
+﻿public class DragonMeleeAttack_Normal : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
-    private DragonStateParameterSet.BiteParams _biteParams;
-    private bool _hasAttacked;
+    private DragonStateParameterSet.NormalAttackParams _normalAttackParams;
+    private string _animation;
 
-    public DragonMeleeAttack_Bite(
+    public DragonMeleeAttack_Normal(
         DragonContext context,
-        IParentState parent)
+        IParentState parent,
+        string animation,
+        DragonStateParameterSet.NormalAttackParams normalAttackParams)
         : base(context, parent)
     {
-        _biteParams = Context.Parameter.Bite;
+        _animation = animation;
+        _normalAttackParams = normalAttackParams;
     }
 
     protected override void OnEnterState()
     {
-        _hasAttacked = false;
-
         Context.Movement.ResetNavMeshAgent();
 
         Context.Movement.Lock();
 
         Context.Animator.SetBool("IsMove", false);
-        Context.Animator.SetTrigger("Attack_Bite");
+        Context.Animator.SetTrigger(_animation);
     }
 
     protected override void OnFixedUpdate()
@@ -35,7 +36,7 @@
 
     protected override void OnEnterStateRender()
     {
-        Context.Combat.SetDetector(_biteParams.DetectRadius, _biteParams.Angle);
+        Context.Combat.SetDetector(_normalAttackParams.DetectRadius, _normalAttackParams.Angle);
     }
 
     public void OnActionMoment()
