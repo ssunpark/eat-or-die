@@ -18,7 +18,7 @@ public class RoomInfoRepository
         string jsonData = PlayerPrefs.GetString(SaveKey, null);
         if (string.IsNullOrEmpty(jsonData))
         {
-            Debug.Log("");
+            Debug.Log("RoomInfoRepository: 저장된 RoomInfo가 없어 기본 상태로 초기화합니다.");
             return new RoomInfo();
         }
         RoomInfoDTO dto = JsonUtility.FromJson<RoomInfoDTO>(jsonData);
