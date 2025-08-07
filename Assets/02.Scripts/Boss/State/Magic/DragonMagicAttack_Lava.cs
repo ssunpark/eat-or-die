@@ -30,9 +30,17 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
 
     protected override void OnFixedUpdate()
     {
-        float t = Machine.StateTime;
+        if (!Context.Movement.IsLocked && 
+            _spawnCount >= _lavaParams.AngleList.Length &&
+            Machine.StateTime >= _lavaParams.StartDelay + (_lavaParams.Interval * _lavaParams.AngleList.Length))
+        {
+            ParentState.OnSubStateComplete();
+        }
+    }
 
-        if (_spawnCount < _lavaParams.AngleList.Length && t >= _nextSpawnTime)
+    protected override void OnRender()
+    {
+        if (_spawnCount < _lavaParams.AngleList.Length && Machine.StateTime >= _nextSpawnTime)
         {
             float angle = _lavaParams.AngleList[_spawnCount];
             float distance = Random.Range(_lavaParams.MinDistance, _lavaParams.MaxDistance);
@@ -54,14 +62,7 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
             Debug.Log($"Lava {_spawnCount + 1} 생성 (각도 {angle}, 거리 {distance})");
 
             _spawnCount++;
-            _nextSpawnTime = t + _lavaParams.Interval;
-        }
-
-        if (!Context.Movement.IsLocked && 
-            _spawnCount >= _lavaParams.AngleList.Length &&
-            t >= _lavaParams.StartDelay + (_lavaParams.Interval * _lavaParams.AngleList.Length))
-        {
-            ParentState.OnSubStateComplete();
+            _nextSpawnTime = Machine.StateTime + _lavaParams.Interval;
         }
     }
 }

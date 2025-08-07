@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class LavaFloor : MonoBehaviour
@@ -35,6 +34,23 @@ public class LavaFloor : MonoBehaviour
         if (_timer >= _duration)
         {
             _isActive = false;
+        }
+    }
+    
+    private void OnTriggerStay(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+            return;
+
+        var hit = other.GetComponent<IAttackable>();
+        if (hit != null)
+        {
+            var attackinfo = new AttackInfo
+            {
+                MeleeDamage = 10f,
+                TotalDamageMultiplier = 1f
+            };
+            hit.OnHitLocal(attackinfo, null);
         }
     }
 }

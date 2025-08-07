@@ -20,7 +20,7 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState
 
     private void TryActivateRandomMagicSkill()
     {
-        _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
+        _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
         return;
         float randProbability = Random.value;
         if (Context.Sight.Distance < Context.Parameter.Base.MeleeAttackDistance
