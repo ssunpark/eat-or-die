@@ -69,6 +69,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, stateList);
 		
+		Context.Agent.speed = Context.StatManager.GetStat(EStatType.EnemyMoveSpeed);
+		
 		stateMachines.Add(_behaviourMachine);
 	}
 
@@ -99,14 +101,14 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	{
 		if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
 		
-		Vector3 direction = Context.Agent.path.corners[1] - transform.position;
-		transform.forward = direction;
+		Vector3 direction = Context.Agent.nextPosition - transform.position;
+		transform.forward = direction.normalized;
 		
 		if (direction.sqrMagnitude < 0.01f) return;
 		
 		direction.Normalize();
-		
-		transform.position += direction * Context.StatManager.GetStat(EStatType.EnemyMoveSpeed) * Runner.DeltaTime;
+
+		transform.position += direction * Context.Agent.speed * Runner.DeltaTime;
 	}
 
 	public void Detect()
@@ -126,8 +128,23 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
 	{
-		if (!HasStateAuthority) return;
+		if (HasStateAuthority)
+		{
+			float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+			float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+			_takenDamage += amount * (100 / (100 + defense));
 		
+			_hit = true;
+		}
+		else
+		{
+			RPC_HitByAttack(attack, attacker);
+		}
+	}
+
+	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+	{
 		float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
 		float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
 		_takenDamage += amount * (100 / (100 + defense));
@@ -135,14 +152,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		_hit = true;
 	}
 
-	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
-	{
-	}
-
 	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
 	{
-		//Todo: 이펙트 처리
-
 	}
 }

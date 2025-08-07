@@ -35,5 +35,6 @@ public class TraceState : AEnemyState
     protected override void OnExitState()
     {
         Context.Agent.isStopped = true;
+        Context.Agent.velocity = Vector3.zero;
     }
 }
