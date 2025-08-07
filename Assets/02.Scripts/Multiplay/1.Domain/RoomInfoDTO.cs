@@ -6,6 +6,7 @@ using UnityEngine;
 [Serializable]
 public class RoomInfoDTO
 {
+    public string RoomName;
     public List<int> KnownIngredientsList = new List<int>();
     public List<int> KnownRecipesList = new List<int>();
 
@@ -13,6 +14,7 @@ public class RoomInfoDTO
     {
         return new RoomInfoDTO()
         {
+            RoomName = roomInfo.RoomName,
             KnownIngredientsList = roomInfo.KnownIngredients.ToList(),
             KnownRecipesList = roomInfo.KnownRecipes.ToList()
         };
@@ -21,6 +23,7 @@ public class RoomInfoDTO
     public RoomInfo ToDomain()
     {
         return new RoomInfo(
+            RoomName,
             new HashSet<int>(KnownIngredientsList ?? new List<int>()),
             new HashSet<int>(KnownRecipesList ?? new List<int>())
             );
