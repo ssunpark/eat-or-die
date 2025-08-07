@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using Fusion.Addons.FSM;
@@ -6,7 +6,7 @@ using RaycastPro.Detectors;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
-public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
+public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector
 {
 	[SerializeField] private int _enemyId; // 몬스터 ID
 
