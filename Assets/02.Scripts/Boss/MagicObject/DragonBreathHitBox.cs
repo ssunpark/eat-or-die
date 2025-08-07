@@ -6,14 +6,11 @@ public class DragonBreathHitBox : MonoBehaviour
 {
     public float ExpandSpeed = 30f;
     public float MaxLength = 20f;
-    public LayerMask HitLayer;
 
     private BoxCollider _collider;
     private float _currentLength = 0f;
     private float _timer = 0f;
     private float _despawnTime = 3f;
-
-    private HashSet<Collider> _hitTargets = new();
     
     private Action _onEndCallback;
 
@@ -25,12 +22,13 @@ public class DragonBreathHitBox : MonoBehaviour
 
     public void Init(float particleDuration, Action onDespawnCallback = null)
     {
-        _collider.size = new Vector3(1f, 1f, 0f);
+        var newSize = _collider.size;
+        newSize.z = 0f;
+        _collider.size = newSize;
         _collider.center = new Vector3(0f, 0f, 0f); // center도 초기화 필요
         _timer = 0f;
         _currentLength = 0f;
         _despawnTime = particleDuration + 1f;
-        _hitTargets.Clear();
 
         _onEndCallback = onDespawnCallback;
     }
@@ -44,7 +42,7 @@ public class DragonBreathHitBox : MonoBehaviour
             _currentLength += ExpandSpeed * Time.deltaTime;
             _currentLength = Mathf.Min(_currentLength, MaxLength);
 
-            _collider.size = new Vector3(1f, 1f, _currentLength);
+            _collider.size = new Vector3(_collider.size.x, _collider.size.y, _currentLength);
             _collider.center = new Vector3(0f, 0f, _currentLength / 2f);
         }
 
@@ -54,14 +52,14 @@ public class DragonBreathHitBox : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
-        if (((1 << other.gameObject.layer) & HitLayer) == 0) return;
-        if (_hitTargets.Contains(other)) return;
-
-        _hitTargets.Add(other);
-
-        // var hit = other.GetComponent<IDamageable>();
-        // hit?.TakeDamage(10f, null); // Object.InputAuthority 제거됨
+        if (!other.CompareTag("Player")) return;
+        
+        var hit = other.GetComponent<IAttackable>();
+        var attackinfo = new AttackInfo();
+        attackinfo.MeleeDamage = 10f;
+        attackinfo.TotalDamageMultiplier = 1f;
+        hit.OnHitLocal(attackinfo, null);
     }
 }
