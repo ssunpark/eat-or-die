@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Redcode.Pools;
+using System;
 
 public class ParticleAutoReturn : MonoBehaviour
 {
@@ -7,10 +8,14 @@ public class ParticleAutoReturn : MonoBehaviour
     private bool _isPlaying;
     private Pool<ParticleSystem> _pool;
 
+    internal void Init(Pool<ParticleSystem> pool)
+    {
+        _pool = pool;
+    }
+
     private void Awake()
     {
         _ps = GetComponent<ParticleSystem>();
-        _pool = ProjectileManager.Instance.ExplodeEffectPool[_ps];
     }
 
     private void OnEnable()

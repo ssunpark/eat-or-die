@@ -6,7 +6,7 @@ using RaycastPro.Detectors;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
-public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector
+public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
 {
 	[SerializeField] private int _enemyId; // 몬스터 ID
 
@@ -126,7 +126,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	// IAttackable Interface Implementation
 	public NetworkObject NetworkObject { get; }
 	
-	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
+	public void OnHitLocal(AttackInfo attack)
 	{
 		if (HasStateAuthority)
 		{
@@ -138,12 +138,12 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		}
 		else
 		{
-			RPC_HitByAttack(attack, attacker);
+			RPC_HitByAttack(attack);
 		}
 	}
 
 	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+	public void RPC_HitByAttack(AttackInfo attack)
 	{
 		float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
 		float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
@@ -152,7 +152,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		_hit = true;
 	}
 
-	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
+	public void OnHitStateAuthority(AttackInfo attack)
 	{
 	}
 }
