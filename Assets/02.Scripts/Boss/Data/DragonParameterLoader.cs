@@ -33,6 +33,7 @@ public class DragonParameterLoader
     public DragonStateParameterSet.NormalAttackParams RightScratch => _parameters.RightScratch;
     public DragonStateParameterSet.NormalAttackParams LeftScratch => _parameters.LeftScratch;
     public DragonStateParameterSet.NormalAttackParams Bite => _parameters.Bite;
+    public DragonStateParameterSet.LeftScratchSpecialParams LeftScratch_Special => _parameters.LeftScratch_Special;
     public DragonStateParameterSet.MagicParams Magic => _parameters.Magic;
     public DragonStateParameterSet.BreathParams Breath => _parameters.Breath;
     public DragonStateParameterSet.LavaParams Lava => _parameters.Lava;

@@ -27,6 +27,9 @@ public class DragonStateParameterSet
     public NormalAttackParams RightScratch;
     public NormalAttackParams LeftScratch;
     public NormalAttackParams Bite;
+    
+    // 근거리 변형 패턴들
+    public LeftScratchSpecialParams LeftScratch_Special;
 
     // 추격 상태 파라미터
     public ChaseParams Chase;
@@ -131,10 +134,10 @@ public class DragonStateParameterSet
     }
 
     [Serializable]
-    public class LeftScratchParams
+    public class LeftScratchSpecialParams
     {
-        public float DetectRadius;
-        public float Angle;
+        public float Speed;
+        public float LifeTime;
     }
 
     [Serializable]

@@ -1,16 +1,38 @@
 ﻿public class DragonMeleeAttack_Special_LeftScratch : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
-    public DragonMeleeAttack_Special_LeftScratch(DragonContext context, IParentState parentState) : base(context, parentState)
+    public DragonMeleeAttack_Special_LeftScratch(DragonContext context, IParentState parent) : base(context, parent)
     {
+    }
+    
+    protected override void OnEnterState()
+    {
+        Context.Movement.ResetNavMeshAgent();
+
+        Context.Movement.Lock();
+
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger("Attack_LeftScratch");
+    }
+
+    protected override void OnFixedUpdate()
+    {
+        if (Context.Movement.IsLocked)
+        {
+            return;
+        }
+
+        ParentState.OnSubStateComplete();
     }
 
     public void OnActionMoment()
     {
-        throw new System.NotImplementedException();
+        Context.Combat.Attack();
+        // 투사체 발사
+        Context.Combat.DarkProjectileEffect();
     }
 
     public void OnExitMoment()
     {
-        throw new System.NotImplementedException();
+        Context.Movement.Unlock();
     }
 }

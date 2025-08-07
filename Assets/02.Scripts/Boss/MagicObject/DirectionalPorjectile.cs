@@ -15,6 +15,8 @@ public class DirectionalProjectile : MonoBehaviour
     public void Fire(Vector3 direction, float speed, float lifeTime, Action callback)
     {
         _direction = direction.normalized;
+        var angle = Quaternion.LookRotation(_direction.normalized).eulerAngles.y;
+        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, angle, transform.eulerAngles.z);
         _speed = speed;
         _lifeTime = lifeTime;
         _timer = 0f;

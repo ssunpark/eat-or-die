@@ -15,17 +15,25 @@ public class DragonObjectPool
         Transform root = controller.transform;
         GameObject lavaPool = new("LavaPool");
         
-        BreathParticlePool = Pool.Create(controller.DragonBreathEffectPrefab, 0, root);
+        BreathParticlePool = Pool.Create(controller.DragonBreathEffectPrefab, 1, root).NonLazy();
         LavaProjectilePool = Pool.Create(controller.LavaProjectile, 0, lavaPool.transform);
         LavaFloorPool = Pool.Create(controller.LavaFloorPrefab, 0, lavaPool.transform);
 
-        foreach (var proj in controller.GetComponentsInChildren<DirectionalProjectile>())
+        foreach (var proj in controller.DirectionalProjectiles)
         {
             GameObject pool = new(proj.name);
             _dirPools.TryAdd(proj.name, Pool.Create(proj, 0, pool.transform));
         }
     }
 
-    public Pool<DirectionalProjectile> GetDirectionalPool(string name)
-        => _dirPools.TryGetValue(name, out var pool) ? pool : null;
+    public DirectionalProjectile GetDirectionalPool(string name)
+        => _dirPools.TryGetValue(name, out var pool) ? pool.Get() : null;
+
+    public void TakeDirectionalPool(string name, DirectionalProjectile projectile)
+    {
+        if (_dirPools.TryGetValue(name, out var pool))
+        {
+            pool.Take(projectile);
+        }
+    }
 }

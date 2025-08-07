@@ -6,8 +6,6 @@ public class DragonCombat
 {
     private readonly DragonController _controller;
 
-    public Transform BreathPoint => _controller.BreathPoint;
-
     public DragonCombat(DragonController controller)
     {
         _controller = controller;
@@ -56,20 +54,39 @@ public class DragonCombat
 
     #endregion
 
+    #region SpecialMelee
+
+    private const string DarkProjectileKey = "Dragon_BlackProjectile_Prefab";
+
+    public void DarkProjectileEffect()
+    {
+        var spawnPoint = _controller.LeftPoint.position;
+
+        var projectile = _controller.Pool.GetDirectionalPool(DarkProjectileKey);
+
+        projectile.transform.position = spawnPoint;
+        var param = _controller.ParamLoader.LeftScratch_Special;
+        projectile.Fire(_controller.transform.forward, param.Speed, param.LifeTime,
+            () => _controller.Pool.TakeDirectionalPool(DarkProjectileKey, projectile));
+    }
+
+    #endregion
+
     #region Magic
+
     // 브레스
     public void PlayBreath(float duration)
     {
         var vfx = _controller.Pool.BreathParticlePool.Get();
-        vfx.transform.position = BreathPoint.position;
+        vfx.transform.position = _controller.BreathPoint.position;
         vfx.transform.rotation = Quaternion.LookRotation(_controller.transform.forward);
         vfx.Init(duration, () => _controller.Pool.BreathParticlePool.Take(vfx));
     }
-    
+
     // Lava
     public void FireLava(Vector3 forward, float angle, float distance, LavaProjectileData data)
     {
-        var spawnPoint = BreathPoint.position;
+        var spawnPoint = _controller.BreathPoint.position;
 
         Quaternion rot = Quaternion.AngleAxis(angle, Vector3.up);
         Vector3 dir = rot * forward;
@@ -77,7 +94,8 @@ public class DragonCombat
 
         // 지면 위치 보정
         Debug.DrawRay(targetPos + Vector3.up * 5f, Vector3.down * 10f, Color.cyan, 10f);
-        if (Physics.Raycast(targetPos + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f, LayerMask.GetMask("Floor")))
+        if (Physics.Raycast(targetPos + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f,
+                LayerMask.GetMask("Floor")))
         {
             targetPos = hit.point;
         }
@@ -95,7 +113,7 @@ public class DragonCombat
             _controller.Pool.LavaFloorPool
         );
     }
-    
+
     // Roar
     public void PerformRoarAttack(float radius, int count, float duration)
     {
@@ -114,5 +132,6 @@ public class DragonCombat
             .Append(effect.transform.DOScale(Vector3.zero, duration / 4f))
             .AppendCallback(() => effect.SetActive(false));
     }
+
     #endregion
 }

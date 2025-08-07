@@ -18,11 +18,16 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
 
     protected override void OnEnterState()
     {
+        //_currentSubStateMachine = Context.Phase.CurrentPhase == EDragonPhase.Phase1 ? _phase1SubStateMachine : _phase2SubStateMachine;
+        _currentSubStateMachine = _phase2SubStateMachine;
+
         TryActiveRandomAttackSubState();
     }
 
     private void TryActiveRandomAttackSubState()
     {
+        _currentSubStateMachine.TryActivateState<DragonMeleeAttack_Special_LeftScratch>(true);
+        return;
         // 1번은 Prepare라고 약속, 하드코딩이지만 일단 진행
         int random = Random.Range(1, _currentSubStateMachine.States.Length);
         var nextState = _currentSubStateMachine.States[random];
@@ -43,10 +48,9 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
             new DragonMeleeAttack_Prepare(Context, this),
             new DragonMeleeAttack_Special_LeftScratch(Context, this)
         );
-        
-        _currentSubStateMachine = _phase1SubStateMachine;
 
         stateMachines.Add(_phase1SubStateMachine);
+        stateMachines.Add(_phase2SubStateMachine);
     }
 
     public void OnSubStateComplete()

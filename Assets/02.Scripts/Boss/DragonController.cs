@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
@@ -7,10 +6,18 @@ using UnityEngine;
 
 public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimationEntryActionNotify, IAnimationExitActionNotify
 {
+    [Header("공격 지점")]
     [SerializeField]
     private Transform _breathPoint;
-    
     public Transform BreathPoint => _breathPoint;
+    
+    [SerializeField]
+    private Transform _rightPoint;
+    public Transform RightPoint => _rightPoint;
+    
+    [SerializeField]
+    private Transform _leftPoint;
+    public Transform LeftPoint => _leftPoint;
 
     [Header("스킬 오브젝트")]
     [SerializeField]
@@ -35,6 +42,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [SerializeField]
     private LavaFloor _lavaFloorPrefab;
     public LavaFloor LavaFloorPrefab => _lavaFloorPrefab;
+
+    [SerializeField]
+    private List<DirectionalProjectile> _directionalProjectiles;
+    public List<DirectionalProjectile> DirectionalProjectiles => _directionalProjectiles;
     
     [Header("연출 오브젝트")]
     [SerializeField]
