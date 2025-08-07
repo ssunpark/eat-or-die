@@ -7,11 +7,14 @@ public class PlayerItemHolder: NetworkBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _handTransform;
     private PlayerFSM _playerController;
+    public EAttackType AttackType = EAttackType.MeleeWeapon;
     public Item HeldItem { get; private set; }
     private GameObject _heldItemObject;
     public string InteractionTag;
 
     private Player _player;
+
+    public string ProjectileKey;
     [System.Serializable]
     public class AnimatorOverrideEntry
     {
@@ -70,6 +73,9 @@ public class PlayerItemHolder: NetworkBehaviour
         _heldItemObject = null;
         HoldItemID = -1;
         _player.CacheAnimationLengths();
+
+        AttackType = EAttackType.MeleeWeapon;
+        ProjectileKey = "DefaultProjectile";
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
@@ -93,6 +99,9 @@ public class PlayerItemHolder: NetworkBehaviour
             return;
         }
         
+        AttackType = changedHoldItem.ItemData.AttackType;
+        ProjectileKey = changedHoldItem.ItemData.ProjectileKey;
+
         changedHoldItem.HoldItem(gameObject);
         _heldItemObject = changedHoldItem.GetHoldItemObject();
         _heldItemObject.transform.SetParent(_handTransform);
@@ -101,7 +110,6 @@ public class PlayerItemHolder: NetworkBehaviour
         _heldItemObject.transform.localPosition = new Vector3(0.07f, 0.14f, -0.02f);
         _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
         _heldItemObject.transform.localScale = Vector3.one;
-        // 계속 이 방식으로 손에 붙인다면 이 정보도 노가다로 csv에 저장해야할듯...
 
         _player.CacheAnimationLengths();
     }

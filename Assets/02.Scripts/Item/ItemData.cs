@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class ItemData
 {
@@ -38,7 +37,25 @@ public class ItemData
     private GameObject _prefab;
     public GameObject Prefab => _prefab;
 
-    public ItemData(int id, string name, string description, bool isIngredient, bool hasDurability, int maxQuantity, float maxDurability, EAttackType attackType, string iconAddressablePath, string prefabAddressablePath)
+    // 발사체 키 (원거리 공격 아이템에 사용)
+    private string _projectileKey;
+    public string ProjectileKey
+    {
+        get => _projectileKey;
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                _projectileKey = "DefaultProjectile";
+            }
+            else
+            {
+                _projectileKey = value;
+            }
+        }
+    }
+
+    public ItemData(int id, string name, string description, bool isIngredient, bool hasDurability, int maxQuantity, float maxDurability, EAttackType attackType, string iconAddressablePath, string prefabAddressablePath, string projectileKey=null)
     {
         // TODO: 유효성 검사
         ID = id;
@@ -57,6 +74,9 @@ public class ItemData
         // 프리팹 Addressable 경로가 비어있으면 기본값 사용
         var finalPrefabAddressablePath = string.IsNullOrEmpty(prefabAddressablePath) ? "Weapon_Staff_Prefab" : prefabAddressablePath;
         _prefab = Addressables.LoadAssetAsync<GameObject>(finalPrefabAddressablePath).WaitForCompletion();
+
+        // 발사체 키 설정
+        ProjectileKey = projectileKey ?? "DefaultProjectile";
     }
 
     // 설명 추가 메서드

@@ -46,4 +46,7 @@ public class WeaponItemRawData
     
     [Name("PrefabPath(Addressable)")]
     public string PrefabPath { get; set; }
+
+    [Name("ProjectileKey")]
+    public string ProjectileKey { get; set; }
 }

@@ -65,7 +65,7 @@ public class ItemFactory
     {
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, true,
             rawData.MaxStack, rawData.MaxDuration, rawData.AttackType,
-            rawData.IconPath, rawData.PrefabPath);
+            rawData.IconPath, rawData.PrefabPath, rawData.ProjectileKey);
         
         // HOld 효과 정의
         var holdStatEffect = new ItemHoldEffect_Weapon(rawData.MeleeDamage, rawData.MagicDamage, rawData.AttackSpeed, rawData.Range);
@@ -81,12 +81,13 @@ public class ItemFactory
         var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.HasDurability, rawData.MaxQuantity,
             rawData.MaxDuration ?? 1f, EAttackType.MeleeWeapon,
             rawData.AddressablePath, rawData.PrefabPath);
-        
+
         IUseEffect useEffect = rawData.ActionName switch
         {
             "Hoe" => new UseEffectHoe(),
             "WateringCan" => new UseEffectWateringCan(),
             "Seed" => new UseEffectSeed(rawData.ID),
+            _ => new UseEffectNone()
         };
         var effectList = new List<IUseEffect>() { useEffect };
         
