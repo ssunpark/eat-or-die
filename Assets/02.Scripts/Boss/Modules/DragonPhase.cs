@@ -18,10 +18,14 @@ public class DragonPhase
         _dragonController.PhaseEffect.SetActive(false);
     }
 
-    public void EvaluatePhase(float hpRatio)
+    public bool EvaluatePhase(float hpRatio)
     {
         if (hpRatio <= _phaseThreshold)
+        {
             SetPhase(EDragonPhase.Phase2);
+            return true;
+        }
+        return false;
     }
 
     private void SetPhase(EDragonPhase phase)
@@ -29,5 +33,6 @@ public class DragonPhase
         CurrentPhase = phase;
         // 전환 시 연출 or 상태 변경 트리거
         _dragonController.PhaseEffect.SetActive(true);
+        _dragonController.Animator.SetTrigger("Roar");
     }
 }

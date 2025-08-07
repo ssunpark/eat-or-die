@@ -23,6 +23,9 @@ public class DragonState_Alert : DragonStateBase
         _hasDestination = false;
 
         Context.Animator.SetBool("IsMove", true);
+        
+        float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
+        Context.Phase.EvaluatePhase(HpRatio);
     }
 
     protected override void OnFixedUpdate()

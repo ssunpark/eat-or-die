@@ -23,8 +23,6 @@ public class DragonContext
         Phase = new DragonPhase(controller, Parameter.Base);
         Animator = controller.GetComponent<Animator>();
         Transform = controller.transform;
-
-        Stats.OnHealthChanged += Phase.EvaluatePhase;
     }
 
     public void OnSpawned()
