@@ -31,8 +31,7 @@ public class DragonBreathEffect : MonoBehaviour
         _timer = 0f;
         _currentLength = 0f;
         _despawnTime = particleDuration;
-
-
+        
         // 콜라이더 초기화
         _collider.enabled = true;
         var size = _collider.size;

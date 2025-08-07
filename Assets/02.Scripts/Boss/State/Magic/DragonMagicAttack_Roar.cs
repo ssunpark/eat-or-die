@@ -24,19 +24,6 @@ public class DragonMagicAttack_Roar : DragonSubStateBase
 
     protected override void OnFixedUpdate()
     {
-        if (!_onFired && Machine.StateTime >= _roarParams.FireTime)
-        {
-            _onFired = true;
-
-            Context.Combat.PerformRoarAttack(
-                _roarParams.Radius,
-                _roarParams.Count,
-                _roarParams.Duration
-            );
-
-            return;
-        }
-
         if (Machine.StateTime >= _roarParams.FireTime + _roarParams.Duration)
         {
             Context.Animator.SetBool("Attack_Roar", false);
@@ -47,9 +34,23 @@ public class DragonMagicAttack_Roar : DragonSubStateBase
             ParentState.OnSubStateComplete();
         }
     }
-
-    protected override void OnExitState()
+    
+    protected override void OnEnterStateRender()
     {
         _onFired = false;
+    }
+
+    protected override void OnRender()
+    {
+        if (!_onFired && Machine.StateTime >= _roarParams.FireTime)
+        {
+            _onFired = true;
+
+            Context.Combat.PerformRoarAttack(
+                _roarParams.Radius,
+                _roarParams.Count,
+                _roarParams.Duration
+            );
+        }
     }
 }

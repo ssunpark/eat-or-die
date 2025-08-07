@@ -20,9 +20,6 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
 
     protected override void OnEnterState()
     {
-        _spawnCount = 0;
-        _nextSpawnTime = _lavaParams.StartDelay;
-
         Context.Movement.Lock();
         Context.Animator.SetBool("IsMove", false);
         Context.Animator.SetTrigger("Attack_Lava");
@@ -30,12 +27,18 @@ public class DragonMagicAttack_Lava : DragonSubStateBase
 
     protected override void OnFixedUpdate()
     {
-        if (!Context.Movement.IsLocked && 
+        if (!Context.Movement.IsLocked &&
             _spawnCount >= _lavaParams.AngleList.Length &&
             Machine.StateTime >= _lavaParams.StartDelay + (_lavaParams.Interval * _lavaParams.AngleList.Length))
         {
             ParentState.OnSubStateComplete();
         }
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        _nextSpawnTime = _lavaParams.StartDelay;
+        _spawnCount = 0;
     }
 
     protected override void OnRender()
