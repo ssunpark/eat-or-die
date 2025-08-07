@@ -10,6 +10,4 @@ public class EnemyBehaviourMachine : StateMachine<AEnemyStateBehaviour>
     {
         Context = context;
     }
-    
-    
 }

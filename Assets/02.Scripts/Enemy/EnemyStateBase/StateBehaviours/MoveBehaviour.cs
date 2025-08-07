@@ -38,9 +38,5 @@ public class MoveBehaviour : AEnemyStateBehaviour
     
     protected override void OnFixedUpdate()
     {
-        if (!Machine.Context.Animator.IsInTransition(0))
-        {
-            Machine.Context.Mover.Move();
-        }
     }
 }
