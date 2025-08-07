@@ -66,6 +66,10 @@ public class Projectile : NetworkBehaviour
         var ps = _pool.Get();
         ps.transform.position = transform.position;
         ps.transform.rotation = transform.rotation;
+
+        var autoReturn = ps.GetComponent<ParticleAutoReturn>();
+        autoReturn.Init(_pool);
+
         ps.Play();
     }
 
