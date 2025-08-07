@@ -24,7 +24,7 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
     {
 
         SpawnPoint = new Vector3[2];
-        SpawnPoint[(int)SpawnPosition.DemoScene] = new Vector3(30, 0, 171);
+        SpawnPoint[(int)SpawnPosition.DemoScene] = new Vector3(0, 1, 0);
         SpawnPoint[(int)SpawnPosition.Origin] = new Vector3(0, 1, 0);
     }
 
@@ -56,6 +56,8 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
         currentButtons.Set(EButtons.UseItem, InputReader.Instance.InputActions.Player.UseItem.IsPressed());
         currentButtons.Set(EButtons.Run, InputReader.Instance.InputActions.Player.Sprint.IsPressed());
 
+
+        data.mousePosition = InputReader.Instance.MousePosition;
         data.previousButtons = _prevButtons;
         data.direction = new Vector2(move.x, move.y);
         data.buttons = currentButtons;
