@@ -1,7 +1,4 @@
-﻿using Fusion;
-using Fusion.Addons.FSM;
-using Fusion.Addons.SimpleKCC;
-using UnityEngine;
+﻿using UnityEngine;
 public class PlayerCookingState : APlayerStateBase
 {
     public PlayerCookingState(PlayerFSM controller) : base(controller) 
@@ -21,24 +18,15 @@ public class PlayerCookingState : APlayerStateBase
         base.OnEnterStateRender();
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateInput()
     {
-        if (!_fsm.HasStateAuthority) return;
-
         KCC.Move(Vector3.zero);
 
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]*3)
         {
-            RPC_NotifyCookingComplete();
+            CookingManager.Instance.OnCookingCompleted();
 
-            Machine.ForceActivateState<PlayerIdleState>();
+            RequestActivateState();
         }
-    }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
-    private void RPC_NotifyCookingComplete()
-    {
-        // 요리 완료 처리
-        CookingManager.Instance.OnCookingCompleted();
     }
 }

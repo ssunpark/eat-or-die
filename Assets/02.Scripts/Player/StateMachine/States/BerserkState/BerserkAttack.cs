@@ -46,42 +46,93 @@ public class BerserkAttack : ABerserkSubStateBase
 
     public override void OnActionMoment()
     {
-        if(!_fsm.HasStateAuthority) return;
         Vector3 attackOrigin = _fsm.transform.position + _fsm.transform.rotation * _positionOffset;
-        Vector3 direction = _fsm.transform.forward;
+        Vector3 direction = KCC.GetLookRotation();
+        Vector2 dir2d = new Vector2(direction.x, direction.z);
+        EAttackType attackType = _fsm.PlayerNetworkObject.ItemHolder.AttackType;
+        float meleeDamage = _stat.GetStat(EStatType.MeleeDamage);
+        float magicDamage = _stat.GetStat(EStatType.MagicDamage);
+        float totalDamageMultiplier = _stat.GetStat(EStatType.TotalDamage);
+        float bossDamageMultiplier = _stat.GetStat(EStatType.BossDamage);
 
+        AttackInfo attackInfo = new AttackInfo()
+        {
+            MeleeDamage = meleeDamage,
+            MagicDamage = magicDamage,
+            TotalDamageMultiplier = totalDamageMultiplier,
+            BossDamageMultiplier = bossDamageMultiplier,
+            KnockbackVector = _fsm.transform.forward * _knockbackStrength,
+            HitRecoveryTime = _hitStunLength,
+            Attacker = _fsm.PlayerNetworkObject.Object
+        };
+        Debug.Log($"[PlayerAttackState] Performing attack of type: {attackType} at origin: {attackOrigin} with direction: {direction}");
+        string projectileKey = _fsm.PlayerNetworkObject.ItemHolder.ProjectileKey;
+        switch (attackType)
+        {
+            case EAttackType.MeleeWeapon:
+                PerformMeleeAttack(attackOrigin, attackInfo);
+                break;
+            case EAttackType.RangeWeapon:
+                if (_fsm.HasStateAuthority)
+                PerformRangedAttack(attackOrigin, dir2d, projectileKey, attackInfo);
+                break;
+            default:
+                Debug.LogWarning($"[PlayerAttackState] Unsupported attack type: {attackType}");
+                break;
+        }
+
+    }
+    private void PerformRangedAttack(Vector3 attackOrigin, Vector3 direction, string projectileKey = "", AttackInfo attackInfo = default)
+    {
+        if (string.IsNullOrEmpty(projectileKey))
+        {
+            Debug.LogWarning("[PlayerAttackState] ProjectileKey is null or empty. Using default.");
+            projectileKey = "DefaultProjectile";
+        }
+        Debug.Log($"[PlayerAttackState] Performing ranged attack with projectile key: {projectileKey}");
+        GameObject projectilePrefab = ProjectileManager.Instance.GetProjectile(projectileKey);
+        if (projectilePrefab == null)
+        {
+            Debug.LogError($"[PlayerAttackState] Cannot find projectile prefab with key: {projectileKey}");
+            return;
+        }
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        var projectile = Machine.Runner.Spawn(projectilePrefab, attackOrigin, rotation, PlayerRef.None).GetComponent<Projectile>();
+        if (projectile == null)
+        {
+            Debug.LogError("[PlayerAttackState] Spawned object does not have Projectile component.");
+            return;
+        }
+
+        projectile.Initialize(
+            attackInfo: attackInfo
+        );
+    }
+    private void PerformMeleeAttack(Vector3 attackOrigin, AttackInfo attackInfo)
+    {
         int result = Machine.Runner.GetPhysicsScene().OverlapSphere(attackOrigin, _stat.GetStat(EStatType.AttackRange), _hitsColliders,
-                    _fsm.BerserkLayerMask, QueryTriggerInteraction.Collide);
+                            _fsm.attackableLayerMask, QueryTriggerInteraction.Collide);
 
         for (int i = 0; i < result; i++)
         {
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
-            Debug.Log($"BerserkAttack - {target.NetworkObject.InputAuthority} detected");
 
+            // If no enemy has been hit or this target has already been hit, we continue.
             if (target == null || _fsm.HitTargets.Contains(target.NetworkObject) || target.NetworkObject == _fsm.PlayerNetworkObject?.Object)
             {
-                Debug.Log($"BerserkAttack - {target.NetworkObject.InputAuthority} is not attackable or already hit or is the player itself.");
                 continue;
             }
 
-            AttackInfo attackState = new AttackInfo()
-            {
-                MeleeDamage = _meleeDamage,
-                MagicDamage = _magicDamage,
-                TotalDamageMultiplier = _totalDamageMultiplier,
-                BossDamageMultiplier = _bossDamageMultiplier,
-                KnockbackVector = _fsm.transform.forward * _knockbackStrength,
-                HitRecoveryTime = _hitStunLength,
-            };
-            target.OnHitLocal(attackState, _fsm.PlayerNetworkObject?.Object);
-            Debug.Log($"BerserkAttack - {target.NetworkObject.InputAuthority} hit with damage: {attackState.MeleeDamage}");
+
+            target.OnHitLocal(attackInfo);
+
             if (i >= _fsm.HitTargets.Count)
                 _fsm.HitTargets.Add(target.NetworkObject);
             else
                 _fsm.HitTargets.Set(i, target.NetworkObject);
         }
-
     }
+
     protected override void OnExitState()
     {
         _fsm.HitTargets.Clear();
@@ -90,7 +141,6 @@ public class BerserkAttack : ABerserkSubStateBase
     {
         if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
-
         if (Machine.StateTime >= _animationTime)
         {
             Machine.ForceActivateState<BerserkChase>();

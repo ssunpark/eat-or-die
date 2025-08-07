@@ -18,6 +18,13 @@ public class PlayerMoveState : APlayerStateBase
     protected override void OnEnterState()
     {
         base.OnEnterState();
+        
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        base.OnEnterStateRender();
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
         _hungerConsumptionOvertime = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.HungerConsumptionOverTime);
         _moveSpeed = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.MoveSpeed);
         _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
@@ -25,22 +32,41 @@ public class PlayerMoveState : APlayerStateBase
         _fsm.CanUseItem = true;
     }
 
-    protected override void OnEnterStateRender()
+    protected override void OnFixedUpdateInput()
     {
-        base.OnEnterStateRender();
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+        Move();
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
+        {
+            RequestActivateState(EPlayerState.Attack);
+            return;
+        }
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Interact))
+        {
+            if (IsInteractTargetExists())
+            {
+                RequestActivateState(EPlayerState.Interact);
+                return;
+            }
+        }
+        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.UseItem))
+        {
+            if (IsUseItemTargetExists())
+            {
+                RequestActivateState(EPlayerState.UseItem);
+                return;
+            }
+        }
     }
 
-    protected override void OnFixedUpdate()
+    protected void Move()
     {
-        if (!_fsm.HasStateAuthority) return;
         float multiplier = _fsm.CurrentInput.buttons.IsSet(EButtons.Run) ? _sprintMultipler : 1f;
 
         var moveInput = _fsm.CurrentInput.direction;
 
         if (moveInput.sqrMagnitude < 0.01f)
         {
-            Machine.ForceActivateState<PlayerIdleState>();
+            RequestActivateState();
             KCC.Move(Vector3.zero);
             return;
         }
@@ -60,29 +86,14 @@ public class PlayerMoveState : APlayerStateBase
         }
 
         KCC.Move(movementDirection * _moveSpeed * multiplier, 0);
-        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
+    }
+    protected override void OnFixedUpdateState()
+    {
+        if(!_fsm.PlayerNetworkObject.HasInputAuthority)
         {
-            Machine.ForceActivateState<PlayerAttackState>();
-            return;
-        }
-        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Interact))
-        {
-            if (IsInteractTargetExists())
-            {
-                Machine.ForceActivateState<PlayerInteractState>();
-                return;
-            }
-        }
-        if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.UseItem))
-        {
-            if (IsUseItemTargetExists())
-            {
-                Machine.ForceActivateState<PlayerUseItemState>();
-                return;
-            }
+            Move();
         }
         _resource.ConsumeHunger(_hungerConsumptionOvertime * Machine.Runner.DeltaTime);
-
     }
 
     protected override void OnExitState()

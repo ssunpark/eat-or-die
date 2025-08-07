@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _classType: 0
-  _Nickname: 
+  _Nickname: Player
   _nicknameText: {fileID: 6576278217062109773}
 --- !u!114 &7988786741016961868
 MonoBehaviour:
@@ -477,8 +477,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackableLayerMask:
     serializedVersion: 2
-    m_Bits: 3072
-  PlayerNetworkObject: {fileID: 0}
+    m_Bits: 2048
+  PlayerNetworkObject: {fileID: -1359219720603866000}
   _CanInteract:
     _value: 0
   _CanAttack:
@@ -495,8 +495,8 @@ MonoBehaviour:
   BerserkLayerMask:
     serializedVersion: 2
     m_Bits: 3072
-  SimpleKCC: {fileID: 0}
-  HungryEffect: {fileID: 0}
+  SimpleKCC: {fileID: 7794456745956900610}
+  HungryEffect: {fileID: 4270917886160304851}
   _HitTargets: []
 --- !u!114 &1508319554009502233
 MonoBehaviour:
@@ -530,6 +530,7 @@ MonoBehaviour:
   _handTransform: {fileID: 9100239417126608133}
   AttackType: 0
   InteractionTag: 
+  ProjectileKey: 
   _overrideList:
   - key: Sword
     controller: {fileID: 22100000, guid: 7fbfb5b6b9ad11345ac36411415c5329, type: 2}
@@ -559,11 +560,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InteractionLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   TagName: 
   HoldItemID: 0
   ItemName: 
-  _controller: {fileID: 0}
+  _controller: {fileID: 9075220696021084764}
 --- !u!114 &-1195990435125554968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -648,7 +649,7 @@ MonoBehaviour:
     ColliderLayer: 10
     CollisionLayerMask:
       serializedVersion: 2
-      m_Bits: 1025
+      m_Bits: 11905
     ProxyInterpolationMode: 0
     MaxPenetrationSteps: 8
     CCDRadiusMultiplier: 0.75
@@ -675,7 +676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78dd9b7557000974fbd4b435b8917855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerFSM: {fileID: 0}
+  PlayerFSM: {fileID: 9075220696021084764}
 --- !u!136 &9038074923266824852
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -973,6 +974,11 @@ PrefabInstance:
 --- !u!4 &4270917886160304850 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1174567618921852708, guid: eece469b9b0934e4a8c93564305f5d49, type: 3}
+  m_PrefabInstance: {fileID: 3101218961181709814}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &4270917886160304851 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1174567618921852709, guid: eece469b9b0934e4a8c93564305f5d49, type: 3}
   m_PrefabInstance: {fileID: 3101218961181709814}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5655635364309781370

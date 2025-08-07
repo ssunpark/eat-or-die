@@ -5,6 +5,7 @@ public class PlayerCorpseState : APlayerStateBase
     {
         AnimState = "Die";
         StateId = (int)EPlayerState.Corpse;
+        AnimTransitionLength = 0;
     }
     private Renderer[] _rendererObjects;
     protected override void OnEnterState()
@@ -31,7 +32,7 @@ public class PlayerCorpseState : APlayerStateBase
             renderer.gameObject.SetActive(true);
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateInput()
     {
         KCC.Move(Vector3.zero);
     }
