@@ -109,7 +109,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         if (_stateMachine.Machine.ActiveState is IAnimationEntryActionNotify notify)
         {
-            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnEntryMoment();
         }
     }
@@ -118,7 +117,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         if (_stateMachine.Machine.ActiveState is IAnimationActionNotify notify)
         {
-            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnActionMoment();
         }
     }
@@ -127,7 +125,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         if (_stateMachine.Machine.ActiveState is IAnimationExitActionNotify notify)
         {
-            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnExitMoment();
         }
     }

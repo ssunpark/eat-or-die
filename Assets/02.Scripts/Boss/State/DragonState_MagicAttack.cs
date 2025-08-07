@@ -73,7 +73,6 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
     {
         if (_subStateMachine.ActiveState is IAnimationEntryActionNotify notify)
         {
-            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnEntryMoment();
         }
     }
@@ -82,7 +81,6 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
     {
         if (_subStateMachine.ActiveState is IAnimationExitActionNotify notify)
         {
-            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnExitMoment();
         }
     }
@@ -91,7 +89,6 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
     {
         if (_subStateMachine.ActiveState is IAnimationActionNotify notify)
         {
-            Debug.Log($"DragonAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnActionMoment();
         }
     }
