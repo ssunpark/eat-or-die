@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using RaycastPro.Detectors;
 using UnityEngine;
 
 public class DragonCombat
@@ -29,6 +30,33 @@ public class DragonCombat
         }
     }
 
+    #region Melee
+
+    public void SetDetector(float detectRadius, float angle)
+    {
+        _controller.AttackDetector.Radius = detectRadius;
+        _controller.AttackDetector.angleX = angle;
+    }
+
+    public void Attack()
+    {
+        foreach (var collider in _controller.AttackDetector.DetectedColliders)
+        {
+            if (collider.CompareTag("Player") && collider.TryGetComponent(out IAttackable attackable))
+            {
+                var attackinfo = new AttackInfo
+                {
+                    MeleeDamage = 10f,
+                    TotalDamageMultiplier = 1f
+                };
+                attackable.OnHitLocal(attackinfo, null);
+            }
+        }
+    }
+
+    #endregion
+
+    #region Magic
     // 브레스
     public void PlayBreath(float duration)
     {
@@ -86,4 +114,5 @@ public class DragonCombat
             .Append(effect.transform.DOScale(Vector3.zero, duration / 4f))
             .AppendCallback(() => effect.SetActive(false));
     }
+    #endregion
 }

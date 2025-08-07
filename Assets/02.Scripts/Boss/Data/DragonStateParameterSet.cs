@@ -112,25 +112,29 @@ public class DragonStateParameterSet
     [Serializable]
     public class SwipeParams
     {
-        // 스와이프 공격 전용 파라미터 (추후 구현 필요)
+        public float DetectRadius;
+        public float Angle;
     }
 
     [Serializable]
     public class RightScratchParams
     {
-        // 오른손 할퀴기 공격 파라미터 (추후 구현 필요)
+        public float DetectRadius;
+        public float Angle;
     }
 
     [Serializable]
     public class LeftScratchParams
     {
-        // 왼손 할퀴기 공격 파라미터 (추후 구현 필요)
+        public float DetectRadius;
+        public float Angle;
     }
 
     [Serializable]
     public class BiteParams
     {
-        // 물기 공격 파라미터 (추후 구현 필요)
+        public float DetectRadius;
+        public float Angle;
     }
 
     [Serializable]

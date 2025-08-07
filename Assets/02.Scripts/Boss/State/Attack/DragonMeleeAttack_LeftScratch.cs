@@ -1,4 +1,4 @@
-﻿public class DragonMeleeAttack_LeftScratch : DragonSubStateBase
+﻿public class DragonMeleeAttack_LeftScratch : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
     private DragonStateParameterSet.LeftScratchParams _leftScratchParams;
     private bool _hasAttacked;
@@ -31,5 +31,20 @@
         }
         
         ParentState.OnSubStateComplete();
+    }
+    
+    protected override void OnEnterStateRender()
+    {
+        Context.Combat.SetDetector(_leftScratchParams.DetectRadius, _leftScratchParams.Angle);
+    }
+
+    public void OnActionMoment()
+    {
+        Context.Combat.Attack();
+    }
+    
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
     }
 }

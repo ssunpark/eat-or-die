@@ -1,6 +1,6 @@
-﻿public class DragonMeleeAttack_RightScratch : DragonSubStateBase
+﻿public class DragonMeleeAttack_RightScratch : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
-    private DragonStateParameterSet.RightScratchParams RightScratch;
+    private DragonStateParameterSet.RightScratchParams _rightScratch;
     private bool _hasAttacked;
 
     public DragonMeleeAttack_RightScratch(
@@ -8,7 +8,7 @@
         IParentState parent)
         : base(context, parent)
     {
-        RightScratch = Context.Parameter.RightScratch;
+        _rightScratch = Context.Parameter.RightScratch;
     }
 
     protected override void OnEnterState()
@@ -31,5 +31,20 @@
         }
         
         ParentState.OnSubStateComplete();
+    }
+    
+    protected override void OnEnterStateRender()
+    {
+        Context.Combat.SetDetector(_rightScratch.DetectRadius, _rightScratch.Angle);
+    }
+
+    public void OnActionMoment()
+    {
+        Context.Combat.Attack();
+    }
+    
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class DragonMeleeAttack_Swipe : DragonSubStateBase
+public class DragonMeleeAttack_Swipe : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
     private DragonStateParameterSet.SwipeParams _swipeParams;
     private bool _hasAttacked;
@@ -33,5 +33,20 @@ public class DragonMeleeAttack_Swipe : DragonSubStateBase
         }
 
         ParentState.OnSubStateComplete();
+    }
+    
+    protected override void OnEnterStateRender()
+    {
+        Context.Combat.SetDetector(_swipeParams.DetectRadius, _swipeParams.Angle);
+    }
+
+    public void OnActionMoment()
+    {
+        Context.Combat.Attack();
+    }
+    
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
     }
 }

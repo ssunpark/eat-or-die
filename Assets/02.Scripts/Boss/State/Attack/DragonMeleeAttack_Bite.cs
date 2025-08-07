@@ -1,4 +1,4 @@
-﻿public class DragonMeleeAttack_Bite : DragonSubStateBase
+﻿public class DragonMeleeAttack_Bite : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
     private DragonStateParameterSet.BiteParams _biteParams;
     private bool _hasAttacked;
@@ -16,9 +16,9 @@
         _hasAttacked = false;
 
         Context.Movement.ResetNavMeshAgent();
-        
+
         Context.Movement.Lock();
-        
+
         Context.Animator.SetBool("IsMove", false);
         Context.Animator.SetTrigger("Attack_Bite");
     }
@@ -29,7 +29,22 @@
         {
             return;
         }
-        
+
         ParentState.OnSubStateComplete();
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Context.Combat.SetDetector(_biteParams.DetectRadius, _biteParams.Angle);
+    }
+
+    public void OnActionMoment()
+    {
+        Context.Combat.Attack();
+    }
+
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
     }
 }

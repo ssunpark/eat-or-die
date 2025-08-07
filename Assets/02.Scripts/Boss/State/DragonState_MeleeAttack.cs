@@ -2,7 +2,7 @@
 using Fusion.Addons.FSM;
 using UnityEngine;
 
-public class DragonState_MeleeAttack : DragonStateBase, IParentState
+public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimationActionNotify, IAnimationExitActionNotify
 {
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.AttackParams _attackParams;
@@ -20,7 +20,7 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
     private void TryActiveRandomAttackSubState()
     {
-        int random = Random.Range(0, 4); // 0~3
+        int random = 3;//Random.Range(0, 4); // 0~3
 
         switch (random)
         {
@@ -74,5 +74,21 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState
 
         // 모두 아닌경우 다시 경계 태세
         Machine.TryActivateState<DragonState_Alert>(true);
+    }
+
+    public void OnActionMoment()
+    {
+        if (_subStateMachine.ActiveState is IAnimationActionNotify notify)
+        {
+            notify.OnActionMoment();
+        }
+    }
+    
+    public void OnExitMoment()
+    {
+        if (_subStateMachine.ActiveState is IAnimationExitActionNotify notify)
+        {
+            notify.OnExitMoment();
+        }
     }
 }
