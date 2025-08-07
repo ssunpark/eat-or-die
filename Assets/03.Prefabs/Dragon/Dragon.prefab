@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1334625138126663118}
   - component: {fileID: 3515642794523664083}
   m_Layer: 0
-  m_Name: Sight
+  m_Name: SightDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15001,7 +15001,7 @@ GameObject:
   - component: {fileID: 1640360813581410663}
   - component: {fileID: 193430250931287965}
   m_Layer: 0
-  m_Name: Attack
+  m_Name: AttackDetector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36418,6 +36418,8 @@ MonoBehaviour:
   _lavaProjectilePrefab: {fileID: 1399366059635242526, guid: 2a42182c9ec7ab143a7e7ddef3056891, type: 3}
   _lavaFloorPrefab: {fileID: 4560508798471847427, guid: 08d6dab1c42a18546b0483a4e388eed9, type: 3}
   _phaseEffect: {fileID: 5026193841536070581}
+  _sightDetector: {fileID: 3515642794523664083}
+  _attackDetector: {fileID: 193430250931287965}
   _testDamage: 0
 --- !u!114 &3625587632435982483
 MonoBehaviour:

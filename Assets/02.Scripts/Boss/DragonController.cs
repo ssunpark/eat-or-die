@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
+using RaycastPro.Detectors;
 using UnityEngine;
 
 public class DragonController : NetworkBehaviour, IStateMachineOwner
@@ -38,6 +39,15 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner
     [SerializeField]
     private GameObject _phaseEffect;
     public GameObject PhaseEffect => _phaseEffect;
+    
+    [Header("감지기")]
+    [SerializeField]
+    private SightDetector _sightDetector;
+    public SightDetector SightDetector => _sightDetector;
+
+    [SerializeField]
+    private SightDetector _attackDetector;
+    public SightDetector AttackDetector => _attackDetector;
 
     [Header("테스트")]
     [SerializeField]

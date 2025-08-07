@@ -21,7 +21,7 @@ public class DragonSight
 
     public void SetSightDetector(float fullAwarenessRadius, float detectRadius, float detectAngle)
     {
-        SightDetector = _controller.GetComponentInChildren<SightDetector>();
+        SightDetector = _controller.SightDetector;
         SightDetector.fullAwareness = fullAwarenessRadius;
         SightDetector.minRadius = fullAwarenessRadius;
         SightDetector.Radius = detectRadius;
