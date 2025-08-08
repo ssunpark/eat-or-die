@@ -113,7 +113,9 @@ public class PlayerInfoManager : NetworkBehaviourSingleton<PlayerInfoManager>, I
             var playerObj = runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
             runner.SetPlayerObject(player, playerObj);
             _playerControllers[player] = playerObj.GetComponent<Player>();
-            RegisterPlayer(player, playerObj.GetComponent<PlayerCustomizeHandler>().Nickname, playerObj.GetComponent<NetworkObject>().Id);
+            var customizeHandler = playerObj.GetComponent<PlayerCustomizeHandler>();
+            var networkObj = playerObj.GetComponent<NetworkObject>();
+            RegisterPlayer(player, customizeHandler.Nickname, networkObj.Id);
         }
     }
     void INetworkRunnerCallbacks.OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
