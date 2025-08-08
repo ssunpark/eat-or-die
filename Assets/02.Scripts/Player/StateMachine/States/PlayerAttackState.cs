@@ -94,7 +94,7 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
         float totalDamageMultiplier = _stat.GetStat(EStatType.TotalDamage);
         float bossDamageMultiplier = _stat.GetStat(EStatType.BossDamage);
 
-        AttackInfo attackInfo = new AttackInfo()
+        AttackInfo attackInfo = new()
         {
             MeleeDamage = meleeDamage,
             MagicDamage = magicDamage,

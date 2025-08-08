@@ -65,7 +65,6 @@ public class BerserkAttack : ABerserkSubStateBase
             HitRecoveryTime = _hitStunLength,
             Attacker = _fsm.PlayerNetworkObject.Object
         };
-        Debug.Log($"[PlayerAttackState] Performing attack of type: {attackType} at origin: {attackOrigin} with direction: {direction}");
         string projectileKey = _fsm.PlayerNetworkObject.ItemHolder.ProjectileKey;
         switch (attackType)
         {
@@ -89,7 +88,6 @@ public class BerserkAttack : ABerserkSubStateBase
             Debug.LogWarning("[PlayerAttackState] ProjectileKey is null or empty. Using default.");
             projectileKey = "DefaultProjectile";
         }
-        Debug.Log($"[PlayerAttackState] Performing ranged attack with projectile key: {projectileKey}");
         GameObject projectilePrefab = ProjectileManager.Instance.GetProjectile(projectileKey);
         if (projectilePrefab == null)
         {
