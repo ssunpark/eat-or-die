@@ -91,7 +91,7 @@ public class ItemFactory
             _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MeleeDamage, "#ffffff", rawData.MeleeDamage),
             _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MagicDamage, "#ffffff", rawData.MagicDamage),
             _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackSpeed, "#ffffff", rawData.AttackSpeed),
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackRange, "#ffffff", rawData.Range),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackRange, "#ffffff", rawData.AttackRange),
         };
         
         var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Weapon,
@@ -105,11 +105,43 @@ public class ItemFactory
             projectileKey: rawData.ProjectileKey);
 
         // HOld 효과 정의
-        var holdStatEffect = new ItemHoldEffect_Weapon(rawData.MeleeDamage, rawData.MagicDamage, rawData.AttackSpeed,
-            rawData.Range);
-        var holdAnimatorEffect = new ItemHoldEffect_Animator(rawData.ActionName);
-        var holdEffectList = new List<IItemHoldEffect>() { holdStatEffect, holdAnimatorEffect };
+        var holdEffectList = new List<IItemHoldEffect>()
+        {
+            new ItemHoldEffect_Animator(rawData.ActionName),
+            new ItemHoldEffect_Stat(rawData.ID, rawData.MeleeDamage, EStatType.MeleeDamage),
+            new ItemHoldEffect_Stat(rawData.ID, rawData.MagicDamage, EStatType.MagicDamage),
+            new ItemHoldEffect_Stat(rawData.ID, rawData.AttackSpeed, EStatType.AttackSpeed),
+            new ItemHoldEffect_Stat(rawData.ID, rawData.AttackRange, EStatType.AttackRange),
+        };
 
+        var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemDefinition.Prefab, _itemPoolParent);
+        return new ItemProfile(itemDefinition, holdEffectList, null, pool, poolParent);
+    }
+
+    public ItemProfile CreateItem(EquipmentItemRawData rawData)
+    {
+        var extraDescription = new List<string>()
+        {
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Equip, EStatType.MeleeDefense, "#ffffff", rawData.MeleeDefense),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Equip, EStatType.MagicDefense, "#ffffff", rawData.MagicDefense),
+        };
+        
+        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Equip,
+            extraDescription: extraDescription,
+            isIngredient: rawData.IsIngredient,
+            hasDurability: rawData.HasDurability,
+            maxQuantity: rawData.MaxQuantity,
+            maxDurability: rawData.MaxDuration,
+            equipType: rawData.EquipType,
+            iconAddressablePath: rawData.IconPath,
+            prefabAddressablePath: rawData.PrefabPath);
+
+        var holdEffectList = new List<IItemHoldEffect>()
+        {
+            new ItemHoldEffect_Stat(rawData.ID, rawData.MeleeDefense, EStatType.MeleeDefense),
+            new ItemHoldEffect_Stat(rawData.ID, rawData.MagicDefense, EStatType.MagicDefense),
+        };
+        
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemDefinition.Prefab, _itemPoolParent);
         return new ItemProfile(itemDefinition, holdEffectList, null, pool, poolParent);
     }

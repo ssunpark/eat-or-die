@@ -13,6 +13,7 @@ public class ItemManager : NetworkBehaviour
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
     private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
     private const string WEAPON_CSV_PATH = "/ItemCSV/Weapon.csv";
+    private const string EQUIP_CSV_PATH = "/ItemCSV/Equip.csv";
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -52,12 +53,12 @@ public class ItemManager : NetworkBehaviour
         }
         
         // 장비 아이템
-        // var equipmentItemRawDataList = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
-        // foreach (var data in equipmentItemRawDataList)
-        // {
-        //     var useItem = _itemFactory.CreateEquipmentItem(data);
-        //     _itemDict[data.ID] = useItem;
-        // }
+        var equipmentItemRawDataList = CSVLoader<EquipmentItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{EQUIP_CSV_PATH}");
+        foreach (var data in equipmentItemRawDataList)
+        {
+            var useItem = _itemFactory.CreateItem(data);
+            _itemDictionary[data.ID] = useItem;
+        }
         
         // 무기 아이템
         var weaponItemRawData = CSVLoader<WeaponItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{WEAPON_CSV_PATH}");

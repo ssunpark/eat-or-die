@@ -19,7 +19,7 @@ public class ItemHoldEffect_Weapon : IItemHoldEffect
     public void Hold(GameObject target)
     {
         target.GetComponent<Player>().Stat.ApplyModifier(EStatType.MeleeDamage, new StatModifier(EStatModifierType.Add, _meleeDamage, EFFECT_SOURCE));
-        target.GetComponent<Player>().Stat.ApplyModifier(EStatType.MagicDamage, new StatModifier(EStatModifierType.Add, _meleeDamage, EFFECT_SOURCE));
+        target.GetComponent<Player>().Stat.ApplyModifier(EStatType.MagicDamage, new StatModifier(EStatModifierType.Add, _magicDamage, EFFECT_SOURCE));
         target.GetComponent<Player>().Stat.ApplyModifier(EStatType.AttackSpeed, new StatModifier(EStatModifierType.Add, _attackSpeed, EFFECT_SOURCE));
         target.GetComponent<Player>().Stat.ApplyModifier(EStatType.AttackRange, new StatModifier(EStatModifierType.Add, _range, EFFECT_SOURCE));
     }

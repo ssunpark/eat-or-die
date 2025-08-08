@@ -39,7 +39,7 @@ public class WeaponItemRawData
     public float AttackSpeed { get; set; }
 
     [Name("Range")]
-    public float Range { get; set; }
+    public float AttackRange { get; set; }
 
     [Name("IconPath(Addressable)")]
     public string IconPath { get; set; }
