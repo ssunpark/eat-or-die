@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
-    private Item[] _ingredients ;
-    public Item[] Ingredients => _ingredients;
+    private ItemInstance[] _ingredients ;
+    public ItemInstance[] Ingredients => _ingredients;
     public event Action OnInventoryUpdated;
 
     public UI_RecipeList RecipeListUI;
@@ -26,8 +26,8 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
             .ToHashSet();
         
         _ingredients = InventoryManager.Instance.Inventory.SlotList
-            .Where(slot => slot.Item != null && slot.Item.ID >= 200000 && slot.Item.ID < 300000 && validIngredientIDs.Contains(slot.Item.ID))
-            .Select(slot => slot.Item)
+            .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
+            .Select(slot => slot.ItemInstance)
             .ToArray();
         for (int i = 0; i < _ingredients.Length; i++)
         {

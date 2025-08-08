@@ -50,7 +50,7 @@ public class PlayerDeadState : APlayerStateBase
                 var slot = inv.SlotList[i];
                 if (!slot.IsEmpty)
                 {
-                    var item = slot.Item;
+                    var item = slot.ItemInstance;
                     ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, _fsm.transform.position, Quaternion.identity);
                     slot.RemoveItem();
                 }
@@ -65,7 +65,7 @@ public class PlayerDeadState : APlayerStateBase
                 var slot = qs.SlotList[i];
                 if (!slot.IsEmpty)
                 {
-                    var item = slot.Item;
+                    var item = slot.ItemInstance;
                     ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, _fsm.transform.position, Quaternion.identity);
                     slot.RemoveItem();
                 }

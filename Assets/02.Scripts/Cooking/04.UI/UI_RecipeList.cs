@@ -64,9 +64,9 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
     
-    private void HandleCookingFinished(Item cookedItem)
+    private void HandleCookingFinished(ItemInstance cookedItemInstance)
     {
-        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);
+        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItemInstance.ID);
         if (recipe == null) return;
 
         if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))

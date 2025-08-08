@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-public class ItemData
+public class ItemDefinition
 {
     // 아이템 고유 ID
     public readonly int ID;
@@ -55,7 +55,7 @@ public class ItemData
         }
     }
 
-    public ItemData(int id, string name, string description, bool isIngredient, bool hasDurability, int maxQuantity, float maxDurability, EAttackType attackType, string iconAddressablePath, string prefabAddressablePath, string projectileKey=null)
+    public ItemDefinition(int id, string name, string description, bool isIngredient, bool hasDurability, int maxQuantity, float maxDurability, EAttackType attackType, string iconAddressablePath, string prefabAddressablePath, string projectileKey=null)
     {
         // TODO: 유효성 검사
         ID = id;

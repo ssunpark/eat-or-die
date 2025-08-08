@@ -27,15 +27,15 @@ public class UI_CookingCompletedPopup : MonoBehaviour
         CookingManager.CookingFinished -= ShowPopup;
     }
 
-    private void ShowPopup(Item item)
+    private void ShowPopup(ItemInstance itemInstance)
     {
-        if (item == null || item.ItemInfo.ItemData == null)
+        if (itemInstance == null || itemInstance.ItemProfile.ItemDefinition == null)
         {
             Debug.LogWarning("[UI_CookingCompletedPopup] 전달된 아이템이 null입니다.");
             return;
         }
 
-        Refresh(item.ItemInfo.ItemData);
+        Refresh(itemInstance.ItemProfile.ItemDefinition);
         FadeIn();
 
         if (_coroutine != null)
@@ -47,17 +47,17 @@ public class UI_CookingCompletedPopup : MonoBehaviour
 
     }
     
-    public void Refresh(ItemData itemData)
+    public void Refresh(ItemDefinition itemDefinition)
     {
-        if (itemData == null)
+        if (itemDefinition == null)
         {
             Debug.Log("[UICookingCompletedPopup] itemData is null");
             return;
         }
 
-        RecipeIcon.sprite = itemData.Icon;
-        RecipeName.text = itemData.Name;
-        RecipeDescription.text = itemData.Description;
+        RecipeIcon.sprite = itemDefinition.Icon;
+        RecipeName.text = itemDefinition.Name;
+        RecipeDescription.text = itemDefinition.Description;
     }
     
     private void FadeIn()
