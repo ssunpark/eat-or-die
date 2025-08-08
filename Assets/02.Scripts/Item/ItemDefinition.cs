@@ -7,6 +7,9 @@ public class ItemDefinition
     // 아이템 고유 ID
     public readonly int ID;
     
+    // 아이템 종류
+    public readonly EItemType Type;
+    
     // 아이템 이름
     public readonly string Name;
     
@@ -24,6 +27,18 @@ public class ItemDefinition
 
     // 공격 방식 (근거리, 원거리)
     public readonly EAttackType AttackType;
+    
+    // 공격력
+    public readonly float MeleeDamage;
+    
+    // 마법 공격력
+    public readonly float MagicDamage;
+
+    // 공격 속도
+    public readonly float AttackSpeed;
+    
+    // 공격 범위
+    public readonly float Range;
     
     // 아이템 설명 (추가 가능)
     private string _description;
@@ -55,9 +70,16 @@ public class ItemDefinition
         }
     }
 
-    public ItemDefinition(int id, string name, string description, bool isIngredient, bool hasDurability, int maxQuantity, float maxDurability, EAttackType attackType, string iconAddressablePath, string prefabAddressablePath, string projectileKey=null)
+    public ItemDefinition(int id, string name, string description, 
+        EAttackType attackType = EAttackType.MeleeWeapon,
+        bool isIngredient = false, 
+        bool hasDurability = false, 
+        int maxQuantity = 1, 
+        float maxDurability = 1f,  
+        string iconAddressablePath = null, 
+        string prefabAddressablePath = null, 
+        string projectileKey=null)
     {
-        // TODO: 유효성 검사
         ID = id;
         Name = name;
         _description = description;
@@ -68,7 +90,7 @@ public class ItemDefinition
         HasDurability = hasDurability;
 
         // 아이콘 Addressable 경로가 비어있으면 기본값 사용
-        var finalIconAddressablePath = iconAddressablePath == String.Empty ? "TestItemIcon" : iconAddressablePath;
+        var finalIconAddressablePath = string.IsNullOrEmpty(iconAddressablePath)  ? "TestItemIcon" : iconAddressablePath;
         _icon = Addressables.LoadAssetAsync<Sprite>(finalIconAddressablePath).WaitForCompletion();
         
         // 프리팹 Addressable 경로가 비어있으면 기본값 사용

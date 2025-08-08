@@ -21,7 +21,7 @@ public class WeaponItemRawData
     public EAttackType AttackType { get; set; }
 
     [Name("MaxStack")]
-    public int MaxStack { get; set; }
+    public int MaxQuantity { get; set; }
 
     [Name("ActionName")]
     public string ActionName { get; set; }
