@@ -28,9 +28,8 @@ public class PlayerDeadState : APlayerStateBase
     {
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateState()
     {
-        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
         {
