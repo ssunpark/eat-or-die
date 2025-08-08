@@ -14,6 +14,8 @@ public class ItemManager : NetworkBehaviour
     private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
     private const string WEAPON_CSV_PATH = "/ItemCSV/Weapon.csv";
     private const string EQUIP_CSV_PATH = "/ItemCSV/Equip.csv";
+    private const string CRAFT_CSV_PATH = "/ItemCSV/Craft.csv";
+    
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
@@ -78,8 +80,13 @@ public class ItemManager : NetworkBehaviour
         var seedRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}");
         seedRawDataList.ForEach(x => x.ItemType = EItemType.Seed);
         
+        // 설치 아이템
+        var craftRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{CRAFT_CSV_PATH}");
+        seedRawDataList.ForEach(x => x.ItemType = EItemType.Craft);
+        
         var usableRawDataList = toolRawDataList;
         usableRawDataList.AddRange(seedRawDataList);
+        usableRawDataList.AddRange(craftRawDataList);
         foreach (var data in usableRawDataList)
         {
             var usableItem = _itemFactory.CreateItem(data);
