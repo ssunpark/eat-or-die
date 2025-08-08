@@ -7,26 +7,6 @@ using UnityEngine.EventSystems;
 
 public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField] private NetworkPrefabRef _playerPrefab;
-
-    private Dictionary<EStatType, float> _statInputs = new();
-    private static Dictionary<PlayerRef, Player> _playerControllers = new();
-    public static IDictionary<PlayerRef, Player> PlayerControllers => _playerControllers;
-    [HideInInspector]public Vector3[] SpawnPoint;
-
-    public enum SpawnPosition
-    {
-        DemoScene,
-        Origin
-    } 
-    public SpawnPosition SpawnPos;
-    private void Awake()
-    {
-
-        SpawnPoint = new Vector3[2];
-        SpawnPoint[(int)SpawnPosition.DemoScene] = new Vector3(0, 1, 0);
-        SpawnPoint[(int)SpawnPosition.Origin] = new Vector3(0, 1, 0);
-    }
 
     public void SetRunner(NetworkRunner runner)
     {
@@ -39,7 +19,7 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        NetworkInputData data = new NetworkInputData();
+        NetworkInputData data = new();
         if (InputReader.Instance == null || !InputReader.Instance.HaveControl())
         {
             input.Set(data);
@@ -66,19 +46,6 @@ public class FusionInputProvider : SimulationBehaviour, INetworkRunnerCallbacks
         input.Set(data);
     }
 
-    public void SpawnPlayer(NetworkRunner runner, PlayerRef player)
-    {
-        if (runner.IsServer)
-        {
-            var baseStats = new Dictionary<EStatType, float>(_statInputs);
-
-            Vector3 spawnPos = SpawnPoint[(int)SpawnPos];
-            //new((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0)
-            var playerObj = runner.Spawn(_playerPrefab, spawnPos, Quaternion.identity, player);
-            runner.SetPlayerObject(player, playerObj);
-            _playerControllers[player] = playerObj.GetComponent<Player>();
-        }
-    }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         

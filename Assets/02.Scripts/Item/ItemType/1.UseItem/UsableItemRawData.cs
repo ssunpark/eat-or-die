@@ -1,4 +1,5 @@
-﻿using CsvHelper.Configuration.Attributes;
+﻿using System;
+using CsvHelper.Configuration.Attributes;
 
 public class UsableItemRawData
 {
@@ -10,6 +11,9 @@ public class UsableItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
+    
+    [Ignore]
+    public EItemType ItemType { get; set; }
     
     [Name("HasDurability")]
     public bool HasDurability { get; set; }
@@ -27,7 +31,7 @@ public class UsableItemRawData
     public string ActionName { get; set; }
 
     [Name("IconPath(Addressable)")]
-    public string AddressablePath { get; set; }
+    public string IconPath { get; set; }
     
     [Name("PrefabPath(Addressable)")]
     public string PrefabPath { get; set; }

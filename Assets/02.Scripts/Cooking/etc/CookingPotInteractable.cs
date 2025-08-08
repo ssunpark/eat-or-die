@@ -30,7 +30,7 @@ public class CookingPotInteractable : NetworkBehaviour, IInteractable
             // 요리가 가능한 경우
             _isCooking = true;
             CookingManager.Instance.Rpc_StartCooking(info.Source);
-            FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+            PlayerInfoManager.PlayerControllers[player].RequestState(EPlayerState.Cooking);
         }
     }
 

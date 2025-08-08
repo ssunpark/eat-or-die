@@ -27,7 +27,6 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
         _fsm.CanUseItem = false;
         if (_fsm.InteractTarget == null)
         {
-            Debug.LogError("PlayerInteractState: Target is null. Cannot enter state.");
             RequestActivateState();
             return;
         }
