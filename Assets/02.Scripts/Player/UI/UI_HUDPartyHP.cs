@@ -6,7 +6,6 @@ using UnityEngine;
 public class UI_HUDPartyHP: MonoBehaviour
 {
     [SerializeField] private UI_PartySlot[] _partySlots;
-    [SerializeField] private ResourceManager[] _resourceManagers;
 
     private float _checkTimer;
     private const float CheckInterval = 0.5f;
