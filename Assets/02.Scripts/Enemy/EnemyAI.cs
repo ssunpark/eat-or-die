@@ -163,8 +163,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			_takenDamage += amount * (100 / (100 + defense));
 		
 			_hit = true;
-
-			_behaviourMachine.ForceActivateState<HitBehaviour>();
 		}
 	}
 

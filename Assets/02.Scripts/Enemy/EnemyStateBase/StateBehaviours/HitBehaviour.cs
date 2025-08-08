@@ -27,6 +27,6 @@ public class HitBehaviour : AEnemyStateBehaviour
 
     protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
     {
-        return true;
+        return nextStateBehaviour is not AttackBehaviour;
     }
 }
