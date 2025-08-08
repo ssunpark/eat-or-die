@@ -4,6 +4,7 @@
     Idle,
     RunForward,
     Hit,
+    AttackPrepare,
     Attack,
     Die,
 }
