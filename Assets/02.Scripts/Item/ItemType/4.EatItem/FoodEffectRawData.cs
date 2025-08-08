@@ -1,13 +1,10 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-public class EatEffectRawData
+public class FoodEffectRawData
 {
     [Name("EStatType")]
-    public EStatType Type { get; set; }
+    public EStatType StatType { get; set; }
     
     [Name("EStatModifierType")]
     public EStatModifierType StatModifierType { get; set; }
-    
-    [Name("Description")]
-    public string Description { get; set; }
 }

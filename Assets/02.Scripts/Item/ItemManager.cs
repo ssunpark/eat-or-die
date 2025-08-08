@@ -70,8 +70,15 @@ public class ItemManager : NetworkBehaviour
         }
         
         // 도구 아이템
-        var usableRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
-        usableRawDataList.AddRange(CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
+        var toolRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
+        toolRawDataList.ForEach(x => x.ItemType = EItemType.Tool);
+        
+        // 씨앗 아이템
+        var seedRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}");
+        seedRawDataList.ForEach(x => x.ItemType = EItemType.Seed);
+        
+        var usableRawDataList = toolRawDataList;
+        usableRawDataList.AddRange(seedRawDataList);
         foreach (var data in usableRawDataList)
         {
             var usableItem = _itemFactory.CreateItem(data);

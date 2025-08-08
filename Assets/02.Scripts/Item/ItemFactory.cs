@@ -1,21 +1,37 @@
 ﻿using System.Collections.Generic;
 using Redcode.Pools;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemFactory
 {
+    private const string FOOD_EFFECT_CSV_PATH = "/ItemCSV/FoodEffect.csv";
+    
     private readonly Transform _itemPoolParent;
 
     private readonly Dictionary<string, Pool<Transform>> _sharedPools = new();
 
+    private Dictionary<EStatType, EStatModifierType> _foodEffectModifierDictionary;
+    
+    // 아이템 효과 설명 factory
+    private ItemExtraDescriptionFactory _itemExtraDescriptionFactory = new();
+    
     public ItemFactory(Transform itemPoolParent)
     {
         _itemPoolParent = itemPoolParent;
+        LoadFoodEffectModifier();
     }
 
-    // 음식 아이템 효과 설명 factory
-    private EatEffectManager _eatEffectManager = new();
+    // 음식 아이템 효과 연산자
+    private void LoadFoodEffectModifier()
+    {
+        _foodEffectModifierDictionary = new Dictionary<EStatType, EStatModifierType>();
+        var effectList =
+            CSVLoader<FoodEffectRawData>.LoadCSV($"{Application.streamingAssetsPath}{FOOD_EFFECT_CSV_PATH}");
+        foreach (var effect in effectList)
+        {
+            _foodEffectModifierDictionary.Add(effect.StatType, effect.StatModifierType);
+        }
+    }
 
     // 주어진 데이터에 맞게 아이템 생성 후 반환
     public ItemProfile CreateItem(EatItemRawData rawData)
@@ -43,10 +59,13 @@ public class ItemFactory
             {
                 var statValue = value ?? 0;
                 var buffDuration = duration ?? 0;
-                var modifierType = _eatEffectManager.GetStatModifierType(statType);
-                var effect = new EatEffect_StatModifier(statType, statValue, buffDuration, modifierType);
-                effectList.Add(effect);
-                var desc = _eatEffectManager.GetDescription(statType, statValue, buffDuration);
+                if (_foodEffectModifierDictionary.TryGetValue(statType, out var modifier))
+                {
+                    var effect = new EatEffect_StatModifier(statType, statValue, buffDuration, modifier);
+                    effectList.Add(effect);
+                }
+                
+                var desc = _itemExtraDescriptionFactory.GetDescription(EItemType.Food, statType, "#ffffff", statValue, buffDuration);
                 extraDescription.Add(desc);
             }
         }
@@ -54,19 +73,29 @@ public class ItemFactory
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
 
-        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description,
+        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Food,
+            extraDescription: extraDescription,
             isIngredient: rawData.IsIngredient,
             maxQuantity: rawData.MaxQuantity,
             iconAddressablePath: rawData.IconPath,
             prefabAddressablePath: rawData.PrefabPath);
 
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemDefinition.Prefab, _itemPoolParent);
-        return new ItemProfile(itemDefinition, holdEffectList, effectList, pool, poolParent, extraDescription);
+        return new ItemProfile(itemDefinition, holdEffectList, effectList, pool, poolParent);
     }
 
     public ItemProfile CreateItem(WeaponItemRawData rawData)
     {
-        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description,
+        var extraDescription = new List<string>()
+        {
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MeleeDamage, "#ffffff", rawData.MeleeDamage),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MagicDamage, "#ffffff", rawData.MagicDamage),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackSpeed, "#ffffff", rawData.AttackSpeed),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackRange, "#ffffff", rawData.Range),
+        };
+        
+        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Weapon,
+            extraDescription: extraDescription,
             isIngredient: rawData.IsIngredient,
             maxQuantity: rawData.MaxQuantity,
             maxDurability: rawData.MaxDuration,
@@ -87,7 +116,7 @@ public class ItemFactory
 
     public ItemProfile CreateItem(UsableItemRawData rawData)
     {
-        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, 
+        var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, rawData.ItemType,
             hasDurability: rawData.HasDurability,
             maxQuantity: rawData.MaxQuantity,
             maxDurability: rawData.MaxDuration ?? 1f,

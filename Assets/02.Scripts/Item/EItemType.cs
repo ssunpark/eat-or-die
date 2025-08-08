@@ -5,4 +5,5 @@
     Weapon,
     Equip,
     Tool,
+    Seed,
 }
