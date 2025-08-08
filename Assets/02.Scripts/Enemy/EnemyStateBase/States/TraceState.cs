@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class TraceState : AEnemyState
 {
-    private static readonly int MoveForward = Animator.StringToHash("MoveForward");
-    
     protected override bool CanEnterState()
     {
         return (Context.Target != null);
@@ -12,14 +10,13 @@ public class TraceState : AEnemyState
 
     protected override void OnEnterState()
     {
-        Debug.Log("Trace...");
         Context.Agent.isStopped = false;
-        Context.Animator.SetTrigger(MoveForward);
+        Context.Owner.AnimationState = EAnimationState.RunForward;
     }
 
     protected override void OnFixedUpdate()
     {
-        if (ParentBehaviour.Machine.TryActivateState<AttackBehaviour>())
+        if (ParentBehaviour.Machine.TryActivateState<AttackBehaviour>(true))
         {
             return;
         }

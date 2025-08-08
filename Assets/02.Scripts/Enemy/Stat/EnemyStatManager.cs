@@ -12,7 +12,7 @@ public class EnemyStatManager
     public EnemyStatManager(int id)
     {
         EnemyRawData enemyData = EnemyDataManager.Instance.EnemyRawDataDictionary[id];
-        
+        Debug.Log("attackRange: " + enemyData.AttackRange);
         _statDictionary = new Dictionary<EStatType, Stat>
         {
             { EStatType.EnemyHunger, new Stat(EStatType.EnemyHunger, enemyData.Hunger) },

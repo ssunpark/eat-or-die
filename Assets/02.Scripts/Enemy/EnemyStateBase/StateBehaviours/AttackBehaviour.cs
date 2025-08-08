@@ -3,7 +3,6 @@ using Fusion.Addons.FSM;
 
 public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 {
-	private static readonly int Attack = Animator.StringToHash("Attack");
 	private bool _isAttackFinished = false;
 
 	protected override bool CanEnterState()
@@ -11,8 +10,9 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 		Vector3 toTarget = Machine.Context.Target.transform.position - transform.position;
 		float distance = toTarget.magnitude;
 		
-		if (Machine.StateTime >= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackSpeed)
-			&& distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
+		// if (Machine.StateTime >= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackSpeed)
+		
+		if (distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
 		    && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle))
 		{
 			return true;
@@ -23,10 +23,8 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 	
 	protected override void OnEnterState()
 	{
-		Debug.Log("Attacking...");
 		_isAttackFinished = false;
-		Machine.Context.Animator.SetTrigger(Attack);
-		Machine.Context.AnimationRelay.SetReceiver(this);
+		Machine.Context.Owner.AnimationState = EAnimationState.Attack;
 	}
 
 	protected override void OnFixedUpdate()
@@ -43,8 +41,6 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 	protected override void OnExitState()
 	{
 		_isAttackFinished = false;
-		Machine.Context.Animator.ResetTrigger(Attack);
-		Machine.Context.AnimationRelay.RemoveReceiver();
 	}
 
 	protected override bool CanExitState(AEnemyStateBehaviour nextState)
@@ -52,14 +48,8 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 		return _isAttackFinished;
 	}
 
-	protected override void OnEnterStateRender()
-	{
-	}
-
 	public void OnActionMoment()
 	{
-		if (!HasStateAuthority) return;
-		
 		Debug.Log("Attack Moment Triggered");
 	}
 }
