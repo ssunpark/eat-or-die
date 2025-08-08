@@ -61,13 +61,6 @@ public class ItemDefinition
             }
         }
     }
-    
-    // float meleeDamage = 0f, 
-    // float magicDamage = 0f, 
-    // float attackSpeed = 0f, 
-    // float range = 0f, 
-    // float meleeDefense = 0f, 
-    // float magicDefense = 0f, 
 
     public ItemDefinition(int id, string name, string description, EItemType type, 
         List<string> extraDescription = null,
