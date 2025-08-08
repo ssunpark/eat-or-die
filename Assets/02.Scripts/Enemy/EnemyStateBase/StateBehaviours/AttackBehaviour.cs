@@ -7,18 +7,17 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 
 	protected override bool CanEnterState()
 	{
+		if (Machine.Context.Animator.IsInTransition(0) ||
+		    Machine.StateTime < Machine.Context.StatManager.GetStat(EStatType.EnemyAttackSpeed))
+		{
+			return false;
+		}
+		
 		Vector3 toTarget = Machine.Context.Target.transform.position - transform.position;
 		float distance = toTarget.magnitude;
 		
-		// if (Machine.StateTime >= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackSpeed)
-		
-		if (distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
-		    && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle))
-		{
-			return true;
-		}
-
-		return false;
+		return distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
+		       && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle);
 	}
 	
 	protected override void OnEnterState()
