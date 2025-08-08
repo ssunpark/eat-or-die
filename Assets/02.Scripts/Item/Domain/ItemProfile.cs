@@ -17,21 +17,13 @@ public class ItemProfile
     // 먹기, 설치, 상호작용
     private readonly List<IUseEffect> _useEffect;
 
-    public ItemProfile(ItemDefinition itemDefinition, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Pool<Transform> prefabPool, Transform poolParent, List<string> extraDescription = null)
+    public ItemProfile(ItemDefinition itemDefinition, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Pool<Transform> prefabPool, Transform poolParent)
     {
         ItemDefinition = itemDefinition;
         _useEffect = useEffect;
         _holdEffect = holdEffect;
         _itemPrefabPool = prefabPool;
         _poolParent = poolParent;
-
-        if (extraDescription != null)
-        {
-            foreach (var description in extraDescription)
-            {
-                ItemDefinition.AddDescription(description);
-            }
-        }
 
         // 풀링
         _itemPrefabPool = Pool.Create(ItemDefinition.Prefab.transform, 0, _poolParent.transform);
