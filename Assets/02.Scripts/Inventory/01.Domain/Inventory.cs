@@ -140,6 +140,11 @@ public class Inventory
 
         return item;
     }
+
+    public bool HaveItem(int itemID)
+    {
+        return GetItemCount(itemID) > 0;
+    }
     
     public int GetItemCount(int itemID)
     {
