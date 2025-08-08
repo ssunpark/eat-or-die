@@ -27,15 +27,15 @@ public class UI_RecipeIngredient : MonoBehaviour
 
         foreach (int id in ingredientIdList)
         {
-            AItemInfo itemInfo = ItemManager.Instance.GetItem(id);
-            if (itemInfo == null) continue;
+            ItemProfile itemProfile = ItemManager.Instance.GetItem(id);
+            if (itemProfile == null) continue;
 
             GameObject buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var button = buttonObj.GetComponent<UI_IngredientButton>();
-            button.Refresh(itemInfo.ItemData); // <- AItemInfo 넘김
+            button.Refresh(itemProfile.ItemDefinition); // <- AItemInfo 넘김
             buttonObj.SetActive(false);
 
-            _ingredientButtonDict[itemInfo.ItemData.ID] = button;
+            _ingredientButtonDict[itemProfile.ItemDefinition.ID] = button;
         }
     }
 

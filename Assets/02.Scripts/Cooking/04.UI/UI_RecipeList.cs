@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,17 @@ public class UI_RecipeList : MonoBehaviour
 
     private List<Recipe> _recipeCsvDataList = new List<Recipe>();
     private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
-    
+
+    private void OnEnable()
+    {
+        CookingManager.CookingFinished += HandleCookingFinished;
+    }
+
+    private void OnDisable()
+    {
+        CookingManager.CookingFinished -= HandleCookingFinished;
+    }
+
     // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {
@@ -24,13 +35,6 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    public void ShowAllRecipes()
-    {
-        foreach (var button in _recipeButtonList)
-        {
-            button.gameObject.SetActive(true);
-        }
-    }
 
     public void ShowFilteredRecipes(List<Recipe> recipes)
     {
@@ -51,24 +55,23 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    // 전체 숨기기
-    public void HideAll()
+    public void RefreshAllButtons()
     {
+        Debug.Log("RefreshAllButtons");
         foreach (var button in _recipeButtonList)
         {
-            button.gameObject.SetActive(false);
+            button.Refresh(button.GetRecipe());
         }
     }
     
-    // 해금 메서드
-    public void UnlockRecipe(int resultItemId)
+    private void HandleCookingFinished(ItemInstance cookedItemInstance)
     {
-        Debug.Log("UI_RecipeList::UnlockRecipe");
-        var recipe = _recipeButtonList.Find(btn => btn.ResultItemID == resultItemId);
-        if (recipe != null)
+        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItemInstance.ID);
+        if (recipe == null) return;
+
+        if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
         {
-            Debug.Log("UI_RecipeList recipe 널 체크");
-            recipe.UnlockButton();
+            RefreshAllButtons();
         }
     }
 }

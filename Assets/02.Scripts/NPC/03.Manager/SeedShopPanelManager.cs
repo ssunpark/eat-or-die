@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 {
-    private AItemInfo _itemInfo;
-    private AItemInfo[] _seedItems;
-    public AItemInfo[] SeedItems => _seedItems;
+    private ItemProfile _itemProfile;
+    private ItemProfile[] _seedItems;
+    public ItemProfile[] SeedItems => _seedItems;
     public event Action OnSeedListUpdated;
     
     [SerializeField] private int npcId = 1200002; // 모종 상인 NPC ID
@@ -28,8 +28,8 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         
         if (_seedItems != null && _seedItems.Length > 0)
         {
-            _itemInfo = _seedItems[0];
-            UpdateSeedDetail(_itemInfo.ItemData.ID);
+            _itemProfile = _seedItems[0];
+            UpdateSeedDetail(_itemProfile.ItemDefinition.ID);
         }
         
         else
@@ -55,7 +55,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 
         for (int i = 0; i < _seedItems.Length; i++)
         {
-            Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemData.ID} - {_seedItems[i].ItemData.Name}");
+            Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemDefinition.ID} - {_seedItems[i].ItemDefinition.Name}");
         }
 
         OnSeedListUpdated?.Invoke();
@@ -63,7 +63,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
     
     public void UpdateSeedDetail(int seedItemID)
     {
-        AItemInfo selected = _seedItems.FirstOrDefault(x => x.ItemData.ID == seedItemID);
+        ItemProfile selected = _seedItems.FirstOrDefault(x => x.ItemDefinition.ID == seedItemID);
         NpcItem npcItem = NpcDataManager.Instance.NpcItemList
             .FirstOrDefault(x => x.NpcID == npcId && x.ItemID == seedItemID);
 

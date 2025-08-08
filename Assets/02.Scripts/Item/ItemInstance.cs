@@ -3,13 +3,13 @@ using UnityEngine;
 
 // 외부에서 보이는 값이 변하는 아이템 실질적인 객체
 // 내구도, 갯수 유형으로 나뉨
-public class Item
+public class ItemInstance
 {
-    public readonly AItemInfo ItemInfo;
+    public readonly ItemProfile ItemProfile;
     public readonly int MaxQuantity;
     public readonly float MaxDurability;
 
-    public int ID => ItemInfo.ItemData.ID;
+    public int ID => ItemProfile.ItemDefinition.ID;
 
     private int _quantity;
     public int Quantity => _quantity;
@@ -23,16 +23,16 @@ public class Item
     
     public bool IsDepleted => _quantity <= 0 || _durability <= 0;
 
-    public Item(AItemInfo itemInfo, int initialQuantity = 0, float initialDurability = 1, string extraInfo = "")
+    public ItemInstance(ItemProfile itemProfile, int initialQuantity = 0, float initialDurability = 1, string extraInfo = "")
     {
-        if (itemInfo == null)
+        if (itemProfile == null)
         {
             throw new ArgumentNullException("아이템 정보는 null일 수 없습니다.");
         }
         
-        ItemInfo = itemInfo;
-        MaxQuantity = itemInfo.ItemData.MaxQuantity;
-        MaxDurability = itemInfo.ItemData.MaxDurability;
+        ItemProfile = itemProfile;
+        MaxQuantity = itemProfile.ItemDefinition.MaxQuantity;
+        MaxDurability = itemProfile.ItemDefinition.MaxDurability;
 
         if (initialQuantity < 1 || initialQuantity > MaxQuantity)
         {
@@ -51,12 +51,12 @@ public class Item
 
     public void Use(GameObject target, float amount = 1)
     {
-        if (!ItemInfo.TryUseItem(target))
+        if (!ItemProfile.TryUseItem(target))
         {
             return;
         }
 
-        if (ItemInfo.ItemData.HasDurability)
+        if (ItemProfile.ItemDefinition.HasDurability)
         {
             TryReduceDurability(amount);
             Debug.Log(_durability);

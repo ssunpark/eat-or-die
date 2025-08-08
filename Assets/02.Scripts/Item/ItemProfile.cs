@@ -3,9 +3,9 @@ using Redcode.Pools;
 using UnityEngine;
 
 // 아이템의 정적 정보와 동작을 정의
-public class AItemInfo
+public class ItemProfile
 {
-    public readonly ItemData ItemData;
+    public readonly ItemDefinition ItemDefinition;
     private readonly Transform _poolParent;
     private Pool<Transform> _itemPrefabPool;
     
@@ -17,9 +17,9 @@ public class AItemInfo
     // 먹기, 설치, 상호작용
     private readonly List<IUseEffect> _useEffect;
 
-    public AItemInfo(ItemData itemData, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Pool<Transform> prefabPool, Transform poolParent, List<string> extraDescription = null)
+    public ItemProfile(ItemDefinition itemDefinition, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Pool<Transform> prefabPool, Transform poolParent, List<string> extraDescription = null)
     {
-        ItemData = itemData;
+        ItemDefinition = itemDefinition;
         _useEffect = useEffect;
         _holdEffect = holdEffect;
         _itemPrefabPool = prefabPool;
@@ -29,12 +29,12 @@ public class AItemInfo
         {
             foreach (var description in extraDescription)
             {
-                ItemData.AddDescription(description);
+                ItemDefinition.AddDescription(description);
             }
         }
 
         // 풀링
-        _itemPrefabPool = Pool.Create(ItemData.Prefab.transform, 0, _poolParent.transform);
+        _itemPrefabPool = Pool.Create(ItemDefinition.Prefab.transform, 0, _poolParent.transform);
     }
 
     public void HoldItem(GameObject target)
