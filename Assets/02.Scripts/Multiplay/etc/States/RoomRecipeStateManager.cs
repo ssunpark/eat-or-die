@@ -47,7 +47,7 @@ public class RoomRecipeStateManager : BehaviourSingleton<RoomRecipeStateManager>
         }
     }
     
-    private void HandleCookingFinished(Item cookedItem)
+    private void HandleCookingFinished(ItemInstance cookedItem)
     {
         Debug.Log("HandleCookingFinished 메서드 호출!!");
         var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);

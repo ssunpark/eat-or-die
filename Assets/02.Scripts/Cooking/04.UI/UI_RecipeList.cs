@@ -57,24 +57,24 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    public void RefreshAllButtons()
-    {
-        Debug.Log("RefreshAllButtons");
-        foreach (var button in _recipeButtonList)
-        {
-            Debug.Log("버튼 리프레시 !");
-            button.Refresh(button.GetRecipe());
-        }
-    }
+    // public void RefreshAllButtons()
+    // {
+    //     Debug.Log("RefreshAllButtons");
+    //     foreach (var button in _recipeButtonList)
+    //     {
+    //         Debug.Log("버튼 리프레시 !");
+    //         button.Refresh(button.GetRecipe());
+    //     }
+    // }
     
-    private void HandleCookingFinished(ItemInstance cookedItemInstance)
-    {
-        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItemInstance.ID);
-        if (recipe == null) return;
-
-        if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
-        {
-            RefreshAllButtons();
-        }
-    }
+    // private void HandleCookingFinished(ItemInstance cookedItemInstance)
+    // {
+    //     var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItemInstance.ID);
+    //     if (recipe == null) return;
+    //
+    //     if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
+    //     {
+    //         RefreshAllButtons();
+    //     }
+    // }
 }
