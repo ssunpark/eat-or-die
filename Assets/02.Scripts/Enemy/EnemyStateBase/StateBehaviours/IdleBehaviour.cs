@@ -4,19 +4,9 @@ using UnityEngine;
 
 public class IdleBehaviour : AEnemyStateBehaviour
 {
-	private static readonly int Idle = Animator.StringToHash("Idle");
-	
 	protected override void OnEnterState()
 	{
 		Debug.Log("Idling...");
-		Machine.Context.Animator.SetTrigger(Idle);
+		Machine.Context.Owner.AnimationState = EAnimationState.Idle;
 	}
-	
-	protected override void OnExitState()
-	{
-	}
-	
-	protected override void OnEnterStateRender()
-	{
-	}
-}
+}	
