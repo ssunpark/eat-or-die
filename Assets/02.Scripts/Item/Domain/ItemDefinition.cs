@@ -84,12 +84,6 @@ public class ItemDefinition
         HasDurability = hasDurability;
         MaxQuantity = maxQuantity;
         MaxDurability = maxDurability;
-        // MeleeDamage = meleeDamage;
-        // MagicDamage = magicDamage;
-        // AttackSpeed = attackSpeed;
-        // Range = range;
-        // MeleeDefense = meleeDefense;
-        // MagicDefense = magicDefense;
         EquipType = equipType;
 
         // 아이콘 Addressable 경로가 비어있으면 기본값 사용
