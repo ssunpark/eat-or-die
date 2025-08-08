@@ -34,5 +34,6 @@ public class DragonPhase
         // 전환 시 연출 or 상태 변경 트리거
         _dragonController.PhaseEffect.SetActive(true);
         _dragonController.Animator.SetTrigger("Roar");
+        _dragonController.Animator.SetBool("Awakening", true);
     }
 }
