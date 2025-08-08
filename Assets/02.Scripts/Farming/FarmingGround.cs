@@ -57,6 +57,16 @@ public class FarmingGround : NetworkBehaviour
         }
     }
 
+    public void Hoe()
+    {
+        RPC_Hoe();
+    }
+
+    public void WateringCan()
+    {
+        RPC_WateringCan();
+    }
+
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_Hoe()
     {
