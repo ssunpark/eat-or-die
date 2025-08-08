@@ -80,8 +80,7 @@ public class ItemManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
-    /// AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
+    /// 아이템 조회 함수
     /// </summary>
     /// <param name="id">아이템 ID</param>
     public ItemProfile GetItem(int id)
