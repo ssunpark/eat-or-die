@@ -21,14 +21,10 @@ public class PlayerHitState : APlayerStateBase
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
-
-        if (!_fsm.HasStateAuthority)
-        {
-            //_fsm.PlayerNetworkObject.damageFX.PlayFX();
-        }
+        //_fsm.PlayerNetworkObject.damageFX.PlayFX();
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateState()
     {
         if (!_fsm.HasStateAuthority) return;
         if (Machine.StateTime >= delayTime)

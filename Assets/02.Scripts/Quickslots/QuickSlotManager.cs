@@ -37,18 +37,18 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
     }
 
-	public Item GetItemInSlot(int slotIndex)
+	public ItemInstance GetItemInSlot(int slotIndex)
 	{
-		Item item = _quickSlots.GetItemInSlot(slotIndex);
+		ItemInstance itemInstance = _quickSlots.GetItemInSlot(slotIndex);
 
-		return item;
+		return itemInstance;
 	}
 	
 	public void SendItemToPlayer()
 	{
-		Item item = GetItemInSlot(_selectedSlotIndex);
+		ItemInstance itemInstance = GetItemInSlot(_selectedSlotIndex);
 
-        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(item);
+        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(itemInstance);
 		
 	}
 
@@ -62,8 +62,8 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		else
 		{
-			Item itemInHand = hand.GetItem();
-			hand.PickUpItem(_quickSlots.PutItemInSlot(_selectedSlotIndex, itemInHand));
+			ItemInstance itemInstanceInHand = hand.GetItem();
+			hand.PickUpItem(_quickSlots.PutItemInSlot(_selectedSlotIndex, itemInstanceInHand));
 		}
 		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
 	}
@@ -92,18 +92,18 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		else
 		{
-			if (HandEntity.Instance.Item.ID == _quickSlots.SlotList[slotIndex].Item.ID)
+			if (HandEntity.Instance.ItemInstance.ID == _quickSlots.SlotList[slotIndex].ItemInstance.ID)
 			{
-				Item itemInSlot = _quickSlots.PopSingleItemInSlot(slotIndex);
-				if (!HandEntity.Instance.TryAddItem(itemInSlot))
+				ItemInstance itemInstanceInSlot = _quickSlots.PopSingleItemInSlot(slotIndex);
+				if (!HandEntity.Instance.TryAddItem(itemInstanceInSlot))
 				{
-					_quickSlots.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
+					_quickSlots.SlotList[slotIndex].ItemInstance.TryAdd(itemInstanceInSlot.Quantity);
 				}
 			}
 			else
 			{
-				Item temp = _quickSlots.PopItemInSlot(slotIndex);
-				_quickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
+				ItemInstance temp = _quickSlots.PopItemInSlot(slotIndex);
+				_quickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance);
 				HandEntity.Instance.PickUpItem(temp);
 			}
 		}

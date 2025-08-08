@@ -1,10 +1,9 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -84,12 +83,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public SimpleKCC SimpleKCC;
     private NetworkInputData _currentInput;
     private NetworkInputData _previousInput;
-
+    public ParticleSystem HungryEffect;
     public NetworkInputData CurrentInput => _currentInput;
     public NetworkInputData PreviousInput => _previousInput;
 
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
+
+
 
     [Networked, Capacity(8)]
     public NetworkLinkedList<NetworkObject> HitTargets { get; }
@@ -180,7 +181,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     private bool TestUseItem(bool usePressed)
     {
-        if (ItemHolder.HeldItem == null)
+        if (ItemHolder.HeldItemInstance == null)
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;
@@ -292,6 +293,24 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Gizmos.DrawWireSphere(origin, range);
         }
 #endif
+    }
+    
+    public void RequestActivateState(EPlayerState state)
+    {
+        if (HasStateAuthority)
+        {
+            _playerFSM.ForceActivateState((int)state);
+        }
+        else if(HasInputAuthority)
+        {
+                RPC_RequestChangeStates(state);
+        }
+        
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestChangeStates(EPlayerState state)
+    {
+        _playerFSM.ForceActivateState((int)state);
     }
 
     public float AttackRange => PlayerNetworkObject.Stat.GetStat(EStatType.AttackRange);

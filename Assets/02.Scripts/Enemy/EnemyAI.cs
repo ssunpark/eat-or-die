@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using Fusion.Addons.FSM;
@@ -10,10 +10,16 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 {
 	[SerializeField] private int _enemyId; // 몬스터 ID
 
+	[Networked] public EAnimationState AnimationState { get; set; }
+	
+	public NetworkObject NetworkObject => Object;
+
+	private Animator _animator;
+
+	private ChangeDetector _changeDetector;
+	
 	public EnemyStatManager EnemyStatManager;
 
-	public int HitCountTemp = 0;
-	
 	private RangeDetector _rangeDetector;
 
 	[SerializeField] private float _currentHunger;
@@ -35,22 +41,26 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	public override void Spawned()
 	{
 		_rangeDetector = GetComponent<RangeDetector>();
+		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		
 		Context.Agent.updatePosition = false;
 		Context.Agent.updateRotation = false;
 	}
-	
+
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
 		EnemyStatManager = new EnemyStatManager(_enemyId);
 
 		_currentHunger = EnemyStatManager.GetStat(EStatType.EnemyHunger);
+		_animator = GetComponent<Animator>();
 		
 		Context = new EnemyContext()
 		{
+			Owner = this,
 			Target = null,
+			Animator = _animator,
 			StatManager = EnemyStatManager,
-			Animator = GetComponent<Animator>(),
+			AnimationRelay = GetComponent<EnemyAnimationRelay>(),
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
 			Detector = this,
@@ -67,6 +77,9 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		};
 		
 		_behaviourMachine = new EnemyBehaviourMachine("Behaviour Machine", Context, stateList);
+		
+		Context.Agent.speed = Context.StatManager.GetStat(EStatType.EnemyMoveSpeed);
+		Context.AnimationRelay.SetMachine(_behaviourMachine);
 		
 		stateMachines.Add(_behaviourMachine);
 	}
@@ -93,19 +106,40 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			Detect();
 		}
 	}
+	
+	public override void Render()
+	{
+		foreach (string change in _changeDetector.DetectChanges(this))
+		{
+			switch (change)
+			{
+				case nameof(AnimationState):
+					PlayAnimation();
+					break;
+			}
+		}
+	}
+
+	private void PlayAnimation()
+	{
+		if (_animator == null) return;
+        
+		string stateName = AnimationState.ToString();
+		_animator.CrossFade(stateName, 0.1f);
+	}
 
 	public void Move()
 	{
-		if (!Context.Agent.hasPath) return;
+		if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
 		
 		Vector3 direction = Context.Agent.nextPosition - transform.position;
-		transform.forward = direction;
+		transform.forward = direction.normalized;
 		
 		if (direction.sqrMagnitude < 0.01f) return;
 		
 		direction.Normalize();
-		
-		transform.position += direction * Context.StatManager.GetStat(EStatType.EnemyMoveSpeed) * Runner.DeltaTime;
+
+		transform.position += direction * Context.Agent.speed * Runner.DeltaTime;
 	}
 
 	public void Detect()
@@ -120,28 +154,26 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		}
 	}
 
-	// IAttackable Interface Implementation
-	public NetworkObject NetworkObject { get; }
-	
-	public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
+	public void OnHitLocal(AttackInfo attack)
 	{
-		if (!HasStateAuthority) return;
+		if (HasStateAuthority)
+		{
+			float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+			float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+			_takenDamage += amount * (100 / (100 + defense));
 		
-		float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
-		float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
-		_takenDamage += amount * (100 / (100 + defense));
-		
-		_hit = true;
+			_hit = true;
+
+			_behaviourMachine.ForceActivateState<HitBehaviour>();
+		}
 	}
 
 	[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-	public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+	public void RPC_HitByAttack(AttackInfo attack)
 	{
 	}
 
-	public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
+	public void OnHitStateAuthority(AttackInfo attack)
 	{
-		//Todo: 이펙트 처리
-
 	}
 }

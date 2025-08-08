@@ -1,6 +1,4 @@
-﻿using Fusion; // Add Fusion for NetworkInputData
-using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerIdleState : APlayerStateBase
 {
@@ -13,41 +11,38 @@ public class PlayerIdleState : APlayerStateBase
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
+
+        _fsm.CanInteract = true;
+        _fsm.CanUseItem = true;
     }
 
     protected override void OnEnterState()
     {
         base.OnEnterState();
-        _fsm.CanInteract = true;
-        _fsm.CanUseItem = true;
     }
 
-    protected override void OnFixedUpdate()
+    protected override void PreFixedUpdate()
     {
-        if (!_fsm.HasStateAuthority) return;
+        KCC.Move(Vector3.zero);
+    }
+    protected override void OnFixedUpdateInput()
+    {
         var input = _fsm.CurrentInput.direction;
         if (!Mathf.Approximately(input.sqrMagnitude, 0f))
         {
-            Vector3 dir = new Vector3(input.x, 0, input.y);
-            KCC.SetLookRotation(Quaternion.LookRotation(dir));
-            KCC.Move(dir * _stat.GetStat(EStatType.MoveSpeed));
-            Machine.ForceActivateState<PlayerMoveState>();
+            RequestActivateState(EPlayerState.Move);
             return;
-        }
-        else
-        {
-            KCC.Move(Vector3.zero);
         }
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
         {
-            Machine.ForceActivateState<PlayerAttackState>();
+            RequestActivateState(EPlayerState.Attack);
             return;
         }
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Interact))
         {
             if (IsInteractTargetExists())
             {
-                Machine.ForceActivateState<PlayerInteractState>();
+                RequestActivateState(EPlayerState.Interact);
                 return;
             }
         }
@@ -55,7 +50,7 @@ public class PlayerIdleState : APlayerStateBase
         {
             if (IsUseItemTargetExists())
             {
-                Machine.ForceActivateState<PlayerUseItemState>();
+                RequestActivateState(EPlayerState.UseItem);
                 return;
             }
         }

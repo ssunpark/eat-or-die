@@ -18,7 +18,7 @@ public class ItemFactory
     private EatEffectManager _eatEffectManager = new();
 
     // 주어진 데이터에 맞게 아이템 생성 후 반환
-    public AItemInfo CreateItem(EatItemRawData rawData)
+    public ItemProfile CreateItem(EatItemRawData rawData)
     {
         var holdEffectList = new List<IItemHoldEffect>();
         var effectList = new List<IUseEffect>();
@@ -54,18 +54,18 @@ public class ItemFactory
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
 
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, false,
+        var itemData = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, false,
             rawData.MaxQuantity, 1f, EAttackType.MeleeWeapon, rawData.IconPath, rawData.PrefabPath);
         
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
-        return new AItemInfo(itemData, holdEffectList, effectList, pool, poolParent, extraDescription);
+        return new ItemProfile(itemData, holdEffectList, effectList, pool, poolParent, extraDescription);
     }
 
-    public AItemInfo CreateItem(WeaponItemRawData rawData)
+    public ItemProfile CreateItem(WeaponItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, true,
+        var itemData = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, true,
             rawData.MaxStack, rawData.MaxDuration, rawData.AttackType,
-            rawData.IconPath, rawData.PrefabPath);
+            rawData.IconPath, rawData.PrefabPath, rawData.ProjectileKey);
         
         // HOld 효과 정의
         var holdStatEffect = new ItemHoldEffect_Weapon(rawData.MeleeDamage, rawData.MagicDamage, rawData.AttackSpeed, rawData.Range);
@@ -73,20 +73,21 @@ public class ItemFactory
         var holdEffectList = new List<IItemHoldEffect>() { holdStatEffect, holdAnimatorEffect };
         
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
-        return new AItemInfo(itemData, holdEffectList, null, pool, poolParent);
+        return new ItemProfile(itemData, holdEffectList, null, pool, poolParent);
     }
 
-    public AItemInfo CreateItem(UsableItemRawData rawData)
+    public ItemProfile CreateItem(UsableItemRawData rawData)
     {
-        var itemData = new ItemData(rawData.ID, rawData.Name, rawData.Description, false, rawData.HasDurability, rawData.MaxQuantity,
+        var itemData = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, false, rawData.HasDurability, rawData.MaxQuantity,
             rawData.MaxDuration ?? 1f, EAttackType.MeleeWeapon,
             rawData.AddressablePath, rawData.PrefabPath);
-        
+
         IUseEffect useEffect = rawData.ActionName switch
         {
             "Hoe" => new UseEffectHoe(),
             "WateringCan" => new UseEffectWateringCan(),
             "Seed" => new UseEffectSeed(rawData.ID),
+            _ => new UseEffectNone()
         };
         var effectList = new List<IUseEffect>() { useEffect };
         
@@ -96,7 +97,7 @@ public class ItemFactory
         var holdEffectList = new List<IItemHoldEffect>() { holdAnimatorEffect, holdInteractionEffect };
         
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemData.Prefab, _itemPoolParent);
-        return new AItemInfo(itemData, holdEffectList, effectList, pool, poolParent);
+        return new ItemProfile(itemData, holdEffectList, effectList, pool, poolParent);
     }
     
     private (Pool<Transform>, Transform) GetOrCreateSharedPool(string key, GameObject prefab, Transform poolParent)

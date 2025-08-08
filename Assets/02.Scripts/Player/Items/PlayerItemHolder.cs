@@ -7,11 +7,14 @@ public class PlayerItemHolder: NetworkBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _handTransform;
     private PlayerFSM _playerController;
-    public Item HeldItem { get; private set; }
+    public EAttackType AttackType = EAttackType.MeleeWeapon;
+    public ItemInstance HeldItemInstance { get; private set; }
     private GameObject _heldItemObject;
     public string InteractionTag;
 
     private Player _player;
+
+    public string ProjectileKey;
     [System.Serializable]
     public class AnimatorOverrideEntry
     {
@@ -41,20 +44,20 @@ public class PlayerItemHolder: NetworkBehaviour
     }
     
 
-    public void SetHoldItem(Item item)
+    public void SetHoldItem(ItemInstance itemInstance)
     {
         Debug.Log($"[PlayerItemHolder] SetHoldItem Called.");
 
-        HeldItem = item;
+        HeldItemInstance = itemInstance;
 
         if (HasInputAuthority)
         {
-            if(item == null)
+            if(itemInstance == null)
             {
                 RPC_RequestUnholdItem();
             }
             else
-                RPC_RequestHoldItem(item.ID);
+                RPC_RequestHoldItem(itemInstance.ID);
         }
     }
     
@@ -70,6 +73,9 @@ public class PlayerItemHolder: NetworkBehaviour
         _heldItemObject = null;
         HoldItemID = -1;
         _player.CacheAnimationLengths();
+
+        AttackType = EAttackType.MeleeWeapon;
+        ProjectileKey = "DefaultProjectile";
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
@@ -86,13 +92,16 @@ public class PlayerItemHolder: NetworkBehaviour
         }
         Debug.Log($"[PlayerItemHolder] RPC_RequestHoldItem Called. ID: {itemId}");
         HoldItemID = itemId;
-        AItemInfo changedHoldItem = ItemManager.Instance.GetItem(itemId);
+        ItemProfile changedHoldItem = ItemManager.Instance.GetItem(itemId);
         if(changedHoldItem == null)
         {
             Debug.LogError($"[PlayerItemHolder] 아이템 정보가 없습니다. ID: {itemId}");
             return;
         }
         
+        AttackType = changedHoldItem.ItemDefinition.AttackType;
+        ProjectileKey = changedHoldItem.ItemDefinition.ProjectileKey;
+
         changedHoldItem.HoldItem(gameObject);
         _heldItemObject = changedHoldItem.GetHoldItemObject();
         _heldItemObject.transform.SetParent(_handTransform);
@@ -101,7 +110,6 @@ public class PlayerItemHolder: NetworkBehaviour
         _heldItemObject.transform.localPosition = new Vector3(0.07f, 0.14f, -0.02f);
         _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
         _heldItemObject.transform.localScale = Vector3.one;
-        // 계속 이 방식으로 손에 붙인다면 이 정보도 노가다로 csv에 저장해야할듯...
 
         _player.CacheAnimationLengths();
     }

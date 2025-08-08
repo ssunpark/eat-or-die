@@ -9,8 +9,11 @@ public class InputReader : BehaviourSingleton<InputReader>
     public bool IsEscapeDown { get; private set; }
     public bool IsUseItemDown { get; private set; }
     public bool IsSprintDown { get; private set; }
+
+    public Vector3 MousePosition { get; private set; }
     private PlayerInputActions _inputActions;
     public PlayerInputActions InputActions => _inputActions;
+    public LayerMask GroundLayerMask;
 
     protected bool _externalInputBlocked;
     private bool _paused;
@@ -46,6 +49,17 @@ public class InputReader : BehaviourSingleton<InputReader>
     private void OnAttackPerformed(InputAction.CallbackContext context)
     {
         IsAttackDown = context.action.IsPressed();
+        MousePosition = GetMousePosition();
+    }
+
+    private Vector3 GetMousePosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, GroundLayerMask))
+        {
+            return hit.point;
+        }
+        return Vector3.zero;
     }
     private void OnInteractPerformed(InputAction.CallbackContext context)
     {

@@ -6,13 +6,13 @@ public class EnemyStatManager
 {
     private readonly Dictionary<EStatType, Stat> _statDictionary = new();
 
-    public event Action<EStatType, StatModifier> OnModifierAdded;
-    public event Action<EStatType, StatModifier> OnModifierRemoved;
+    // public event Action<EStatType, StatModifier> OnModifierAdded;
+    // public event Action<EStatType, StatModifier> OnModifierRemoved;
 
     public EnemyStatManager(int id)
     {
         EnemyRawData enemyData = EnemyDataManager.Instance.EnemyRawDataDictionary[id];
-        
+        Debug.Log("attackRange: " + enemyData.AttackRange);
         _statDictionary = new Dictionary<EStatType, Stat>
         {
             { EStatType.EnemyHunger, new Stat(EStatType.EnemyHunger, enemyData.Hunger) },

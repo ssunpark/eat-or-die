@@ -17,7 +17,8 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
         {
             return;
         }
-        _target = _fsm.InteractTarget;
+        if(_fsm.HasStateAuthority || _fsm.HasInputAuthority)
+            _target = _fsm.InteractTarget;
     }
     protected override void OnEnterState()
     {
@@ -27,23 +28,22 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
         if (_fsm.InteractTarget == null)
         {
             Debug.LogError("PlayerInteractState: Target is null. Cannot enter state.");
-            Machine.ForceActivateState<PlayerIdleState>();
+            RequestActivateState();
             return;
         }
-        _target = _fsm.InteractTarget;
+        
     }
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateInput()
     {
-        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
-            Machine.ForceActivateState<PlayerIdleState>();
+            RequestActivateState();
         }
     }
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_fsm.HasStateAuthority)
+        if (_fsm.HasInputAuthority)
         {
             if (_fsm.InteractTarget == null)
             {

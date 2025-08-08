@@ -31,17 +31,17 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
 
     public void UpdateSlotUI()
     {
-        Item itemInSlot = InventoryManager.Instance.Inventory.SlotList[SlotIndex].Item;
-        if (itemInSlot == null)
+        ItemInstance itemInstanceInSlot = InventoryManager.Instance.Inventory.SlotList[SlotIndex].ItemInstance;
+        if (itemInstanceInSlot == null)
         {
             IconImage.gameObject.SetActive(false);
             QuantityText.gameObject.SetActive(false);
             return;
         }
         
-        IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemData.Icon;
-        QuantityText.text = itemInSlot.Quantity.ToString();
+        IconImage.sprite = ItemManager.Instance.GetItem(itemInstanceInSlot.ID).ItemDefinition.Icon;
+        QuantityText.text = itemInstanceInSlot.Quantity.ToString();
         IconImage.gameObject.SetActive(true);
-        QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
+        QuantityText.gameObject.SetActive(itemInstanceInSlot.Quantity > 1);
     }
 }

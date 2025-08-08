@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
+using Fusion.Addons.SimpleKCC;
 using RaycastPro.Detectors;
 using UnityEngine;
 
@@ -12,18 +13,21 @@ public class Player : CharacterBase, IAttackable
     public List<CharacterTraitData> TraitDataList { get; private set; }
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
+
+
     float _damageRecoveryTime = 0.5f;
 
     public PlayerFSM PlayerFSM;
     private bool _hasPlayerTrackerRef;
 
     //private PlayerTracker _playerTrackerRef;
-
+    public PlayerItemHolder ItemHolder { get; private set; }
 
     private Dictionary<string, float> _animationClipLengths;
 
     private Animator _animator;
     bool _isReset;
+    public SimpleKCC SimpleKCC { get; private set; }
 
     public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
     {
@@ -75,7 +79,8 @@ public class Player : CharacterBase, IAttackable
 
         _animator = GetComponent<Animator>();
         PlayerFSM = GetComponent<PlayerFSM>();
-
+        ItemHolder = GetComponent<PlayerItemHolder>();
+        SimpleKCC = GetComponent<SimpleKCC>();
     }
     private IEnumerator WaitAndLoadTraits()
     {
@@ -181,7 +186,6 @@ public class Player : CharacterBase, IAttackable
         {
             _takedDamage = false;
             _prevHunger = current;
-            DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
 
             if (current > 0)
             {
@@ -283,25 +287,27 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
-    public void OnHitLocal(AttackInfo attack, NetworkObject attacker)
+    public void OnHitLocal(AttackInfo attack)
     {
         if (PlayerFSM.IsDead) return;
-
-        RPC_HitByAttack(attack, attacker);
+        var attacker = attack.Attacker;
+        RPC_HitByAttack(attack);
         
         //Todo: 맞는 이펙트? 재생
     }
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker)
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_HitByAttack(AttackInfo attack)
     {
-        OnHitStateAuthority(attack, attacker);
+        OnHitStateAuthority(attack);
     }
 
-    public void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker)
+    public void OnHitStateAuthority(AttackInfo attack)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
         {
             //Todo: 이펙트 처리
+
+            DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
             float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
             float defense = Stat.GetStat(EStatType.Defense);
             float finalDmg = amount * (100 / (100 + defense));
@@ -327,19 +333,5 @@ public class Player : CharacterBase, IAttackable
     }
 
 
-    public void OnGUI()
-    {
-        if (GUILayout.Button("Hit"))
-        {
-            AttackInfo attack = new AttackInfo
-            {
-                MeleeDamage = 73,
-                MagicDamage = 0,
-                TotalDamageMultiplier = 1.0f
-            };
-            NetworkObject attacker = Object;
-            OnHitStateAuthority(attack, attacker);
-        }
-    }
 
 }

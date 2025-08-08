@@ -55,7 +55,7 @@ public class CharacterDataInstaller : MonoBehaviour
                 resourceSync.Initialize(character.Resource);
         }
 
-        var debugger = GetComponent<PlayerStatDebugger>();
+        TryGetComponent(out PlayerStatDebugger debugger);
         if (debugger != null)
             debugger.Bind(character.Stat);
     }

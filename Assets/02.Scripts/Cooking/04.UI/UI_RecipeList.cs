@@ -67,16 +67,14 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
     
-    // private void HandleCookingFinished(Item cookedItem)
-    // {
-    //     Debug.Log("HandleCookingFinished 메서드 호출!!");
-    //     var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);
-    //     if (recipe == null) return;
-    //
-    //     if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
-    //     {
-    //         Debug.Log("룸레시피메니저에서 TryUnlock 시도하고 리프레시!!");
-    //         RefreshAllButtons();
-    //     }
-    // }
+    private void HandleCookingFinished(ItemInstance cookedItemInstance)
+    {
+        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItemInstance.ID);
+        if (recipe == null) return;
+
+        if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
+        {
+            RefreshAllButtons();
+        }
+    }
 }

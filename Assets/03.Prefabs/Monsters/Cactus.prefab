@@ -969,8 +969,8 @@ GameObject:
   - component: {fileID: 5419383378729353496}
   - component: {fileID: 4260784959756580981}
   - component: {fileID: 2659134971517239456}
-  - component: {fileID: 2594665345068873379}
   - component: {fileID: 171160205553937881}
+  - component: {fileID: 321923788496403324}
   m_Layer: 11
   m_Name: Cactus
   m_TagString: Untagged
@@ -1041,7 +1041,6 @@ MonoBehaviour:
   - {fileID: -7930600149514953330}
   - {fileID: 5293771665702562805}
   - {fileID: 5419383378729353496}
-  - {fileID: 2594665345068873379}
   - {fileID: 8098781592835120505}
   - {fileID: 5266104994893125905}
   - {fileID: 6476991057249426944}
@@ -1091,6 +1090,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _enemyId: 800001
   HitCountTemp: 0
+  _currentHunger: 0
   _spawnBehaviour: {fileID: 5266104994893125905}
   _idleBehaviour: {fileID: 8098781592835120505}
   _moveBehaviour: {fileID: 6476991057249426944}
@@ -1186,7 +1186,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.8
-  m_Speed: 10
+  m_Speed: 20
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 60
@@ -1198,24 +1198,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &2594665345068873379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8788173875354196848}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 2620569330388523952}
-  ApplyTiming: 2
-  SyncSettings: 95
-  StateHashes: 000000002b1a167c79406955e3e0cf5161af83d40ed1e8a02d61eb06a9bbb6f72489c9d9a1609f62d8aa0cc437b935014e73a6a7
-  TriggerHashes: 000000002b1a167c0d286c401d6745f8a1609f6237b93501
-  TotalWords: 3
 --- !u!136 &171160205553937881
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1239,6 +1221,18 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &321923788496403324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8788173875354196848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b686ca064f4ffa873b505b0441a774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8807479332320497351
 GameObject:
   m_ObjectHideFlags: 0

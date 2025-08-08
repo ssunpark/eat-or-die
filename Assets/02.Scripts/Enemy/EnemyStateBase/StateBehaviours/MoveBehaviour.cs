@@ -6,8 +6,8 @@ public class MoveBehaviour : AEnemyStateBehaviour
 {
     private EnemyStateMachine _moveStateMachine;
     
-    [SerializeField] private TraceState _traceState = new TraceState();
-    // [SerializeField] private AvoidState _avoidState;
+    private TraceState _traceState = new TraceState();
+    // private AvoidState _avoidState;
 
     protected override void OnCollectChildStateMachines(List<IStateMachine> stateMachines)
     {
@@ -30,17 +30,5 @@ public class MoveBehaviour : AEnemyStateBehaviour
     {
         Debug.Log("Moving...");
         _moveStateMachine.TryActivateState(_traceState);
-    }
-
-    protected override void OnEnterStateRender()
-    {
-    }
-    
-    protected override void OnFixedUpdate()
-    {
-        if (!Machine.Context.Animator.IsInTransition(0))
-        {
-            Machine.Context.Mover.Move();
-        }
     }
 }

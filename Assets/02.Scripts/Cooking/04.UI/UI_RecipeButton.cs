@@ -23,7 +23,7 @@ public class UI_RecipeButton : MonoBehaviour
         bool isKnown = RecipePanelUIManager.Instance.IsKnownRecipe(_data.ID);
         bool canMake = RecipePanelUIManager.Instance.CanMakeRecipe(_data);
         
-        AItemInfo itemInfo = ItemManager.Instance.GetItem(_data.ResultID);
+        ItemProfile itemProfile = ItemManager.Instance.GetItem(_data.ResultID);
 
         if (!isKnown) // 방 기준으로 습득되지 않은 레시피에 대해서
         {
@@ -35,10 +35,9 @@ public class UI_RecipeButton : MonoBehaviour
             return;
         }
         
-        if (itemInfo != null)
+        if (itemProfile != null)
         {
-            Debug.Log("iteminfo != null 체크");
-            IconImage.sprite = itemInfo.ItemData.Icon;
+            IconImage.sprite = itemProfile.ItemDefinition.Icon;
             IconImage.gameObject.SetActive(true);
 
             if (canMake) // 만들 수 있으면
