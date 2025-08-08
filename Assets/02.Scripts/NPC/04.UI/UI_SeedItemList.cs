@@ -5,7 +5,7 @@ public class UI_SeedItemList : MonoBehaviour
 {
     public GameObject Container;
     public GameObject ButtonPrefab;
-    private AItemInfo[] _seedItems;
+    private ItemProfile[] _seedItems;
 
     private Dictionary<int, UI_SeedItemButton> _buttonDict = new Dictionary<int, UI_SeedItemButton>();
     private bool _isInitialized = false;
@@ -60,14 +60,14 @@ public class UI_SeedItemList : MonoBehaviour
         _isInitialized = true;
         _buttonDict.Clear();
 
-        foreach (AItemInfo itemInfo in _seedItems)
+        foreach (ItemProfile itemInfo in _seedItems)
         {
             GameObject obj = Instantiate(ButtonPrefab, Container.transform);
             UI_SeedItemButton button = obj.GetComponent<UI_SeedItemButton>();
             button.Setup(itemInfo);
             obj.SetActive(false);
 
-            _buttonDict[itemInfo.ItemData.ID] = button;
+            _buttonDict[itemInfo.ItemDefinition.ID] = button;
         }
 
         RefreshButtons();
@@ -82,12 +82,12 @@ public class UI_SeedItemList : MonoBehaviour
             button.gameObject.SetActive(false);
         }
 
-        AItemInfo[] seedItems = SeedShopPanelManager.Instance.SeedItems;
+        ItemProfile[] seedItems = SeedShopPanelManager.Instance.SeedItems;
         if (seedItems == null) return;
 
         foreach (var item in seedItems)
         {
-            if (_buttonDict.TryGetValue(item.ItemData.ID, out var button))
+            if (_buttonDict.TryGetValue(item.ItemDefinition.ID, out var button))
             {
                 button.gameObject.SetActive(true);
             }

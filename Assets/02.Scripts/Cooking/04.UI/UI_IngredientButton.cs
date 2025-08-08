@@ -16,20 +16,20 @@ public class UI_IngredientButton : MonoBehaviour
         // IconImage.gameObject.SetActive(false);
     }
     
-    public void Refresh(ItemData itemData)
+    public void Refresh(ItemDefinition itemDefinition)
     {
-        if (itemData == null)
+        if (itemDefinition == null)
         {
             Debug.Log("[UI_IngredientButton] 전달된 아이템 정보가 null입니다.");
             IconImage.gameObject.SetActive(false);
             return;
         }
 
-        IngredientID = itemData.ID;
+        IngredientID = itemDefinition.ID;
 
-        if (itemData.Icon != null)
+        if (itemDefinition.Icon != null)
         {
-            IconImage.sprite = itemData.Icon;
+            IconImage.sprite = itemDefinition.Icon;
             IconImage.gameObject.SetActive(true);
         }
         else

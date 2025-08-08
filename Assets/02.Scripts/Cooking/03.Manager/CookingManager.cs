@@ -16,8 +16,8 @@ public class CookingManager : NetworkBehaviour
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
     public event Action OnCookOutputUpdated;
     public static event Action<string> OnAlertMessage; // 문자열 알림용
-    public static event Action<Item> CookingFinished; // 결과 아이템 전체달용
-    
+    public static event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
+    public static event Action CookFinished;
     
     // Networked 변수는 이름에 추가했으면 좋겠다
     public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
@@ -56,8 +56,8 @@ public class CookingManager : NetworkBehaviour
         }
         else
         {
-            if (!HandEntity.Instance.GetItem().ItemInfo.ItemData.IsIngredient) return;
-            HandEntity.Instance.PickUpItem(IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
+            if (!HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.IsIngredient) return;
+            HandEntity.Instance.PickUpItem(IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance));
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
@@ -73,19 +73,19 @@ public class CookingManager : NetworkBehaviour
         }
         else
         {
-            if (HandEntity.Instance.Item.ID == IngredientInventory.SlotList[slotIndex].Item.ID)
+            if (HandEntity.Instance.ItemInstance.ID == IngredientInventory.SlotList[slotIndex].ItemInstance.ID)
             {
                 var itemInSlot = IngredientInventory.PopSingleItemInSlot(slotIndex);
                 if (!HandEntity.Instance.TryAddItem(itemInSlot))
                 {
-                    IngredientInventory.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
+                    IngredientInventory.SlotList[slotIndex].ItemInstance.TryAdd(itemInSlot.Quantity);
                 }
             }
             else
             {
-                if (!HandEntity.Instance.GetItem().ItemInfo.ItemData.IsIngredient) return;
+                if (!HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.IsIngredient) return;
                 var temp = IngredientInventory.PopItemInSlot(slotIndex);
-                IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
+                IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance);
                 HandEntity.Instance.PickUpItem(temp);
             }
         }
@@ -141,8 +141,8 @@ public class CookingManager : NetworkBehaviour
         //     return -1;
         // }
         
-        int id1 = IngredientInventory.SlotList[0].Item.ID;
-        int id2 = IngredientInventory.SlotList[1].Item.ID;
+        int id1 = IngredientInventory.SlotList[0].ItemInstance.ID;
+        int id2 = IngredientInventory.SlotList[1].ItemInstance.ID;
         
        
         // 이 로직을 RecipeManager로 빼서 거기서 레시피 습득 여부까지 판단하도록
@@ -193,7 +193,7 @@ public class CookingManager : NetworkBehaviour
         {
             if (!slot.IsEmpty)
             {
-                TransferItemToInventory(slot.Item);
+                TransferItemToInventory(slot.ItemInstance);
                 slot.RemoveItem();
             }
         }
@@ -218,14 +218,15 @@ public class CookingManager : NetworkBehaviour
             return;
         }
 
-        InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1));
+        InventoryManager.Instance.PickItemFromGround(new ItemInstance(resultItem, 1));
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-        CookingFinished?.Invoke(new Item(resultItem, 1));
+        CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
+        CookFinished?.Invoke();
     }
     
-    private void TransferItemToInventory(Item item)
+    private void TransferItemToInventory(ItemInstance itemInstance)
     {
-        InventoryManager.Instance.PickItemFromGround(item);
+        InventoryManager.Instance.PickItemFromGround(itemInstance);
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
     

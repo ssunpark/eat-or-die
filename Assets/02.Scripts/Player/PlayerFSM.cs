@@ -181,7 +181,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     private bool TestUseItem(bool usePressed)
     {
-        if (ItemHolder.HeldItem == null)
+        if (ItemHolder.HeldItemInstance == null)
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;

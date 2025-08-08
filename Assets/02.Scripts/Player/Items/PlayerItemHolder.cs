@@ -8,7 +8,7 @@ public class PlayerItemHolder: NetworkBehaviour
     [SerializeField] private Transform _handTransform;
     private PlayerFSM _playerController;
     public EAttackType AttackType = EAttackType.MeleeWeapon;
-    public Item HeldItem { get; private set; }
+    public ItemInstance HeldItemInstance { get; private set; }
     private GameObject _heldItemObject;
     public string InteractionTag;
 
@@ -44,20 +44,20 @@ public class PlayerItemHolder: NetworkBehaviour
     }
     
 
-    public void SetHoldItem(Item item)
+    public void SetHoldItem(ItemInstance itemInstance)
     {
         Debug.Log($"[PlayerItemHolder] SetHoldItem Called.");
 
-        HeldItem = item;
+        HeldItemInstance = itemInstance;
 
         if (HasInputAuthority)
         {
-            if(item == null)
+            if(itemInstance == null)
             {
                 RPC_RequestUnholdItem();
             }
             else
-                RPC_RequestHoldItem(item.ID);
+                RPC_RequestHoldItem(itemInstance.ID);
         }
     }
     
@@ -92,15 +92,15 @@ public class PlayerItemHolder: NetworkBehaviour
         }
         Debug.Log($"[PlayerItemHolder] RPC_RequestHoldItem Called. ID: {itemId}");
         HoldItemID = itemId;
-        AItemInfo changedHoldItem = ItemManager.Instance.GetItem(itemId);
+        ItemProfile changedHoldItem = ItemManager.Instance.GetItem(itemId);
         if(changedHoldItem == null)
         {
             Debug.LogError($"[PlayerItemHolder] 아이템 정보가 없습니다. ID: {itemId}");
             return;
         }
         
-        AttackType = changedHoldItem.ItemData.AttackType;
-        ProjectileKey = changedHoldItem.ItemData.ProjectileKey;
+        AttackType = changedHoldItem.ItemDefinition.AttackType;
+        ProjectileKey = changedHoldItem.ItemDefinition.ProjectileKey;
 
         changedHoldItem.HoldItem(gameObject);
         _heldItemObject = changedHoldItem.GetHoldItemObject();
