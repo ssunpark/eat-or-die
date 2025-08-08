@@ -27,6 +27,7 @@ public class UI_RecipeButton : MonoBehaviour
 
         if (!isKnown) // 방 기준으로 습득되지 않은 레시피에 대해서
         {
+            Debug.Log("!isKnown 조건문 체크!");
             IconImage.sprite = unknownIcon;
             IconImage.color = lockedColor;
             IconImage.gameObject.SetActive(true);
@@ -36,15 +37,18 @@ public class UI_RecipeButton : MonoBehaviour
         
         if (itemInfo != null)
         {
+            Debug.Log("iteminfo != null 체크");
             IconImage.sprite = itemInfo.ItemData.Icon;
             IconImage.gameObject.SetActive(true);
 
             if (canMake) // 만들 수 있으면
             {
+                Debug.Log("만들 수 있으면!");
                 UnlockButton();
             }
             else // 만들 수 없으면
             {
+                Debug.Log("만들 수 없으면!");
                 LockButton();
             }
         }
@@ -71,6 +75,7 @@ public class UI_RecipeButton : MonoBehaviour
 
     public Recipe GetRecipe()
     {
+        Debug.Log("GetRecipe 메서드 호출!!!");
         return _data;
     }
 }

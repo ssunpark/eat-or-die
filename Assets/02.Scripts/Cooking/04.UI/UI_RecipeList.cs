@@ -12,12 +12,14 @@ public class UI_RecipeList : MonoBehaviour
 
     private void OnEnable()
     {
-        CookingManager.CookingFinished += HandleCookingFinished;
+        // CookingManager.CookingFinished += HandleCookingFinished;
+        // InventoryManager.Instance.OnInventoryUpdated += RefreshAllButtons;
     }
-
+    
     private void OnDisable()
     {
-        CookingManager.CookingFinished -= HandleCookingFinished;
+        // CookingManager.CookingFinished -= HandleCookingFinished;
+        // InventoryManager.Instance.OnInventoryUpdated -= RefreshAllButtons;
     }
 
     // 최초 1회만 호출해서 버튼 생성
@@ -60,18 +62,21 @@ public class UI_RecipeList : MonoBehaviour
         Debug.Log("RefreshAllButtons");
         foreach (var button in _recipeButtonList)
         {
+            Debug.Log("버튼 리프레시 !");
             button.Refresh(button.GetRecipe());
         }
     }
     
-    private void HandleCookingFinished(Item cookedItem)
-    {
-        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);
-        if (recipe == null) return;
-
-        if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
-        {
-            RefreshAllButtons();
-        }
-    }
+    // private void HandleCookingFinished(Item cookedItem)
+    // {
+    //     Debug.Log("HandleCookingFinished 메서드 호출!!");
+    //     var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);
+    //     if (recipe == null) return;
+    //
+    //     if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
+    //     {
+    //         Debug.Log("룸레시피메니저에서 TryUnlock 시도하고 리프레시!!");
+    //         RefreshAllButtons();
+    //     }
+    // }
 }
