@@ -28,6 +28,19 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
         }
     }
 
+    public void Init(IList<ParticleSystem> particleSystems)
+    {
+        foreach (var particleSystem in particleSystems)
+        {
+            if (_particlePrefabs.ContainsKey(particleSystem.name))
+            {
+                continue;
+            }
+            _particlePrefabs[particleSystem.name] = particleSystem;
+            var (pool, parent) = GetOrCreateSharedPool(particleSystem, transform);
+        }
+    }
+
 
     private (Pool<ParticleSystem>, Transform) GetOrCreateSharedPool(ParticleSystem key, Transform poolParent)
     {
