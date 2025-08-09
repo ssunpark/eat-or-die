@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerItemHolder: NetworkBehaviour
 {
@@ -65,9 +66,7 @@ public class PlayerItemHolder: NetworkBehaviour
         _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
         _heldItemObject.transform.localScale = Vector3.one;
 
-        _player.CacheAnimationLengths();
 
-        ApplyAnimatorOverride(changedHoldItem.ItemDefinition.AttackType.ToString());
     }
     private void Awake()
     {
@@ -115,7 +114,6 @@ public class PlayerItemHolder: NetworkBehaviour
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
         _heldItemObject = null;
         HoldItemID = -1;
-        _player.CacheAnimationLengths();
 
         AttackType = EAttackType.MeleeWeapon;
         ProjectileKey = "DefaultProjectile";
@@ -127,9 +125,20 @@ public class PlayerItemHolder: NetworkBehaviour
         HoldItemID = itemId;
         _HoldItemLogic(itemId);
     }
-
+    Coroutine _applyOverrideCoroutine;
     public void ApplyAnimatorOverride(string key)
     {
+        if (_applyOverrideCoroutine != null)
+        {
+            StopCoroutine(_applyOverrideCoroutine);
+            _applyOverrideCoroutine = null;
+        }
+        _applyOverrideCoroutine = StartCoroutine(ApplyOverrideCoroutine(key));
+    }
+
+    private IEnumerator ApplyOverrideCoroutine(string key)
+    {
+        yield return new WaitUntil(() => _playerController.StateMachine.ActiveStateId == 0 || _playerController.StateMachine.ActiveStateId == 1);
         if (_animatorOverrideMap.TryGetValue(key, out var controller))
         {
             _animator.runtimeAnimatorController = controller;
@@ -140,5 +149,6 @@ public class PlayerItemHolder: NetworkBehaviour
                 Debug.LogWarning("Unarmed 애니메이터 오버라이드가 설정되지 않았습니다.");
             ApplyAnimatorOverride("Unarmed");
         }
+        _player.CacheAnimationLengths();
     }
 }

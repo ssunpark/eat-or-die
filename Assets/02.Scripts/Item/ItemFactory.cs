@@ -50,10 +50,10 @@ public class ItemFactory
                 extraDescription.Add(desc);
             }
         }
-
+        
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
-
+        holdEffectList.Add(new ItemHoldEffect_Animator("Food"));
         var itemData = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, rawData.IsIngredient, false,
             rawData.MaxQuantity, 1f, EAttackType.MeleeWeapon, rawData.IconPath, rawData.PrefabPath);
         
