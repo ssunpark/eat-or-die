@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -17,21 +18,19 @@ public class RoomInfo
     // 실제 데이터는 private 필드로 관리. [SerializeField]로 인스펙터에는 보이지만 외부 코드에서는 접근 불가.
     [SerializeField] private HashSet<int> _knownIngredients;
     [SerializeField] private HashSet<int> _knownRecipes;
-    
+
     public RoomInfo()
     {
-        RoomName = "TestRoom3"; // 키로 써야함
         _knownIngredients = new HashSet<int>();
         _knownRecipes = new HashSet<int>();
     }
 
-    public RoomInfo(string roomName, HashSet<int> knownIngredients, HashSet<int> knownRecipes)
+    public RoomInfo(RoomInfoDTO roomInfoDTO)
     {
-        RoomName = roomName ?? "Unnamed Room";
-        _knownIngredients = knownIngredients ?? new HashSet<int>();
-        _knownRecipes = knownRecipes ?? new HashSet<int>();;
+        RoomName = roomInfoDTO.RoomName;
+        _knownIngredients = roomInfoDTO.KnownIngredientsList.ToHashSet();
+        _knownRecipes = roomInfoDTO.KnownRecipesList.ToHashSet();
     }
-
     public RoomInfoDTO ToDTO()
     {
         return new RoomInfoDTO(this);

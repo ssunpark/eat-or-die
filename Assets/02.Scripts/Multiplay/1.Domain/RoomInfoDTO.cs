@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+
 // 수현
 [Serializable]
 public class RoomInfoDTO
@@ -19,10 +19,6 @@ public class RoomInfoDTO
 
     public RoomInfo ToDomain()
     {
-        return new RoomInfo(
-            RoomName,
-            new HashSet<int>(KnownIngredientsList ?? new List<int>()),
-            new HashSet<int>(KnownRecipesList ?? new List<int>())
-            );
+        return new RoomInfo(this);
     }
 }
