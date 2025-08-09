@@ -8,28 +8,48 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Projectile : NetworkBehaviour
 {
-    [SerializeField] private LayerMask _hitMask;
+    public LayerMask HitMask;
     public float Speed = 10f;
     public float Lifetime = 5f;
     private AttackInfo _attackInfo;
-    private NetworkObject _attacker;
     private Collider _collider;
+    [Networked] private float _magicDamage { get; set; }
+    [Networked] private float _meleeDamage { get; set; }
+    [Networked] private Vector3 _knockbackVector { get; set; }
+    [Networked] private float _hitRecoveryTime { get; set; }
+    [Networked] private float _bossDamageMultiplier { get; set; }
+    [Networked] private float _totalDamageMultiplier { get; set; }
+    [Networked] private NetworkObject Attacker { get; set; }
     [SerializeField] private ParticleSystem _explodeEffect;
     [Networked] private TickTimer LifeTimer { get; set; }
-    private Pool<ParticleSystem> _pool;
+    [Networked]
+    private bool _isHit_networked { get; set; }
 
+    bool _isHit;
+    IAttackable _hitObject;
+    [Networked, OnChangedRender(nameof(TargetSet))] private NetworkObject _target { get; set; }
+
+    public void TargetSet()
+    {
+        if (_target == null)
+        {
+            Debug.LogWarning("Target is null, cannot set hit object.");
+            _hitObject = null;
+            return;
+        }
+        _hitObject = _target.GetComponent<IAttackable>();
+    }
 
     public override void Spawned()
     {
         if (Object.HasStateAuthority)
         {
             LifeTimer = TickTimer.CreateFromSeconds(Runner, Lifetime);
+            _target = null;
         }
         _collider = GetComponent<Collider>();
-        if (!ProjectileManager.Instance.ExplodeEffectPool.TryGetValue(_explodeEffect, out _pool))
-        {
-            Debug.LogWarning($"[Projectile] ExplodeEffectPool does not contain the specified _explodeEffect for {gameObject.name}. Particle effects will not play.");
-        }
+        _collider.enabled = false;
+        _isHit = false;
     }
 
     public override void FixedUpdateNetwork()
@@ -44,60 +64,80 @@ public class Projectile : NetworkBehaviour
             }
         }
 
-        if (_isHit)
+        if (_isHit_networked)
         {
-            _collider.enabled = false;
-            _isHit = false;
-            _hitObject?.OnHitLocal(_attackInfo);
-            if (_pool == null)
-            {
-                Debug.LogWarning("[Projectile] _pool is null. Make sure the projectile prefab is properly initialized.");
-                return;
-            }
-            PlayParticle();
 
-            if (Object.HasStateAuthority)
+            if (_target != null)
+            {
+                _hitObject = _target.GetComponent<IAttackable>();
+            }
+
+            if (_hitObject != null)
+            {
+                _attackInfo.MagicDamage = _magicDamage;
+                _attackInfo.MeleeDamage = _meleeDamage;
+                _attackInfo.KnockbackVector = _knockbackVector;
+                _attackInfo.HitRecoveryTime = _hitRecoveryTime;
+                _attackInfo.BossDamageMultiplier = _bossDamageMultiplier;
+                _attackInfo.TotalDamageMultiplier = _totalDamageMultiplier;
+                _attackInfo.Attacker = Attacker;
+                _hitObject.OnHitLocal(_attackInfo);
+            }
+            else
+            {
+                Debug.LogWarning("HitObject is null when OnHitChanged is called.");
+            }
+            if (Runner.IsServer)
             {
                 DestroySelf();
             }
-            return;
         }
     }
-
-    private void PlayParticle()
-    {
-        var ps = _pool.Get();
-        ps.transform.position = transform.position;
-        ps.transform.rotation = transform.rotation;
-
-        var autoReturn = ps.GetComponent<ParticleAutoReturn>();
-        autoReturn.Init(_pool);
-
-        ps.Play();
-    }
-
     public void Initialize(AttackInfo attackInfo)
     {
+        if (Runner.IsServer == false)
+            return;
+        _hitObject = null;
+        _target = null;
         _attackInfo = attackInfo;
-        _attacker = attackInfo.Attacker;
+        _magicDamage = attackInfo.MagicDamage;
+        _meleeDamage = attackInfo.MeleeDamage;
+        _knockbackVector = attackInfo.KnockbackVector;
+        _hitRecoveryTime = attackInfo.HitRecoveryTime;
+        _bossDamageMultiplier = attackInfo.BossDamageMultiplier;
+        _totalDamageMultiplier = attackInfo.TotalDamageMultiplier;
+        Attacker = attackInfo.Attacker;
+        _collider.enabled = true;
+        _isHit_networked = false;
     }
 
-    bool _isHit;
-    IAttackable _hitObject;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_isHit)
+        if (_isHit_networked)
         {
+            Debug.LogWarning("Projectile has already hit something, ignoring further collisions.");
             return;
         }
-        if ((_hitMask.value & (1 << other.gameObject.layer)) == 0)
+        if ((HitMask.value & (1 << other.gameObject.layer)) == 0)
+        {
+            Debug.Log($"Projectile {gameObject.name} hit an object not in HitMask: {other.gameObject.name}");
             return;
+        }
         if (other.TryGetComponent<IAttackable>(out var target))
         {
-            if (target.NetworkObject == _attacker) return;
-            _isHit = true;
-            _hitObject = target;
+            if (target.NetworkObject == Attacker)
+            {
+                Debug.LogWarning($"Projectile {gameObject.name} hit its own attacker: {target.NetworkObject.name}");
+                return;
+            }
+            if (Runner.IsServer)
+            {
+                _target = target.NetworkObject;
+                _collider.enabled = false;
+                _isHit_networked = true;
+                ParticleManager.Instance.RpcPlayParticle(_explodeEffect.name, transform.position, Quaternion.identity);
+            }
         }
     }
 
