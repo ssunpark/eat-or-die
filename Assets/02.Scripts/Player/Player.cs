@@ -291,14 +291,13 @@ public class Player : CharacterBase, IAttackable
     {
         if (PlayerFSM.IsDead) return;
         var attacker = attack.Attacker;
-        RPC_HitByAttack(attack);
+
+        if (Runner.IsServer)
+        {
+            OnHitStateAuthority(attack);
+        }
         
         //Todo: 맞는 이펙트? 재생
-    }
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_HitByAttack(AttackInfo attack)
-    {
-        OnHitStateAuthority(attack);
     }
 
     public void OnHitStateAuthority(AttackInfo attack)
