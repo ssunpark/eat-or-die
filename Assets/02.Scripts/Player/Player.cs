@@ -260,7 +260,7 @@ public class Player : CharacterBase, IAttackable
         foreach (var clip in controller.animationClips)
         {
             _animationClipLengths[clip.name] = clip.length;
-            Debug.Log("[Player] Animation Length Cached: " + clip.name + " - " + clip.length);
+            //Debug.Log("[Player] Animation Length Cached: " + clip.name + " - " + clip.length);
         }
     }
 

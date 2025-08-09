@@ -105,7 +105,6 @@ public class PlayerAnimator : NetworkBehaviour
     {
         if (_fsm?.StateMachine?.ActiveState is IAnimationActionNotify notify)
         {
-            Debug.Log($"PlayerAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnActionMoment();
         }
     }
