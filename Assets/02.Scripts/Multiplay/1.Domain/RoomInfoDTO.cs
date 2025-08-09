@@ -10,19 +10,11 @@ public class RoomInfoDTO
     public List<int> KnownIngredientsList = new List<int>();
     public List<int> KnownRecipesList = new List<int>();
 
-    public static RoomInfoDTO FromDomain(RoomInfo roomInfo)
+    public RoomInfoDTO (RoomInfo roomInfo)
     {
-        if (roomInfo == null)
-        {
-            roomInfo = new RoomInfo();
-        }
-        
-        return new RoomInfoDTO()
-        {
-            RoomName = roomInfo.RoomName,
-            KnownIngredientsList = roomInfo.KnownIngredients.ToList(),
-            KnownRecipesList = roomInfo.KnownRecipes.ToList()
-        };
+        RoomName = roomInfo.RoomName;
+        KnownIngredientsList = roomInfo.KnownIngredients.ToList();
+        KnownRecipesList = roomInfo.KnownRecipes.ToList();
     }
 
     public RoomInfo ToDomain()

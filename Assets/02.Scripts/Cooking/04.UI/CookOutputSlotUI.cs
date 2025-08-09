@@ -14,7 +14,7 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
         IconImage.gameObject.SetActive(false);
         QuantityText.gameObject.SetActive(false);
 
-        CookingManager.Instance.OnCookOutputUpdated += UpdateSlotUI;
+        CookingManager.OnCookOutputUpdated += UpdateSlotUI;
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -53,7 +53,6 @@ public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
 
         UpdateSlotUI();
     }
-
 
     public void UpdateSlotUI()
     {
