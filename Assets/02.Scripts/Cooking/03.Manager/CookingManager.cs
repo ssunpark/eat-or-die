@@ -199,12 +199,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         if (_isCooking)
         {
             _t += Time.deltaTime;
-            
-            if (_t >= _cookTime)
-            {
-                // 실제로는 여기서 PlayerState Idle로 전환 요청
-                OnCookingCompleted();
-            }
         }
     }
     
