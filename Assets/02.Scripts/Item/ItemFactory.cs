@@ -157,9 +157,10 @@ public class ItemFactory
 
         IUseEffect useEffect = rawData.ActionName switch
         {
-            "Hoe" => new UseEffectHoe(),
-            "WateringCan" => new UseEffectWateringCan(),
-            "Seed" => new UseEffectSeed(rawData.ID),
+            "Hoe" => new UseEffect_Interact<FarmingGround>(target => target.Hoe()),
+            "WateringCan" => new UseEffect_Interact<FarmingGround>(target => target.WateringCan()),
+            "Seed" => new UseEffect_Interact<SeedGround>(target => target.Plant(rawData.ID)),
+            "CookingPot" => new UseEffect_Interact<UnlockableObject>(target => target.Unlock()),
             _ => new UseEffectNone()
         };
         var effectList = new List<IUseEffect>() { useEffect };
