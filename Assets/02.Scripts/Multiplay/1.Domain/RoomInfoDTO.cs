@@ -13,16 +13,9 @@ public class RoomInfoDTO
     public static RoomInfoDTO FromDomain(RoomInfo roomInfo)
     {
         if (roomInfo == null)
-            Debug.Log("roomInfo 자체가 null입니다!");
-        
-        if(roomInfo.RoomName == null)
-            Debug.Log("RoomName이 널입니다.");
-        
-        if (roomInfo.KnownIngredients == null)
-            Debug.Log("roomInfo.KnownIngredients가 null입니다!");
-
-        if (roomInfo.KnownRecipes == null)
-            Debug.Log("roomInfo.KnownRecipes가 null입니다!");
+        {
+            roomInfo = new RoomInfo();
+        }
         
         return new RoomInfoDTO()
         {

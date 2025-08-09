@@ -2,20 +2,20 @@
 using UnityEngine;
 public class RoomInfoRepository
 {
-    public static string SaveKey = "SuhyeonTest";
+    // public static string SaveKey = "SuhyeonTest";
     
-    public void Save(RoomInfo roomInfo)
+    public void Save(RoomInfo roomInfo, string saveKey)
     {
         RoomInfoDTO dto = RoomInfoDTO.FromDomain(roomInfo);
         string data = JsonUtility.ToJson(dto);
 
-        PlayerPrefs.SetString(SaveKey, data);
+        PlayerPrefs.SetString(saveKey, data);
         PlayerPrefs.Save();
     }
 
-    public bool TryLoad(out RoomInfo roomInfo)
+    public bool TryLoad(string saveKey, out RoomInfo roomInfo)
     {
-        string jsonData = PlayerPrefs.GetString(SaveKey, null);
+        string jsonData = PlayerPrefs.GetString(saveKey, null);
         
         if (string.IsNullOrEmpty(jsonData))
         {

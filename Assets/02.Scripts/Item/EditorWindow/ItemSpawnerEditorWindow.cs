@@ -86,6 +86,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
             EditorGUILayout.LabelField("ID", _lastSpawnedItemDefinition.ID.ToString());
             EditorGUILayout.LabelField("Name", _lastSpawnedItemDefinition.Name);
+            EditorGUILayout.LabelField("ItemCategory", _lastSpawnedItemDefinition.Type.ToString());
             EditorGUILayout.LabelField("HasDurability", _lastSpawnedItemDefinition.HasDurability.ToString());
             EditorGUILayout.LabelField("IsIngredient", _lastSpawnedItemDefinition.IsIngredient.ToString());
             EditorGUILayout.LabelField("Max Quantity", _lastSpawnedItemDefinition.MaxQuantity.ToString());
@@ -93,6 +94,13 @@ public class ItemSpawnerEditorWindow : EditorWindow
             EditorGUILayout.LabelField("Prefab", _lastSpawnedItemDefinition.Prefab.name);
             EditorGUILayout.LabelField("Description");
             EditorGUILayout.TextArea(_lastSpawnedItemDefinition.Description, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
+            string extraDescription = "";
+            foreach (var extra in _lastSpawnedItemDefinition.ExtraDescription)
+            {
+                extraDescription += extra + "\n";
+            }
+            EditorGUILayout.LabelField("ExtraDescription");
+            EditorGUILayout.TextArea(extraDescription, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
 
             if (_lastSpawnedItemDefinition.Icon != null)
             {
