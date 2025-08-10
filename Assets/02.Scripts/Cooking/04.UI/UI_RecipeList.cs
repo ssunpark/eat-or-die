@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,14 +11,14 @@ public class UI_RecipeList : MonoBehaviour
 
     private void OnEnable()
     {
-        // CookingManager.CookingFinished += HandleCookingFinished;
-        // InventoryManager.Instance.OnInventoryUpdated += RefreshAllButtons;
+        RoomRecipeStateManager.OnRecipeUnlocked += HandleRecipeUnlocked;
+        InventoryManager.Instance.OnInventoryUpdated += RefreshAllButtons;
     }
     
     private void OnDisable()
     {
-        // CookingManager.CookingFinished -= HandleCookingFinished;
-        // InventoryManager.Instance.OnInventoryUpdated -= RefreshAllButtons;
+        RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
+        if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshAllButtons;
     }
 
     // 최초 1회만 호출해서 버튼 생성
@@ -57,24 +56,17 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    // public void RefreshAllButtons()
-    // {
-    //     Debug.Log("RefreshAllButtons");
-    //     foreach (var button in _recipeButtonList)
-    //     {
-    //         Debug.Log("버튼 리프레시 !");
-    //         button.Refresh(button.GetRecipe());
-    //     }
-    // }
-    
-    // private void HandleCookingFinished(ItemInstance cookedItemInstance)
-    // {
-    //     var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItemInstance.ID);
-    //     if (recipe == null) return;
-    //
-    //     if (RoomRecipeStateManager.Instance.TryUnlock(recipe.ID))
-    //     {
-    //         RefreshAllButtons();
-    //     }
-    // }
+    private void HandleRecipeUnlocked(Recipe unlockedRecipe)
+    {
+        // 이벤트가 오면, 자신이 가진 버튼들을 새로고침합니다.
+        RefreshAllButtons();
+    }
+
+    public void RefreshAllButtons()
+    {
+        foreach (var button in _recipeButtonList)
+        {
+            button.Refresh(button.GetRecipe());
+        }
+    }
 }

@@ -10,7 +10,6 @@ public class UI_CookingPanel : AUI_PopupBase
     public override EPopupType Type => EPopupType.Cook;
     public GameObject CookingPanel;
     public GameObject RecipePanel;
-    public static Action OnRecipeButtnClicked;  
 
     private void Start()
     {
@@ -23,12 +22,10 @@ public class UI_CookingPanel : AUI_PopupBase
         if (PopupManager.Instance.IsOpen(EPopupType.Recipe))
         {
             PopupManager.Instance.GetOpenPopup(EPopupType.Recipe)?.Close();
-            OnRecipeButtnClicked?.Invoke();
         }
         else
         {
             RecipePanel.GetComponent<UI_RecipePanel>().Open();
-            OnRecipeButtnClicked?.Invoke();
         }
     }
 
