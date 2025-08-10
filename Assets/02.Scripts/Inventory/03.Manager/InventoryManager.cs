@@ -10,6 +10,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     
     public List<Action> OnSlotUpdated;
     public Action OnInventoryUpdated;
+    public static event Action<ItemInstance> OnItemAcquired;
 
     private void Awake()
     {
@@ -69,7 +70,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         ItemInstance remain = _inventory.PickItemFromGround(itemInstance);
         
         OnInventoryUpdated?.Invoke();
-     
+        OnItemAcquired?.Invoke(itemInstance);
         if (remain == null) return;
         
         ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
