@@ -179,5 +179,6 @@ public class DragonStateParameterSet
     {
         public float ChargeDuration; // 모으는 시간
         public float TargetSize;     // 커지는 크기
+        public float RemainDuration;
     }
 }

@@ -106,6 +106,11 @@ public class DragonMovement
 
     public void ResetNavMeshAgent()
     {
+        if (!NavMeshAgent.enabled)
+        {
+            return;
+        }
+        
         NavMeshAgent.ResetPath();
         NavMeshAgent.isStopped = true;
         NavMeshAgent.velocity = Vector3.zero;
@@ -130,7 +135,7 @@ public class DragonMovement
 
         if (!NavMeshAgent.enabled)
             return;
-        ResetNavMeshAgent();
+        NavMeshAgent.ResetPath();
     }
 
     public void Unlock()

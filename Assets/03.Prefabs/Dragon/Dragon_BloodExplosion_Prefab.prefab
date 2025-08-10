@@ -19739,7 +19739,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2559850971606501194}
   - component: {fileID: 6896231369501524761}
-  - component: {fileID: 2625055498402499527}
+  - component: {fileID: -7237849933040897915}
   m_Layer: 0
   m_Name: Dragon_BloodExplosion_Prefab
   m_TagString: Untagged
@@ -19782,9 +19782,16 @@ MonoBehaviour:
   - {fileID: 6936376620735361995}
   - {fileID: 7331006169302181925}
   - {fileID: 3574362954546761997}
-  _effectController: {fileID: 6443423418229092857}
   _explosion: {fileID: 8463626910894888729}
---- !u!114 &2625055498402499527
+  _startScale: 0.5
+  _radius: 9
+  _attackMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  _Duration: 0
+  _RemainDuration: 0
+  _TargetScale: 0
+--- !u!114 &-7237849933040897915
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -19793,59 +19800,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 4755586709490503149}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2979db1e4f954ef48dddfdb2c21cb9d7, type: 3}
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  influence: 1
-  triggerInteraction: 0
-  detectLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  autoUpdate: 1
-  colorProfile: {fileID: 0}
-  gizmosUpdate: 0
-  blockLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  solverType: 0
-  checkLineOfSight: 1
-  usingTagFilter: 1
-  tagFilter: Player
-  onCast:
-    m_PersistentCalls:
-      m_Calls: []
-  onDetect:
-    m_PersistentCalls:
-      m_Calls: []
-  pulseTime: 0
-  detectVector: {x: 0, y: 0, z: 0}
-  onDetectCollider:
-    m_PersistentCalls:
-      m_Calls: []
-  onNewCollider:
-    m_PersistentCalls:
-      m_Calls: []
-  onLostCollider:
-    m_PersistentCalls:
-      m_Calls: []
-  ignoreList: []
-  colliders:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  boundsSolver: 0
-  boundsCenter: 0
-  collectLOS: 0
-  radius: 19
-  height: 0
-  local: 1
-  limited: 1
-  limitCount: 8
+  SortKey: 3836487779
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 6896231369501524761}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &5335908626473359678
 GameObject:
   m_ObjectHideFlags: 0

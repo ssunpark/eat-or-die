@@ -1,73 +1,112 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using RaycastPro.Detectors;
-using Redcode.Pools;
+using Fusion;
 using UnityEngine;
 
-public class BloodExplosion : MonoBehaviour
+public class BloodExplosion : NetworkBehaviour
 {
+    [Header("VFX")]
     [SerializeField]
-    private List<ParticleSystem> _mainParticleList = new List<ParticleSystem>();
-    [SerializeField]
-    private EffectVisualController _effectController;
+    private List<ParticleSystem> _mainParticleList = new();
     [SerializeField]
     private GameObject _explosion;
+    [SerializeField]
+    private float _startScale = 0.5f;
 
-    private RangeDetector _rangeDetector;
-    
-    private Coroutine _explosionCoroutine;
+    [Header("Gameplay")]
+    [SerializeField]
+    private float _radius = 3f;
+    [SerializeField]
+    private LayerMask _attackMask;
 
-    private void Awake()
+    // 네트워크 동기화되는 파라미터
+    [Networked]
+    private TickTimer ExplosionTimer { get; set; } // 서버가 정한 "데미지 시점"
+    [Networked]
+    public float Duration { get; set; }
+    [Networked]
+    public float RemainDuration { get; set; } // VFX 전체 지연(초)
+    [Networked]
+    public float TargetScale { get; set; } // 최종 스케일
+
+    private bool _damaged;
+    private Tween _scaleTween;
+
+    private float _timer;
+
+    public override void Spawned()
     {
-        _rangeDetector = GetComponent<RangeDetector>();
+        ExplosionTimer = TickTimer.CreateFromSeconds(Runner, Duration);
+        // VFX 초기화 (모든 클라)
+        transform.localScale = Vector3.one * _startScale;
+        _explosion.SetActive(false);
+        _damaged = false;
+
+        foreach (var ps in _mainParticleList)
+        {
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = ps.main;
+            main.duration = Duration;
+            ps.Play();
+        }
+
+        // DOTween은 "진행도 시킹"으로 제어할 예정이므로 일단 멈춘 트윈 생성
+        _scaleTween?.Kill();
+        _scaleTween = transform.DOScale(TargetScale, Duration)
+            .SetEase(Ease.Linear);
     }
 
-    // 폭발 준비
-    public void StartExplosion(float delay, float targetSize, Pool<BloodExplosion> pool)
+    public override void FixedUpdateNetwork()
     {
-        transform.localScale = Vector3.one * 0.5f;
-        
-        foreach (var particle in _mainParticleList)
+        if (!_damaged && ExplosionTimer.Expired(Runner))
         {
-            var main = particle.main;
-            main.duration = delay;
+            TriggerExplosion();
         }
 
-        foreach (var particle in _mainParticleList)
+        // 흔적은 간단하게 로컬 타임으로
+        _timer += Time.deltaTime;
+        if (_timer > RemainDuration)
         {
-            particle.Play();
+            Runner.Despawn(Object);
         }
-        
-        gameObject.SetActive(true);
-
-        if (_explosionCoroutine != null)
-        {
-            StopCoroutine(_explosionCoroutine);
-        }
-        _explosionCoroutine = StartCoroutine(Explode(delay));
-
-        transform.DOScale(targetSize, delay);
-        
-        _effectController.SetEndCallBack(() => pool.Take(this));
     }
 
-    private IEnumerator Explode(float delay)
+    private void TriggerExplosion()
     {
-        yield return new WaitForSecondsRealtime(delay);
+        _damaged = true;
         _explosion.SetActive(true);
-        foreach (var collider in _rangeDetector.DetectedColliders)
+
+        if (HasStateAuthority)
+            DoDamageServer();
+    }
+
+    private void DoDamageServer()
+    {
+        Collider[] hits = new Collider[8];
+        var hitCount = Physics.OverlapSphereNonAlloc(transform.position, _radius, hits, _attackMask);
+
+        if (hitCount <= 0)
         {
-            if (collider.TryGetComponent(out IAttackable attackable))
+            return;
+        }
+
+        foreach (var h in hits)
+        {
+            if (h == null)
             {
-                var attackinfo = new AttackInfo
-                {
-                    MeleeDamage = 10f,
-                    TotalDamageMultiplier = 1f
-                };
-                attackable.OnHitLocal(attackinfo);
+                break;
+            }
+
+            if (h.TryGetComponent(out IAttackable atk))
+            {
+                atk.OnHitLocal(new AttackInfo { MeleeDamage = 10f, TotalDamageMultiplier = 1f });
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        _scaleTween?.Kill();
+        _damaged = false;
     }
 }

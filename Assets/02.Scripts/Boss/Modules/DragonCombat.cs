@@ -176,12 +176,16 @@ public class DragonCombat
             .AppendCallback(() => effect.SetActive(false));
     }
 
-    public void PerformBloodExplode(float duration, float targetSize)
+    public void PerformBloodExplode(float duration, float targetSize, float remainDuration)
     {
-        var explosion = _controller.Pool.BloodExplosionPool.Get();
-
-        explosion.transform.position = _controller.transform.position;
-        explosion.StartExplosion(duration, targetSize, _controller.Pool.BloodExplosionPool);
+        var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position, Quaternion.identity,
+            onBeforeSpawned: (runner, obj) =>
+        {
+            var proj = obj.GetComponent<BloodExplosion>();
+            proj.Duration = duration;
+            proj.TargetScale = targetSize;
+            proj.RemainDuration = remainDuration;
+        });
     }
 
     #endregion
