@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using Fusion;
 using RaycastPro.Detectors;
 using UnityEngine;
 
@@ -91,13 +92,14 @@ public class DragonCombat
 
     #region Magic
 
+    public TickTimer BreathTimer { get => _controller.BreathTimer; set => _controller.BreathTimer = value; }
     // 브레스
     public void PlayBreath(float duration)
     {
         var vfx = _controller.Pool.BreathParticlePool.Get();
         vfx.transform.position = _controller.BreathPoint.position;
         vfx.transform.rotation = Quaternion.LookRotation(_controller.transform.forward);
-        vfx.Init(duration, () => _controller.Pool.BreathParticlePool.Take(vfx));
+        vfx.Init(duration, _controller.HasStateAuthority, () => _controller.Pool.BreathParticlePool.Take(vfx));
     }
 
     // Lava

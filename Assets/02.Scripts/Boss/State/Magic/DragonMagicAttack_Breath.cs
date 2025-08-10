@@ -1,4 +1,5 @@
-﻿using Redcode.Pools;
+﻿using Fusion;
+using Redcode.Pools;
 using UnityEngine;
 
 public class DragonMagicAttack_Breath : DragonSubStateBase, IAnimationEntryActionNotify, IAnimationExitActionNotify
@@ -16,6 +17,9 @@ public class DragonMagicAttack_Breath : DragonSubStateBase, IAnimationEntryActio
     protected override void OnEnterState()
     {
         Context.Movement.Lock();
+
+        var total = _breathParams.FireTime + _breathParams.Duration;
+        Context.Combat.BreathTimer = TickTimer.CreateFromSeconds(Machine.Runner, total);
     }
 
     protected override void OnFixedUpdate()
@@ -32,8 +36,10 @@ public class DragonMagicAttack_Breath : DragonSubStateBase, IAnimationEntryActio
 
     protected override void OnRender()
     {
-        if (Machine.StateTime >= _breathParams.FireTime + _breathParams.Duration)
+        if (Context.Combat.BreathTimer.Expired(Machine.Runner))
+        {
             Context.Animator.SetBool("Attack_Breath", false);
+        }
     }
 
     public void OnEntryMoment()

@@ -88,6 +88,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     
     [Networked, OnChangedRender(nameof(OnAnimWaitIndexChanged))]
     public int AnimWaitIndex { get; set; }
+    
+    [Networked]
+    public TickTimer BreathTimer { get; set; }
 
     private void Awake()
     {
@@ -141,10 +144,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void OnEntryMoment()
     {
-        if (!HasStateAuthority)
-        {
-            return;
-        }
         if (_stateMachine.Machine.ActiveState is IAnimationEntryActionNotify notify)
         {
             notify.OnEntryMoment();
@@ -153,10 +152,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void OnActionMoment()
     {
-        if (!HasStateAuthority)
-        {
-            return;
-        }
         if (_stateMachine.Machine.ActiveState is IAnimationActionNotify notify)
         {
             notify.OnActionMoment();
@@ -165,10 +160,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void OnExitMoment()
     {
-        if (!HasStateAuthority)
-        {
-            return;
-        }
         if (_stateMachine.Machine.ActiveState is IAnimationExitActionNotify notify)
         {
             notify.OnExitMoment();

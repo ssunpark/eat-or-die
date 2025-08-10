@@ -20,6 +20,8 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActivateRandomMagicSkill()
     {
+        _subStateMachine.TryActivateState<DragonMagicAttack_Blood>(true);
+        return;
         float randProbability = Random.value;
         int rand = Random.Range(0, 2); // 확장 가능
         if (Context.Sight.Distance < Context.Parameter.Magic.NearMagicRange

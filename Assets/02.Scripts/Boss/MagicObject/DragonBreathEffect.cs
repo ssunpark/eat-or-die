@@ -19,26 +19,22 @@ public class DragonBreathEffect : MonoBehaviour
     private float _despawnTime = 0f;
     private Action _onEndCallback;
 
+    private bool _isState;
+
     private void Awake()
     {
         _collider = GetComponent<BoxCollider>();
         _collider.isTrigger = true;
     }
 
-    public void Init(float particleDuration, Action onDespawnCallback = null)
+    public void Init(float particleDuration, bool isState, Action onDespawnCallback = null)
     {
+        _isState = isState;
         _onEndCallback = onDespawnCallback;
         _timer = 0f;
         _currentLength = 0f;
         _despawnTime = particleDuration;
         
-        // 콜라이더 초기화
-        _collider.enabled = true;
-        var size = _collider.size;
-        size.z = 0f;
-        _collider.size = size;
-        _collider.center = new Vector3(0f, 0f, 0f);
-
         // 파티클 재생
         var main1 = _mainParticle.main;
         main1.duration = particleDuration;
@@ -50,10 +46,26 @@ public class DragonBreathEffect : MonoBehaviour
             main2.duration = particleDuration;
             _subParticle.Play();
         }
+        
+        // 콜라이더 초기화
+        if (!_isState)
+        {
+            _collider.enabled = false;
+            return;
+        }
+        _collider.enabled = true;
+        var size = _collider.size;
+        size.z = 0f;
+        _collider.size = size;
+        _collider.center = new Vector3(0f, 0f, 0f);
     }
 
     private void Update()
     {
+        if (!_isState)
+        {
+            return;
+        }
         _timer += Time.deltaTime;
 
         // 히트박스 점점 커지게
@@ -74,6 +86,10 @@ public class DragonBreathEffect : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (!_isState)
+        {
+            return;
+        }
         if (!other.CompareTag("Player"))
             return;
 
