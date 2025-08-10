@@ -70,7 +70,7 @@ public class DragonCombat
         projectile.Fire(_controller.transform.forward, param.Speed, param.LifeTime,
             () => _controller.Pool.TakeDirectionalPool(DarkProjectileKey, projectile));
     }
-    
+
     public void WindStormEffect()
     {
         var spawnPoint = _controller.RightPoint.position;

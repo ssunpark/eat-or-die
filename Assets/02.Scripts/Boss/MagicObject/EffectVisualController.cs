@@ -46,14 +46,12 @@ public class EffectVisualController : MonoBehaviour
 
     private void OnEnable()
     {
-        Reset(_stayDuration,  _reduceFactor, _upFactor);
+        Appear(_stayDuration);
     }
-
-    public void Reset(float duration, float reduceFactor, float upFactor)
+    
+    public void Appear(float duration)
     {
         _stayDuration = duration;
-        _reduceFactor = reduceFactor;
-        _upFactor = upFactor;
         _time = 0f;
         _currentUpFactor = 0f;
         _cutOutFactor = 0f;

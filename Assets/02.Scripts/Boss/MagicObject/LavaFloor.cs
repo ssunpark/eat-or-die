@@ -16,6 +16,7 @@ public class LavaFloor : MonoBehaviour
 
     public void Init(float duration)
     {
+        _effect.Appear(duration);
         _duration = duration;
         _timer = 0f;
         _isActive = true;

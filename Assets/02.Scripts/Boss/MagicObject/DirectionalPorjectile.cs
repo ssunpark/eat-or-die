@@ -3,18 +3,16 @@ using UnityEngine;
 
 public class DirectionalProjectile : MonoBehaviour
 {
-    private const float DEFAULT_LIFRTIME = 10f;
-    
     private Vector3 _direction;
     private float _speed;
     private float _lifeTime;
     private float _timer;
     private bool _isFired = false;
 
-    private Action _callback;
+    private Action _endCallback;
 
     // Fire 메서드: 방향, 속도, 생존 시간, 생존 시간 이후 콜백 설정
-    public void Fire(Vector3 direction, float speed, float lifeTime = DEFAULT_LIFRTIME, Action callback = null)
+    public void Fire(Vector3 direction, float speed, float lifeTime, Action endCallback)
     {
         _direction = direction.normalized;
         var angle = Quaternion.LookRotation(_direction.normalized).eulerAngles.y;
@@ -23,7 +21,18 @@ public class DirectionalProjectile : MonoBehaviour
         _lifeTime = lifeTime;
         _timer = 0f;
         _isFired = true;
-        _callback = callback;
+        _endCallback = endCallback;
+    }
+    
+    public void Fire(Vector3 direction, float speed)
+    {
+        _direction = direction.normalized;
+        var angle = Quaternion.LookRotation(_direction.normalized).eulerAngles.y;
+        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, angle, transform.eulerAngles.z);
+        _lifeTime = -1f;
+        _speed = speed;
+        _timer = 0f;
+        _isFired = true;
     }
 
     void Update()
@@ -35,12 +44,17 @@ public class DirectionalProjectile : MonoBehaviour
         transform.position += _direction * _speed * Time.deltaTime;
 
         // 생존 시간 체크
+        if (_lifeTime < 0)
+        {
+            return;
+        }
+        
         _timer += Time.deltaTime;
         if (_timer >= _lifeTime)
         {
-            if (_callback != null)
+            if (_endCallback != null)
             {
-                _callback.Invoke();
+                _endCallback.Invoke();
             }
             else
             {
