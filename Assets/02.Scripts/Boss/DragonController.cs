@@ -121,10 +121,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     
     public void OnEntryMoment()
     {
-        Debug.Log($"enter{_stateMachine.Machine.ActiveStateId}");
         if (_stateMachine.Machine.ActiveState is IAnimationEntryActionNotify notify)
         {
-            Debug.Log("enter");
             notify.OnEntryMoment();
         }
     }

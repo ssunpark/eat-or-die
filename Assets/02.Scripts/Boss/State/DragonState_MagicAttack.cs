@@ -72,10 +72,8 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     public void OnEntryMoment()
     {
-        Debug.Log("enter");
         if (_subStateMachine.ActiveState is IAnimationEntryActionNotify notify)
         {
-            Debug.Log("enter");
             notify.OnEntryMoment();
         }
     }

@@ -37,7 +37,6 @@ public class DragonMagicAttack_Blood : DragonSubStateBase, IAnimationEntryAction
 
     public void OnEntryMoment()
     {
-        Debug.Log("Entry Moment");
         Context.Combat.PerformBloodExplode(_bloodParams.ChargeDuration, _bloodParams.TargetSize);
     }
 

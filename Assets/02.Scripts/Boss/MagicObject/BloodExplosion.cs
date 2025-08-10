@@ -57,7 +57,6 @@ public class BloodExplosion : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(delay);
         _explosion.SetActive(true);
-        Debug.Log(_rangeDetector.DetectedColliders.Count);
         foreach (var collider in _rangeDetector.DetectedColliders)
         {
             if (collider.TryGetComponent(out IAttackable attackable))
