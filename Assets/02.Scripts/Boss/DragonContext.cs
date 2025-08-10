@@ -8,6 +8,7 @@ public class DragonContext
     public DragonParameterLoader Parameter { get; private set; }
     public DragonStats Stats { get; private set; }
     public DragonPhase Phase { get; private set; }
+    public DragonAnimation Animation { get; private set; }
     public Animator Animator { get; private set; }
     public Transform Transform { get; private set; }
 
@@ -22,6 +23,7 @@ public class DragonContext
         Sight = new DragonSight(controller);
         Phase = new DragonPhase(controller);
         Stats = new DragonStats(controller);
+        Animation = new DragonAnimation(controller);
     }
 
     public void OnSpawned()

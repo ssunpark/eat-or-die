@@ -60,10 +60,11 @@ public class DragonMovement
         var baseParams = _controller.ParamLoader?.Base;
         float smooth = baseParams?.AnimSmoothSpeed ?? 1f;
 
-        _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, smooth * dt);
-
-        _controller.Animator.SetFloat("XVelocity", _smoothedVelocity.x);
-        _controller.Animator.SetFloat("ZVelocity", _smoothedVelocity.y);
+        if (_controller.HasStateAuthority)
+        {
+            _smoothedVelocity = Vector2.Lerp(_smoothedVelocity, targetVelocity, smooth * dt);
+            _controller.AnimVelocity = _smoothedVelocity; // 네트워크로 복제될 값
+        }
     }
 
     public void MaintainDistanceAndLookAtTarget(float dt, float desiredDistance)
@@ -129,7 +130,7 @@ public class DragonMovement
 
         if (!NavMeshAgent.enabled)
             return;
-        NavMeshAgent.ResetPath();
+        ResetNavMeshAgent();
     }
 
     public void Unlock()

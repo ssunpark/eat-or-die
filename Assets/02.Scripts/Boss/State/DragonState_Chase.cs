@@ -26,7 +26,6 @@ public class DragonState_Chase : DragonStateBase
     protected override void OnEnterState()
     {
         Context.Movement.SetNavMeshAgentMoveData(_chaseParams.ChaseSpeed, _chaseParams.RotationSpeed);
-        Context.Animator.SetBool("IsMove", true);
 
         // 확률적으로 sidestep 시도 여부 결정
         _doSidestep = Random.value < _chaseParams.SidestepProbability;
@@ -73,6 +72,23 @@ public class DragonState_Chase : DragonStateBase
 
         Context.Movement.Move(Machine.Runner.DeltaTime);
     }
+    
+    protected override void OnExitState()
+    {
+        Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
+
+        Context.Movement.ResetNavMeshAgent();
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", true);
+    }
+
+    protected override void OnExitStateRender()
+    {
+        Context.Animator.SetBool("IsMove", false);
+    }
 
     private void SetSidestepDestination()
     {
@@ -98,13 +114,5 @@ public class DragonState_Chase : DragonStateBase
             // 실패 시 바로 추적
             _sidestepComplete = true;
         }
-    }
-    
-    protected override void OnExitState()
-    {
-        Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
-
-        Context.Movement.ResetNavMeshAgent();
-        Context.Animator.SetBool("IsMove", false);
     }
 }

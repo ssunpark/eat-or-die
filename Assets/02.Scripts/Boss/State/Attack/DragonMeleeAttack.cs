@@ -25,9 +25,8 @@ public class DragonMeleeAttack : DragonSubStateBase, IAnimationActionNotify, IAn
         Context.Movement.ResetNavMeshAgent();
 
         Context.Movement.Lock();
-
-        Context.Animator.SetBool("IsMove", false);
-        Context.Animator.SetTrigger(_animation);
+        
+        Context.Combat.SetDetector(_normalAttackParams.DetectRadius, _normalAttackParams.Angle);
     }
 
     protected override void OnFixedUpdate()
@@ -42,7 +41,8 @@ public class DragonMeleeAttack : DragonSubStateBase, IAnimationActionNotify, IAn
 
     protected override void OnEnterStateRender()
     {
-        Context.Combat.SetDetector(_normalAttackParams.DetectRadius, _normalAttackParams.Angle);
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger(_animation);
     }
 
     public void OnActionMoment()

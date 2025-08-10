@@ -27,8 +27,6 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
     protected override void OnEnterState()
     {
         Context.Movement.NavMeshAgent.enabled = false;
-        Context.Animator.SetBool("IsMove", false);
-        Context.Animator.SetBool("IsBackStep", true); // 회전 중에는 움직이는 듯한 연출
     }
 
     protected override void OnFixedUpdate()
@@ -54,6 +52,16 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
     protected override void OnExitState()
     {
         Context.Movement.NavMeshAgent.enabled = true;
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetBool("IsBackStep", true); // 회전 중에는 움직이는 듯한 연출
+    }
+
+    protected override void OnExitStateRender()
+    {
         Context.Animator.SetBool("IsBackStep", false);
     }
 }

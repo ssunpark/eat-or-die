@@ -16,21 +16,26 @@ public class DragonMagicAttack_Breath : DragonSubStateBase, IAnimationEntryActio
     protected override void OnEnterState()
     {
         Context.Movement.Lock();
-        Context.Animator.SetBool("IsMove", false);
-        Context.Animator.SetBool("Attack_Breath", true);
     }
 
     protected override void OnFixedUpdate()
     {
-        float t = Machine.StateTime;
-
-        if (t >= _breathParams.FireTime + _breathParams.Duration)
-            Context.Animator.SetBool("Attack_Breath", false);
-
         if (!Context.Movement.IsLocked)
             ParentState.OnSubStateComplete();
     }
-    
+
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetBool("Attack_Breath", true);
+    }
+
+    protected override void OnRender()
+    {
+        if (Machine.StateTime >= _breathParams.FireTime + _breathParams.Duration)
+            Context.Animator.SetBool("Attack_Breath", false);
+    }
+
     public void OnEntryMoment()
     {
         Context.Combat.PlayBreath(_breathParams.Duration);

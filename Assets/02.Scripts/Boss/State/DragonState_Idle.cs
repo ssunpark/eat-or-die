@@ -35,7 +35,6 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
         if (!_roared && Context.Sight.HasTarget)
         {
             Context.Combat.SetFightMode(true);
-            Context.Animator.SetTrigger("Roar");
             Context.Movement.Lock();
             _roared = true;
             return;
@@ -46,7 +45,6 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
         {
             Context.Sight.SetTarget(found);
             Context.Combat.SetFightMode(true);
-            Context.Animator.SetTrigger("Roar");
             Context.Movement.Lock();
             _roared = true;
             return;

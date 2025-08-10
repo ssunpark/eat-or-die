@@ -12,16 +12,20 @@ public class DragonState_Wait : DragonSubStateBase
 
     protected override void OnEnterState()
     {
-        Context.Animator.SetInteger("IdleIndex", Random.Range(0, 2));
-        Context.Animator.SetBool("IsMove", false);
+        Context.Animation.SetRandomWaitAnimation();
     }
 
     protected override void OnFixedUpdate()
     {
         if (Machine.StateTime >= _waitParams.WaitDuration)
         {
-            Context.Animator.SetInteger("IdleIndex", Random.Range(0, 2));
+            Context.Animation.SetRandomWaitAnimation();
             ParentState.OnSubStateComplete();
         }
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", false);
     }
 }

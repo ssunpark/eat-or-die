@@ -17,8 +17,6 @@ public class DragonMagicAttack_Blood : DragonSubStateBase, IAnimationEntryAction
     protected override void OnEnterState()
     {
         Context.Movement.Lock();
-        Context.Animator.SetBool("IsMove", false);
-        Context.Animator.SetTrigger("Attack_Blood");
     }
 
     protected override void OnFixedUpdate()
@@ -33,6 +31,8 @@ public class DragonMagicAttack_Blood : DragonSubStateBase, IAnimationEntryAction
     protected override void OnEnterStateRender()
     {
         _spawnCount = 0;
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetTrigger("Attack_Blood");
     }
 
     public void OnEntryMoment()

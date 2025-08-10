@@ -17,20 +17,27 @@ public class DragonMagicAttack_Roar : DragonSubStateBase, IAnimationEntryActionN
     protected override void OnEnterState()
     {
         Context.Movement.Lock();
-        Context.Animator.SetBool("IsMove", false);
-        Context.Animator.SetBool("Attack_Roar", true);
     }
 
     protected override void OnFixedUpdate()
     {
-        if (Machine.StateTime >= _roarParams.FireTime + _roarParams.Duration)
-        {
-            Context.Animator.SetBool("Attack_Roar", false);
-        }
-
         if (!Context.Movement.IsLocked)
         {
             ParentState.OnSubStateComplete();
+        }
+    }
+    
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", false);
+        Context.Animator.SetBool("Attack_Roar", true);
+    }
+
+    protected override void OnRender()
+    {
+        if (Machine.StateTime >= _roarParams.FireTime + _roarParams.Duration)
+        {
+            Context.Animator.SetBool("Attack_Roar", false);
         }
     }
 

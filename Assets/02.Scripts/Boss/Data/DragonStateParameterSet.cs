@@ -140,6 +140,7 @@ public class DragonStateParameterSet
     public class MagicParams
     {
         public float ContinueMagicProbability; // 연속 마법 사용 확률
+        public float NearMagicRange;
         public float NearMagicProbability;     // 근접 마법 사용 확률
     }
 

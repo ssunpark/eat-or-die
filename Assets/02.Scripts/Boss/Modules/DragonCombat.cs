@@ -15,18 +15,16 @@ public class DragonCombat
     public void OnSpawned()
     {
         SetFightMode(_controller.IsFightMode);
+        
+        if (!_controller.HasStateAuthority)
+        {
+            _controller.AttackDetector.enabled = false;
+        }
     }
 
     public void SetFightMode(bool active)
     {
-        int index = _controller.Animator.GetLayerIndex("Fight Layer");
-        float weight = active ? 1f : 0f;
-        _controller.Animator.SetLayerWeight(index, weight);
-
-        if (_controller.HasStateAuthority)
-        {
-            _controller.RPC_SetFightLayerWeight(weight);
-        }
+        _controller.RPC_SetFightLayerWeight(active);
     }
 
     #region Melee

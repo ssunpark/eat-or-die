@@ -17,7 +17,13 @@ public class DragonSight
         _controller = controller;
     }
 
-    public void OnSpawned() { }
+    public void OnSpawned()
+    {
+        if (!_controller.HasStateAuthority)
+        {
+            SightDetector.enabled = false;
+        }
+    }
 
     public void SetSightDetector(float fullAwarenessRadius, float detectRadius, float detectAngle)
     {

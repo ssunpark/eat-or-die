@@ -16,16 +16,16 @@ public class DragonState_Alert : DragonStateBase
         _baseParams = Context.Parameter.Base;
     }
 
+    protected override bool CanEnterState()
+    {
+        return Context.Sight.Target != null;
+    }
+
     protected override void OnEnterState()
     {
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         _hasDestination = false;
-        
-        Context.Animator.SetBool("IsMove", true);
-        
-        float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
-        Context.Phase.EvaluatePhase(HpRatio);
     }
 
     protected override void OnFixedUpdate()
@@ -45,8 +45,8 @@ public class DragonState_Alert : DragonStateBase
 
     private void HandleAlertDecision()
     {
-        Machine.TryActivateState<DragonState_MagicAttack>(true);
-        return;
+        // Machine.TryActivateState<DragonState_MagicAttack>(true);
+        // return;
         float distance = Context.Sight.Distance;
         float rand = Random.value;
         
@@ -79,8 +79,21 @@ public class DragonState_Alert : DragonStateBase
 
     protected override void OnExitState()
     {
-        Context.Animator.SetBool("IsMove", false);
         Context.Movement.ResetNavMeshAgent();
+    }
+
+    // 모든 클라이언트 호출
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", true);
+        
+        float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
+        Context.Phase.EvaluatePhase(HpRatio);
+    }
+
+    protected override void OnExitStateRender()
+    {
+        Context.Animator.SetBool("IsMove", false);
     }
 
     private void ChooseNewLookDestination()

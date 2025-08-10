@@ -17,8 +17,6 @@ public class DragonState_Patrol : DragonSubStateBase
     protected override void OnEnterState()
     {
         _hasDestination = false;
-
-        Context.Animator.SetBool("IsMove", true);
     }
 
     protected override void OnFixedUpdate()
@@ -42,7 +40,15 @@ public class DragonState_Patrol : DragonSubStateBase
     protected override void OnExitState()
     {
         Context.Movement.ResetNavMeshAgent();
+    }
 
+    protected override void OnEnterStateRender()
+    {
+        Context.Animator.SetBool("IsMove", true);
+    }
+
+    protected override void OnExitStateRender()
+    {
         Context.Animator.SetBool("IsMove", false);
     }
 
