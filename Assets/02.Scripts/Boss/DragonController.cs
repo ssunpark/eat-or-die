@@ -22,7 +22,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [Header("스킬 오브젝트")]
     [SerializeField]
     private RoarExplosion _roarExplosion;
-
     public RoarExplosion RoarExplosion => _roarExplosion;
     
     [SerializeField]
@@ -42,6 +41,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [SerializeField]
     private LavaFloor _lavaFloorPrefab;
     public LavaFloor LavaFloorPrefab => _lavaFloorPrefab;
+    
+    [SerializeField]
+    private BloodExplosion _bloodExplosionPrefabPrefab;
+    public BloodExplosion BloodExplosionPrefab => _bloodExplosionPrefabPrefab;
 
     [SerializeField]
     private List<DirectionalProjectile> _directionalProjectiles;
@@ -118,8 +121,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     
     public void OnEntryMoment()
     {
+        Debug.Log($"enter{_stateMachine.Machine.ActiveStateId}");
         if (_stateMachine.Machine.ActiveState is IAnimationEntryActionNotify notify)
         {
+            Debug.Log("enter");
             notify.OnEntryMoment();
         }
     }

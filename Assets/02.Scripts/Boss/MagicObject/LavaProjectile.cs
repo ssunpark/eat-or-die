@@ -68,7 +68,7 @@ public class LavaProjectile : MonoBehaviour
         // 이펙트나 데미지 처리 등 추가 가능
         var floor = _lavaFloorPool.Get();
         floor.transform.position = _lavaProjectileData.TargetPosition;
-        floor.Effect.SetCallBack(() => _lavaFloorPool.Take(floor));
+        floor.Effect.SetEndCallBack(() => _lavaFloorPool.Take(floor));
         floor.Init(_lavaProjectileData.Duration);
 
         _onDespawnCallback?.Invoke();

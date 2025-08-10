@@ -150,5 +150,13 @@ public class DragonCombat
             .AppendCallback(() => effect.SetActive(false));
     }
 
+    public void PerformBloodExplode(float duration, float targetSize)
+    {
+        var explosion = _controller.Pool.BloodExplosionPool.Get();
+        
+        explosion.transform.position = _controller.transform.position;
+        explosion.StartExplosion(duration, targetSize, _controller.Pool.BloodExplosionPool);
+    }
+
     #endregion
 }

@@ -2,8 +2,6 @@
 
 public class DragonMagicAttack_Lava : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
-    private const string RAYCAST_MASK = "Floor";
-    
     private DragonStateParameterSet.LavaParams _lavaParams;
 
     private int _spawnCount = 0;

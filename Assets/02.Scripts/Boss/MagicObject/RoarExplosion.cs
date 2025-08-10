@@ -64,7 +64,7 @@ public class RoarExplosion : MonoBehaviour
             Debug.Log("폭발");
             var explosionObject = _lavaFloorPool.Get();
             explosionObject.transform.position = spawnPos;
-            explosionObject.Effect.SetCallBack(() => _lavaFloorPool.Take(explosionObject));
+            explosionObject.Effect.SetEndCallBack(() => _lavaFloorPool.Take(explosionObject));
             explosionObject.Init(3f);
 
 #if UNITY_EDITOR

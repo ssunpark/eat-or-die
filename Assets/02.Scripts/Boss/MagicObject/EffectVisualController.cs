@@ -26,7 +26,7 @@ public class EffectVisualController : MonoBehaviour
     private bool _isAppearing; // 현재 나타나는 중인지
     
     private event Action OnDespawn;
-    public void SetCallBack(Action callback) => OnDespawn = callback;
+    public void SetEndCallBack(Action callback) => OnDespawn = callback;
 
     private void Awake()
     {

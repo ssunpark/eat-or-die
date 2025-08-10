@@ -20,7 +20,7 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActivateRandomMagicSkill()
     {
-        _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
+        _subStateMachine.TryActivateState<DragonMagicAttack_Blood>(true);
         return;
         float randProbability = Random.value;
         if (Context.Sight.Distance < Context.Parameter.Base.MeleeAttackDistance
@@ -47,7 +47,8 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
         _subStateMachine = new StateMachine<DragonSubStateBase>("MagicAttackSubFSM",
             new DragonMagicAttack_Breath(Context, this),
             new DragonMagicAttack_Lava(Context, this),
-            new DragonMagicAttack_Roar(Context, this)
+            new DragonMagicAttack_Roar(Context, this),
+            new DragonMagicAttack_Blood(Context, this)
         );
 
         stateMachines.Add(_subStateMachine);
@@ -71,8 +72,10 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     public void OnEntryMoment()
     {
+        Debug.Log("enter");
         if (_subStateMachine.ActiveState is IAnimationEntryActionNotify notify)
         {
+            Debug.Log("enter");
             notify.OnEntryMoment();
         }
     }

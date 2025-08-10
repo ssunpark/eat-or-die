@@ -27,7 +27,7 @@ public class DragonStateParameterSet
     public NormalAttackParams RightScratch;
     public NormalAttackParams LeftScratch;
     public NormalAttackParams Bite;
-    
+
     // 근거리 변형 패턴들
     public ProjectileParams LeftScratch_Special;
     public ProjectileParams RightScratch_Special;
@@ -47,12 +47,14 @@ public class DragonStateParameterSet
     // Roar 공격 관련 파라미터
     public RoarParams Roar;
 
+    public BloodParams Blood;
+
     [Serializable]
     public class BaseParams
     {
-        public float MoveSpeed;           // 이동 속도
-        public float RotationSpeed;       // 회전 속도
-        public float HP;                  // 체력
+        public float MoveSpeed;     // 이동 속도
+        public float RotationSpeed; // 회전 속도
+        public float HP;            // 체력
         public float PhaseThreshold;
         public float DetectRadius;        // 기본 감지 범위 (FOV 포함)
         public float FullAwarenessRadius; // 전방향 감지 거리
@@ -112,7 +114,7 @@ public class DragonStateParameterSet
         public float MinDistanceToFinishPrepare; // 준비 종료를 위한 최소 거리
         public float PrepareChance;              // 준비 상태 진입 확률
     }
-    
+
     [Serializable]
     public class NormalAttackParams
     {
@@ -169,5 +171,12 @@ public class DragonStateParameterSet
         public float Duration; // 기술 전체 지속 시간
         public float Radius;   // 기술 반경
         public int Count;      // 폭발 생성 갯수
+    }
+
+    [Serializable]
+    public class BloodParams
+    {
+        public float ChargeDuration; // 모으는 시간
+        public float TargetSize;     // 커지는 크기
     }
 }
