@@ -108,7 +108,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.34170312
   m_Height: 1.6470296
@@ -190,9 +190,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad9efe6a1c23b0445b1f2a0852005d07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _hitMask:
+  HitMask:
     serializedVersion: 2
-    m_Bits: 3072
+    m_Bits: 1024
   Speed: 10
   Lifetime: 5
   _explodeEffect: {fileID: 711015393224981034, guid: ec134cb2209344b4e95a4de9ed533366, type: 3}

@@ -7,6 +7,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
     {
         AnimState = "UseItem";
         StateId = (int)EPlayerState.UseItem;
+        _shouldPlayAnimation = false;
     }
 
     private NetworkObject _target;
@@ -31,6 +32,9 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         {
             _target = _fsm.ItemUseTarget;
         }
+        string desired = _fsm.UseItemMode == EUseItemMode.Give ? "UseItem_Give" : "UseItem";
+        AnimState = desired;
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     void IAnimationActionNotify.OnActionMoment()
@@ -59,6 +63,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
+            Debug.Log(_fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]);
             RequestActivateState();
         }
     }

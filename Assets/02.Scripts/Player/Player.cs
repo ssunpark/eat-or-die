@@ -180,6 +180,31 @@ public class Player : CharacterBase, IAttackable
 
     APlayerStateBase _nextState = null;
 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_HealOrDamage(float amount)
+    {
+        if(amount > 0)
+        {
+            Resource.RestoreHunger(amount);
+            // 힐
+        }
+        else if(amount <0)
+        {
+            Resource.ConsumeHunger(-amount);
+            _takedDamage = true;
+            // 데미지
+        }
+        else
+        {
+            Debug.Log("미친놈아 0을 왜 호출해");
+        }
+    }
+
+    public void TryHealOrDamage(float amount)
+    {
+        RPC_HealOrDamage(amount);
+    }
+
     private void EvaluateCurrentHunger(float current, float max)
     {
         if (_takedDamage)
@@ -260,7 +285,7 @@ public class Player : CharacterBase, IAttackable
         foreach (var clip in controller.animationClips)
         {
             _animationClipLengths[clip.name] = clip.length;
-            Debug.Log("[Player] Animation Length Cached: " + clip.name + " - " + clip.length);
+            //Debug.Log("[Player] Animation Length Cached: " + clip.name + " - " + clip.length);
         }
     }
 
@@ -291,14 +316,13 @@ public class Player : CharacterBase, IAttackable
     {
         if (PlayerFSM.IsDead) return;
         var attacker = attack.Attacker;
-        RPC_HitByAttack(attack);
+
+        if (Runner.IsServer)
+        {
+            OnHitStateAuthority(attack);
+        }
         
         //Todo: 맞는 이펙트? 재생
-    }
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_HitByAttack(AttackInfo attack)
-    {
-        OnHitStateAuthority(attack);
     }
 
     public void OnHitStateAuthority(AttackInfo attack)

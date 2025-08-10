@@ -2,20 +2,18 @@
 using UnityEngine;
 public class RoomInfoRepository
 {
-    // public static string SaveKey = "SuhyeonTest";
-    
-    public void Save(RoomInfo roomInfo, string saveKey)
+    public void Save(string roomName ,RoomInfoDTO roomInfoDto)
     {
-        RoomInfoDTO dto = RoomInfoDTO.FromDomain(roomInfo);
-        string data = JsonUtility.ToJson(dto);
+        // firebase Save를 하면 자동 ID가 생성 해당 ID를 고유값으로 사용
+        string data = JsonUtility.ToJson(roomInfoDto);
 
-        PlayerPrefs.SetString(saveKey, data);
+        PlayerPrefs.SetString(roomName, data);
         PlayerPrefs.Save();
     }
 
-    public bool TryLoad(string saveKey, out RoomInfo roomInfo)
+    public bool TryLoad(string roomName, out RoomInfo roomInfo)
     {
-        string jsonData = PlayerPrefs.GetString(saveKey, null);
+        string jsonData = PlayerPrefs.GetString(roomName, null);
         
         if (string.IsNullOrEmpty(jsonData))
         {
