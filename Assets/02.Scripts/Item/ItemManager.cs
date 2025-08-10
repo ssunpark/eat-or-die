@@ -106,7 +106,6 @@ public class ItemManager : NetworkBehaviour
     {
         return _itemDictionary.Values
             .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient)
-            // 2. .ID (숫자) 대신 ItemDefinition (객체 자체)를 선택하도록 변경
             .Select(itemInfo => itemInfo.ItemDefinition)
             .ToList();
     }
