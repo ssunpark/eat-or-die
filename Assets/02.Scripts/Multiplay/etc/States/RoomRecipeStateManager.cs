@@ -1,23 +1,20 @@
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class RoomRecipeStateManager : BehaviourSingleton<RoomRecipeStateManager>
 {
-    private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
-
+    public static event System.Action<Recipe> OnRecipeUnlocked;
+    
     private void OnEnable()
     {
         CookingManager.CookingFinished += HandleCookingFinished;
-        InventoryManager.Instance.OnInventoryUpdated += RefreshAllButtons;
 
     }
     
     private void OnDisable()
     {
-        // CookingManager.CookingFinished -= HandleCookingFinished;
-        // InventoryManager.Instance.OnInventoryUpdated -= RefreshAllButtons;
-
+        CookingManager.CookingFinished -= HandleCookingFinished;
+    
     }
     
     public bool IsUnlocked(int recipeID)
@@ -37,16 +34,6 @@ public class RoomRecipeStateManager : BehaviourSingleton<RoomRecipeStateManager>
         return success;
     }
     
-    public void RefreshAllButtons()
-    {
-        Debug.Log("RefreshAllButtons");
-        foreach (var button in _recipeButtonList)
-        {
-            Debug.Log("버튼 리프레시 !");
-            button.Refresh(button.GetRecipe());
-        }
-    }
-    
     private void HandleCookingFinished(ItemInstance cookedItem)
     {
         Debug.Log("HandleCookingFinished 메서드 호출!!");
@@ -56,7 +43,7 @@ public class RoomRecipeStateManager : BehaviourSingleton<RoomRecipeStateManager>
         if (TryUnlock(recipe.ID))
         {
             Debug.Log("룸레시피메니저에서 TryUnlock 시도하고 리프레시!!");
-            RefreshAllButtons();
+            OnRecipeUnlocked?.Invoke(recipe);
         }
     }
 }
