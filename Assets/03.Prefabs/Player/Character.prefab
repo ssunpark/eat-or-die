@@ -320,6 +320,7 @@ MonoBehaviour:
     m_Bits: 3072
   SimpleKCC: {fileID: 7794456745956900610}
   HungryEffect: {fileID: 4270917886160304851}
+  _UseItemMode: 0
   _HitTargets: []
 --- !u!114 &1508319554009502233
 MonoBehaviour:
@@ -369,6 +370,8 @@ MonoBehaviour:
     controller: {fileID: 22100000, guid: 71d7cd49fd5f7d2479194f0115040508, type: 2}
   - key: Unarmed
     controller: {fileID: 22100000, guid: 352cbfaeede517f4aa29b300329de502, type: 2}
+  - key: Food
+    controller: {fileID: 22100000, guid: 56db36c105d42494fa7d3d308dfba18d, type: 2}
 --- !u!114 &-7732792288924044988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,7 +403,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2615d364a70f4817830b874e07a6cc81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enableLogging: 1
+  _enableLogging: 0
 --- !u!95 &8846330280774017447
 Animator:
   serializedVersion: 7

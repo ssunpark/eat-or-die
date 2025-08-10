@@ -40,7 +40,6 @@ public class PlayerInfoManager : NetworkBehaviourSingleton<PlayerInfoManager>, I
     public Player GetPlayerFromNetworkId(NetworkId networkId)
     {
         var obj = Runner.FindObject(networkId);
-        Debug.Log($"GetPlayerFromNetworkId: {networkId} -> {obj}");
 
         if (obj == null)
         {
