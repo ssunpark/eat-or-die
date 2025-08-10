@@ -180,6 +180,31 @@ public class Player : CharacterBase, IAttackable
 
     APlayerStateBase _nextState = null;
 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_HealOrDamage(float amount)
+    {
+        if(amount > 0)
+        {
+            Resource.RestoreHunger(amount);
+            // 힐
+        }
+        else if(amount <0)
+        {
+            Resource.ConsumeHunger(-amount);
+            _takedDamage = true;
+            // 데미지
+        }
+        else
+        {
+            Debug.Log("미친놈아 0을 왜 호출해");
+        }
+    }
+
+    public void TryHealOrDamage(float amount)
+    {
+        RPC_HealOrDamage(amount);
+    }
+
     private void EvaluateCurrentHunger(float current, float max)
     {
         if (_takedDamage)
