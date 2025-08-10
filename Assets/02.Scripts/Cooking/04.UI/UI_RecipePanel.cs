@@ -20,11 +20,6 @@ public class UI_RecipePanel : AUI_PopupBase
         }
     }
 
-    public override void Close()
-    {
-        base.Close();
-    }
-
     private void Init()
     {
         UIRecipeIngredient.Init();

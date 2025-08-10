@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
@@ -103,10 +102,12 @@ public class ItemManager : NetworkBehaviour
         return _itemDictionary.GetValueOrDefault(id);
     }
 
-    public List<int> GetFoodIngredientList()
+    public List<ItemDefinition> GetFoodIngredientList()
     {
         return _itemDictionary.Values
-            .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient).Select(itemInfo => itemInfo.ItemDefinition.ID).ToList();
+            .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient)
+            .Select(itemInfo => itemInfo.ItemDefinition)
+            .ToList();
     }
 
     /// <summary>
