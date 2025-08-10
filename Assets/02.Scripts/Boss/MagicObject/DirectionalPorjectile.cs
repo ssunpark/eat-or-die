@@ -62,7 +62,7 @@ public class DirectionalProjectile : MonoBehaviour
                 MeleeDamage = 10f,
                 TotalDamageMultiplier = 1f
             };
-            hit.OnHitLocal(attackinfo, null);
+            hit.OnHitLocal(attackinfo);
         }
     }
 }

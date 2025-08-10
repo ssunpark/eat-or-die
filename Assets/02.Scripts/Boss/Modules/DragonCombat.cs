@@ -47,7 +47,7 @@ public class DragonCombat
                     MeleeDamage = 10f,
                     TotalDamageMultiplier = 1f
                 };
-                attackable.OnHitLocal(attackinfo, null);
+                attackable.OnHitLocal(attackinfo);
             }
         }
     }
