@@ -14,6 +14,6 @@ public class EatEffect_HungerInstantRecovery : IUseEffect
 
     public void Use(GameObject target)
     {
-        target.GetComponent<Player>().Resource.RestoreHunger(_value);
+        target.GetComponent<Player>().TryHealOrDamage(_value);
     }
 }

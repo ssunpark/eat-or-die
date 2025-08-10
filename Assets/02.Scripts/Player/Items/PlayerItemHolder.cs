@@ -122,8 +122,8 @@ public class PlayerItemHolder: NetworkBehaviour
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void RPC_RequestHoldItem(int itemId)
     {
-        HoldItemID = itemId;
         _HoldItemLogic(itemId);
+        HoldItemID = itemId;
     }
     Coroutine _applyOverrideCoroutine;
     public void ApplyAnimatorOverride(string key)

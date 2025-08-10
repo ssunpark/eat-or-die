@@ -30,7 +30,7 @@ public class FSMStateInstances
 [RequireComponent(typeof(StateMachineController))]
 public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 {
-
+    public bool EnableDebugLog = false;
     #region FSM
 
     private StateMachine<APlayerStateBase> _playerFSM; // 메인 상태 머신
@@ -185,7 +185,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;
-        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Undefined")
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed")
             return false;
 
         if (requiredTag == "Player")
@@ -318,19 +318,48 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         var ray = cam.ScreenPointToRay(Input.mousePosition);
         var scene = Runner.GetPhysicsScene();
-
+#if UNITY_EDITOR
+        Debug.DrawRay(ray.origin, ray.direction * MAX_RAYCAST_DISTANCE, Color.red, 1f);
+#endif
+        if (EnableDebugLog)
+        {
+            Debug.Log($"[PlayerFSM] Raycasting from {ray.origin} in direction {ray.direction} for {MAX_RAYCAST_DISTANCE} units.");
+        }
         if (scene.Raycast(ray.origin, ray.direction, out RaycastHit hit, MAX_RAYCAST_DISTANCE, InteractLayerMask, QueryTriggerInteraction.Collide))
         {
             var go = hit.collider.gameObject;
-            if (!go.CompareTag("Player")) return false; 
+            if (EnableDebugLog)
+            {
+                Debug.Log($"[PlayerFSM] Hit object: {go.name} at distance {hit.distance}");
+            }
+            var player = hit.collider.GetComponentInParent<Player>();
+            if (player == null) return false;
 
-            if (!go.TryGetComponent(out NetworkObject netObj)) return false;
+            var netObj = player.NetworkObject;
+            if (netObj == null) return false;
+
+            if (EnableDebugLog)
+            {
+                Debug.Log($"[PlayerFSM] NetworkObject found: {netObj.name}");
+            }
             var dist = Vector3.Distance(transform.position, netObj.transform.position);
+            if (EnableDebugLog)
+            {
+                Debug.Log($"[PlayerFSM] Distance to player: {dist}");
+            }
             if (dist <= _useItemMaxDistance)
             {
+                if (EnableDebugLog)
+                {
+                    Debug.Log($"[PlayerFSM] Player is within use item distance: {dist}");
+                }
                 targetPlayer = netObj;
                 return true;
             }
+        }
+        if (EnableDebugLog)
+        {
+            Debug.Log($"[PlayerFSM] No player found under cursor.");
         }
         return false;
     }
