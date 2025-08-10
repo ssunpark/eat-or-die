@@ -5030,6 +5030,7 @@ GameObject:
   - component: {fileID: 5724498656811093184}
   - component: {fileID: 6449309145600843578}
   - component: {fileID: 1399366059635242526}
+  - component: {fileID: 496830421925239187}
   m_Layer: 5
   m_Name: Dragon_LavaProjectile_prefab
   m_TagString: Untagged
@@ -5089,6 +5090,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5741e669bf6049faa57fe172fa0c0102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _StartPos: {x: 0, y: 0, z: 0}
+  _TargetPos: {x: 0, y: 0, z: 0}
+  _Speed: 0
+  _Height: 0
+  _Duration: 0
+  _StartTick: 0
+--- !u!114 &496830421925239187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3654384956866666557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 3138057420
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1399366059635242526}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &4398954568284846514
 GameObject:
   m_ObjectHideFlags: 0

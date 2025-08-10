@@ -5,8 +5,6 @@ using System.Collections.Generic;
 public class DragonObjectPool
 {
     public Pool<DragonBreathEffect> BreathParticlePool { get; private set; }
-    public Pool<LavaProjectile> LavaProjectilePool { get; private set; }
-    public Pool<LavaFloor> LavaFloorPool { get; private set; }
     public Pool<BloodExplosion> BloodExplosionPool { get; private set; }
 
     private readonly Dictionary<string, Pool<DirectionalProjectile>> _dirPools = new();
@@ -17,8 +15,6 @@ public class DragonObjectPool
         GameObject DragonEffectPool = new("DragonEffectPool");
 
         BreathParticlePool = Pool.Create(controller.DragonBreathEffectPrefab, 1, root).NonLazy();
-        LavaProjectilePool = Pool.Create(controller.LavaProjectile, 0, DragonEffectPool.transform);
-        LavaFloorPool = Pool.Create(controller.LavaFloorPrefab, 0, DragonEffectPool.transform);
         BloodExplosionPool = Pool.Create(controller.BloodExplosionPrefab, 0, DragonEffectPool.transform);
 
         foreach (var proj in controller.DirectionalProjectiles)

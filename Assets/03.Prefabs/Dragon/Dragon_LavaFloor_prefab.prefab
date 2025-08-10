@@ -9817,6 +9817,7 @@ GameObject:
   - component: {fileID: 5806663815303536093}
   - component: {fileID: 1635828186724294182}
   - component: {fileID: 4560508798471847427}
+  - component: {fileID: -8385459628350137386}
   m_Layer: 0
   m_Name: Dragon_LavaFloor_prefab
   m_TagString: Untagged
@@ -9874,6 +9875,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bcedf97ef900f6469e80c9f617b1195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _StartTick: 0
+  _Duration: 0
+--- !u!114 &-8385459628350137386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4335515881596931616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 512358149
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 4560508798471847427}
+  ForceRemoteRenderTimeframe: 0
 --- !u!1 &4582637253372544753
 GameObject:
   m_ObjectHideFlags: 0
@@ -29622,8 +29644,8 @@ MonoBehaviour:
   _isParticleSystem: 0
   _inputMaterial: {fileID: 2100000, guid: ec56cfb5c44dde9498ae3f10743f8897, type: 2}
   _stayDuration: 5
-  _reduceFactor: 2
-  _upFactor: 2
+  _reduceFactor: 1
+  _upFactor: 1
 --- !u!1 &7861679818073421428
 GameObject:
   m_ObjectHideFlags: 0

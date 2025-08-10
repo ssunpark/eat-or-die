@@ -5,7 +5,7 @@ public class EffectVisualController : MonoBehaviour
 {
     [SerializeField]
     private bool _isParticleSystem;
-    
+
     [SerializeField]
     private Material _inputMaterial;
     private Material _objectMaterial;
@@ -17,14 +17,14 @@ public class EffectVisualController : MonoBehaviour
     [SerializeField]
     private float _reduceFactor = 1; // 사라지는 속도
     [SerializeField]
-    private float _upFactor = 1;     // 나타나는 속도
+    private float _upFactor = 1; // 나타나는 속도
 
     private float _time;
     private float _submitReduceFactor;
     private float _cutOutFactor;
     private float _currentUpFactor;
     private bool _isAppearing; // 현재 나타나는 중인지
-    
+
     private event Action OnDespawn;
     public void SetEndCallBack(Action callback) => OnDespawn = callback;
 
@@ -44,11 +44,14 @@ public class EffectVisualController : MonoBehaviour
         }
     }
 
-    private void OnEnable()
+    public void Appear(float holdSeconds, float appearSeconds, float fadeSeconds)
     {
-        Appear(_stayDuration);
+        // 초 → 속도로 변환
+        _upFactor = (appearSeconds <= 0f) ? 1f : 1f / appearSeconds;
+        _reduceFactor = (fadeSeconds <= 0f) ? 1f : 1f / fadeSeconds;
+        Appear(holdSeconds); // 기존 로직 재사용 (여기서 _stayDuration = holdSeconds)
     }
-    
+
     public void Appear(float duration)
     {
         _stayDuration = duration;
@@ -84,15 +87,11 @@ public class EffectVisualController : MonoBehaviour
         _time += Time.deltaTime;
         if (_time > _stayDuration)
         {
-            _submitReduceFactor = Mathf.Lerp(_submitReduceFactor, _reduceFactor, Time.deltaTime / 50f);
-            _cutOutFactor -= _submitReduceFactor * Time.deltaTime;
+            _cutOutFactor -= _reduceFactor * Time.deltaTime; // fadeSeconds가 끝나면 0이 됨
             _cutOutFactor = Mathf.Clamp01(_cutOutFactor);
-
             _objectMaterial.SetFloat("_MaskCutOut", _cutOutFactor);
-            if (_cutOutFactor <= 0)
-            {
+            if (_cutOutFactor <= 0f)
                 OnDespawn?.Invoke();
-            }
         }
     }
 }

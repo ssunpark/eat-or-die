@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using System;
+using DG.Tweening;
 using RaycastPro.Detectors;
 using UnityEngine;
 
@@ -84,7 +85,8 @@ public class DragonCombat
 
         projectile.transform.position = spawnPoint;
         var param = _controller.ParamLoader.RightScratch_Special;
-        projectile.Fire(direction, param.Speed, param.LifeTime, () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
+        projectile.Fire(direction, param.Speed, param.LifeTime,
+            () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
     }
 
     #endregion
@@ -109,26 +111,50 @@ public class DragonCombat
         Vector3 dir = rot * forward;
         Vector3 targetPos = spawnPoint + dir * distance;
 
-        // 지면 위치 보정
-        Debug.DrawRay(targetPos + Vector3.up * 5f, Vector3.down * 10f, Color.cyan, 10f);
+        // 지면 보정
         if (Physics.Raycast(targetPos + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f,
                 LayerMask.GetMask("Floor")))
-        {
             targetPos = hit.point;
+
+        // 권위에서만 네트워크 스폰
+        if (_controller.HasStateAuthority)
+        {
+            // 1~2틱 리드로 여유 (네트 시간 보정)
+            int startTick = _controller.Runner.Tick + 2;
+
+            var proj = _controller.Runner.Spawn(
+                _controller.LavaProjectile, // NetworkObject 붙은 프리팹
+                spawnPoint,
+                Quaternion.identity,
+                onBeforeSpawned: (runner, obj) =>
+                {
+                    var proj = obj.GetComponent<LavaProjectile>();
+                    // 네트워크 필드들을 "스폰 스냅샷"에 포함
+                    proj.StartPosition = spawnPoint;
+                    proj.TargetPos = targetPos;
+                    proj.Speed = data.Speed;
+                    proj.Height = data.Height;
+                    proj.Duration = data.Duration;
+                    proj.StartTick = startTick;
+                });
+
+            // 도착 시 할 일
+            Action onArrived = () =>
+            {
+                // 도착 위치에 네트워크 LavaFloor 스폰 (권위만)
+                _controller.Runner.Spawn(
+                    _controller.LavaFloorPrefab, targetPos, Quaternion.identity,
+                    onBeforeSpawned: (runner, obj) =>
+                    {
+                        var proj = obj.GetComponent<LavaFloor>();
+                        proj.StartPosition = targetPos;
+                        proj.StartTick = _controller.Runner.Tick;
+                        proj.Duration = data.Duration;
+                    });
+            };
+
+            proj.SetArrivedAction(onArrived);
         }
-
-        var lava = _controller.Pool.LavaProjectilePool.Get();
-        lava.transform.position = spawnPoint;
-
-        lava.Fire(
-            new LavaProjectileData(
-                targetPos,
-                data.Speed,
-                data.Duration,
-                data.Height),
-            () => _controller.Pool.LavaProjectilePool.Take(lava),
-            _controller.Pool.LavaFloorPool
-        );
     }
 
     // Roar
@@ -153,7 +179,7 @@ public class DragonCombat
     public void PerformBloodExplode(float duration, float targetSize)
     {
         var explosion = _controller.Pool.BloodExplosionPool.Get();
-        
+
         explosion.transform.position = _controller.transform.position;
         explosion.StartExplosion(duration, targetSize, _controller.Pool.BloodExplosionPool);
     }

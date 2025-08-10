@@ -1,5 +1,6 @@
 ﻿using System;
 using DG.Tweening;
+using Fusion;
 using Redcode.Pools;
 using UnityEngine;
 
@@ -19,75 +20,98 @@ public struct LavaProjectileData
     }
 }
 
-public class LavaProjectile : MonoBehaviour
+public class LavaProjectile : NetworkBehaviour
 {
-    private LavaProjectileData _lavaProjectileData;
+    // 네트워크로 공유되는 초기값(스폰 시에만 셋)
+    [Networked]
+    public Vector3 StartPosition { get; set; }
+    [Networked]
+    public Vector3 TargetPos { get; set; }
+    [Networked]
+    public float Speed { get; set; }
+    [Networked]
+    public float Height { get; set; } // 포물선 높이
+    [Networked]
+    public float Duration { get; set; } // 도착 후 장판 지속시간(다음 단계에서 사용)
+    [Networked]
+    public int StartTick { get; set; } // 네트 시작 틱 (시간 보정용)
 
-    private Tween _moveTween;
+    // 로컬 상태
+    private bool _arrived;
+    private float _travelTime;          // distance / Speed
+    private Action _onArrivedAuthority; // 권위에서만 설정/호출
 
-    private Pool<LavaFloor> _lavaFloorPool;
-
-    private Action _onDespawnCallback;
-
-    public void Fire(LavaProjectileData projectileData, Action OnDespawnCallback,
-        Pool<LavaFloor> floorPool)
+    public void SetArrivedAction(Action callback)
     {
-        _lavaProjectileData = projectileData;
-        _lavaFloorPool = floorPool;
-        _onDespawnCallback = OnDespawnCallback;
-
-        StartParabolaMove();
+        if (!HasStateAuthority)
+        {
+            return;
+        }
+        
+        _onArrivedAuthority = callback;
     }
 
-    private void StartParabolaMove()
+    public override void Spawned()
     {
-        Vector3 startPos = transform.position;
+        transform.position = StartPosition;
+        
+        // 프록시/권위 모두 동일하게 이동을 "재현"할 수 있도록 travelTime 계산
+        _travelTime = Vector3.Distance(StartPosition, TargetPos) / Mathf.Max(0.01f, Speed);
 
-        // 중간 정점 계산
-        Vector3 midPoint = (startPos + _lavaProjectileData.TargetPosition) / 2f;
-        midPoint.y += _lavaProjectileData.Height;
+        // Y값 무시하고 바라보는 방향 계산
+        Vector3 dir = TargetPos - StartPosition;
+        dir.y = 0f;
+        if (dir.sqrMagnitude > 0.0001f)
+            transform.rotation = Quaternion.LookRotation(dir.normalized);
+        else
+            transform.rotation = Quaternion.identity; // 동일 위치 방어
 
-        // 전체 경로
-        Vector3[] path = new Vector3[] { midPoint, _lavaProjectileData.TargetPosition };
-
-        // 거리 계산 (CatmullRom은 곡선이라 근사)
-        float totalDistance =
-            Vector3.Distance(startPos, midPoint) + Vector3.Distance(midPoint, _lavaProjectileData.TargetPosition);
-        float duration = totalDistance / _lavaProjectileData.Speed;
-
-        _moveTween?.Kill();
-
-        _moveTween = transform
-            .DOPath(path, duration, PathType.CatmullRom)
-            .SetEase(Ease.Linear)
-            .OnComplete(OnArrived);
+        _arrived = false;
     }
 
-    private void OnArrived()
+    public override void Render()
     {
-        // 이펙트나 데미지 처리 등 추가 가능
-        var floor = _lavaFloorPool.Get();
-        floor.transform.position = _lavaProjectileData.TargetPosition;
-        floor.Effect.SetEndCallBack(() => _lavaFloorPool.Take(floor));
-        floor.Init(_lavaProjectileData.Duration);
+        // 네트워크 시간 기준 진행도
+        float elapsed = (Runner.Tick - StartTick) * Runner.DeltaTime;
+        if (elapsed < 0f)
+            return; // 아직 시작 전
 
-        _onDespawnCallback?.Invoke();
+        float t = _travelTime <= 0f ? 1f : Mathf.Clamp01(elapsed / _travelTime);
+
+        // 포물선 위치 계산 (Lerp + 간단한 포물선 높이)
+        Vector3 p = Vector3.Lerp(StartPosition, TargetPos, t);
+        // h(t) = 4 * H * t * (1 - t)  (정점에서 Height 만큼 상승)
+        float h = 4f * Height * t * (1f - t);
+        p.y += h;
+        transform.position = p;
+
+        // 도착 처리 (한 번만)
+        if (!_arrived && t >= 1f)
+        {
+            _arrived = true;
+
+            if (Object.HasStateAuthority)
+            {
+                // 권위에서만 도착 콜백 (장판 생성 등)
+                _onArrivedAuthority?.Invoke();
+            }
+
+            // 살짝 여유 두고 디스폰
+            Runner.Despawn(Object);
+        }
     }
 
+    // 충돌 판정은 권위만 수행(선택)
     private void OnTriggerEnter(Collider other)
     {
+        if (!Object || !Object.HasStateAuthority)
+            return;
         if (!other.CompareTag("Player"))
             return;
 
-        var hit = other.GetComponent<IAttackable>();
-        if (hit != null)
+        if (other.TryGetComponent(out IAttackable hit))
         {
-            var attackinfo = new AttackInfo
-            {
-                MeleeDamage = 10f,
-                TotalDamageMultiplier = 1f
-            };
-            hit.OnHitLocal(attackinfo);
+            hit.OnHitLocal(new AttackInfo { MeleeDamage = 10f, TotalDamageMultiplier = 1f });
         }
     }
 }

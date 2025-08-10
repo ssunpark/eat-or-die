@@ -1,53 +1,73 @@
+using Fusion;
 using UnityEngine;
 
-public class LavaFloor : MonoBehaviour
+public class LavaFloor : NetworkBehaviour
 {
-    private float _timer;
-    private float _duration;
-    private bool _isActive;
-    
+    [Networked]
+    public Vector3 StartPosition { get; set; }
+    [Networked]
+    public int StartTick { get; set; }
+    [Networked]
+    public float Duration { get; set; }
+
+    [SerializeField]
+    private float _appearSeconds = 1f;
+    [SerializeField]
+    private float _fadeSeconds = 1f;
+
     private EffectVisualController _effect;
-    public EffectVisualController Effect => _effect;
+    private Collider _col;
+    private bool _vfxStarted;
 
-    private void Awake()
+    public override void Spawned()
     {
+        transform.position = StartPosition;
+        
+        _col = GetComponent<Collider>();
         _effect = GetComponentInChildren<EffectVisualController>();
+        if (_col)
+            _col.enabled = true;
+        _vfxStarted = false; // 여기서는 아직 시작하지 않음
     }
 
-    public void Init(float duration)
+    public override void Render()
     {
-        _effect.Appear(duration);
-        _duration = duration;
-        _timer = 0f;
-        _isActive = true;
-    }
-
-    private void Update()
-    {
-        if (!_isActive)
+        float elapsed = (Runner.Tick - StartTick) * Runner.DeltaTime;
+        if (elapsed < 0f)
             return;
 
-        _timer += Time.deltaTime;
-        if (_timer >= _duration)
+        if (!_vfxStarted && _effect != null)
         {
-            _isActive = false;
+            float hold = Mathf.Max(0f, Duration - _appearSeconds - _fadeSeconds);
+            _effect.Appear(hold, _appearSeconds, _fadeSeconds);
+            _vfxStarted = true;
         }
     }
-    
+
+    public override void FixedUpdateNetwork()
+    {
+        float elapsed = (Runner.Tick - StartTick) * Runner.DeltaTime;
+        if (Object.HasStateAuthority && elapsed >= Duration)
+        {
+            Runner.Despawn(Object); // 페이드가 딱 종료되는 시점
+        }
+    }
+
     private void OnTriggerStay(Collider other)
     {
+        // 데미지 판정은 권위만
+        if (!Object || !Object.HasStateAuthority)
+            return;
         if (!other.CompareTag("Player"))
             return;
 
-        var hit = other.GetComponent<IAttackable>();
-        if (hit != null)
+        if (other.TryGetComponent(out IAttackable hit))
         {
-            var attackinfo = new AttackInfo
+            hit.OnHitLocal(new AttackInfo
             {
                 MeleeDamage = 10f,
                 TotalDamageMultiplier = 1f
-            };
-            hit.OnHitLocal(attackinfo);
+            });
         }
     }
 }

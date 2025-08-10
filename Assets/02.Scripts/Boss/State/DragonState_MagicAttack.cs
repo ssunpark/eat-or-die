@@ -20,35 +20,37 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActivateRandomMagicSkill()
     {
-        _subStateMachine.TryActivateState<DragonMagicAttack_Blood>(true);
-        return;
-        float randProbability = Random.value;
-        if (Context.Sight.Distance < Context.Parameter.Base.MeleeAttackDistance
-            && randProbability < Context.Parameter.Magic.NearMagicProbability)
-        {
-            _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
-            return;
-        }
-
-        int rand = Random.Range(0, 2); // 확장 가능
-        switch (rand)
-        {
-            case 0:
-                _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
-                break;
-            case 1:
-                _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
-                break;
-        }
+        // _subStateMachine.TryActivateState<DragonMagicAttack_Blood>(true);
+        // return;
+        int rand = Random.Range(0, _subStateMachine.States.Length);
+        _subStateMachine.TryActivateState(_subStateMachine.States[rand], true);
+        // float randProbability = Random.value;
+        // if (Context.Sight.Distance < Context.Parameter.Base.MeleeAttackDistance
+        //     && randProbability < Context.Parameter.Magic.NearMagicProbability)
+        // {
+        //     _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
+        //     return;
+        // }
+        //
+        // int rand = Random.Range(0, 2); // 확장 가능
+        // switch (rand)
+        // {
+        //     case 0:
+        //         _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
+        //         break;
+        //     case 1:
+        //         _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
+        //         break;
+        // }
     }
 
     protected override void CollectChildStateMachines(List<IStateMachine> stateMachines)
     {
         _subStateMachine = new StateMachine<DragonSubStateBase>("MagicAttackSubFSM",
-            new DragonMagicAttack_Breath(Context, this),
+            // new DragonMagicAttack_Breath(Context, this),
             new DragonMagicAttack_Lava(Context, this),
-            new DragonMagicAttack_Roar(Context, this),
-            new DragonMagicAttack_Blood(Context, this)
+            new DragonMagicAttack_Roar(Context, this)
+            // new DragonMagicAttack_Blood(Context, this)
         );
 
         stateMachines.Add(_subStateMachine);
