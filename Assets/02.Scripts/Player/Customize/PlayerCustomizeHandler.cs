@@ -31,10 +31,21 @@ public class PlayerCustomizeHandler : NetworkBehaviour
             {
                 Debug.LogWarning("[PlayerCustomizeHandler] CustomizationDataHolder가 없어용");
                 Debug.LogWarning("캐릭터 커스터마이징이 안되니 참고하세용");
+                //커스터마이징 데이터가 없으면 그냥 기본값으로 설정
+                var classType = ECharacterType.Warrior; // 기본 클래스
+                var nickname = "Player"+UnityEngine.Random.Range(100,999); // 기본 닉네임
+                var customData = new CustomizationData(); // 빈 커스터마이징 데이터
+                Rpc_SetCharacterInfo(classType, nickname, customData);
                 return;
             }
             var holder = CustomizationDataHolder.Instance;
+
+            if (string.IsNullOrEmpty(holder.Nickname))
+            {
+                holder.Nickname = "Player"+ UnityEngine.Random.Range(100, 999);
+            }
             Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
+            SendNicknameToHost();
         }
         else
         {
@@ -104,5 +115,37 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         Nickname = nickname;
         _customData = data;
         ApplyCustomization();
+    }
+
+    public void SendNicknameToHost()
+    {
+        if (Object.HasStateAuthority)
+        {
+            var holder = CustomizationDataHolder.Instance;
+            string nickname = string.IsNullOrEmpty(holder.Nickname) ? "Player" + UnityEngine.Random.Range(100, 999) : holder.Nickname;
+            CustomizationData data = holder.CustomizationData;
+            Nickname = nickname;
+            _customData = data;
+
+            PlayerInfoManager.Instance.UpdateNickname(Object.InputAuthority, nickname);
+            return;
+        }
+        if (Object.HasInputAuthority)
+        {
+            var holder = CustomizationDataHolder.Instance;
+            string nickname = string.IsNullOrEmpty(holder.Nickname) ? "Player" + UnityEngine.Random.Range(100, 999) : holder.Nickname;
+            CustomizationData data = holder.CustomizationData;
+
+            Rpc_SendNicknameAndCustomization(nickname, data);
+        }
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void Rpc_SendNicknameAndCustomization(string nickname, CustomizationData data)
+    {
+        Nickname = nickname;
+        _customData = data;
+
+        PlayerInfoManager.Instance.UpdateNickname(Object.InputAuthority, nickname);
     }
 }

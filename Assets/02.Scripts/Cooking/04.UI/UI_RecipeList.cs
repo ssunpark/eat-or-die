@@ -8,7 +8,19 @@ public class UI_RecipeList : MonoBehaviour
 
     private List<Recipe> _recipeCsvDataList = new List<Recipe>();
     private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
+
+    private void OnEnable()
+    {
+        RoomRecipeStateManager.OnRecipeUnlocked += HandleRecipeUnlocked;
+        InventoryManager.Instance.OnInventoryUpdated += RefreshAllButtons;
+    }
     
+    private void OnDisable()
+    {
+        RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
+        if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshAllButtons;
+    }
+
     // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {
@@ -24,13 +36,6 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    public void ShowAllRecipes()
-    {
-        foreach (var button in _recipeButtonList)
-        {
-            button.gameObject.SetActive(true);
-        }
-    }
 
     public void ShowFilteredRecipes(List<Recipe> recipes)
     {
@@ -51,24 +56,17 @@ public class UI_RecipeList : MonoBehaviour
         }
     }
 
-    // 전체 숨기기
-    public void HideAll()
+    private void HandleRecipeUnlocked(Recipe unlockedRecipe)
+    {
+        // 이벤트가 오면, 자신이 가진 버튼들을 새로고침합니다.
+        RefreshAllButtons();
+    }
+
+    public void RefreshAllButtons()
     {
         foreach (var button in _recipeButtonList)
         {
-            button.gameObject.SetActive(false);
-        }
-    }
-    
-    // 해금 메서드
-    public void UnlockRecipe(int resultItemId)
-    {
-        Debug.Log("UI_RecipeList::UnlockRecipe");
-        var recipe = _recipeButtonList.Find(btn => btn.ResultItemID == resultItemId);
-        if (recipe != null)
-        {
-            Debug.Log("UI_RecipeList recipe 널 체크");
-            recipe.UnlockButton();
+            button.Refresh(button.GetRecipe());
         }
     }
 }

@@ -5,11 +5,10 @@ using Fusion.Addons.FSM;
 public class DieBehaviour : AEnemyStateBehaviour
 {
     [SerializeField] private float _despawnTime = 2f;
-    private static readonly int Die = Animator.StringToHash("Die");
 
     protected override void OnEnterState()
     {
-        Machine.Context.Animator.SetTrigger(Die);
+        Machine.Context.Owner.AnimationState = EAnimationState.Die;
     }
 
     protected override void OnFixedUpdate()

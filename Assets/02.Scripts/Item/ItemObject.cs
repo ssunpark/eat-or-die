@@ -77,7 +77,7 @@ public class ItemObject : NetworkBehaviour, IPickable
                 {
                     var itemData = ItemManager.Instance.GetItem(ItemID);
                     itemData.ReturnHoldItemToPool(_itemObject);
-                    var item = new Item(itemData, Quantity, Durability, ExtraInfo);
+                    var item = new ItemInstance(itemData, Quantity, Durability, ExtraInfo);
                     InventoryManager.Instance.PickItemFromGround(item);
                     RPC_Despawn();
                 }

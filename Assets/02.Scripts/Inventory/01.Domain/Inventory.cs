@@ -16,7 +16,7 @@ public class Inventory
         }
     }
     
-    public Item GetItemInSlot(int slotIndex)
+    public ItemInstance GetItemInSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
@@ -24,10 +24,10 @@ public class Inventory
             return null;
         }
         
-        return SlotList[slotIndex].Item;
+        return SlotList[slotIndex].ItemInstance;
     }
 
-    public Item PopItemInSlot(int slotIndex)
+    public ItemInstance PopItemInSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
@@ -35,12 +35,12 @@ public class Inventory
             return null;
         }
         
-        Item slotItem = GetItemInSlot(slotIndex);
+        ItemInstance slotItemInstance = GetItemInSlot(slotIndex);
         SlotList[slotIndex].RemoveItem();
-        return slotItem;
+        return slotItemInstance;
     }
     
-    public Item PopSingleItemInSlot(int slotIndex)
+    public ItemInstance PopSingleItemInSlot(int slotIndex)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
@@ -52,60 +52,60 @@ public class Inventory
         
         if (targetSlot.IsEmpty) return null;
         
-        Item item = targetSlot.Item;
+        ItemInstance itemInstance = targetSlot.ItemInstance;
         
-        if (item.Quantity > 1)
+        if (itemInstance.Quantity > 1)
         {
-            item.SetQuantity(item.Quantity - 1);
-            return new Item(item.ItemInfo, 1);
+            itemInstance.SetQuantity(itemInstance.Quantity - 1);
+            return new ItemInstance(itemInstance.ItemProfile, 1);
         }
         else
         {
             targetSlot.RemoveItem();
-            return item;
+            return itemInstance;
         }
     }
     
-    public Item PutItemInSlot(int slotIndex, Item item)
+    public ItemInstance PutItemInSlot(int slotIndex, ItemInstance itemInstance)
     {
         if (slotIndex < 0 || slotIndex >= SlotList.Count)
         {
             Debug.LogError("Invalid slot index: " + slotIndex);
-            return item;
+            return itemInstance;
         }
 
         Slot targetSlot = SlotList[slotIndex];
         
         if (targetSlot.IsEmpty)
         {
-            targetSlot.AddItem(item);
+            targetSlot.AddItem(itemInstance);
             return null;
         }
         
-        if (targetSlot.Item.ID == item.ID)
+        if (targetSlot.ItemInstance.ID == itemInstance.ID)
         {
-            if (targetSlot.Item.Quantity + item.Quantity > targetSlot.Item.MaxQuantity)
+            if (targetSlot.ItemInstance.Quantity + itemInstance.Quantity > targetSlot.ItemInstance.MaxQuantity)
             {
-                int excessQuantity = targetSlot.Item.Quantity + item.Quantity - targetSlot.Item.MaxQuantity;
-                targetSlot.Item.SetQuantity(targetSlot.Item.MaxQuantity);
-                item.SetQuantity(excessQuantity);
-                return item;
+                int excessQuantity = targetSlot.ItemInstance.Quantity + itemInstance.Quantity - targetSlot.ItemInstance.MaxQuantity;
+                targetSlot.ItemInstance.SetQuantity(targetSlot.ItemInstance.MaxQuantity);
+                itemInstance.SetQuantity(excessQuantity);
+                return itemInstance;
             }
             else
             {
-                targetSlot.Item.TryAdd(item.Quantity);
+                targetSlot.ItemInstance.TryAdd(itemInstance.Quantity);
                 return null;
             }
         }
         else
         {
-            Item temp = targetSlot.Item;
-            targetSlot.AddItem(item);
+            ItemInstance temp = targetSlot.ItemInstance;
+            targetSlot.AddItem(itemInstance);
             return temp;
         }
     }
 
-    public Item PickItemFromGround(Item item)
+    public ItemInstance PickItemFromGround(ItemInstance itemInstance)
     {
         foreach (Slot slot in SlotList)
         {
@@ -113,17 +113,17 @@ public class Inventory
             {
                 continue;
             }
-            if (slot.Item.ID == item.ID)
+            if (slot.ItemInstance.ID == itemInstance.ID)
             {
-                if (slot.Item.Quantity + item.Quantity > slot.Item.MaxQuantity)
+                if (slot.ItemInstance.Quantity + itemInstance.Quantity > slot.ItemInstance.MaxQuantity)
                 {
-                    int excessQuantity = slot.Item.Quantity + item.Quantity - slot.Item.MaxQuantity;
-                    slot.Item.SetQuantity(slot.Item.MaxQuantity);
-                    item.SetQuantity(excessQuantity);
+                    int excessQuantity = slot.ItemInstance.Quantity + itemInstance.Quantity - slot.ItemInstance.MaxQuantity;
+                    slot.ItemInstance.SetQuantity(slot.ItemInstance.MaxQuantity);
+                    itemInstance.SetQuantity(excessQuantity);
                 }
                 else
                 {
-                    slot.Item.TryAdd(item.Quantity);
+                    slot.ItemInstance.TryAdd(itemInstance.Quantity);
                     return null;
                 }
             }
@@ -133,12 +133,17 @@ public class Inventory
         {
             if (slot.IsEmpty)
             {
-                slot.AddItem(item);
+                slot.AddItem(itemInstance);
                 return null;
             }
         }
 
-        return item;
+        return itemInstance;
+    }
+
+    public bool HaveItem(int itemID)
+    {
+        return GetItemCount(itemID) > 0;
     }
     
     public int GetItemCount(int itemID)
@@ -146,9 +151,9 @@ public class Inventory
         int count = 0;
         foreach (Slot slot in SlotList)
         {
-            if (!slot.IsEmpty && slot.Item.ID == itemID)
+            if (!slot.IsEmpty && slot.ItemInstance.ID == itemID)
             {
-                count += slot.Item.Quantity;
+                count += slot.ItemInstance.Quantity;
             }
         }
         return count;
@@ -167,18 +172,18 @@ public class Inventory
 
         foreach (Slot slot in SlotList)
         {
-            if (slot.IsEmpty || slot.Item.ID != itemID)
+            if (slot.IsEmpty || slot.ItemInstance.ID != itemID)
             {
                 continue;
             }
-            if (slot.Item.Quantity > remaining)
+            if (slot.ItemInstance.Quantity > remaining)
             {
-                slot.Item.TryRemove(remaining);
+                slot.ItemInstance.TryRemove(remaining);
                 return true;
             }
             else
             {
-                remaining -= slot.Item.Quantity;
+                remaining -= slot.ItemInstance.Quantity;
                 slot.RemoveItem();
             }
             

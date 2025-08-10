@@ -28,9 +28,8 @@ public class PlayerDeadState : APlayerStateBase
     {
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateState()
     {
-        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
         {
@@ -51,7 +50,7 @@ public class PlayerDeadState : APlayerStateBase
                 var slot = inv.SlotList[i];
                 if (!slot.IsEmpty)
                 {
-                    var item = slot.Item;
+                    var item = slot.ItemInstance;
                     ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, _fsm.transform.position, Quaternion.identity);
                     slot.RemoveItem();
                 }
@@ -66,7 +65,7 @@ public class PlayerDeadState : APlayerStateBase
                 var slot = qs.SlotList[i];
                 if (!slot.IsEmpty)
                 {
-                    var item = slot.Item;
+                    var item = slot.ItemInstance;
                     ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, _fsm.transform.position, Quaternion.identity);
                     slot.RemoveItem();
                 }

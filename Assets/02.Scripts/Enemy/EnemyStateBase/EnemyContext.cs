@@ -4,6 +4,7 @@ using UnityEngine.AI;
 
 public class EnemyContext
 {
+    public EnemyAI Owner;
     public GameObject Target;
     public EnemyStatManager StatManager;
     public Animator Animator;

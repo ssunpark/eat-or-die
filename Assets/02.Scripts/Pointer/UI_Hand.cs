@@ -21,18 +21,18 @@ public class UI_Hand : MonoBehaviour
 	
 	public void UpdateHandUI()
 	{
-		Item itemInHand = HandEntity.Instance.Item;
-		if (itemInHand == null)
+		ItemInstance itemInstanceInHand = HandEntity.Instance.ItemInstance;
+		if (itemInstanceInHand == null)
 		{
 			IconImage.gameObject.SetActive(false);
 			QuantityText.gameObject.SetActive(false);
 			return;
 		}
 		
-		IconImage.sprite = itemInHand.ItemInfo.ItemData.Icon;
-		QuantityText.text = itemInHand.Quantity.ToString();
+		IconImage.sprite = itemInstanceInHand.ItemProfile.ItemDefinition.Icon;
+		QuantityText.text = itemInstanceInHand.Quantity.ToString();
 		IconImage.gameObject.SetActive(true);
-		QuantityText.gameObject.SetActive(itemInHand.Quantity > 1);
+		QuantityText.gameObject.SetActive(itemInstanceInHand.Quantity > 1);
 	}
 	
 }

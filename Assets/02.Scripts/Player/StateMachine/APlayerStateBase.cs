@@ -49,6 +49,38 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
         }
     }
 
+    protected override void OnFixedUpdate()
+    {
+        PreFixedUpdate();
+
+        if (_fsm.HasInputAuthority)
+            OnFixedUpdateInput();
+        if (_fsm.HasStateAuthority)
+            OnFixedUpdateState();
+
+        PostFixedUpdate();
+    }
+
+    /// <summary>
+    /// Input, State, Observer 상관없이 모든 플레이어 상태에서 고정 업데이트 전에 실행되는 메서드입니다.
+    /// </summary>
+    protected virtual void PreFixedUpdate() { }
+
+    /// <summary>
+    /// Input, State, Observer 상관없이 모든 플레이어 상태에서 고정 업데이트 후에 실행되는 메서드입니다.
+    /// </summary>
+    protected virtual void PostFixedUpdate() { }
+
+    /// <summary>
+    /// Input Authority가 있는 플레이어 상태에서 고정 업데이트 중에 실행되는 메서드입니다.
+    /// </summary>
+    protected virtual void OnFixedUpdateInput() { }
+
+    /// <summary>
+    /// State Authority가 있는 플레이어 상태에서 고정 업데이트 중에 실행되는 메서드입니다.
+    /// </summary>
+    protected virtual void OnFixedUpdateState() { }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
     protected void GrantExpOrder(string actionName, int? @int = null)
     {
@@ -65,4 +97,9 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
     }
 
     
+    protected void RequestActivateState(EPlayerState state = EPlayerState.Idle)
+    {
+        _fsm.RequestActivateState(state);
+    }
+
 }

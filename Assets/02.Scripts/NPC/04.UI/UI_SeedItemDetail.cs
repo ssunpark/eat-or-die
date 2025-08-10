@@ -14,15 +14,15 @@ public class UI_SeedItemDetail : MonoBehaviour
     public TextMeshProUGUI StockText;
     public TextMeshProUGUI OwnedCountText;
     
-    public void SetDetail(AItemInfo itemInfo, NpcItem npcItem)
+    public void SetDetail(ItemProfile itemProfile, NpcItem npcItem)
     {
-        int itemID = itemInfo.ItemData.ID;
+        int itemID = itemProfile.ItemDefinition.ID;
         int count = InventoryManager.Instance.Inventory.GetItemCount(itemID);
         OwnedCountText.text = $"소지개수: {count.ToString()} 개";
         
-        IconImage.sprite = itemInfo.ItemData.Icon;
-        NameText.text = itemInfo.ItemData.Name;
-        DescriptionText.text = itemInfo.ItemData.Description;
+        IconImage.sprite = itemProfile.ItemDefinition.Icon;
+        NameText.text = itemProfile.ItemDefinition.Name;
+        DescriptionText.text = itemProfile.ItemDefinition.Description;
 
         PriceText.text = $"구매가격: {npcItem.Price} 골드";
         StockText.text = npcItem.IsInfinite ? "재고수량: 무한" : $"재고수량: {npcItem.StockQuantity}";
@@ -30,7 +30,7 @@ public class UI_SeedItemDetail : MonoBehaviour
         
         int myGold = CurrencyManager.Instance.Get(ECurrencyType.Gold); // 임시 골드
         int maxCount = CalcMaxPurchasableCount(npcItem, myGold);
-        uiItemPurchase.Init(itemInfo, npcItem, maxCount);
+        uiItemPurchase.Init(itemProfile, npcItem, maxCount);
     }
     
     private int CalcMaxPurchasableCount(NpcItem npcItem, int myGold)

@@ -10,7 +10,7 @@ public class UI_RecipePanel : AUI_PopupBase
     
     private bool _isInitialized = false;
 
-    public void Open()
+    public override void Open()
     {
         base.Open();
         if (!_isInitialized)
@@ -20,7 +20,7 @@ public class UI_RecipePanel : AUI_PopupBase
         }
     }
 
-    public void Close()
+    public override void Close()
     {
         base.Close();
     }
