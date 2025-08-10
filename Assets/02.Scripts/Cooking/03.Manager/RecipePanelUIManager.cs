@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
-    private ItemInstance[] _ingredients ;
+    private ItemInstance[] _ingredients;
     public ItemInstance[] Ingredients => _ingredients;
-    public event Action OnInventoryUpdated;
 
+    // public UI_RecipeIngredient IngredientListUI;
     public UI_RecipeList RecipeListUI;
     private void Start()
     {
@@ -19,6 +17,7 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
     // 디버그로 확인하고 이벤트 호출
     public void UpdateIngredients()
     {
+        Debug.Log("RecipePanelUIManager의 UpdateIngredients 메서드 진입");
         var validIngredientIDs = RecipeManager.Instance.RecipeList
             .Where(recipe => recipe.Ingredient2ID.HasValue) // 재료 2개짜리만
             .SelectMany(recipe => new[] { recipe.Ingredient1ID, recipe.Ingredient2ID.Value }) // 양쪽 다 꺼냄
@@ -29,11 +28,7 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
             .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
             .Select(slot => slot.ItemInstance)
             .ToArray();
-        for (int i = 0; i < _ingredients.Length; i++)
-        {
-            Debug.Log(_ingredients[i].ID);
-        }
-        OnInventoryUpdated?.Invoke();
+        // IngredientListUI.ShowFilteredIngredients();
     }
 
     public void UpdateRecipes(int ingredientID)
@@ -49,12 +44,13 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 
     public bool IsKnownIngredient(int ingredientID)
     {
-        return RoomInfoManager.Instance.CurrentRoomInfo.KnownIngredients.Contains(ingredientID);
+        // return RoomInfoManager.Instance.CurrentRoomInfo.KnownIngredients.Contains(ingredientID);
+        return RoomRecipeStateManager.Instance.IsUnlockedIngredients(ingredientID);
     }
 
     public bool IsKnownRecipe(int recipeID)
     {
-        return RoomRecipeStateManager.Instance.IsUnlocked(recipeID);
+        return RoomRecipeStateManager.Instance.IsUnlockedRecipes(recipeID);
     }
 
     public bool CanMakeRecipe(Recipe recipe)
