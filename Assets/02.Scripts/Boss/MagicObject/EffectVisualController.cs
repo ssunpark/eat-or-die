@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class EffectVisual : MonoBehaviour
+public class EffectVisualController : MonoBehaviour
 {
     [SerializeField]
     private bool _isParticleSystem;
@@ -42,9 +42,11 @@ public class EffectVisual : MonoBehaviour
             _meshRenderer.material = _inputMaterial;
             _objectMaterial = _meshRenderer.material;
         }
-        
-        // 테스트
-        // Reset(_stayDuration,  _reduceFactor, _upFactor);
+    }
+
+    private void OnEnable()
+    {
+        Reset(_stayDuration,  _reduceFactor, _upFactor);
     }
 
     public void Reset(float duration, float reduceFactor, float upFactor)

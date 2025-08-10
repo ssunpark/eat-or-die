@@ -1,17 +1,23 @@
-﻿public class DragonMeleeAttack_Normal : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
+﻿using System;
+
+public class DragonMeleeAttack : DragonSubStateBase, IAnimationActionNotify, IAnimationExitActionNotify
 {
     private DragonStateParameterSet.NormalAttackParams _normalAttackParams;
     private string _animation;
 
-    public DragonMeleeAttack_Normal(
+    private Action _specialAttack;
+
+    public DragonMeleeAttack(
         DragonContext context,
         IParentState parent,
         string animation,
-        DragonStateParameterSet.NormalAttackParams normalAttackParams)
+        DragonStateParameterSet.NormalAttackParams normalAttackParams,
+        Action SpecialAttack = null)
         : base(context, parent)
     {
         _animation = animation;
         _normalAttackParams = normalAttackParams;
+        _specialAttack = SpecialAttack;
     }
 
     protected override void OnEnterState()
@@ -42,6 +48,7 @@
     public void OnActionMoment()
     {
         Context.Combat.Attack();
+        _specialAttack?.Invoke();
     }
 
     public void OnExitMoment()

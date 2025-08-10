@@ -2,19 +2,16 @@ using UnityEngine;
 
 public class LavaFloor : MonoBehaviour
 {
-    private const float REDUCE_FACTOR = 5f;
-    private const float UP_FACTOR = 2f;
-    
     private float _timer;
     private float _duration;
     private bool _isActive;
     
-    private EffectVisual _effect;
-    public EffectVisual Effect => _effect;
+    private EffectVisualController _effect;
+    public EffectVisualController Effect => _effect;
 
     private void Awake()
     {
-        _effect = GetComponentInChildren<EffectVisual>();
+        _effect = GetComponentInChildren<EffectVisualController>();
     }
 
     public void Init(float duration)
@@ -22,7 +19,6 @@ public class LavaFloor : MonoBehaviour
         _duration = duration;
         _timer = 0f;
         _isActive = true;
-        _effect.Reset(duration, REDUCE_FACTOR, UP_FACTOR);
     }
 
     private void Update()

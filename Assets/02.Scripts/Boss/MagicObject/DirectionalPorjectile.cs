@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class DirectionalProjectile : MonoBehaviour
 {
+    private const float DEFAULT_LIFRTIME = 10f;
+    
     private Vector3 _direction;
     private float _speed;
     private float _lifeTime;
@@ -12,7 +14,7 @@ public class DirectionalProjectile : MonoBehaviour
     private Action _callback;
 
     // Fire 메서드: 방향, 속도, 생존 시간, 생존 시간 이후 콜백 설정
-    public void Fire(Vector3 direction, float speed, float lifeTime, Action callback)
+    public void Fire(Vector3 direction, float speed, float lifeTime = DEFAULT_LIFRTIME, Action callback = null)
     {
         _direction = direction.normalized;
         var angle = Quaternion.LookRotation(_direction.normalized).eulerAngles.y;

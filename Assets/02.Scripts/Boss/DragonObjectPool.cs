@@ -14,7 +14,7 @@ public class DragonObjectPool
     {
         Transform root = controller.transform;
         GameObject lavaPool = new("LavaPool");
-        
+
         BreathParticlePool = Pool.Create(controller.DragonBreathEffectPrefab, 1, root).NonLazy();
         LavaProjectilePool = Pool.Create(controller.LavaProjectile, 0, lavaPool.transform);
         LavaFloorPool = Pool.Create(controller.LavaFloorPrefab, 0, lavaPool.transform);
@@ -26,7 +26,10 @@ public class DragonObjectPool
         }
     }
 
-    public DirectionalProjectile GetDirectionalPool(string name)
+    public Pool<DirectionalProjectile> GetDirectionalPool(string key)
+        => _dirPools.GetValueOrDefault(key);
+
+    public DirectionalProjectile GetDirectionalPoolObject(string name)
         => _dirPools.TryGetValue(name, out var pool) ? pool.Get() : null;
 
     public void TakeDirectionalPool(string name, DirectionalProjectile projectile)

@@ -57,17 +57,34 @@ public class DragonCombat
     #region SpecialMelee
 
     private const string DarkProjectileKey = "Dragon_BlackProjectile_Prefab";
+    private const string WindStormKey = "Dragon_WindStorm_Prefab";
 
     public void DarkProjectileEffect()
     {
         var spawnPoint = _controller.LeftPoint.position;
 
-        var projectile = _controller.Pool.GetDirectionalPool(DarkProjectileKey);
+        var projectile = _controller.Pool.GetDirectionalPoolObject(DarkProjectileKey);
 
         projectile.transform.position = spawnPoint;
         var param = _controller.ParamLoader.LeftScratch_Special;
         projectile.Fire(_controller.transform.forward, param.Speed, param.LifeTime,
             () => _controller.Pool.TakeDirectionalPool(DarkProjectileKey, projectile));
+    }
+    
+    public void WindStormEffect()
+    {
+        var spawnPoint = _controller.RightPoint.position;
+        spawnPoint.y = _controller.transform.position.y;
+
+        // Y값 제외하고 방향 계산
+        var direction = spawnPoint - _controller.transform.position;
+        direction.Normalize();
+
+        var projectile = _controller.Pool.GetDirectionalPoolObject(WindStormKey);
+
+        projectile.transform.position = spawnPoint;
+        var param = _controller.ParamLoader.RightScratch_Special;
+        projectile.Fire(direction, param.Speed, param.LifeTime, () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
     }
 
     #endregion

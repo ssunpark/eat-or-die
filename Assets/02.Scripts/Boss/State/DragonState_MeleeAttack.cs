@@ -26,10 +26,8 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActiveRandomAttackSubState()
     {
-        _currentSubStateMachine.TryActivateState<DragonMeleeAttack_Special_LeftScratch>(true);
-        return;
-        // 1번은 Prepare라고 약속, 하드코딩이지만 일단 진행
-        int random = Random.Range(1, _currentSubStateMachine.States.Length);
+        // 0번은 Prepare라고 약속, 하드코딩이지만 일단 진행
+        int random = 2;// Random.Range(1, _currentSubStateMachine.States.Length);
         var nextState = _currentSubStateMachine.States[random];
         _currentSubStateMachine.TryActivateState(nextState, true);
     }
@@ -38,15 +36,18 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
     {
         _phase1SubStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
             new DragonMeleeAttack_Prepare(Context, this),
-            new DragonMeleeAttack_Normal(Context, this, "Attack_Bite", Context.Parameter.Bite),
-            new DragonMeleeAttack_Normal(Context, this, "Attack_LeftScratch", Context.Parameter.LeftScratch),
-            new DragonMeleeAttack_Normal(Context, this, "Attack_RightScratch", Context.Parameter.RightScratch),
-            new DragonMeleeAttack_Normal(Context, this, "Attack_Swipe", Context.Parameter.Swipe)
+            new DragonMeleeAttack(Context, this, "Attack_Bite", Context.Parameter.Bite),
+            new DragonMeleeAttack(Context, this, "Attack_LeftScratch", Context.Parameter.LeftScratch),
+            new DragonMeleeAttack(Context, this, "Attack_RightScratch", Context.Parameter.RightScratch),
+            new DragonMeleeAttack(Context, this, "Attack_Swipe", Context.Parameter.Swipe)
         );
 
         _phase2SubStateMachine = new StateMachine<DragonSubStateBase>("MeleeAttackSubFSM",
             new DragonMeleeAttack_Prepare(Context, this),
-            new DragonMeleeAttack_Special_LeftScratch(Context, this)
+            new DragonMeleeAttack(Context, this, "Attack_LeftScratch", Context.Parameter.LeftScratch
+                , () => Context.Combat.DarkProjectileEffect()),
+            new DragonMeleeAttack(Context, this, "Attack_RightScratch", Context.Parameter.LeftScratch
+                , () => Context.Combat.WindStormEffect())
         );
 
         stateMachines.Add(_phase1SubStateMachine);
