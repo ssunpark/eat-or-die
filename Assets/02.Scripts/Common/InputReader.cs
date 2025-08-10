@@ -72,6 +72,7 @@ public class InputReader : BehaviourSingleton<InputReader>
     private void OnUseItemPerformed(InputAction.CallbackContext context)
     {
         IsUseItemDown = context.action.IsPressed();
+        MousePosition = GetMousePosition();
     }
     private void OnSprintPerformed(InputAction.CallbackContext context)
     {
