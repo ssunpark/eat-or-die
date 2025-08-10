@@ -69,9 +69,10 @@ public class ItemFactory
                 extraDescription.Add(desc);
             }
         }
-
+        
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
+        holdEffectList.Add(new ItemHoldEffect_Animator("Food"));
 
         var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Food,
             extraDescription: extraDescription,

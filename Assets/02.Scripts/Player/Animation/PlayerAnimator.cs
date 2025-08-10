@@ -105,7 +105,6 @@ public class PlayerAnimator : NetworkBehaviour
     {
         if (_fsm?.StateMachine?.ActiveState is IAnimationActionNotify notify)
         {
-            Debug.Log($"PlayerAnimator: OnActionMoment called on state {notify.GetType().Name}");
             notify.OnActionMoment();
         }
     }
@@ -113,21 +112,6 @@ public class PlayerAnimator : NetworkBehaviour
     public void OnAnimationFinished()
     {
         TryInitializeController();
-        //미사용
-        //Debug.Log($"PlayerAnimator: OnAnimationFinished called on state {_fsm?.StateMachine?.ActiveState?.GetType().Name}");
-        //if (_fsm == null || _fsm.StateMachine == null)
-        //{
-        //    Debug.LogError("PlayerAnimator: FSM or StateMachine is null.");
-        //    return;
-        //}
-        //if (_fsm?.StateMachine?.ActiveState is IAnimationActionEndNotify notify)
-        //{
-        //    notify.OnAnimationFinished();
-        //}
-        //else
-        //{
-        //    Debug.LogWarning("PlayerAnimator: Current state is NOT IAnimationActionEndNotify");
-        //}
     }
 
 

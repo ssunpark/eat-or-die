@@ -16,8 +16,6 @@ public class ProjectileManager : BehaviourSingleton<ProjectileManager>
     [SerializeField] private List<ProjectileEntry> _projectiles;
 
     private Dictionary<string, GameObject> _projectileMap = new();
-    private Dictionary<ParticleSystem, Pool<ParticleSystem>> _sharedPools = new();
-    public IReadOnlyDictionary<ParticleSystem, Pool<ParticleSystem>> ExplodeEffectPool => _sharedPools;
 
     private void Awake()
     {
@@ -27,13 +25,9 @@ public class ProjectileManager : BehaviourSingleton<ProjectileManager>
             {
                 _projectileMap[entry.Key] = entry.Prefab;
             }
-            // ExplodeEffectPrefab이 null이 아닐 때만 GetOrCreateSharedPool 호출
-            if (entry.ExplodeEffectPrefab != null)
-            {
-                var (pool, parent) = GetOrCreateSharedPool(entry.ExplodeEffectPrefab, transform);
-            }
 
         }
+        ParticleManager.Instance.Init(_projectiles);
 
     }
 
@@ -51,15 +45,4 @@ public class ProjectileManager : BehaviourSingleton<ProjectileManager>
         return null;
     }
 
-    private (Pool<ParticleSystem>, Transform) GetOrCreateSharedPool(ParticleSystem key, Transform poolParent)
-    {
-        if (_sharedPools.TryGetValue(key, out var existingPool))
-            return (existingPool, existingPool.Container);
-
-        GameObject parent = new(key.name);
-        parent.transform.SetParent(poolParent);
-        var newPool = Pool.Create(key, 0, parent.transform);
-        _sharedPools[key] = newPool;
-        return (newPool, parent.transform);
-    }
 }
