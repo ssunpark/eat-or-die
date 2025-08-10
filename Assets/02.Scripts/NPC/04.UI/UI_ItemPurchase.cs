@@ -1,4 +1,5 @@
 ﻿using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -131,15 +132,18 @@ public class UI_ItemPurchase : MonoBehaviour
 
         Debug.Log($"{_itemProfile.ItemDefinition.Name} {_selectedCount}개 구매 완료");
         
-        for (int i = 0; i < _selectedCount; i++)
-        {
-            Debug.Log("아이템 구매 횟수 시도");
-            // 중앙 인벤토리 시스템을 통해 처리
-            ItemInstance newItemInstance = new ItemInstance(_itemProfile, 1);
-            InventoryManager.Instance.PickItemFromGround(newItemInstance);
-        }
+        // for (int i = 0; i < _selectedCount; i++)
+        // {
+        //     Debug.Log("아이템 구매 횟수 시도");
+        //     // 중앙 인벤토리 시스템을 통해 처리
+        //     ItemInstance newItemInstance = new ItemInstance(_itemProfile, 1);
+        //     InventoryManager.Instance.PickItemFromGround(newItemInstance);
+        // }
         
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        ItemInstance newItemInstance = new ItemInstance(_itemProfile, _selectedCount);
+        InventoryManager.Instance.PickItemFromGround(newItemInstance);
+
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
 
         // TODO: 구매 성공 알림, UI 닫기 등 추가
     }
