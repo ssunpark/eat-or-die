@@ -3,7 +3,6 @@ using Fusion.Addons.FSM;
 
 public class SpawnBehaviour : AEnemyStateBehaviour
 {
-    private static readonly int Spawn = Animator.StringToHash("Spawn");
     private bool _isSpawned = false;
 
     protected override void OnFixedUpdate()

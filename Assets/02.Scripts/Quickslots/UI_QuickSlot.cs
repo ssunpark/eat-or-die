@@ -30,17 +30,17 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler
 
 	public void UpdateSlotUI()
 	{
-		Item itemInSlot = QuickSlotManager.Instance.GetItemInSlot(SlotIndex);
-		if (itemInSlot == null)
+		ItemInstance itemInstanceInSlot = QuickSlotManager.Instance.GetItemInSlot(SlotIndex);
+		if (itemInstanceInSlot == null)
 		{
 			IconImage.gameObject.SetActive(false);
 			QuantityText.gameObject.SetActive(false);
 			return;
 		}
         
-		IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemData.Icon;
-		QuantityText.text = itemInSlot.Quantity.ToString();
+		IconImage.sprite = ItemManager.Instance.GetItem(itemInstanceInSlot.ID).ItemDefinition.Icon;
+		QuantityText.text = itemInstanceInSlot.Quantity.ToString();
 		IconImage.gameObject.SetActive(true);
-		QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
+		QuantityText.gameObject.SetActive(itemInstanceInSlot.Quantity > 1);
 	}	
 }

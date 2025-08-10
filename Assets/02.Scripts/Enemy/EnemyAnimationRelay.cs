@@ -2,20 +2,18 @@
 
 public class EnemyAnimationRelay : MonoBehaviour
 {
-    private IEventReceiver _eventReceiver;
-
-    public void SetReceiver(IEventReceiver eventReceiver)
-    {
-        _eventReceiver = eventReceiver;
-    }
+    private EnemyBehaviourMachine _machine;
     
-    public void RemoveReceiver()
+    public void SetMachine(EnemyBehaviourMachine machine)
     {
-        _eventReceiver = null;
+        _machine = machine;
     }
 
     public void CallAnimationEvent()
     {
-        _eventReceiver?.OnActionMoment();
+        if (_machine.ActiveState is IEventReceiver eventReceiver)
+        {
+            eventReceiver.OnActionMoment();
+        }
     }
 }

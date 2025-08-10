@@ -34,9 +34,10 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
+        _fsm.HungryEffect.Play();
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateState()
     {
         _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 2);
     }

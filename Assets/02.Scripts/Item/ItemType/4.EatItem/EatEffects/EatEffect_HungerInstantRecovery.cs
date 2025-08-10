@@ -14,7 +14,6 @@ public class EatEffect_HungerInstantRecovery : IUseEffect
 
     public void Use(GameObject target)
     {
-        // 매개 변수로 받은 특정 타겟에 대해 효과 적용
-        Debug.Log(Description);
+        target.GetComponent<Player>().TryHealOrDamage(_value);
     }
 }

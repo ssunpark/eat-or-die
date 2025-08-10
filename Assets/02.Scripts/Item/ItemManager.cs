@@ -13,12 +13,15 @@ public class ItemManager : NetworkBehaviour
     private const string TOOL_CSV_PATH = "/ItemCSV/Tool.csv";
     private const string SEED_CSV_PATH = "/ItemCSV/Seed.csv";
     private const string WEAPON_CSV_PATH = "/ItemCSV/Weapon.csv";
+    private const string EQUIP_CSV_PATH = "/ItemCSV/Equip.csv";
+    private const string CRAFT_CSV_PATH = "/ItemCSV/Craft.csv";
+    
     [Header("아이템 오브젝트")]
     [SerializeField]
     private NetworkPrefabRef _itemObjectPrefab;
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
-    private Dictionary<int, AItemInfo> _itemDictionary;
+    private Dictionary<int, ItemProfile> _itemDictionary;
     
     // 아이템 팩토리
     private ItemFactory _itemFactory;
@@ -41,7 +44,7 @@ public class ItemManager : NetworkBehaviour
         _itemFactory = new ItemFactory(transform);
         
         // 데이터 로드 후 생성
-        _itemDictionary = new Dictionary<int, AItemInfo>();
+        _itemDictionary = new Dictionary<int, ItemProfile>();
         
         // 음식 아이템
         var eatItemRawDataList = CSVLoader<EatItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{FOOD_CSV_PATH}");
@@ -52,12 +55,12 @@ public class ItemManager : NetworkBehaviour
         }
         
         // 장비 아이템
-        // var equipmentItemRawDataList = ItemDataLoader.LoadItemRawData<EquipmentItemRawData>($"{Application.streamingAssetsPath}{ITEM_CSV_PATH}/EquipmentItemTestCSV.csv");
-        // foreach (var data in equipmentItemRawDataList)
-        // {
-        //     var useItem = _itemFactory.CreateEquipmentItem(data);
-        //     _itemDict[data.ID] = useItem;
-        // }
+        var equipmentItemRawDataList = CSVLoader<EquipmentItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{EQUIP_CSV_PATH}");
+        foreach (var data in equipmentItemRawDataList)
+        {
+            var useItem = _itemFactory.CreateItem(data);
+            _itemDictionary[data.ID] = useItem;
+        }
         
         // 무기 아이템
         var weaponItemRawData = CSVLoader<WeaponItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{WEAPON_CSV_PATH}");
@@ -70,8 +73,20 @@ public class ItemManager : NetworkBehaviour
         }
         
         // 도구 아이템
-        var usableRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
-        usableRawDataList.AddRange(CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}"));
+        var toolRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{TOOL_CSV_PATH}");
+        toolRawDataList.ForEach(x => x.ItemType = EItemType.Tool);
+        
+        // 씨앗 아이템
+        var seedRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{SEED_CSV_PATH}");
+        seedRawDataList.ForEach(x => x.ItemType = EItemType.Seed);
+        
+        // 설치 아이템
+        var craftRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{CRAFT_CSV_PATH}");
+        seedRawDataList.ForEach(x => x.ItemType = EItemType.Craft);
+        
+        var usableRawDataList = toolRawDataList;
+        usableRawDataList.AddRange(seedRawDataList);
+        usableRawDataList.AddRange(craftRawDataList);
         foreach (var data in usableRawDataList)
         {
             var usableItem = _itemFactory.CreateItem(data);
@@ -80,11 +95,10 @@ public class ItemManager : NetworkBehaviour
     }
 
     /// <summary>
-    /// 아이템 조회 함수 (추가 아이템 종류가 생기는 경우 종류 별 조회 함수 추가)
-    /// AItem을 동작에 맞는 인터페이스로 변경해서 사용 (Interface폴더 참고)
+    /// 아이템 조회 함수
     /// </summary>
     /// <param name="id">아이템 ID</param>
-    public AItemInfo GetItem(int id)
+    public ItemProfile GetItem(int id)
     {
         return _itemDictionary.GetValueOrDefault(id);
     }
@@ -92,7 +106,7 @@ public class ItemManager : NetworkBehaviour
     public List<int> GetFoodIngredientList()
     {
         return _itemDictionary.Values
-            .Where(itemInfo => itemInfo.ItemData.IsIngredient).Select(itemInfo => itemInfo.ItemData.ID).ToList();
+            .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient).Select(itemInfo => itemInfo.ItemDefinition.ID).ToList();
     }
 
     /// <summary>
@@ -110,7 +124,7 @@ public class ItemManager : NetworkBehaviour
             return;
         }
         
-        if (!_itemDictionary.TryGetValue(id, out AItemInfo item))
+        if (!_itemDictionary.TryGetValue(id, out ItemProfile item))
         {
             Debug.LogWarning($"없는 아이템입니다. ID: {id}");
             return;

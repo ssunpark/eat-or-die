@@ -20,11 +20,11 @@ public class UI_DropZone : MonoBehaviour, IPointerDownHandler
 		{
 			if (!HandEntity.Instance.IsHandEmpty)
 			{
-				Item itemInHand = HandEntity.Instance.Item;
+				ItemInstance itemInstanceInHand = HandEntity.Instance.ItemInstance;
 				ItemManager.Instance.RPC_CreateItemObject(
-					itemInHand.ID,
-					itemInHand.Quantity, 
-                    itemInHand.Durability,
+					itemInstanceInHand.ID,
+					itemInstanceInHand.Quantity, 
+                    itemInstanceInHand.Durability,
 					HandEntity.Instance.transform.position, 
 					HandEntity.Instance.transform.rotation);
 				HandEntity.Instance.DropItem();

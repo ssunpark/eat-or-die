@@ -14,7 +14,7 @@ public class UI_ItemPurchase : MonoBehaviour
     public TextMeshProUGUI TotalPriceText;
     public TextMeshProUGUI CurrentGoldText;
     
-    private AItemInfo _itemInfo;
+    private ItemProfile _itemProfile;
     private NpcItem _npcItem;
     private int _selectedCount;
     private int _maxCount;
@@ -41,9 +41,9 @@ public class UI_ItemPurchase : MonoBehaviour
         CurrencyManager.Instance.OnCurrencyChanged -= OnGoldAmountChanged;
     }
 
-    public void Init(AItemInfo itemInfo, NpcItem npcItem, int maxCount)
+    public void Init(ItemProfile itemProfile, NpcItem npcItem, int maxCount)
     {
-        _itemInfo = itemInfo;
+        _itemProfile = itemProfile;
         _npcItem = npcItem;
         _unitPrice = npcItem.Price;
         _maxCount = Mathf.Clamp(maxCount, 1, 99);
@@ -120,7 +120,7 @@ public class UI_ItemPurchase : MonoBehaviour
 
     public void OnClickBuyButton()
     {
-        Debug.Log($"{_itemInfo.ItemData.Name} {_selectedCount}개 구매 시도");
+        Debug.Log($"{_itemProfile.ItemDefinition.Name} {_selectedCount}개 구매 시도");
 
         if (!CurrencyManager.Instance.TrySpend(ECurrencyType.Gold, TotalPrice))
         {
@@ -129,14 +129,14 @@ public class UI_ItemPurchase : MonoBehaviour
             return;
         }
 
-        Debug.Log($"{_itemInfo.ItemData.Name} {_selectedCount}개 구매 완료");
+        Debug.Log($"{_itemProfile.ItemDefinition.Name} {_selectedCount}개 구매 완료");
         
         for (int i = 0; i < _selectedCount; i++)
         {
             Debug.Log("아이템 구매 횟수 시도");
             // 중앙 인벤토리 시스템을 통해 처리
-            Item newItem = new Item(_itemInfo, 1);
-            InventoryManager.Instance.PickItemFromGround(newItem);
+            ItemInstance newItemInstance = new ItemInstance(_itemProfile, 1);
+            InventoryManager.Instance.PickItemFromGround(newItemInstance);
         }
         
         InventoryManager.Instance.OnInventoryUpdated?.Invoke();

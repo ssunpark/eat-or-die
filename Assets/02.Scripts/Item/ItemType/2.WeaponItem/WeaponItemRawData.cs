@@ -21,7 +21,7 @@ public class WeaponItemRawData
     public EAttackType AttackType { get; set; }
 
     [Name("MaxStack")]
-    public int MaxStack { get; set; }
+    public int MaxQuantity { get; set; }
 
     [Name("ActionName")]
     public string ActionName { get; set; }
@@ -39,11 +39,14 @@ public class WeaponItemRawData
     public float AttackSpeed { get; set; }
 
     [Name("Range")]
-    public float Range { get; set; }
+    public float AttackRange { get; set; }
 
     [Name("IconPath(Addressable)")]
     public string IconPath { get; set; }
     
     [Name("PrefabPath(Addressable)")]
     public string PrefabPath { get; set; }
+
+    [Name("ProjectileKey")]
+    public string ProjectileKey { get; set; }
 }

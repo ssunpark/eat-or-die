@@ -9,14 +9,14 @@ public class UI_CraftItemButton : MonoBehaviour
     public TextMeshProUGUI ItemNameText;
     
     private CraftRecipe _craftRecipe;
-    private AItemInfo _itemInfo;
+    private ItemProfile _itemProfile;
     
-    public void Refresh(CraftRecipe craftRecipe, AItemInfo itemInfo)
+    public void Refresh(CraftRecipe craftRecipe, ItemProfile itemProfile)
     {
         _craftRecipe = craftRecipe;
-        _itemInfo = itemInfo;
+        _itemProfile = itemProfile;
 
-        IconImage.sprite = itemInfo.ItemData.Icon;
+        IconImage.sprite = itemProfile.ItemDefinition.Icon;
         ItemNameText.text = craftRecipe.CraftRecipeName;
     }
 
@@ -47,10 +47,10 @@ public class UI_CraftItemButton : MonoBehaviour
             return;
         }
 
-        Item craftedItem = new Item(_itemInfo, 1);
-        InventoryManager.Instance.PickItemFromGround(craftedItem);
+        ItemInstance craftedItemInstance = new ItemInstance(_itemProfile, 1);
+        InventoryManager.Instance.PickItemFromGround(craftedItemInstance);
 
-        Debug.Log($"{_itemInfo.ItemData.Name} 제작 성공!");
+        Debug.Log($"{_itemProfile.ItemDefinition.Name} 제작 성공!");
         
     }
 }

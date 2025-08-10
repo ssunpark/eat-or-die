@@ -7,6 +7,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
     {
         AnimState = "UseItem";
         StateId = (int)EPlayerState.UseItem;
+        _shouldPlayAnimation = false;
     }
 
     private NetworkObject _target;
@@ -27,12 +28,24 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         base.OnEnterStateRender();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
+        if(_fsm.HasStateAuthority || _fsm.HasInputAuthority)
+        {
+            _target = _fsm.ItemUseTarget;
+        }
+        string desired = _fsm.UseItemMode == EUseItemMode.Give ? "UseItem_Give" : "UseItem";
+        AnimState = desired;
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
     }
 
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (!_fsm.HasStateAuthority) return;
-        RPC_UseItemOrder(_target);
+        if (!_fsm.HasInputAuthority) return;
+        if (_target == null)
+        {
+            Debug.LogWarning("PlayerUseItemState: Target is null. Cannot use item.");
+            return;
+        }
+        _fsm.ItemHolder.UseItem(_target.gameObject);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
@@ -45,13 +58,13 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         }
         _fsm.ItemHolder.UseItem(target.gameObject);
     }
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateInput()
     {
-        if (!_fsm.HasStateAuthority) return;
         KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
-            Machine.ForceActivateState<PlayerIdleState>();
+            Debug.Log(_fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]);
+            RequestActivateState();
         }
     }
 }

@@ -1,17 +1,21 @@
 ﻿using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerItemHolder: NetworkBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _handTransform;
     private PlayerFSM _playerController;
-    public Item HeldItem { get; private set; }
+    public EAttackType AttackType = EAttackType.MeleeWeapon;
+    public ItemInstance HeldItemInstance { get; private set; }
     private GameObject _heldItemObject;
     public string InteractionTag;
 
     private Player _player;
+
+    public string ProjectileKey;
     [System.Serializable]
     public class AnimatorOverrideEntry
     {
@@ -22,7 +26,48 @@ public class PlayerItemHolder: NetworkBehaviour
 
     private Dictionary<string,AnimatorOverrideController> _animatorOverrideMap = new();
     public int HoldItemID { get; private set; }
+    public override void Spawned()
+    {
+        if (HoldItemID > 0)
+        {
+            Debug.Log($"[PlayerItemHolder] Spawned - Item with ID {HoldItemID} is being held. Synchronizing state.");
+            _HoldItemLogic(HoldItemID);
+        }
+    }
+    private void _HoldItemLogic(int itemId)
+    {
+        if (_player == null)
+        {
+            _player = GetComponent<Player>();
+        }
 
+        if (_heldItemObject != null)
+        {
+            var heldItem = ItemManager.Instance.GetItem(HoldItemID);
+            heldItem?.UnHoldItem(gameObject, _heldItemObject);
+            _heldItemObject = null;
+        }
+
+        ItemProfile changedHoldItem = ItemManager.Instance.GetItem(itemId);
+        if (changedHoldItem == null)
+        {
+            Debug.LogError($"[PlayerItemHolder] 아이템 정보가 없습니다. ID: {itemId}");
+            return;
+        }
+
+        AttackType = changedHoldItem.ItemDefinition.AttackType;
+        ProjectileKey = changedHoldItem.ItemDefinition.ProjectileKey;
+
+        changedHoldItem.HoldItem(gameObject);
+        _heldItemObject = changedHoldItem.GetHoldItemObject();
+        _heldItemObject.transform.SetParent(_handTransform);
+
+        _heldItemObject.transform.localPosition = new Vector3(0.07f, 0.14f, -0.02f);
+        _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
+        _heldItemObject.transform.localScale = Vector3.one;
+
+
+    }
     private void Awake()
     {
         // 얘도 나중에 어드레서블 로드 후 key 기반 로딩
@@ -41,20 +86,20 @@ public class PlayerItemHolder: NetworkBehaviour
     }
     
 
-    public void SetHoldItem(Item item)
+    public void SetHoldItem(ItemInstance itemInstance)
     {
         Debug.Log($"[PlayerItemHolder] SetHoldItem Called.");
 
-        HeldItem = item;
+        HeldItemInstance = itemInstance;
 
         if (HasInputAuthority)
         {
-            if(item == null)
+            if(itemInstance == null)
             {
                 RPC_RequestUnholdItem();
             }
             else
-                RPC_RequestHoldItem(item.ID);
+                RPC_RequestHoldItem(itemInstance.ID);
         }
     }
     
@@ -69,45 +114,31 @@ public class PlayerItemHolder: NetworkBehaviour
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
         _heldItemObject = null;
         HoldItemID = -1;
-        _player.CacheAnimationLengths();
+
+        AttackType = EAttackType.MeleeWeapon;
+        ProjectileKey = "DefaultProjectile";
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void RPC_RequestHoldItem(int itemId)
     {
-        if(_player == null)
-        {
-            _player = GetComponent<Player>();
-        }
-        if (HoldItemID > 0)
-        {
-            var heldItem = ItemManager.Instance.GetItem(HoldItemID);
-            heldItem?.UnHoldItem(gameObject, _heldItemObject);
-        }
-        Debug.Log($"[PlayerItemHolder] RPC_RequestHoldItem Called. ID: {itemId}");
+        _HoldItemLogic(itemId);
         HoldItemID = itemId;
-        AItemInfo changedHoldItem = ItemManager.Instance.GetItem(itemId);
-        if(changedHoldItem == null)
-        {
-            Debug.LogError($"[PlayerItemHolder] 아이템 정보가 없습니다. ID: {itemId}");
-            return;
-        }
-        
-        changedHoldItem.HoldItem(gameObject);
-        _heldItemObject = changedHoldItem.GetHoldItemObject();
-        _heldItemObject.transform.SetParent(_handTransform);
-
-        // 손 위치와 회전 설정
-        _heldItemObject.transform.localPosition = new Vector3(0.07f, 0.14f, -0.02f);
-        _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
-        _heldItemObject.transform.localScale = Vector3.one;
-        // 계속 이 방식으로 손에 붙인다면 이 정보도 노가다로 csv에 저장해야할듯...
-
-        _player.CacheAnimationLengths();
     }
-
+    Coroutine _applyOverrideCoroutine;
     public void ApplyAnimatorOverride(string key)
     {
+        if (_applyOverrideCoroutine != null)
+        {
+            StopCoroutine(_applyOverrideCoroutine);
+            _applyOverrideCoroutine = null;
+        }
+        _applyOverrideCoroutine = StartCoroutine(ApplyOverrideCoroutine(key));
+    }
+
+    private IEnumerator ApplyOverrideCoroutine(string key)
+    {
+        yield return new WaitUntil(() => _playerController.StateMachine.ActiveStateId == 0 || _playerController.StateMachine.ActiveStateId == 1);
         if (_animatorOverrideMap.TryGetValue(key, out var controller))
         {
             _animator.runtimeAnimatorController = controller;
@@ -118,5 +149,6 @@ public class PlayerItemHolder: NetworkBehaviour
                 Debug.LogWarning("Unarmed 애니메이터 오버라이드가 설정되지 않았습니다.");
             ApplyAnimatorOverride("Unarmed");
         }
+        _player.CacheAnimationLengths();
     }
 }

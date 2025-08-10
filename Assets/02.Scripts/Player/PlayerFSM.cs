@@ -1,20 +1,18 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class StateValues
+public enum EUseItemMode : byte
 {
-    public float MoveHungerTimer = 0f;
-    public float MoveHungerInterval = 1f;
+    Self = 0,
+    Give = 1
 }
-
 public class FSMStateInstances
 {
     public PlayerIdleState Idle;
@@ -32,13 +30,12 @@ public class FSMStateInstances
 [RequireComponent(typeof(StateMachineController))]
 public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 {
-
+    public bool EnableDebugLog = false;
     #region FSM
 
     private StateMachine<APlayerStateBase> _playerFSM; // 메인 상태 머신
     public StateMachine<APlayerStateBase> StateMachine => _playerFSM;
     public FSMStateInstances FSMStateInstances { get; private set; }
-    public StateValues StateValues { get; set; } = new StateValues();
 
 
     #endregion
@@ -84,12 +81,15 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public SimpleKCC SimpleKCC;
     private NetworkInputData _currentInput;
     private NetworkInputData _previousInput;
-
+    public ParticleSystem HungryEffect;
     public NetworkInputData CurrentInput => _currentInput;
     public NetworkInputData PreviousInput => _previousInput;
 
     public const float INTERACTABLE_DISTANCE = 2f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
+    private const float _useItemMaxDistance = 2.0f;
+    [Networked]
+    public EUseItemMode UseItemMode { get; set; } = EUseItemMode.Self;
 
     [Networked, Capacity(8)]
     public NetworkLinkedList<NetworkObject> HitTargets { get; }
@@ -158,7 +158,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
                 {
-                    RPC_SetItemUseTarget(null);
+                    RPC_SetItemUseTargetAndMode(null, EUseItemMode.Self);
                 }
             }
         }
@@ -172,21 +172,35 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    private void RPC_SetItemUseTarget(NetworkObject obj)
+    private void RPC_SetItemUseTargetAndMode(NetworkObject obj, EUseItemMode mode)
     {
         ItemUseTarget = obj;
+        UseItemMode = mode;
     }
 
 
     private bool TestUseItem(bool usePressed)
     {
-        if (ItemHolder.HeldItem == null)
+        if (ItemHolder.HeldItemInstance == null)
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;
-        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Undefined")
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed")
             return false;
 
+        if (requiredTag == "Player")
+        {
+            // 커서 대상 우선
+            if (TryGetPlayerUnderCursor(out var playerUnderCursor))
+            {
+                RPC_SetItemUseTargetAndMode(playerUnderCursor, EUseItemMode.Give);
+                return true;
+            }
+
+            // 커서에 유효 대상이 없으면 자기 자신
+            RPC_SetItemUseTargetAndMode(PlayerNetworkObject.Object, EUseItemMode.Self);
+            return true;
+        }
         Vector3 interactionPoint = transform.position + transform.forward;
 
         int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, INTERACTABLE_DISTANCE, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
@@ -214,7 +228,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (closest.TryGetComponent(out NetworkObject net))
         {
-            RPC_SetItemUseTarget(net);
+            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Self);
             return true;
         }
 
@@ -277,22 +291,77 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         _currentInput = input;
     }
 
-    private void OnDrawGizmosSelected()
+    
+    public void RequestActivateState(EPlayerState state)
     {
-#if UNITY_EDITOR
-        if (!EditorApplication.isPlaying)
-            return;
-
-        if (StateMachine?.ActiveState is PlayerAttackState attackState || StateMachine?.ActiveState is PlayerBerserkState berserkState)
+        if (HasStateAuthority)
         {
-            Vector3 origin = transform.position + transform.rotation * new Vector3(0f, 0.2f, 0.5f);
-            float range = AttackRange;
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(origin, range);
+            _playerFSM.ForceActivateState((int)state);
         }
-#endif
+        else if(HasInputAuthority)
+        {
+                RPC_RequestChangeStates(state);
+        }
+        
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestChangeStates(EPlayerState state)
+    {
+        _playerFSM.ForceActivateState((int)state);
     }
 
-    public float AttackRange => PlayerNetworkObject.Stat.GetStat(EStatType.AttackRange);
+    private bool TryGetPlayerUnderCursor(out NetworkObject targetPlayer)
+    {
+        targetPlayer = null;
+        var cam = Camera.main;
+        if (cam == null) return false;
+
+        var ray = cam.ScreenPointToRay(Input.mousePosition);
+        var scene = Runner.GetPhysicsScene();
+#if UNITY_EDITOR
+        Debug.DrawRay(ray.origin, ray.direction * MAX_RAYCAST_DISTANCE, Color.red, 1f);
+#endif
+        if (EnableDebugLog)
+        {
+            Debug.Log($"[PlayerFSM] Raycasting from {ray.origin} in direction {ray.direction} for {MAX_RAYCAST_DISTANCE} units.");
+        }
+        if (scene.Raycast(ray.origin, ray.direction, out RaycastHit hit, MAX_RAYCAST_DISTANCE, InteractLayerMask, QueryTriggerInteraction.Collide))
+        {
+            var go = hit.collider.gameObject;
+            if (EnableDebugLog)
+            {
+                Debug.Log($"[PlayerFSM] Hit object: {go.name} at distance {hit.distance}");
+            }
+            var player = hit.collider.GetComponentInParent<Player>();
+            if (player == null) return false;
+
+            var netObj = player.NetworkObject;
+            if (netObj == null) return false;
+
+            if (EnableDebugLog)
+            {
+                Debug.Log($"[PlayerFSM] NetworkObject found: {netObj.name}");
+            }
+            var dist = Vector3.Distance(transform.position, netObj.transform.position);
+            if (EnableDebugLog)
+            {
+                Debug.Log($"[PlayerFSM] Distance to player: {dist}");
+            }
+            if (dist <= _useItemMaxDistance)
+            {
+                if (EnableDebugLog)
+                {
+                    Debug.Log($"[PlayerFSM] Player is within use item distance: {dist}");
+                }
+                targetPlayer = netObj;
+                return true;
+            }
+        }
+        if (EnableDebugLog)
+        {
+            Debug.Log($"[PlayerFSM] No player found under cursor.");
+        }
+        return false;
+    }
+
 }

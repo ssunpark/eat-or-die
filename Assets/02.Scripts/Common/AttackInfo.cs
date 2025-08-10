@@ -14,4 +14,7 @@ public struct AttackInfo : INetworkStruct
     public float BossDamageMultiplier;
 
     public float TotalDamageMultiplier;
+
+    public NetworkObject Attacker;
+
 }

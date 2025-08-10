@@ -3,9 +3,8 @@
 public interface IAttackable
 {
     NetworkObject NetworkObject { get; }
-    void OnHitLocal(AttackInfo attack, NetworkObject attacker);
-    void RPC_HitByAttack(AttackInfo attack, NetworkObject attacker); // 이건 RPC 메서드가 붙지 않으므로 구현체에서 [Rpc] 필요
-    void OnHitStateAuthority(AttackInfo attack, NetworkObject attacker);
+    void OnHitLocal(AttackInfo attack);
+    void OnHitStateAuthority(AttackInfo attack);
     /*
     /// <param name="attack">공격 정보</param>
     /// <param name="attacker">공격하는 플레이어
