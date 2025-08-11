@@ -1,15 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 {
 	private Inventory _quickSlots;
-	public Inventory Quickslots => _quickSlots;
     public int QuickSlotSize;
 
 	private int _selectedSlotIndex;
 	
-	public Action<int> OnQuickSlotUpdated;
+	public event Action OnEntireQuickSlotUpdated;
+	public event Action<int> OnQuickSlotUpdated;
+	public event Action<ItemInstance> OnItemAcquired;
 	
 	private void Awake()
 	{
@@ -36,6 +38,17 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         
         OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
     }
+    
+    public bool TryConsumeItem(int itemID, int amount)
+    {
+	    bool result = _quickSlots.TryConsumeItem(itemID, amount);
+        
+	    if (result)
+	    {
+		    OnEntireQuickSlotUpdated?.Invoke();
+	    }
+	    return result;
+	}
 
 	public ItemInstance GetItemInSlot(int slotIndex)
 	{
@@ -79,6 +92,17 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		
 		SendItemToPlayer();
 	}
+	
+	public void PickItemFromGround(ItemInstance itemInstance)
+	{
+		ItemInstance remain = _quickSlots.PickItemFromGround(itemInstance);
+        
+		OnEntireQuickSlotUpdated?.Invoke();
+		OnItemAcquired?.Invoke(itemInstance);
+		if (remain == null) return;
+        
+		ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
+	}
 
 	public void OnClickMouseRight(int slotIndex)
 	{
@@ -109,5 +133,26 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 
 		OnQuickSlotUpdated?.Invoke(slotIndex);
+	}
+
+	public List<Slot> GetAllSlots()
+	{
+		return _quickSlots.GetAllSlots();
+	}
+
+	public void DropAllItems(Vector3 position = default)
+	{
+		List<Slot> slots = GetAllSlots();
+
+		foreach (Slot slot in slots)
+		{
+			if (!slot.IsEmpty)
+			{
+				ItemInstance item = slot.GetItem();
+				ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity);
+				slot.RemoveItem();
+			}
+		}
+		OnEntireQuickSlotUpdated?.Invoke();
 	}
 }

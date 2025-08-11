@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class AnimatePopup : MonoBehaviour
 {
     public Color BackgroundColor = new Color(10.0f / 255.0f, 10.0f / 255.0f, 10.0f / 255.0f, 0.6f);
-    public float DestroyTime = 0.5f;
+    public float DestroyTime = 0.1f;
+    public bool BackgroundFade = true;
     public bool BlockBackgroundInput = true;
     private GameObject _background;
     private Animator _animator;
@@ -46,6 +47,8 @@ public class AnimatePopup : MonoBehaviour
     
     private void AddBackground()
     {
+        if (!BackgroundFade) return;
+        
         Texture2D bgTex = new Texture2D(1, 1);
         bgTex.SetPixel(0, 0, BackgroundColor);
         bgTex.Apply();
@@ -79,7 +82,7 @@ public class AnimatePopup : MonoBehaviour
         Image image = _background.GetComponent<Image>();
         if (image != null)
         {
-            image.CrossFadeAlpha(0.0f, 0.2f, false);
+            image.CrossFadeAlpha(0.0f, DestroyTime, false);
         }
     }
 }

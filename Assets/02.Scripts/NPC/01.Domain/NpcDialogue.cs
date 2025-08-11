@@ -7,11 +7,11 @@ public class NpcDialogue
     
     [Name("NPC ID")]
     public int NPCID { get; set; }
-    
-    [Name("대사 ID")]
+
+    [Name("Dialogue ID")]
     public int DialogueID { get; set; }
-    
-    [Name("대사 내용")]
+
+    [Name("Dialogue Contents")]
     public string DialogueContents { get; set; }
         
 }

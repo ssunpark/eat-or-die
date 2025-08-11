@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,60 +5,70 @@ public class UI_RecipeIngredient : MonoBehaviour
 {
     public GameObject Container;
     public GameObject ButtonPrefab;
-    
-    private Dictionary<int, UI_IngredientButton> _ingredientButtonDict = new Dictionary<int, UI_IngredientButton>();
 
+    private readonly Dictionary<int, UI_IngredientButton> _ingredientDataList = new();
     private bool _isInitialized = false;
 
+    // 제외하고 싶은 재료의 ID 목록
+    private readonly HashSet<int> _excludedIngredientIDs = new()
+    {
+        200012, // 썩은 작물
+        200013, // 강철
+        200028 // 드래곤 고기
+        // 여기에 더 추가...
+    };
+    
     private void OnEnable()
     {
-        RecipePanelUIManager.Instance.OnInventoryUpdated += RefreshIngredientButtons;
+        RoomRecipeStateManager.OnIngredientUnlocked += HandleIngredientUnlocked;
     }
 
+    private void OnDisable()
+    {
+        RoomRecipeStateManager.OnIngredientUnlocked -= HandleIngredientUnlocked;
+    }
+    
     public void Init()
     {
         if (_isInitialized) return;
         _isInitialized = true;
-        
-        List<int> ingredientIdList = ItemManager.Instance.GetFoodIngredientList();
-        _ingredientButtonDict.Clear();
-        
 
-        foreach (int id in ingredientIdList)
+        var allIngredients = ItemManager.Instance.GetFoodIngredientList();
+        _ingredientDataList.Clear();
+
+        foreach (var ingredientId in allIngredients)
         {
-            ItemProfile itemProfile = ItemManager.Instance.GetItem(id);
-            if (itemProfile == null) continue;
+            if (ingredientId == null)
+            {
+                continue;
+            }
 
-            GameObject buttonObj = Instantiate(ButtonPrefab, Container.transform);
+            // 제외 목록에 포함된 ID라면 버튼을 만들지 않고 건너뜀
+            if (_excludedIngredientIDs.Contains(ingredientId.ID))
+            {
+                continue;
+            }
+
+            var buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var button = buttonObj.GetComponent<UI_IngredientButton>();
-            button.Refresh(itemProfile.ItemDefinition); // <- AItemInfo 넘김
-            buttonObj.SetActive(false);
-
-            _ingredientButtonDict[itemProfile.ItemDefinition.ID] = button;
+            button.Refresh(ingredientId);
+            buttonObj.SetActive(true);
+            _ingredientDataList[ingredientId.ID] = button;
         }
+    }
+
+    private void HandleIngredientUnlocked(int unlockedIngredientID)
+    {
+        RefreshIngredientButtons();
     }
 
     private void RefreshIngredientButtons()
     {
         // 모두 비활성화
-        foreach (var button in _ingredientButtonDict.Values)
+        foreach (var button in _ingredientDataList.Values)
         {
-            button.gameObject.SetActive(false);
-        }
-
-        // 현재 인벤토리에 있는 재료들만 활성화
-        var ingredientList = RecipePanelUIManager.Instance.Ingredients;
-        if (ingredientList != null && ingredientList.Length > 0)
-        {
-            Debug.Log(ingredientList[0].ID);
-        }
-
-        foreach (var item in ingredientList)
-        {
-            if (_ingredientButtonDict.TryGetValue(item.ID, out var button))
-            {
-                button.gameObject.SetActive(true);
-            }
+            button.Refresh(button.GetIngredient());
         }
     }
+
 }

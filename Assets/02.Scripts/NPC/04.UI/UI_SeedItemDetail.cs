@@ -17,7 +17,7 @@ public class UI_SeedItemDetail : MonoBehaviour
     public void SetDetail(ItemProfile itemProfile, NpcItem npcItem)
     {
         int itemID = itemProfile.ItemDefinition.ID;
-        int count = InventoryManager.Instance.Inventory.GetItemCount(itemID);
+        int count = InventoryManager.Instance.GetItemCount(itemID);
         OwnedCountText.text = $"소지개수: {count.ToString()} 개";
         
         IconImage.sprite = itemProfile.ItemDefinition.Icon;

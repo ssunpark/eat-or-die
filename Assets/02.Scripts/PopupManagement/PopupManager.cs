@@ -1,67 +1,66 @@
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class PopupManager : BehaviourSingleton<PopupManager>
 {
-	private readonly List<AUI_PopupBase> openedPopups = new();
-	public bool HasOpenedPopup => openedPopups.Count > 0;
+    private readonly List<AUI_PopupBase> openedPopups = new();
+    public bool HasOpenedPopup => openedPopups.Count > 0;
 
-	private void Update()
-	{
-		if (Input.GetKeyDown(KeyCode.Escape))
-		{
-			CloseLast();
-		}
-		
-		if (!HasOpenedPopup)
-		{
-			InputReader.Instance.GainControl();
-		}
-	}
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseLast();
+        }
 
-	public void Register(AUI_PopupBase popup)
-	{
-		if (!openedPopups.Contains(popup))
-			openedPopups.Add(popup);
-	}
+        if (!HasOpenedPopup && InputReader.Instance != null)
+        {
+            InputReader.Instance.GainControl();
+        }
+    }
 
-	public void Unregister(AUI_PopupBase popup)
-	{
-		openedPopups.Remove(popup);
-	}
+    public void Register(AUI_PopupBase popup)
+    {
+        //if (!openedPopups.Contains(popup))
+        openedPopups.Add(popup);
+    }
 
-	public void CloseLast()
-	{
-		if (openedPopups.Count > 0)
-		{
-			openedPopups[^1].Close();
-		}
-	}
+    public void Unregister(AUI_PopupBase popup)
+    {
+        openedPopups.Remove(popup);
+    }
 
-	public bool IsOpen(EPopupType type)
-	{
-		return openedPopups.Any(popup => popup.Type == type);
-	}
+    public void CloseLast()
+    {
+        if (openedPopups.Count > 0)
+        {
+            openedPopups[^1].Close();
+        }
+    }
 
-	public AUI_PopupBase GetOpenPopup(EPopupType type)
-	{
-		return openedPopups.FirstOrDefault(popup => popup.Type == type);
-	}
+    public bool IsOpen(EPopupType type)
+    {
+        return openedPopups.Any(popup => popup.Type == type);
+    }
 
-	public IReadOnlyList<AUI_PopupBase> GetAllOpenPopups()
-	{
-		return openedPopups.AsReadOnly();
-	}
+    public AUI_PopupBase GetOpenPopup(EPopupType type)
+    {
+        return openedPopups.FirstOrDefault(popup => popup.Type == type);
+    }
 
-	public void CloseAll()
-	{
-		IReadOnlyList<AUI_PopupBase> popups = GetAllOpenPopups();
+    public IReadOnlyList<AUI_PopupBase> GetAllOpenPopups()
+    {
+        return openedPopups.AsReadOnly();
+    }
 
-		for (int i = popups.Count - 1; i >= 0; --i)
-		{
-			popups[i].Close();
-		}
-	}
+    public void CloseAll()
+    {
+        IReadOnlyList<AUI_PopupBase> popups = GetAllOpenPopups();
+
+        for (int i = popups.Count - 1; i >= 0; --i)
+        {
+            popups[i].Close();
+        }
+    }
 }

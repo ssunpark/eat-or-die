@@ -48,13 +48,6 @@ public class UI_RecipeButton : MonoBehaviour
                 LockButton();
             }
         }
-        
-        // else
-        // {
-        //     Debug.Log($"[UI_IngredientButton] 아이템 데이터 없음 - ID: {_data.ID}");
-        //     IconImage.gameObject.SetActive(false);
-        //     LockButton();
-        // }
     }
 
     public void UnlockButton()

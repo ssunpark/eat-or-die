@@ -123,7 +123,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         Dictionary<int, int> specialIngredientResultMap = new Dictionary<int, int>
         {
             { 200013, 200121 }, // 강철 -> 단단한 요리
-            { 200015, 200122 }, // 드래곤 고기 -> 드래곤 스테이크
+            { 200028, 200122 } // 드래곤 고기 -> 드래곤 스테이크
             // 추가 가능
         };
 
@@ -180,7 +180,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         }
 
         InventoryManager.Instance.PickItemFromGround(new ItemInstance(resultItem, 1));
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
         RPC_BroadcastCookingResult(itemId);
     }
@@ -188,7 +188,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     private void TransferItemToInventory(ItemInstance itemInstance)
     {
         InventoryManager.Instance.PickItemFromGround(itemInstance);
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
 
     private void Update()

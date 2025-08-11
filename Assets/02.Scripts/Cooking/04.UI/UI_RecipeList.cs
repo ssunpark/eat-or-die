@@ -12,13 +12,13 @@ public class UI_RecipeList : MonoBehaviour
     private void OnEnable()
     {
         RoomRecipeStateManager.OnRecipeUnlocked += HandleRecipeUnlocked;
-        InventoryManager.Instance.OnInventoryUpdated += RefreshAllButtons;
+        InventoryManager.Instance.OnInventoryUpdated += RefreshRecipeButtons;
     }
     
     private void OnDisable()
     {
         RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
-        if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshAllButtons;
+        if (InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshRecipeButtons;
     }
 
     // 최초 1회만 호출해서 버튼 생성
@@ -59,10 +59,10 @@ public class UI_RecipeList : MonoBehaviour
     private void HandleRecipeUnlocked(Recipe unlockedRecipe)
     {
         // 이벤트가 오면, 자신이 가진 버튼들을 새로고침합니다.
-        RefreshAllButtons();
+        RefreshRecipeButtons();
     }
 
-    public void RefreshAllButtons()
+    public void RefreshRecipeButtons()
     {
         foreach (var button in _recipeButtonList)
         {
