@@ -40,7 +40,7 @@ public class DragonMagicAttack_Lava : DragonSubStateBase, IAnimationActionNotify
     {
         if (_spawnCount < _lavaParams.AngleList.Length)
         {
-            float angle = _lavaParams.AngleList[_spawnCount];
+            float angle = _lavaParams.AngleList[_spawnCount] + Random.Range(-10f, 10f);
             float distance = Random.Range(_lavaParams.MinDistance, _lavaParams.MaxDistance);
 
             var data = new LavaProjectileData(

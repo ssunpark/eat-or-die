@@ -49,7 +49,7 @@ public class DragonState_Alert : DragonStateBase
         // return;
         float distance = Context.Sight.Distance;
         float rand = Random.value;
-        
+
         // 너무 멀면 Chase or 원거리 마법 시도
         if (distance > _baseParams.MeleeAttackDistance)
         {
@@ -70,11 +70,16 @@ public class DragonState_Alert : DragonStateBase
         if (rand < _alertParams.MagicProbability)
         {
             Machine.TryActivateState<DragonState_MagicAttack>(true);
+            return;
         }
-        else
+        else if (distance < _baseParams.MeleeAttackDistance ||
+                 Context.Phase.CurrentPhase == EDragonPhase.Phase2)
         {
             Machine.TryActivateState<DragonState_MeleeAttack>(true);
+            return;
         }
+
+        Machine.TryActivateState<DragonState_Alert>(true);
     }
 
     protected override void OnExitState()
@@ -86,7 +91,7 @@ public class DragonState_Alert : DragonStateBase
     protected override void OnEnterStateRender()
     {
         Context.Animator.SetBool("IsMove", true);
-        
+
         float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
         Context.Phase.EvaluatePhase(HpRatio);
     }

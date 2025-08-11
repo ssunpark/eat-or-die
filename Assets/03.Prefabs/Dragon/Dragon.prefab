@@ -36393,9 +36393,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5839903247064313073}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3651417241611533723}
   m_SourcePrefab: {fileID: 100100000, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
 --- !u!4 &2405983379442941629 stripped
 Transform:
@@ -36436,6 +36433,8 @@ MonoBehaviour:
   _attackDetector: {fileID: 193430250931287965}
   _testDamage: 0
   IsLock: 0
+  _AnimVelocity: {x: 0, y: 0}
+  _AnimWaitIndex: 0
 --- !u!114 &3625587632435982483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36456,7 +36455,6 @@ MonoBehaviour:
   - {fileID: 3940347917857073997}
   - {fileID: 6117635654882981029}
   - {fileID: 5839903247064313073}
-  - {fileID: 3651417241611533723}
   - {fileID: 4164867259146122460}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &6117635654882981029
@@ -36538,24 +36536,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enableLogging: 1
---- !u!114 &3651417241611533723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3037701649389904903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Animator: {fileID: 8611984156815877319}
-  ApplyTiming: 2
-  SyncSettings: 127
-  StateHashes: 000000004050def884c378d619c253540b3cc3922e001b45d44663d46539b0b76f761dff417d3d9d46980c4f847e744ad8833fcad2cc9282b82418639ed8947f5d41e0d85c48f10ae50868cd7a29bdba5be9ef325ae0fee0a9485d8e8fb4d1928df3d56ddcb7488de983ee77e88affa595e94655cb18f6ef6c2bdc050e8c157b5e26485b7f8be6fd598a743941e68c1de3db7da0fbb7858475eb7ad76d8782f35e1ea5ac647eedbf303f25bb0a5f6da8
-  TriggerHashes: 00000000dede26c15198e5dc85193c795a14e8ac1ad853500a58c48b47b4adb8
-  TotalWords: 10
 --- !u!4 &3552494798179252798 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1703912541600113512, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
@@ -36569,10 +36549,5 @@ Transform:
 --- !u!4 &6502487576309494590 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -228551495868700056, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
-  m_PrefabInstance: {fileID: 2803908993256118614}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &8611984156815877319 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
   m_PrefabInstance: {fileID: 2803908993256118614}
   m_PrefabAsset: {fileID: 0}
