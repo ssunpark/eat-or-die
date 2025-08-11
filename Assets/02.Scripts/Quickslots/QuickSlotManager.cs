@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 {
 	private Inventory _quickSlots;
-	public Inventory Quickslots => _quickSlots;
     public int QuickSlotSize;
 
 	private int _selectedSlotIndex;
@@ -109,5 +109,25 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 
 		OnQuickSlotUpdated?.Invoke(slotIndex);
+	}
+
+	public List<Slot> GetAllSlots()
+	{
+		return _quickSlots.GetAllSlots();
+	}
+
+	public void DropAllItems(Vector3 position = default)
+	{
+		List<Slot> slots = GetAllSlots();
+
+		foreach (Slot slot in slots)
+		{
+			if (!slot.IsEmpty)
+			{
+				ItemInstance item = slot.GetItem();
+				ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity);
+				slot.RemoveItem();
+			}
+		}
 	}
 }

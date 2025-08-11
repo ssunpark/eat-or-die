@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using ExitGames.Client.Photon.StructWrapping;
 using UnityEngine;
 
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
@@ -20,8 +22,8 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
             .SelectMany(recipe => new[] { recipe.Ingredient1ID, recipe.Ingredient2ID.Value }) // 양쪽 다 꺼냄
             .Distinct()
             .ToHashSet();
-        
-        _ingredients = InventoryManager.Instance.Inventory.SlotList
+
+        _ingredients = InventoryManager.Instance.GetAllSlots()
             .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
             .Select(slot => slot.ItemInstance)
             .ToArray();
@@ -53,14 +55,14 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
         int ingredient1ID = recipe.Ingredient1ID;
         int? ingredient2ID = recipe.Ingredient2ID;
     
-        if (!InventoryManager.Instance.Inventory.HaveItem(ingredient1ID))
+        if (!InventoryManager.Instance.HaveItem(ingredient1ID))
         {
             return false;
         }
 
         if (ingredient2ID.HasValue)
         {
-            if (!InventoryManager.Instance.Inventory.HaveItem(ingredient2ID.Value))
+            if (!InventoryManager.Instance.HaveItem(ingredient2ID.Value))
             {
                 return false;
             }
