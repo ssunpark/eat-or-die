@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AuiInventory : AUI_PopupBase
+public class UI_Inventory : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.Inventory;
 
@@ -21,13 +21,21 @@ public class AuiInventory : AUI_PopupBase
 
         InventoryManager.Instance.OnSlotUpdated += UpdateSlotUI;
         InventoryManager.Instance.OnInventoryUpdated += UpdateInventoryUI;
-        gameObject.SetActive(false);
+        Close();
     }
 
     public void ToggleInventory()
     {
         bool isActive = gameObject.activeSelf;
-        gameObject.SetActive(!isActive);
+
+        if (isActive)
+        {
+            Close();
+        }
+        else
+        {
+            Open();
+        }
     }
 
     private void UpdateInventoryUI()
