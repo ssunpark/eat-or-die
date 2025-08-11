@@ -53,14 +53,14 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
         int ingredient1ID = recipe.Ingredient1ID;
         int? ingredient2ID = recipe.Ingredient2ID;
     
-        if (!InventoryManager.Instance.Inventory.HaveItem(ingredient1ID))
+        if (!InventoryManager.Instance.HaveItem(ingredient1ID))
         {
             return false;
         }
 
         if (ingredient2ID.HasValue)
         {
-            if (!InventoryManager.Instance.Inventory.HaveItem(ingredient2ID.Value))
+            if (!InventoryManager.Instance.HaveItem(ingredient2ID.Value))
             {
                 return false;
             }
