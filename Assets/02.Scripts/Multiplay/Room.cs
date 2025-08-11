@@ -21,6 +21,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
+        _runner.AddCallbacks(this);
         await ParticleManager.Instance.InitFromCsvAsync();
         SceneRef scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         NetworkSceneInfo sceneInfo = new();
