@@ -17,6 +17,7 @@ public class UI_QuickSlotHolder : MonoBehaviour
 			_quickSlotList.Add(quickSlotComponent);
 		}
 
+		QuickSlotManager.Instance.OnEntireQuickSlotUpdated += UpdateEntireQuickSlotUI;
 		QuickSlotManager.Instance.OnQuickSlotUpdated += UpdateSlotUI;
 	}
 	
@@ -29,5 +30,13 @@ public class UI_QuickSlotHolder : MonoBehaviour
 		}
 		
 		_quickSlotList[slotIndex].UpdateSlotUI();
+	}
+
+	private void UpdateEntireQuickSlotUI()
+	{
+		for (int i = 0; i < _quickSlotList.Count; ++i)
+		{
+			UpdateSlotUI(i);
+		}
 	}
 }

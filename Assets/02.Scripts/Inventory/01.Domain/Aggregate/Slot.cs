@@ -21,5 +21,9 @@ public class Slot
             RemoveItem();
         }
     }
-    
+
+    public ItemInstance GetItem()
+    {
+        return ItemInstance;
+    }
 }

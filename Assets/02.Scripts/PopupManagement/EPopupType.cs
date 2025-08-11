@@ -1,9 +1,10 @@
-public enum EPopupType
+﻿public enum EPopupType
 {
-	Inventory,
-	Equipment,
-	Cook,
-	Recipe,
-	Shop,
-	Craft
+    Default,
+    Inventory,
+    Equipment,
+    Cook,
+    Recipe,
+    Shop,
+    Craft
 }
