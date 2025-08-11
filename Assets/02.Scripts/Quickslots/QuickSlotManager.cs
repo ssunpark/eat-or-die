@@ -9,7 +9,9 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 
 	private int _selectedSlotIndex;
 	
-	public Action<int> OnQuickSlotUpdated;
+	public event Action OnEntireQuickSlotUpdated;
+	public event Action<int> OnQuickSlotUpdated;
+	public event Action<ItemInstance> OnItemAcquired;
 	
 	private void Awake()
 	{
@@ -36,6 +38,17 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         
         OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
     }
+    
+    public bool TryConsumeItem(int itemID, int amount)
+    {
+	    bool result = _quickSlots.TryConsumeItem(itemID, amount);
+        
+	    if (result)
+	    {
+		    OnEntireQuickSlotUpdated?.Invoke();
+	    }
+	    return result;
+	}
 
 	public ItemInstance GetItemInSlot(int slotIndex)
 	{
@@ -78,6 +91,17 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		
 		SendItemToPlayer();
+	}
+	
+	public void PickItemFromGround(ItemInstance itemInstance)
+	{
+		ItemInstance remain = _quickSlots.PickItemFromGround(itemInstance);
+        
+		OnEntireQuickSlotUpdated?.Invoke();
+		OnItemAcquired?.Invoke(itemInstance);
+		if (remain == null) return;
+        
+		ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
 	}
 
 	public void OnClickMouseRight(int slotIndex)
@@ -129,5 +153,6 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 				slot.RemoveItem();
 			}
 		}
+		OnEntireQuickSlotUpdated?.Invoke();
 	}
 }
