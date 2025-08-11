@@ -25,6 +25,12 @@ public class HandEntity : BehaviourSingleton<HandEntity>
 
     public bool TryAddItem(ItemInstance itemInstance)
     {
+        if (IsHandEmpty) 
+        {
+            PickUpItem(itemInstance);
+            return true;
+        }
+        
         if (itemInstance.ID != ItemInstance.ID) return false;
 
         if (!ItemInstance.TryAdd(itemInstance.Quantity)) return false;

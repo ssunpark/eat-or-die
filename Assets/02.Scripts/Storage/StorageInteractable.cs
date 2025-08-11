@@ -1,9 +1,10 @@
+using Fusion;
 using UnityEngine;
 
-public class StorageInteractable : MonoBehaviour, IInteractable
+public class StorageInteractable : NetworkBehaviour, IInteractable
 {
-    [SerializeField] SharedStorage _sharedStorage;
-    
+    [SerializeField] private SharedStorage _sharedStorage;
+
     public bool IsImmediate => true;
 
     public void Interact()
