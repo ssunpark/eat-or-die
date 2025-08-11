@@ -1,0 +1,22 @@
+﻿public enum ESkillEffectType
+{
+    HungerRestore,
+    StatChange,
+    StatBuff,
+    FoodEffectBoost,
+    AttackSpeedTimeBuff,
+    ConsecutiveAttackTotalDamageBuff,
+    EnemySlow,
+    FlashbackDelay,
+    FloorHungerRestore,
+    FloorTotalAttackBuff,
+    FoodEffectTimeBoost,
+    GetSeed,
+    HungerConsumeReduction,
+    HungerDoubleRestoreChance,
+    HungerOnePercentRestoreByChance,
+    HungerRestoreByMaxHunger,
+    ManaRestore,
+    NpcDeal,
+    ReturnIngredient
+}
