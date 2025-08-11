@@ -1,40 +1,37 @@
-﻿using System;
-using Fusion;
-using Unity.VisualScripting;
+﻿using Fusion;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 //수현
 public class UI_CookingPanel : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.Cook;
     public GameObject CookingPanel;
-    public GameObject RecipePanel;
+    public UI_RecipeIngredient UIRecipeIngredient;
+    public UI_RecipeList UIRecipeList;
+
+    private bool _isInitialized;
 
     private void Start()
     {
         CookingPanel.SetActive(false);
-        RecipePanel.SetActive(false);
     }
 
-    public void OnClickRecipeButton()
+    public override void Open()
     {
-        if (PopupManager.Instance.IsOpen(EPopupType.Recipe))
+        base.Open();
+        if (!_isInitialized)
         {
-            PopupManager.Instance.GetOpenPopup(EPopupType.Recipe)?.Close();
-        }
-        else
-        {
-            RecipePanel.GetComponent<UI_RecipePanel>().Open();
+            Init();
+            _isInitialized = true;
         }
     }
 
-    public void OpenCookingPanel()
+    private void Init()
     {
-        bool isActive = CookingPanel.activeSelf;
-        CookingPanel.SetActive(!isActive);
+        UIRecipeIngredient.Init();
+        UIRecipeList.Init();
     }
-
+    
     public void OnClickCookingButton()
     {
         NetworkRunner Runner = FindAnyObjectByType<NetworkRunner>();
