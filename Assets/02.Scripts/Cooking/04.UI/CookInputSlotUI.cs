@@ -41,18 +41,18 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
     // 슬롯에 있는 아이콘과 수량 표시 갱신
     public void UpdateSlotUI()
     {
-        Item itemInSlot = CookingManager.Instance.Inventory.SlotList[SlotIndex].Item;
-        if (itemInSlot == null)
+        ItemInstance itemInstanceInSlot = CookingManager.Instance.IngredientInventory.SlotList[SlotIndex].ItemInstance;
+        if (itemInstanceInSlot == null)
         {
             IconImage.gameObject.SetActive(false);
             QuantityText.gameObject.SetActive(false);
             return;
         }
         
-        IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemData.Icon;
-        QuantityText.text = itemInSlot.Quantity.ToString();
+        IconImage.sprite = ItemManager.Instance.GetItem(itemInstanceInSlot.ID).ItemDefinition.Icon;
+        QuantityText.text = itemInstanceInSlot.Quantity.ToString();
         IconImage.gameObject.SetActive(true);
-        QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
+        QuantityText.gameObject.SetActive(itemInstanceInSlot.Quantity > 1);
     }
     
 }

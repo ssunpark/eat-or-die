@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using System.Linq;
 
 public class TraitManager
@@ -10,7 +11,7 @@ public class TraitManager
     private Dictionary<ETraitType, int> _skillPoints = new(); // 5레벨 단위 포인트
     private Dictionary<ETraitType, Trait> _traitDict;
     private readonly StatManager _statManager;
-
+    private List<CharacterTraitData> _originalTraitDataList;
     public TraitManager(ITraitDataRepository repo, StatManager statManager)
     {
         _statManager = statManager;
@@ -20,16 +21,24 @@ public class TraitManager
             data =>
             {
                 var trait = new Trait();
+                trait.Setup(data.MaxLevel, data.ExpPerLevel);
                 trait.SetLevel(0);
                 ApplyTraitEffect(data, 0); // 초기화 시 적용
                 return trait;
             });
-    }
 
+        _originalTraitDataList = repo.GetCharacterTraitData();
+    }
+    
+    public IEnumerable<CharacterTraitData> GetAllTraitData() => _originalTraitDataList;
     public void AddExp(ETraitType type, int amount, CharacterTraitData traitData)
     {
-        if (!_traitDict.TryGetValue(type, out var trait)) return;
-
+        if (!_traitDict.TryGetValue(type, out var trait))
+        {
+            Debug.LogWarning($"[TraitManager] 알 수 없는 특성 타입: {type}");
+            return;
+        }
+        //Debug.Log($"[TraitManager] {type} 특성에 경험치 추가: {amount}");
         int prevLevel = trait.Level;
         if (prevLevel == trait.MaxLevel) return;
         trait.AddExp(amount);
@@ -39,7 +48,7 @@ public class TraitManager
         {
             ApplyTraitEffect(traitData, trait.Level - prevLevel);
             OnTraitLeveledUp?.Invoke(type, trait.Level - prevLevel);
-
+            TraitLevelStorage.SetLevel(type, trait.Level);
             int prevPoint = prevLevel / 5;
             int newPoint = trait.Level / 5;
             if (newPoint > prevPoint)
@@ -53,7 +62,11 @@ public class TraitManager
                 _skillPoints.TryAdd(type, 0);
                 _skillPoints[type] += 5;
             }
+            //Debug.Log($"[TraitManager] {type} 레벨업: {prevLevel} -> {trait.Level}, 획득 경험치: {amount}");
         }
+        //Debug.Log($"[TraitManager] {type} 특성 경험치 저장: {trait.CurrentExp}");
+
+        TraitLevelStorage.SetExperience(type, trait.CurrentExp);
     }
 
     private void ApplyTraitEffect(CharacterTraitData data, int levelDiff)
@@ -70,7 +83,7 @@ public class TraitManager
             source: data.TraitType
         );
 
-        _statManager.ApplyModifier(data.AffectedStat, modifier);
+        _statManager.ApplyModifier(data.StatType, modifier);
     }
 
     public Dictionary<ETraitType, int> GetTraitSnapshot()
@@ -115,5 +128,19 @@ public class TraitManager
         }
     }
 
+    public void ResetTraits()
+    {
+        foreach (var kvp in _traitDict)
+        {
+            kvp.Value.SetLevel(0);
+            _statManager.RemoveModifiersFrom(kvp.Key);
+        }
+        _skillPoints.Clear();
+    }
 
+    public Trait GetTrait(ETraitType type)
+    {
+        _traitDict.TryGetValue(type, out var trait);
+        return trait;
+    }
 }

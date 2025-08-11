@@ -1,16 +1,30 @@
 using UnityEngine;
 using Fusion.Addons.FSM;
 
-public class AttackBehaviour : AEnemyStateBehaviour
+public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 {
-	private static readonly int Attack = Animator.StringToHash("Attack");
 	private bool _isAttackFinished = false;
+
+	protected override bool CanEnterState()
+	{
+		Vector3 toTarget = Machine.Context.Target.transform.position - transform.position;
+		float distance = toTarget.magnitude;
+		
+		// if (Machine.StateTime >= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackSpeed)
+		
+		if (distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
+		    && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle))
+		{
+			return true;
+		}
+
+		return false;
+	}
 	
 	protected override void OnEnterState()
 	{
-		Debug.Log("Attacking...");
 		_isAttackFinished = false;
-		Machine.Context.Animator.SetTrigger(Attack);
+		Machine.Context.Owner.AnimationState = EAnimationState.Attack;
 	}
 
 	protected override void OnFixedUpdate()
@@ -20,14 +34,13 @@ public class AttackBehaviour : AEnemyStateBehaviour
 		if (!Machine.Context.Animator.IsInTransition(0) && stateInfo.normalizedTime >= 1f)
 		{
 			_isAttackFinished = true;
-			Machine.TryActivateState<MoveBehaviour>();
+			Machine.TryActivateState<IdleBehaviour>();
 		}
 	}
 
 	protected override void OnExitState()
 	{
 		_isAttackFinished = false;
-		Machine.Context.Animator.ResetTrigger(Attack);
 	}
 
 	protected override bool CanExitState(AEnemyStateBehaviour nextState)
@@ -35,7 +48,8 @@ public class AttackBehaviour : AEnemyStateBehaviour
 		return _isAttackFinished;
 	}
 
-	protected override void OnEnterStateRender()
+	public void OnActionMoment()
 	{
-	}	
+		Debug.Log("Attack Moment Triggered");
+	}
 }

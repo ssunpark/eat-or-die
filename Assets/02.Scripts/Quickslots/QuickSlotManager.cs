@@ -21,36 +21,35 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		_selectedSlotIndex = slotIndex;
 		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
 	}
-	
-	public void UpdateSelectedSlot()
-	{
-		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
-	}
 
-	public Item GetItemInSlot(int slotIndex)
-	{
-		Item item = _quickSlots.GetItemInSlot(slotIndex);
+    public void UseItem(GameObject target, Action removeCallback)
+    {
+        var currentItem = GetItemInSlot(_selectedSlotIndex);
+        currentItem.Use(target); 
+        
+        // 아이템 전부 소진
+        if (currentItem.IsDepleted)
+        {
+            _quickSlots.SlotList[_selectedSlotIndex].RemoveItem();
+            removeCallback?.Invoke();
+        }
+        
+        OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
+    }
 
-		return item;
+	public ItemInstance GetItemInSlot(int slotIndex)
+	{
+		ItemInstance itemInstance = _quickSlots.GetItemInSlot(slotIndex);
+
+		return itemInstance;
 	}
 	
 	public void SendItemToPlayer()
 	{
-		Item item = GetItemInSlot(_selectedSlotIndex);
-		AItemInfo itemInfo = item?.ItemInfo;
-        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(itemInfo);
-  //      if (item == null)
-		//{
-		//	Debug.Log("Selected slot is empty.");
-            
-  //          //Room.Instance.LocalPlayer.UnequipItem();
-  //      }
-		//else
-		//{
-		//	Debug.Log("Sending item to player: " + item.ID);
-		//	Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(item.ID);
-  //          // Room.Instance.LocalPlayer.EquipItem(item);
-  //      }
+		ItemInstance itemInstance = GetItemInSlot(_selectedSlotIndex);
+
+        Room.Instance.LocalPlayer.GetComponent<PlayerItemHolder>().SetHoldItem(itemInstance);
+		
 	}
 
 	private void HandSwap()
@@ -63,8 +62,8 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		else
 		{
-			Item itemInHand = hand.GetItem();
-			hand.PickUpItem(_quickSlots.PutItemInSlot(_selectedSlotIndex, itemInHand));
+			ItemInstance itemInstanceInHand = hand.GetItem();
+			hand.PickUpItem(_quickSlots.PutItemInSlot(_selectedSlotIndex, itemInstanceInHand));
 		}
 		OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
 	}
@@ -93,18 +92,18 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		else
 		{
-			if (HandEntity.Instance.Item.ID == _quickSlots.SlotList[slotIndex].Item.ID)
+			if (HandEntity.Instance.ItemInstance.ID == _quickSlots.SlotList[slotIndex].ItemInstance.ID)
 			{
-				Item itemInSlot = _quickSlots.PopSingleItemInSlot(slotIndex);
-				if (!HandEntity.Instance.TryAddItem(itemInSlot))
+				ItemInstance itemInstanceInSlot = _quickSlots.PopSingleItemInSlot(slotIndex);
+				if (!HandEntity.Instance.TryAddItem(itemInstanceInSlot))
 				{
-					_quickSlots.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
+					_quickSlots.SlotList[slotIndex].ItemInstance.TryAdd(itemInstanceInSlot.Quantity);
 				}
 			}
 			else
 			{
-				Item temp = _quickSlots.PopItemInSlot(slotIndex);
-				_quickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
+				ItemInstance temp = _quickSlots.PopItemInSlot(slotIndex);
+				_quickSlots.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance);
 				HandEntity.Instance.PickUpItem(temp);
 			}
 		}

@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 {
-    private AItemInfo[] _seedItems;
-    public AItemInfo[] SeedItems => _seedItems;
+    private ItemProfile _itemProfile;
+    private ItemProfile[] _seedItems;
+    public ItemProfile[] SeedItems => _seedItems;
     public event Action OnSeedListUpdated;
     
     [SerializeField] private int npcId = 1200002; // 모종 상인 NPC ID
@@ -17,21 +18,24 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         // NpcItemList가 이미 로드되어 있으면 바로 실행
         if (NpcDataManager.Instance != null && NpcDataManager.Instance.NpcItemList != null)
         {
-            LoadSeedItemsFromNpc(npcId);
-            UpdateNpcDialogue(npcId);
-        }
-        else
-        {
-            // 아니라면 로딩 완료 이벤트 구독
-            NpcDataManager.Instance.OnNpcItemListLoaded += HandleNpcItemListLoaded;
+            HandleNpcItemListLoaded();
         }
     }
 
     private void HandleNpcItemListLoaded()
     {
-        // 한 번만 실행되도록 구독 해제
-        NpcDataManager.Instance.OnNpcItemListLoaded -= HandleNpcItemListLoaded;
         LoadSeedItemsFromNpc(npcId);
+        
+        if (_seedItems != null && _seedItems.Length > 0)
+        {
+            _itemProfile = _seedItems[0];
+            UpdateSeedDetail(_itemProfile.ItemDefinition.ID);
+        }
+        
+        else
+        {
+            Debug.Log("[SeedShop] 시드 아이템이 비어 있어 초기화 실패");
+        }
     }
     
     public void LoadSeedItemsFromNpc(int npcId)
@@ -51,7 +55,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 
         for (int i = 0; i < _seedItems.Length; i++)
         {
-            Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemData.ID} - {_seedItems[i].ItemData.Name}");
+            Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemDefinition.ID} - {_seedItems[i].ItemDefinition.Name}");
         }
 
         OnSeedListUpdated?.Invoke();
@@ -59,7 +63,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
     
     public void UpdateSeedDetail(int seedItemID)
     {
-        AItemInfo selected = _seedItems.FirstOrDefault(x => x.ItemData.ID == seedItemID);
+        ItemProfile selected = _seedItems.FirstOrDefault(x => x.ItemDefinition.ID == seedItemID);
         NpcItem npcItem = NpcDataManager.Instance.NpcItemList
             .FirstOrDefault(x => x.NpcID == npcId && x.ItemID == seedItemID);
 
@@ -81,7 +85,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 
         if (dialogueList.Count == 0)
         {
-            Debug.LogWarning($"[NpcDialogue] NPC ID {npcID}의 대사가 없습니다.");
+            Debug.Log($"[NpcDialogue] NPC ID {npcID}의 대사가 없습니다.");
             return;
         }
 

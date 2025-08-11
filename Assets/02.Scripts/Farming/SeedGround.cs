@@ -3,9 +3,12 @@ using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(NetworkObject))]
 public class SeedGround : NetworkBehaviour
 {
-    [Networked]
+    private const string SEED_TAG = "Seed";
+    
+    [Networked, OnChangedRender(nameof(OnIsPlantedChanged))]
     public bool IsPlanted { get; set; }
     
     private FarmingGround _parentFarmingGround;
@@ -57,5 +60,10 @@ public class SeedGround : NetworkBehaviour
             });
 
         IsPlanted = true;
+    }
+
+    private void OnIsPlantedChanged()
+    {
+        gameObject.tag = IsPlanted ? "Untagged" : SEED_TAG;
     }
 }

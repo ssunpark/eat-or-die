@@ -1,11 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class CurrencyManager : BehaviourSingleton<CurrencyManager>
 {
     private Dictionary<ECurrencyType, int> _currencies = new();
-
     public event Action<ECurrencyType, int> OnCurrencyChanged;
+
+    private void Start()
+    {
+        Debug.Log("이니셜 호출");
+        Initialize(new Dictionary<ECurrencyType, int>
+        {
+            {ECurrencyType.Gold, 1000}
+        });
+    }
 
     /// <summary>
     /// 재화 딕셔너리를 초기화한다.

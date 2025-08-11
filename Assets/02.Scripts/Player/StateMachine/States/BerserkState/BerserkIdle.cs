@@ -1,30 +1,26 @@
-﻿using Fusion.Addons.FSM;
-public class BerserkIdle : ABerserkSubStateBase, IAnimationActionEndNotify
+﻿using UnityEngine;
+using Fusion.Addons.FSM;
+public class BerserkIdle : ABerserkSubStateBase
 {
-    private bool _animFinished;
 
-    public BerserkIdle(PlayerController controller) : base(controller) { }
+    public BerserkIdle(PlayerFSM controller) : base(controller) { }
 
-    protected override void OnInitialize()
+    public override void OnActionMoment()
     {
-        this.AddTransition(
-            Machine.GetState<BerserkChase>(),
-            () => _animFinished
-        );
+        Debug.Log("뿡");
     }
 
-    protected override bool CanExitState(IState nextState)
+    protected override void OnEnterStateRender()
     {
-        return _animFinished;
+        Anim.CrossFadeInFixedTime("Berserk Start", AnimTransitionLength);
     }
 
-    protected override void OnEnterState()
+    protected override void OnFixedUpdate()
     {
-        _animFinished = false;
-    }
-
-    public void OnAnimationFinished()
-    {
-        _animFinished = true;
+        if (!_fsm.HasStateAuthority) return;
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Berserk Start"])
+        {
+            Machine.ForceActivateState<BerserkChase>();
+        }
     }
 }

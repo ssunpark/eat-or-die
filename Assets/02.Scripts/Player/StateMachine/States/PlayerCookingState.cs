@@ -1,36 +1,32 @@
-﻿using Fusion.Addons.FSM;
-public class PlayerCookingState : APlayerStateBase, IAnimationActionEndNotify, IAnimationActionNotify
+﻿using UnityEngine;
+public class PlayerCookingState : APlayerStateBase
 {
-    public PlayerCookingState(PlayerController controller) : base(controller) 
+    public PlayerCookingState(PlayerFSM controller) : base(controller) 
     {
+        AnimState = "Cook";
         StateId = (int)EPlayerState.Cooking;
-    }
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
     }
     protected override void OnEnterState()
     {
-        _animationFinished = false;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Cook);
+        base.OnEnterState();
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+
+    }
+    protected override void OnEnterStateRender()
+    {
+        base.OnEnterStateRender();
     }
 
-    void IAnimationActionNotify.OnActionMoment()
+    protected override void OnFixedUpdateInput()
     {
-        
-    }
+        KCC.Move(Vector3.zero);
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
-    {
-        if (_controller.Object.HasInputAuthority)
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]*3)
         {
             CookingManager.Instance.OnCookingCompleted();
-        }
 
-        _animationFinished = true;
+            RequestActivateState();
+        }
     }
 }

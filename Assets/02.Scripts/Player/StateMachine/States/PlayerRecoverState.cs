@@ -1,27 +1,31 @@
-﻿using Fusion.Addons.FSM;
-public class PlayerRecoverState : APlayerStateBase, IAnimationActionEndNotify
+﻿using UnityEngine;
+public class PlayerRecoverState : APlayerStateBase
 {
 
-    public PlayerRecoverState(PlayerController controller) : base(controller)
+    public PlayerRecoverState(PlayerFSM controller) : base(controller)
     {
+        AnimState = "Recover";
+        StateId = (int)EPlayerState.Recover;
     }
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
-    }
-    public void OnAnimationFinished()
-    {
-        _animationFinished = true;
-    }
-
     protected override void OnEnterState()
     {
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Recover);
+        base.OnEnterState();
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
         _resource.RestoreHunger(_resource.MaxHunger / 20);
+    }
+
+    protected override void OnFixedUpdateInput()
+    {
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            RequestActivateState();
+        }
+    }
+    protected override void OnEnterStateRender()
+    {
+        base.OnEnterStateRender();
     }
     protected override void OnExitState()
     {

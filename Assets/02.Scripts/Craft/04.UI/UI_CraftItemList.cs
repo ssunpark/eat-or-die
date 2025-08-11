@@ -44,12 +44,12 @@ public class UI_CraftItemList : MonoBehaviour
         foreach (var craftRecipe in craftRecipes)
         {
             if (craftRecipe.CraftResultID < minID || craftRecipe.CraftResultID >= maxID) continue;
-            AItemInfo itemInfo = ItemManager.Instance.GetItem(craftRecipe.CraftResultID);
-            if (itemInfo == null || itemInfo.ItemData == null) continue;
+            ItemProfile itemProfile = ItemManager.Instance.GetItem(craftRecipe.CraftResultID);
+            if (itemProfile == null || itemProfile.ItemDefinition == null) continue;
             
             GameObject btn = Instantiate(CraftItemPrefab, container.transform);
             UI_CraftItemButton craftItemButtons = btn.GetComponent<UI_CraftItemButton>();
-            craftItemButtons.Refresh(craftRecipe, itemInfo);
+            craftItemButtons.Refresh(craftRecipe, itemProfile);
             btn.SetActive(false);
             _craftItemButtons.Add(craftItemButtons);
         }

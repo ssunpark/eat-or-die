@@ -1,16 +1,11 @@
-﻿using System;
-using Fusion.Addons.FSM;
-using UnityEditor.Rendering.LookDev;
+﻿using Fusion.Addons.FSM;
 using UnityEngine;
 
 public class HitBehaviour : AEnemyStateBehaviour
 {
-    private static readonly int Hit = Animator.StringToHash("Hit");
-    
     protected override void OnEnterState()
     {
-        Debug.Log("Hit...");
-        Machine.Context.Animator.SetTrigger(Hit);
+        Machine.Context.Owner.AnimationState = EAnimationState.Hit;
     }
 
     protected override void OnFixedUpdate()
@@ -19,14 +14,19 @@ public class HitBehaviour : AEnemyStateBehaviour
 
         if (!Machine.Context.Animator.IsInTransition(0) && stateInfo.normalizedTime >= 1f)
         {
-            Machine.TryActivateState<IdleBehaviour>();
+            if (Machine.PreviousState is AttackBehaviour or HitBehaviour)
+            {
+                Machine.TryActivateState<IdleBehaviour>();
+            }
+            else
+            {
+                Machine.TryActivateState(Machine.PreviousState, true);
+            }
         }
     }
 
     protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
     {
-        if (nextStateBehaviour is IdleBehaviour) return true;
-
-        return false;
+        return nextStateBehaviour is not AttackBehaviour;
     }
 }

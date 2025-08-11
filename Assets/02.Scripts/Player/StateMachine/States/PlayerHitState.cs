@@ -1,29 +1,41 @@
 ﻿using Fusion.Addons.FSM;
-public class PlayerHitState : APlayerStateBase, IAnimationActionEndNotify
+using Fusion.Addons.SimpleKCC;
+using UnityEngine;
+using Fusion;
+public class PlayerHitState : APlayerStateBase
 {
-    public PlayerHitState(PlayerController controller) : base(controller)
+    public PlayerHitState(PlayerFSM controller) : base(controller)
     {
+        AnimState = "Hit";
+        delayTime = 0.33333f;
         StateId = (int)EPlayerState.Hit;
     }
-    private bool _animationFinished;
-    protected override void OnInitialize()
-    {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
-    }
-    protected override bool CanExitState(IState nextState)
-    {
-        return _animationFinished;
-    }
+    public float delayTime;
     protected override void OnEnterState()
     {
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Hit);
+        base.OnEnterState();
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
     }
 
-    public void OnAnimationFinished()
+    protected override void OnEnterStateRender()
     {
-        _animationFinished = true;
+        base.OnEnterStateRender();
+        //_fsm.PlayerNetworkObject.damageFX.PlayFX();
+    }
+
+    protected override void OnFixedUpdateState()
+    {
+        if (!_fsm.HasStateAuthority) return;
+        if (Machine.StateTime >= delayTime)
+        {
+            if(_resource.GetHungerPercent() <= 0.1f)
+            {
+                Machine.ForceActivateState<PlayerBerserkState>();
+                return;
+            }
+            Machine.ForceActivateState<PlayerIdleState>();
+            return;
+        }
     }
 }

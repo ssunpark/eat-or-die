@@ -2,7 +2,7 @@
 
 public interface IStatDataRepository
 {
-    List<CharacterStatData> GetCharacterStatData();
+    List<CharacterStatData> GetCharacterStatData(ECharacterType type);
 
 }
 

@@ -1,24 +1,37 @@
-﻿public class CharacterTraitData
+﻿using UnityEngine;
+
+public class CharacterTraitData
 {
-    public ETraitType TraitType;
-    public int MaxLevel;
-    public EStatModifierType ModifierType;
-    public EStatType AffectedStat;
-    public float ValuePerLevel;
-    public int Level;
-    public CharacterTraitData(
-        ETraitType traitType,
-        int maxLevel,
-        EStatModifierType modifierType,
-        EStatType affectedStat,
-        float valuePerLevel,
-        int startLevel = 0)
+    // rawdata와 매칭되는 클래스
+    public readonly int ID;
+    public readonly ETraitType TraitType;
+    public readonly string Name;
+    public readonly string Description;
+    public readonly EStatModifierType ModifierType;
+    public readonly int MaxLevel;
+    public readonly EStatType StatType;
+    public readonly float ValuePerLevel;
+    public readonly string ActionName;
+    public readonly int ExpValue;
+    public readonly int ExpPerLevel;
+    public readonly string IconPath;
+    public readonly Sprite Icon;
+
+    public CharacterTraitData(int id, ETraitType traitType, string name, string description, EStatModifierType modifierType,
+                              int maxLevel, EStatType statType, float valuePerLevel, string actionName,
+                              int expValue, int expPerLevel, string iconPath)
     {
+        ID = id;
         TraitType = traitType;
-        MaxLevel = maxLevel;
+        Name = name;
+        Description = description;
         ModifierType = modifierType;
-        AffectedStat = affectedStat;
+        MaxLevel = maxLevel;
+        StatType = statType;
         ValuePerLevel = valuePerLevel;
-        Level = startLevel;
+        ActionName = actionName;
+        ExpValue = expValue;
+        ExpPerLevel = expPerLevel;
+        IconPath = iconPath;
     }
 }

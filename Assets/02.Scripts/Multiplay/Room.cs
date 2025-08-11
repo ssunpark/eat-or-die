@@ -15,14 +15,16 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     public void SetLocalPlayer(GameObject player) => _localPlayer = player;
 
+    private PlayerInfoManager _playerInfoManager;
     private FusionInputProvider _inputProvider;
     public async void StartGame(GameMode mode)
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
-        
+        _runner.AddCallbacks(this);
+        await ParticleManager.Instance.InitFromCsvAsync();
         SceneRef scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
-        NetworkSceneInfo sceneInfo = new NetworkSceneInfo();
+        NetworkSceneInfo sceneInfo = new();
         if (scene.IsValid) {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
@@ -35,11 +37,20 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         {
             Debug.LogError("FusionInputProvider not found in the scene.");
         }
+        _playerInfoManager = FindAnyObjectByType<PlayerInfoManager>();
+        if (_playerInfoManager != null)
+        {
+            _playerInfoManager.SetRunner(_runner);
+        }
+        else
+        {
+            Debug.LogError("PlayerInfoManager not found in the scene.");
+        }
 
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "EnemyTestRoom",
+            SessionName = "Scene",
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
@@ -48,13 +59,22 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("Player joined");
-        _inputProvider.SpawnPlayer(runner, player);
+        // 이 콜백은 모든 클라이언트에서 호출되지만, RPC 호출은 호스트(서버)만 해야 함
+        if (Runner.IsServer)
+        {
+            Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
+
+            // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
+            var dto = RoomInfoManager.Instance.CurrentRoomInfo.ToDTO();
+            var json = JsonUtility.ToJson(dto);
+
+            // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
+            RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
+        }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        Debug.Log("Player left");
     }
     
     public void OnInput(NetworkRunner runner, NetworkInput input) { }
@@ -64,7 +84,8 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
-        Debug.Log($"Disconnected from server: {reason}");    
+        Debug.Log($"Disconnected from server: {reason}");
+        SceneManager.LoadScene(0);
     }
     
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }

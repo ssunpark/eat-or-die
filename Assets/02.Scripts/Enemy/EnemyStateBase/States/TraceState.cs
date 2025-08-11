@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class TraceState : AEnemyState
 {
-    private static readonly int MoveForward = Animator.StringToHash("MoveForward");
-    
     protected override bool CanEnterState()
     {
         return (Context.Target != null);
@@ -12,21 +10,28 @@ public class TraceState : AEnemyState
 
     protected override void OnEnterState()
     {
-        Debug.Log("Trace...");
-        Context.Animator.SetTrigger(MoveForward);
+        Context.Agent.isStopped = false;
+        Context.Owner.AnimationState = EAnimationState.RunForward;
     }
 
     protected override void OnFixedUpdate()
     {
-        Vector3 toTarget = Context.Target.transform.position - ParentBehaviour.transform.position;
-        float distance = toTarget.magnitude;
-
-        if (distance <= Context.Stat.AttackRange
-            && Vector3.Angle(toTarget, ParentBehaviour.transform.forward) <= Context.Stat.AttackAngle)
+        if (ParentBehaviour.Machine.TryActivateState<AttackBehaviour>(true))
         {
-            ParentBehaviour.Machine.TryActivateState<AttackBehaviour>();
+            return;
         }
         
         Context.Agent.SetDestination(Context.Target.transform.position);
+        
+        if (!Context.Animator.IsInTransition(0))
+        {
+            Context.Mover.Move();
+        }
+    }
+
+    protected override void OnExitState()
+    {
+        Context.Agent.isStopped = true;
+        Context.Agent.velocity = Vector3.zero;
     }
 }

@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class UI_SeedItemList : MonoBehaviour
 {
-        public GameObject Container;
+    public GameObject Container;
     public GameObject ButtonPrefab;
+    private ItemProfile[] _seedItems;
 
     private Dictionary<int, UI_SeedItemButton> _buttonDict = new Dictionary<int, UI_SeedItemButton>();
     private bool _isInitialized = false;
@@ -12,17 +13,16 @@ public class UI_SeedItemList : MonoBehaviour
 
     private void OnEnable()
     {
-        // SeedItems가 이미 있으면 Init 바로 실행
-        if (!_isInitialized && SeedShopPanelManager.Instance.SeedItems.Length > 0)
+        if (!_isInitialized) //&& SeedShopPanelManager.Instance.SeedItems.Length > 0
         {
             Init();
         }
-        // 아니면 이벤트 대기
-        else if (!_isSubscribed)
-        {
-            SeedShopPanelManager.Instance.OnSeedListUpdated += Init;
-            _isSubscribed = true;
-        }
+        
+        // else if (!_isSubscribed)
+        // {
+        //     SeedShopPanelManager.Instance.OnSeedListUpdated += Init;
+        //     _isSubscribed = true;
+        // }
 
         RefreshButtons();
     }
@@ -38,26 +38,36 @@ public class UI_SeedItemList : MonoBehaviour
 
     public void Init()
     {
-        if (_isInitialized) return;
-        _isInitialized = true;
-
-        AItemInfo[] seedItems = SeedShopPanelManager.Instance.SeedItems;
-        if (seedItems == null || seedItems.Length == 0)
+        _seedItems = SeedShopPanelManager.Instance.SeedItems;
+        if (_seedItems == null || _seedItems.Length == 0)
         {
-            Debug.LogWarning("[SeedItemList] SeedItems가 비어 있습니다.");
+            if (!_isSubscribed)
+            {
+                SeedShopPanelManager.Instance.OnSeedListUpdated += Init;
+                _isSubscribed = true;
+            }
+            
+            Debug.Log("[SeedItemList] SeedItems가 비어 있습니다.");
             return;
         }
 
+        if (_isSubscribed)
+        {
+            SeedShopPanelManager.Instance.OnSeedListUpdated -= Init;
+            _isSubscribed = false;
+        }
+
+        _isInitialized = true;
         _buttonDict.Clear();
 
-        foreach (AItemInfo itemInfo in seedItems)
+        foreach (ItemProfile itemInfo in _seedItems)
         {
             GameObject obj = Instantiate(ButtonPrefab, Container.transform);
             UI_SeedItemButton button = obj.GetComponent<UI_SeedItemButton>();
             button.Setup(itemInfo);
             obj.SetActive(false);
 
-            _buttonDict[itemInfo.ItemData.ID] = button;
+            _buttonDict[itemInfo.ItemDefinition.ID] = button;
         }
 
         RefreshButtons();
@@ -72,10 +82,12 @@ public class UI_SeedItemList : MonoBehaviour
             button.gameObject.SetActive(false);
         }
 
-        AItemInfo[] seedItems = SeedShopPanelManager.Instance.SeedItems;
+        ItemProfile[] seedItems = SeedShopPanelManager.Instance.SeedItems;
+        if (seedItems == null) return;
+
         foreach (var item in seedItems)
         {
-            if (_buttonDict.TryGetValue(item.ItemData.ID, out var button))
+            if (_buttonDict.TryGetValue(item.ItemDefinition.ID, out var button))
             {
                 button.gameObject.SetActive(true);
             }

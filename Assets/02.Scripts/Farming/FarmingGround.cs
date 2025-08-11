@@ -1,24 +1,26 @@
-using System;
 using Fusion;
 using UnityEngine;
 
 public class FarmingGround : NetworkBehaviour
 {
-    [Networked]
+    private const string HOE_TAG = "Hoe";
+    private const string WATER_TAG = "WateringCan";
+
+    [Networked, OnChangedRender(nameof(OnStateChanged))]
     public EFarmingGroundState State { get; set; }
-    
+
     [SerializeField]
     private GameObject _baseGround;
-    
+
     [SerializeField]
     private GameObject _plowedGround;
-    
+
     [SerializeField]
     private GameObject _plowedSubGround;
-    
+
     [SerializeField]
     private Material _waterMaterial;
-    
+
     private MeshRenderer _plowedGroundRenderer;
     private MeshRenderer _plowedSubGroundRenderer;
 
@@ -30,43 +32,67 @@ public class FarmingGround : NetworkBehaviour
 
     public override void Spawned()
     {
-        _baseGround.SetActive(State == EFarmingGroundState.None);
-        _plowedGround.SetActive(State != EFarmingGroundState.None);
+        OnStateChanged();
     }
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    public void RPC_Plow()
+    public void OnStateChanged()
+    {
+        _baseGround.SetActive(State == EFarmingGroundState.None);
+        _plowedGround.SetActive(State == EFarmingGroundState.Hoe);
+
+        tag = State switch
+        {
+            EFarmingGroundState.None => HOE_TAG,
+            EFarmingGroundState.Hoe => WATER_TAG,
+            _ => "Untagged"
+        };
+        gameObject.tag = tag;
+
+        if (State == EFarmingGroundState.WateringCan)
+        {
+            _baseGround.SetActive(false);
+            _plowedGround.SetActive(true);
+            _plowedGroundRenderer.material = _waterMaterial;
+            _plowedSubGroundRenderer.material = _waterMaterial;
+        }
+    }
+
+    public void Hoe()
+    {
+        RPC_Hoe();
+    }
+
+    public void WateringCan()
+    {
+        RPC_WateringCan();
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_Hoe()
     {
         if (State != EFarmingGroundState.None)
         {
             return;
         }
-        
+
         // 밭 갈기
         if (Runner.IsServer)
         {
-            State = EFarmingGroundState.Plowed;
+            State = EFarmingGroundState.Hoe;
         }
-        
-        _baseGround.SetActive(false);
-        _plowedGround.SetActive(true);
     }
 
-    [Rpc(RpcSources.All, RpcTargets.All)]
-    public void RPC_Water()
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_WateringCan()
     {
-        if (State != EFarmingGroundState.Plowed)
+        if (State != EFarmingGroundState.Hoe)
         {
             return;
         }
-        
+
         if (Runner.IsServer)
         {
-            State = EFarmingGroundState.Watered;
+            State = EFarmingGroundState.WateringCan;
         }
-        
-        // 머티리얼 변경
-        _plowedGroundRenderer.material = _waterMaterial;
-        _plowedSubGroundRenderer.material = _waterMaterial;
     }
 }

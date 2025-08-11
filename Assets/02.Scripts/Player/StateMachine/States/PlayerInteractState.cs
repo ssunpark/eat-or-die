@@ -1,37 +1,56 @@
-﻿using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
-public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify, IAnimationActionEndNotify
+﻿using Fusion;
+using Fusion.Addons.FSM;
+using UnityEngine; // Add Fusion FSM for PlayerStateMachine
+public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
 {
-    public PlayerInteractState(PlayerController controller) : base(controller)
+    public PlayerInteractState(PlayerFSM controller) : base(controller)
     {
+        AnimState = "Interact";
         StateId = (int)EPlayerState.Interact;
     }
-
-    private bool _animationFinished;
-    protected override void OnInitialize()
+    private NetworkObject _target;
+    protected override void OnEnterStateRender()
     {
-        this.AddTransition(
-            _controller.FSMStateInstances.Idle,
-            () => _animationFinished
-        );
+        base.OnEnterStateRender();
+
+        if (_fsm.InteractTarget == null)
+        {
+            return;
+        }
+        if(_fsm.HasStateAuthority || _fsm.HasInputAuthority)
+            _target = _fsm.InteractTarget;
     }
     protected override void OnEnterState()
     {
-        _animationFinished = false;
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Interact);
+        base.OnEnterState();
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        if (_fsm.InteractTarget == null)
+        {
+            RequestActivateState();
+            return;
+        }
+        
     }
-
+    protected override void OnFixedUpdateInput()
+    {
+        KCC.Move(Vector3.zero);
+        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            RequestActivateState();
+        }
+    }
     void IAnimationActionNotify.OnActionMoment()
     {
-        if (_controller.StateValues.Interactable != null)
+        if (_fsm.HasInputAuthority)
         {
-            _controller.Interact.UseOrInteract(
-                interactable: _controller.StateValues.Interactable
-            );
+            if (_fsm.InteractTarget == null)
+            {
+                Debug.LogWarning("PlayerInteractState: Interact target is null. Cannot perform interaction.");
+                return;
+            }
+            _fsm.Interact.Interact(_target);
         }
     }
 
-    void IAnimationActionEndNotify.OnAnimationFinished()
-    {
-        _animationFinished = true;
-    }
 }

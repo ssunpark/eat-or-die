@@ -1,29 +1,49 @@
-﻿public class Trait
+﻿using UnityEngine;
+public class Trait
 {
-    public readonly int MaxLevel = 100; // 최대 레벨
     public int Level { get; private set; }
-    public int Exp { get; private set; }
-    public int ExpToNextLevel => (Level + 1) * 100;
+    public float CurrentExp { get; private set; }
+    public int MaxLevel { get; private set; }
+    public float TotalExpRequired { get; private set; }
 
     public Trait()
     {
         Level = 0;
-        Exp = 0;
+        CurrentExp = 0;
     }
 
-    public void AddExp(int amount)
+    public void Setup(int maxLevel, float totalExpRequired)
     {
-        Exp += amount;
-        while (Exp >= ExpToNextLevel)
+        MaxLevel = maxLevel;
+        TotalExpRequired = totalExpRequired;
+    }
+
+    public void AddExp(float amount)
+    {
+        if (Level >= MaxLevel)
+            return;
+
+        CurrentExp += amount;
+
+        float expPerLevel = TotalExpRequired / MaxLevel;
+
+        while (CurrentExp >= expPerLevel && Level < MaxLevel)
         {
-            Exp -= ExpToNextLevel;
+            CurrentExp -= expPerLevel;
             Level++;
+        }
+
+        if (Level >= MaxLevel)
+        {
+            CurrentExp = 0;
         }
     }
 
     public void SetLevel(int level)
     {
-        Level = level;
-        Exp = 0;
+        Level = Mathf.Clamp(level, 0, MaxLevel);
+        CurrentExp = 0;
     }
+
+    
 }

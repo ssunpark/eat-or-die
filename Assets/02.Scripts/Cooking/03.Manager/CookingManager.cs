@@ -1,51 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
-public class CookingManager : BehaviourSingleton<CookingManager>
+public class CookingManager : NetworkBehaviourSingleton<CookingManager>
 {
-    public Inventory Inventory = new Inventory(2);
-    public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
-    
+    private CookingPotInteractable _currentCookingPot;
+
     public Inventory FoodInventory = new Inventory(1);
-    public Action OnCookOutputUpdated;
+    public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
+    private Inventory _inputIngredientInventory;
+    public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
+    public static event Action OnCookOutputUpdated;
+    public static event Action<string> OnAlertMessage; // 문자열 알림용
+    public static event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
+    
+    public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
+    private bool _isCooking;
+    private float _cookTime = 4f;
+    private float _t;
+
+    public void SetCurrentCookingPot(CookingPotInteractable cookingPot)
+    {
+        _currentCookingPot = cookingPot;
+    }
+    
     public void OnClickMouseLeft(int slotIndex)
     {
         if (HandEntity.Instance.IsHandEmpty)
         {
-            var itemInSlot = Inventory.PopItemInSlot(slotIndex);
+            var itemInSlot = IngredientInventory.PopItemInSlot(slotIndex);
             if (itemInSlot == null) return;
             HandEntity.Instance.PickUpItem(itemInSlot);
         }
         else
         {
-            HandEntity.Instance.PickUpItem(Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item));
+            if (!HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.IsIngredient) return;
+            HandEntity.Instance.PickUpItem(IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance));
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
 
     public void OnClickMouseRight(int slotIndex)
     {
-        if (Inventory.SlotList[slotIndex].IsEmpty) return;
+
+        if (IngredientInventory.SlotList[slotIndex].IsEmpty) return;
 
         if (HandEntity.Instance.IsHandEmpty)
         {
-            HandEntity.Instance.PickUpItem(Inventory.PopSingleItemInSlot(slotIndex));
+            HandEntity.Instance.PickUpItem(IngredientInventory.PopSingleItemInSlot(slotIndex));
         }
         else
         {
-            if (HandEntity.Instance.Item.ID == Inventory.SlotList[slotIndex].Item.ID)
+            if (HandEntity.Instance.ItemInstance.ID == IngredientInventory.SlotList[slotIndex].ItemInstance.ID)
             {
-                var itemInSlot = Inventory.PopSingleItemInSlot(slotIndex);
+                var itemInSlot = IngredientInventory.PopSingleItemInSlot(slotIndex);
                 if (!HandEntity.Instance.TryAddItem(itemInSlot))
                 {
-                    Inventory.SlotList[slotIndex].Item.TryAdd(itemInSlot.Quantity);
+                    IngredientInventory.SlotList[slotIndex].ItemInstance.TryAdd(itemInSlot.Quantity);
                 }
             }
             else
             {
-                var temp = Inventory.PopItemInSlot(slotIndex);
-                Inventory.PutItemInSlot(slotIndex, HandEntity.Instance.Item);
+                if (!HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.IsIngredient) return;
+                var temp = IngredientInventory.PopItemInSlot(slotIndex);
+                IngredientInventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance);
                 HandEntity.Instance.PickUpItem(temp);
             }
         }
@@ -54,32 +73,44 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     private bool HasEmptySlot()
     {
-        return Inventory.SlotList.Exists(slot => slot.IsEmpty);
+        return IngredientInventory.SlotList.Exists(slot => slot.IsEmpty);
     }
     
     public void OnCookingCompleted()
     {
+        // 실제로는 PlayerState의 OnEndState 메서드 내부에서 이 함수가 호출됨
         if (!_isCooking)
         {
-            Debug.LogWarning("요리가 진행 중이 아닙니다.");
+            Debug.Log("요리가 진행 중이 아닙니다.");
             return;
         }
+        
+        // RPC_IsCookingCheck();
+        _currentCookingPot.Rpc_EndCooking();
         _isCooking = false;
-        if (_t>=_cookTime)
+        
+        if (_t >= _cookTime)
         {
             ProcessCookingResult();
         }
         else
         {
             ReturnRecipesToInventory();
+            OnAlertMessage?.Invoke("요리가 취소되었습니다.");
         }
+        
+        _t = 0; // _t 초기화
+        // _amICooking = false;
     }
     
+    // RPC가 _isCooking을 false로 만들어주는데 1프레임정도의 딜레이가 생겨서 1프레임도안 TryCook이 2번실행
     public int TryCook()
     {
-        int id1 = Inventory.SlotList[0].Item.ID;
-        int id2 = Inventory.SlotList[1].Item.ID;
-    
+        int id1 = IngredientInventory.SlotList[0].ItemInstance.ID;
+        int id2 = IngredientInventory.SlotList[1].ItemInstance.ID;
+        
+       
+        // 이 로직을 RecipeManager로 빼서 거기서 레시피 습득 여부까지 판단하도록
         foreach (var recipe in RecipeManager.Instance.RecipeList)
         {
             if ((recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
@@ -88,13 +119,29 @@ public class CookingManager : BehaviourSingleton<CookingManager>
                 return recipe.ResultID;
             }
         }
-        return 200044; // 애매한 요리 ID
+        
+        Dictionary<int, int> specialIngredientResultMap = new Dictionary<int, int>
+        {
+            { 200013, 200121 }, // 강철 -> 단단한 요리
+            { 200028, 200122 } // 드래곤 고기 -> 드래곤 스테이크
+            // 추가 가능
+        };
+
+        HashSet<int> inputSet = new HashSet<int> { id1, id2 };
+        foreach (int id in inputSet)
+        {
+            if (specialIngredientResultMap.TryGetValue(id, out int result))
+            {
+                return result;
+            }
+        }
+        
+        return 200120; // 애매한 요리 ID
     }
     
     public void ProcessCookingResult()
     {
         int resultItemId = TryCook();
-    
         ConsumeInputIngredients();
         GiveItemToInventory(resultItemId);
         ReturnRecipesToInventory();
@@ -103,20 +150,20 @@ public class CookingManager : BehaviourSingleton<CookingManager>
     
     public void ReturnRecipesToInventory()
     {
-        foreach (var slot in Inventory.SlotList)
+        foreach (var slot in IngredientInventory.SlotList)
         {
             if (!slot.IsEmpty)
             {
-                TransferItemToInventory(slot.Item);
+                TransferItemToInventory(slot.ItemInstance);
                 slot.RemoveItem();
             }
         }
         OnCookingSlotUpdated.ForEach(action => action?.Invoke());
     }
     
-    private void ConsumeInputIngredients()
+    public void ConsumeInputIngredients()
     {
-        foreach (var slot in Inventory.SlotList)
+        foreach (var slot in IngredientInventory.SlotList)
         {
             slot.UseItem();
         }
@@ -128,41 +175,74 @@ public class CookingManager : BehaviourSingleton<CookingManager>
         var resultItem = ItemManager.Instance.GetItem(itemId);
         if (resultItem == null)
         {
-            Debug.LogError($"[CookingPanelManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
+            Debug.Log($"[CookingManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
             return;
         }
-    
-        InventoryManager.Instance.PickItemFromGround(new Item(resultItem, 1)); // 나중에 한번에 여러개 만드는거 생기면 1을 바꾸시면 됩니다
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+
+        InventoryManager.Instance.PickItemFromGround(new ItemInstance(resultItem, 1));
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
+        RPC_BroadcastCookingResult(itemId);
     }
     
-    private void TransferItemToInventory(Item item)
+    private void TransferItemToInventory(ItemInstance itemInstance)
     {
-        InventoryManager.Instance.PickItemFromGround(item);
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        InventoryManager.Instance.PickItemFromGround(itemInstance);
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
-    private float _t;
-    private float _cookTime = 4f;
-    private bool _isCooking;
-    
+
     private void Update()
     {
-        if (!_isCooking) return;
-        _t += Time.deltaTime;
-        if (_t >= _cookTime)
+        // 네트워크 연결 이후 작동하게 하기 위함
+        if(!IsSpawned) return;
+        
+        if (_isCooking)
         {
-            // 플레이어 연결 미완료여서 임시로 플레이어와 상호작용없이 요리 완료
-            OnCookingCompleted();
-            //Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Idle);
+            _t += Time.deltaTime;
         }
     }
     
-    internal void StartCook()
+    public void TryStartCook()
     {
-        if (HasEmptySlot()) return; // 빈 슬롯이면 return. 쿠킹 패널만 닫힘.
-        // Room.Instance.LocalPlayer.GetComponent<PlayerStateMachine>().RequestChangeState(EPlayerState.Cooking);
-        _t = 0;
-        _isCooking = true; // rpc로 변환
+        if (HasEmptySlot())
+        {
+            Debug.Log("[CookingManager] 빈 슬롯이 있어 요리를 시작할 수 없습니다.");
+            return;
+        }
+
+        _currentCookingPot?.Rpc_StartCooking(Runner.LocalPlayer);
     }
-    
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Rpc_StartCooking([RpcTarget] PlayerRef player)
+    {
+        _isCooking = true;
+        // FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
+        OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
+        // Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void Rpc_CookingPotAlreadyUse([RpcTarget] PlayerRef player)
+    {
+        OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
+        
+        // 만약 재료를 다시 인벤토리로 보내고 싶으면 
+        // ReturnRecipesToInventory();
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_IsCookingCheck()
+    {
+        _isCooking = false;
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_BroadcastCookingResult(int resultItemId, RpcInfo info = default)
+    {
+        var resultItem = ItemManager.Instance.GetItem(resultItemId);
+        var itemInstance = new ItemInstance(resultItem, 1);
+
+        CookingFinished?.Invoke(itemInstance); // 레시피를 업데이트 시키는 이벤트
+    }
 }

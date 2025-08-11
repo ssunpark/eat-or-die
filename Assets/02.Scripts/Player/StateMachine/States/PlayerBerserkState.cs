@@ -1,62 +1,49 @@
 ﻿using System.Collections.Generic;
 using Fusion.Addons.FSM;
 using UnityEngine;
-public class PlayerBerserkState : APlayerStateBase, IAnimationActionEndNotify
+public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
 {
     private StateMachine<ABerserkSubStateBase> _subFSM;
     private readonly BerserkChase _chase;
     private readonly BerserkAttack _attack;
 
-    public PlayerBerserkState(PlayerController controller) : base(controller)
+    public PlayerBerserkState(PlayerFSM fsm) : base(fsm)
     {
-        _subFSM = new StateMachine<ABerserkSubStateBase>("BerserkFSM",
-            new BerserkIdle(controller), // 초기 상태
-            new BerserkChase(controller),
-            new BerserkAttack(controller)
+        _subFSM = new StateMachine<ABerserkSubStateBase>("Berserk FSM",
+            new BerserkIdle(fsm), // 초기 상태
+            new BerserkChase(fsm),
+            new BerserkAttack(fsm)
         );
         _subFSM.SetDefaultState(0);
+
         StateId = (int)EPlayerState.Berserk;
     }
     protected override void CollectChildStateMachines(List<IStateMachine> list)
     {
         list.Add(_subFSM);
     }
-    protected override bool CanExitState(IState nextState)
-    {
-        return _resource.GetHungerPercent() > 0.1f || _resource.GetHungerPercent()==0f;
-    }
     protected override void OnEnterState()
     {
-        _controller.Movement.Move(Vector3.zero, false); // 이동 멈춤
-
+        base.OnEnterState();
+        _fsm.CanInteract = false;
+        _fsm.CanUseItem = false;
+        KCC.Move(Vector3.zero); // 이동 멈춤
+        Debug.Log("PlayerBerserkState: Entering Berserk state.");
         _subFSM.Reset(); // 내부 상태머신 초기화
-
-        if (_controller.Object.HasInputAuthority)
-        {
-            InputReader.playerControllerInputBlocked = true;
-        }
-        _controller.PlayAnimTriggerNetwork(EAnimTrigger.Berserk);
+        ParticleManager.Instance.RpcPlayParticle(_fsm.HungryEffect.name, _fsm.transform.position, _fsm.transform.rotation);
+    }
+    protected override void OnEnterStateRender()
+    {
+        base.OnEnterStateRender();
     }
 
-    protected override void OnFixedUpdate()
+    protected override void OnFixedUpdateState()
     {
-        _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 5);
+        _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 2);
     }
 
-    protected override void OnExitState()
+    public void OnActionMoment()
     {
-        if (_controller.Object.HasInputAuthority)
-        {
-            InputReader.playerControllerInputBlocked = false;
-        }
-    }
-
-    public void OnAnimationFinished()
-    {
-        if (_subFSM.ActiveState is IAnimationActionEndNotify notify)
-        {
-            Debug.Log("Berserk State: OnAnimationFinished Called");
-            notify.OnAnimationFinished();
-        }
+        _subFSM.ActiveState?.OnActionMoment();
     }
 }
