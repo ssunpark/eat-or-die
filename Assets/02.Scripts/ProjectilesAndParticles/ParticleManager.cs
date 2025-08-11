@@ -84,6 +84,12 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
         }
     }
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RequestPlayParticle(string particleKey, Vector3 position, Quaternion rotation)
+    {
+        RpcPlayParticle(particleKey, position, rotation);
+    }
+
     public ParticleSystem PlayByKeyLocalAsChild(string particleKey, Transform parent, Vector3 localPos, Quaternion localRot)
     {
         var prefab = GetParticlePrefab(particleKey);
