@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
@@ -5,7 +6,7 @@ using RaycastPro.Detectors;
 using UnityEngine;
 
 public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimationEntryActionNotify,
-    IAnimationExitActionNotify
+    IAnimationExitActionNotify, IAttackable
 {
     [Header("공격 지점")]
     [SerializeField]
@@ -65,11 +66,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     private SightDetector _attackDetector;
     public SightDetector AttackDetector => _attackDetector;
 
-    [Header("테스트")]
-    [SerializeField]
-    private float _testDamage;
-    public bool IsLock;
-
     private DragonContext _context;
     private DragonStateMachine _stateMachine;
 
@@ -77,6 +73,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public GameObject Target { get; private set; }
     public DragonParameterLoader ParamLoader { get; private set; }
     public DragonObjectPool Pool { get; private set; }
+
+    public NetworkObject NetworkObject => Object;
 
     [Networked]
     private bool _isFightMode { get; set; }
@@ -91,6 +89,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     
     [Networked]
     public TickTimer BreathTimer { get; set; }
+
+    [Header("테스트")]
+    [SerializeField]
+    private float _hp;
 
     private void Awake()
     {
@@ -114,9 +116,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     private void Update()
     {
-        IsLock = _context.Movement.IsLocked;
+        _hp = _context.Stats.CurrentHP;
     }
-    
+
     public override void Render()
     {
         // 네트워크로 복제된 동일 값
@@ -175,10 +177,15 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         Animator.SetInteger("IdleIndex", AnimWaitIndex);
     }
-
-    [ContextMenu("TakeDamage")]
-    public void TakeDamage()
+    
+    public void OnHitLocal(AttackInfo attack)
     {
-        _context.Stats.TakeDamage(_testDamage);
+        if (HasStateAuthority)
+        {
+            float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+            _context.Stats.TakeDamage(amount);
+        }
     }
+
+    public void OnHitStateAuthority(AttackInfo attack) { }
 }

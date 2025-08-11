@@ -38,7 +38,6 @@ public class DragonBreathEffect : MonoBehaviour
         // 파티클 재생
         var main1 = _mainParticle.main;
         main1.duration = particleDuration;
-        _mainParticle.Play();
 
         if (_subParticle != null)
         {
@@ -46,6 +45,8 @@ public class DragonBreathEffect : MonoBehaviour
             main2.duration = particleDuration;
             _subParticle.Play();
         }
+        
+        _mainParticle.Play();
         
         // 콜라이더 초기화
         if (!_isState)
