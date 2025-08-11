@@ -3,8 +3,6 @@ using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
-using System;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -367,8 +365,4 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         return false;
     }
 
-    public void RequestRequestPlayParticle(string key, Vector3 worldPos, Quaternion rot)
-    {
-        ParticleManager.Instance.RPC_RequestPlayParticle(key, worldPos, rot);
-    }
 }
