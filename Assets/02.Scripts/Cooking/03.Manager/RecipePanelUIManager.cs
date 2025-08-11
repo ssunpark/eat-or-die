@@ -9,22 +9,22 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
     
     private void Start()
     {
-        InventoryManager.Instance.OnInventoryUpdated += UpdateIngredients;
+        // InventoryManager.Instance.OnInventoryUpdated += UpdateIngredients;
     }
     
     public void UpdateIngredients()
     {
-        Debug.Log("RecipePanelUIManager의 UpdateIngredients 메서드 진입");
-        var validIngredientIDs = RecipeManager.Instance.RecipeList
-            .Where(recipe => recipe.Ingredient2ID.HasValue) // 재료 2개짜리만
-            .SelectMany(recipe => new[] { recipe.Ingredient1ID, recipe.Ingredient2ID.Value }) // 양쪽 다 꺼냄
-            .Distinct()
-            .ToHashSet();
-        
-        _ingredients = InventoryManager.Instance.Inventory.SlotList
-            .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
-            .Select(slot => slot.ItemInstance)
-            .ToArray();
+        // Debug.Log("RecipePanelUIManager의 UpdateIngredients 메서드 진입");
+        // var validIngredientIDs = RecipeManager.Instance.RecipeList
+        //     .Where(recipe => recipe.Ingredient2ID.HasValue) // 재료 2개짜리만
+        //     .SelectMany(recipe => new[] { recipe.Ingredient1ID, recipe.Ingredient2ID.Value }) // 양쪽 다 꺼냄
+        //     .Distinct()
+        //     .ToHashSet();
+
+        // _ingredients = InventoryManager.Instance.Inventory.SlotList
+        //     .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
+        //     .Select(slot => slot.ItemInstance)
+        //     .ToArray();
     }
 
     public void UpdateRecipes(int ingredientID)
