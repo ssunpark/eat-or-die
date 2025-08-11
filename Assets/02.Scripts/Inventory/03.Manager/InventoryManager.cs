@@ -86,7 +86,13 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     
     public bool TryConsumeItem(int itemID, int amount)
     {
-        return _inventory.TryConsumeItem(itemID, amount);
+        bool result = _inventory.TryConsumeItem(itemID, amount);
+        
+        if (result)
+        {
+            OnInventoryUpdated?.Invoke();
+        }
+        return result;
     }
 
     public ItemInstance GetItemInSlot(int slotIndex)
@@ -112,5 +118,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
                 slot.RemoveItem();
             }
         }
+        OnInventoryUpdated?.Invoke();
     }
 }
