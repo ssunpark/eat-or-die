@@ -186,14 +186,14 @@ public class Player : CharacterBase, IAttackable
         if(amount > 0)
         {
             Resource.RestoreHunger(amount);
-            ParticleManager.Instance.RpcPlayParticle("Eat_Good", transform.position+(Vector3.up*0.5f), Quaternion.identity);
+            ParticleManager.Instance.RpcPlayParticle("Use_Success_Eat", transform.position+(Vector3.up*0.5f), Quaternion.identity);
             // 힐
         }
         else if(amount <0)
         {
             Resource.ConsumeHunger(-amount);
 
-            ParticleManager.Instance.RpcPlayParticle("Eat_Bad", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
+            ParticleManager.Instance.RpcPlayParticle("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
             // 데미지
         }
         else
