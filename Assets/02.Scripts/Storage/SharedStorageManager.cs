@@ -7,15 +7,17 @@ public class SharedStorageManager : BehaviourSingleton<SharedStorageManager>
 
     public event Action OnStorageUpdated;
     public event Action OnOpenStorage;
-    public event Action<int> OnSlotUpdated;
 
     public void OpenStorage(SharedStorage sharedStorage)
     {
-        _currentSharedStorage?.OnS
+        if (_currentSharedStorage != null)
+        {
+            _currentSharedStorage.OnStorageUpdated -= OnStorageUpdated;
+        }
         
         _currentSharedStorage = sharedStorage;
         _currentSharedStorage.OnStorageUpdated += OnStorageUpdated;
-        OnStorageUpdated?.Invoke(); // UI 업데이트 구독
+        OnStorageUpdated?.Invoke(); // UI 업데이트
         OnOpenStorage?.Invoke(); // 창고 열기 이벤트
     }
     

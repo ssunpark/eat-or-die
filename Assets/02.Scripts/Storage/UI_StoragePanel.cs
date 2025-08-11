@@ -19,7 +19,6 @@ public class UI_StoragePanel : AUI_PopupBase
             _uiSlotList.Add(slotComponent);
         }
 
-        SharedStorageManager.Instance.OnSlotUpdated += UpdateSlotUI;
         SharedStorageManager.Instance.OnStorageUpdated += UpdateInventoryUI;
         SharedStorageManager.Instance.OnOpenStorage += ToggleStorage;
         Close();
