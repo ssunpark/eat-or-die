@@ -9,6 +9,12 @@ public class BloodExplosion : NetworkBehaviour
     [SerializeField]
     private List<ParticleSystem> _mainParticleList = new();
     [SerializeField]
+    private List<EffectVisualController> _fadeEffectList = new();
+    [SerializeField]
+    private float _appearSeconds = 1f;
+    [SerializeField]
+    private float _fadeSeconds = 1f;
+    [SerializeField]
     private GameObject _explosion;
     [SerializeField]
     private float _startScale = 0.5f;
@@ -53,6 +59,12 @@ public class BloodExplosion : NetworkBehaviour
             ps.Play();
         }
 
+        foreach (var effect in _fadeEffectList)
+        {
+            float remainDuration = RemainDuration - _appearSeconds - _fadeSeconds;
+            effect.Appear(remainDuration, _appearSeconds, _fadeSeconds);
+        }
+
         // DOTween은 "진행도 시킹"으로 제어할 예정이므로 일단 멈춘 트윈 생성
         _scaleTween?.Kill();
         _scaleTween = transform.DOScale(TargetScale, Duration)
@@ -67,7 +79,7 @@ public class BloodExplosion : NetworkBehaviour
         }
 
         // 흔적은 간단하게 로컬 타임으로
-        _timer += Time.deltaTime;
+        _timer += Runner.DeltaTime;
         if (_timer > RemainDuration)
         {
             Runner.Despawn(Object);
