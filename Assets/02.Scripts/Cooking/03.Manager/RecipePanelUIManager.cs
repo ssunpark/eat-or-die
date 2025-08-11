@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
-    private ItemInstance[] _ingredients;
-    public ItemInstance[] Ingredients => _ingredients;
+    // private ItemInstance[] _ingredients;
+    // public ItemInstance[] Ingredients => _ingredients;
     public UI_RecipeList RecipeListUI;
     
     private void Start()
