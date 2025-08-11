@@ -67,33 +67,42 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
     {
         foreach (var entry in projectiles)
         {
-            if (entry.ExplodeEffectPrefab != null)
+            if (entry.Prefab.TryGetComponent(out Projectile projectile))
             {
-                if(_particlePrefabs.ContainsKey(entry.ExplodeEffectPrefab.name))
+                if(projectile.ExplodeEffect != null)
                 {
-                    continue;
+                    if (_particlePrefabs.ContainsKey(projectile.ExplodeEffect.name))
+                    {
+                        continue;
+                    }
+                    _particlePrefabs[projectile.ExplodeEffect.name] = projectile.ExplodeEffect;
+                    var (pool, parent) = GetOrCreateSharedPool(projectile.ExplodeEffect, transform);
                 }
-                _particlePrefabs[entry.ExplodeEffectPrefab.name] = entry.ExplodeEffectPrefab;
-                var (pool, parent) = GetOrCreateSharedPool(entry.ExplodeEffectPrefab, transform);
+                
             }
 
         }
     }
 
-    public void Init(IList<ParticleSystem> particleSystems)
+    public ParticleSystem PlayByKeyLocalAsChild(string particleKey, Transform parent, Vector3 localPos, Quaternion localRot)
     {
-        foreach (var particleSystem in particleSystems)
-        {
-            if (_particlePrefabs.ContainsKey(particleSystem.name))
-            {
-                continue;
-            }
-            _particlePrefabs[particleSystem.name] = particleSystem;
-            var (pool, parent) = GetOrCreateSharedPool(particleSystem, transform);
-        }
+        var prefab = GetParticlePrefab(particleKey);
+        if (prefab == null) return null;
+
+        if (!_sharedPools.TryGetValue(prefab, out var pool))
+            _sharedPools[prefab] = pool = GetOrCreateSharedPool(prefab, transform).Item1;
+
+        var instance = pool.Get();
+        instance.transform.SetParent(parent, false);
+        instance.transform.localPosition = localPos;
+        instance.transform.localRotation = localRot;
+
+        var autoReturn = instance.GetComponent<ParticleAutoReturn>();
+        autoReturn.Init(pool);
+
+        instance.Play();
+        return instance;
     }
-
-
     private (Pool<ParticleSystem>, Transform) GetOrCreateSharedPool(ParticleSystem key, Transform poolParent)
     {
         if (_sharedPools.TryGetValue(key, out var existingPool))
@@ -123,6 +132,11 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
     }
     private ParticleSystem GetParticlePrefab(string particleKey)
     {
+        if (string.IsNullOrEmpty(particleKey))
+        {
+            Debug.LogWarning("Particle key is null or empty. Cannot get particle prefab.");
+            return null;
+        }
         if (_particlePrefabs.TryGetValue(particleKey, out var prefab))
             return prefab;
 
@@ -153,5 +167,20 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
 
         instance.Play();
 
+    }
+
+    public void PlayByKeyLocal(string particleKey, Vector3 position, Quaternion rotation)
+    {
+        var prefab = GetParticlePrefab(particleKey);
+        if (prefab != null)
+        {
+            PlayParticle(prefab, position, rotation);
+        }
+#if UNITY_EDITOR
+        else
+        {
+            Debug.LogWarning($"[ParticleManager] Particle key not found: {particleKey}");
+        }
+#endif
     }
 }

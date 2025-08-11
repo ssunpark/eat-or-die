@@ -10,7 +10,6 @@ public class ProjectileManager : BehaviourSingleton<ProjectileManager>
     {
         public string Key;
         public GameObject Prefab;
-        public ParticleSystem ExplodeEffectPrefab;
     }
 
     [SerializeField] private List<ProjectileEntry> _projectiles;

@@ -181,17 +181,19 @@ public class Player : CharacterBase, IAttackable
     APlayerStateBase _nextState = null;
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_HealOrDamage(float amount)
+    public void RPC_HealOrDamageFromEat(float amount)
     {
         if(amount > 0)
         {
             Resource.RestoreHunger(amount);
+            ParticleManager.Instance.RpcPlayParticle("Eat_Good", transform.position+(Vector3.up*0.5f), Quaternion.identity);
             // 힐
         }
         else if(amount <0)
         {
             Resource.ConsumeHunger(-amount);
-            _takedDamage = true;
+
+            ParticleManager.Instance.RpcPlayParticle("Eat_Bad", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
             // 데미지
         }
         else
@@ -200,9 +202,9 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
-    public void TryHealOrDamage(float amount)
+    public void TryHealOrDamageFromEat(float amount)
     {
-        RPC_HealOrDamage(amount);
+        RPC_HealOrDamageFromEat(amount);
     }
 
     private void EvaluateCurrentHunger(float current, float max)

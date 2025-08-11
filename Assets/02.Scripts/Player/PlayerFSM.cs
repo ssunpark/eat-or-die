@@ -11,7 +11,8 @@ using UnityEditor;
 public enum EUseItemMode : byte
 {
     Self = 0,
-    Give = 1
+    Give = 1,
+    Targeted = 2
 }
 public class FSMStateInstances
 {
@@ -228,7 +229,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (closest.TryGetComponent(out NetworkObject net))
         {
-            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Self);
+            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Targeted);
             return true;
         }
 

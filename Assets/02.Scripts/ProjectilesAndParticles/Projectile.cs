@@ -20,7 +20,7 @@ public class Projectile : NetworkBehaviour
     [Networked] private float _bossDamageMultiplier { get; set; }
     [Networked] private float _totalDamageMultiplier { get; set; }
     [Networked] private NetworkObject Attacker { get; set; }
-    [SerializeField] private ParticleSystem _explodeEffect;
+    public ParticleSystem ExplodeEffect;
     [Networked] private TickTimer LifeTimer { get; set; }
     [Networked]
     private bool _isHit_networked { get; set; }
@@ -93,7 +93,7 @@ public class Projectile : NetworkBehaviour
             }
         }
     }
-    public void Initialize(AttackInfo attackInfo)
+    public void Initialize(AttackInfo attackInfo, LayerMask layerMask)
     {
         if (Runner.IsServer == false)
             return;
@@ -109,6 +109,7 @@ public class Projectile : NetworkBehaviour
         Attacker = attackInfo.Attacker;
         _collider.enabled = true;
         _isHit_networked = false;
+        HitMask = layerMask;
     }
 
 
@@ -136,7 +137,7 @@ public class Projectile : NetworkBehaviour
                 _target = target.NetworkObject;
                 _collider.enabled = false;
                 _isHit_networked = true;
-                ParticleManager.Instance.RpcPlayParticle(_explodeEffect.name, transform.position, Quaternion.identity);
+                ParticleManager.Instance.RpcPlayParticle(ExplodeEffect.name, transform.position, Quaternion.identity);
             }
         }
     }

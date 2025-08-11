@@ -28,7 +28,8 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         base.OnEnterStateRender();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        if(_fsm.HasStateAuthority || _fsm.HasInputAuthority)
+        PlayUseVfx(EUsePhase.Start, _fsm.transform.position+Vector3.up);
+        if (_fsm.HasStateAuthority || _fsm.HasInputAuthority)
         {
             _target = _fsm.ItemUseTarget;
         }
@@ -44,6 +45,15 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         {
             Debug.LogWarning("PlayerUseItemState: Target is null. Cannot use item.");
             return;
+        }
+
+        if(_fsm.UseItemMode == EUseItemMode.Self)
+        {
+            PlayUseVfx(EUsePhase.Success, _fsm.transform.position + (Vector3.up * 0.5f));
+        }
+        else
+        {
+            PlayUseVfx(EUsePhase.Success, _target.transform.position + (Vector3.up * 0.5f));
         }
         _fsm.ItemHolder.UseItem(_target.gameObject);
     }
@@ -65,6 +75,30 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         {
             Debug.Log(_fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]);
             RequestActivateState();
+        }
+    }
+
+    private void PlayUseVfx(EUsePhase phase, Vector3 worldPos)
+    {
+        var go = _fsm.ItemHolder?.HeldItemObject;
+
+        if (go != null && go.TryGetComponent<IUseVfxProvider>(out var vfx))
+        {
+            var key = vfx.GetEffectKey(phase);
+            if (string.IsNullOrEmpty(key)) return;
+
+            if (vfx.MustBeChild)
+            {
+                var parent = vfx.GetUseSpawnPoint() ?? go.transform;
+                ParticleManager.Instance.PlayByKeyLocalAsChild(
+                    key, parent, Vector3.zero, Quaternion.identity
+                );
+            }
+            else
+            {
+                var rot = Quaternion.identity;
+                ParticleManager.Instance.PlayByKeyLocal(key, worldPos, rot);
+            }
         }
     }
 }
