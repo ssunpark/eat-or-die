@@ -194,4 +194,9 @@ public class Inventory
         }
         return true;
     }
+    
+    public List<Slot> GetAllSlots()
+    {
+        return SlotList;
+    }
 }

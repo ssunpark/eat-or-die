@@ -30,7 +30,7 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
 
     public void UpdateSlotUI()
     {
-        ItemInstance itemInstanceInSlot = InventoryManager.Instance.Inventory.SlotList[SlotIndex].ItemInstance;
+        ItemInstance itemInstanceInSlot = InventoryManager.Instance.GetItemInSlot(SlotIndex);
         if (itemInstanceInSlot == null)
         {
             IconImage.gameObject.SetActive(false);
