@@ -6,12 +6,17 @@ public class SharedStorageManager : BehaviourSingleton<SharedStorageManager>
     [SerializeField] private SharedStorage _currentSharedStorage;
 
     public event Action OnStorageUpdated;
+    public event Action OnOpenStorage;
     public event Action<int> OnSlotUpdated;
 
     public void OpenStorage(SharedStorage sharedStorage)
     {
+        _currentSharedStorage?.OnS
+        
         _currentSharedStorage = sharedStorage;
+        _currentSharedStorage.OnStorageUpdated += OnStorageUpdated;
         OnStorageUpdated?.Invoke(); // UI 업데이트 구독
+        OnOpenStorage?.Invoke(); // 창고 열기 이벤트
     }
     
     public void GetItemFromStorage(ItemInstance itemInstance)
@@ -23,5 +28,36 @@ public class SharedStorageManager : BehaviourSingleton<SharedStorageManager>
     private void ItemToHand(ItemInstance itemInstance)
     {
         HandEntity.Instance.PickUpItem(itemInstance);
+    }
+
+    public void OnClickMouseLeft(int slotIndex)
+    {
+        if (HandEntity.Instance.IsHandEmpty)
+        {
+            _currentSharedStorage.RPC_TryTakeItem(slotIndex);
+        }
+        else
+        {
+            NetworkedItem item = HandEntity.Instance.GetItem().ToNetworkedItem();
+            _currentSharedStorage.RPC_TryPutItem(slotIndex, item);
+        }
+    }
+
+    public void OnClickMouseRight(int slotIndex)
+    {
+        if (HandEntity.Instance.IsHandEmpty)
+        {
+            _currentSharedStorage.RPC_TryTakeOneItem(slotIndex, new NetworkedItem { ID = 0 });
+        }
+        else
+        {
+            NetworkedItem item = HandEntity.Instance.GetItem().ToNetworkedItem();
+            _currentSharedStorage.RPC_TryTakeOneItem(slotIndex, item);
+        }
+    }
+    
+    public NetworkedItem GetItemInSlot(int slotIndex)
+    {
+        return _currentSharedStorage.GetItemInSlot(slotIndex);
     }
 }

@@ -1,12 +1,35 @@
+using System;
 using UnityEngine;
 using Fusion;
 
 public class SharedStorage : NetworkBehaviour
 {
-    private const int STORAGE_SIZE = 60;
-
+    private const int STORAGE_SIZE = 30;
+    
+    public event Action OnStorageUpdated;
+    
     [Networked, Capacity(STORAGE_SIZE)] public NetworkArray<NetworkedItem> Items { get; }
 
+    private ChangeDetector _changeDetector;
+    
+    public override void Spawned()
+    {
+        _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+    }
+    
+    public override void Render()
+    {
+        foreach (string change in _changeDetector.DetectChanges(this))
+        {
+            switch (change)
+            {
+                case nameof(Items):
+                    OnStorageUpdated?.Invoke();
+                    break;
+            }
+        }
+    }
+    
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_TryTakeItem(int slotIndex, RpcInfo info = default)
     {
@@ -72,7 +95,7 @@ public class SharedStorage : NetworkBehaviour
     }
     
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_TryPutItem(int slotIndex, NetworkedItem item, PlayerRef player)
+    public void RPC_TryPutItem(int slotIndex, NetworkedItem item, RpcInfo info = default)
     {
         if (slotIndex < 0 || slotIndex >= STORAGE_SIZE) return;
      
@@ -104,7 +127,7 @@ public class SharedStorage : NetworkBehaviour
                     Durability = item.Durability,
                     MaxQuantity = item.MaxQuantity
                 };
-                RPC_PutItemToLocal(player, remainItem);
+                RPC_PutItemToLocal(info.Source, remainItem);
             }
             else
             {
@@ -119,8 +142,13 @@ public class SharedStorage : NetworkBehaviour
         }
         else
         {
-            RPC_PutItemToLocal(player, itemInSlot);
+            RPC_PutItemToLocal(info.Source, itemInSlot);
             Items.Set(slotIndex, item);
         }
+    }
+
+    public NetworkedItem GetItemInSlot(int slotIndex)
+    {
+        return Items.Get(slotIndex);
     }
 }
