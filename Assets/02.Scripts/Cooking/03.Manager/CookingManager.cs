@@ -180,7 +180,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         }
 
         InventoryManager.Instance.PickItemFromGround(new ItemInstance(resultItem, 1));
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
         RPC_BroadcastCookingResult(itemId);
     }
@@ -188,7 +188,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     private void TransferItemToInventory(ItemInstance itemInstance)
     {
         InventoryManager.Instance.PickItemFromGround(itemInstance);
-        InventoryManager.Instance.OnInventoryUpdated?.Invoke();
+        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
 
     private void Update()
