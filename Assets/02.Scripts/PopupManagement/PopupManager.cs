@@ -22,8 +22,8 @@ public class PopupManager : BehaviourSingleton<PopupManager>
 
     public void Register(AUI_PopupBase popup)
     {
-        if (!openedPopups.Contains(popup))
-            openedPopups.Add(popup);
+        //if (!openedPopups.Contains(popup))
+        openedPopups.Add(popup);
     }
 
     public void Unregister(AUI_PopupBase popup)
