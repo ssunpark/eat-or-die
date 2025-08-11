@@ -93,6 +93,7 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
     
     private void HandleCookingFinished(ItemInstance cookedItem)
     {
+        
         var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);
         if (recipe == null) return;
 
