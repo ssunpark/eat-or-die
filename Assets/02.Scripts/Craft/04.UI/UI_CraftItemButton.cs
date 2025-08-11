@@ -22,8 +22,8 @@ public class UI_CraftItemButton : MonoBehaviour
 
     public void CanInteractable()
     {
-        int haveMat1 = InventoryManager.Instance.Inventory.GetItemCount(_craftRecipe.CraftMaterial1ID);
-        int haveMat2 = InventoryManager.Instance.Inventory.GetItemCount(_craftRecipe.CraftMaterial2ID);
+        int haveMat1 = InventoryManager.Instance.GetItemCount(_craftRecipe.CraftMaterial1ID);
+        int haveMat2 = InventoryManager.Instance.GetItemCount(_craftRecipe.CraftMaterial2ID);
 
         bool canCraft = haveMat1 >= _craftRecipe.CraftMaterial1Count &&
                         haveMat2 >= _craftRecipe.CraftMaterial2Count;
@@ -38,8 +38,8 @@ public class UI_CraftItemButton : MonoBehaviour
 
     public void OnClick()
     {
-        bool consumedMat1 = InventoryManager.Instance.Inventory.TryConsumeItem(_craftRecipe.CraftMaterial1ID, _craftRecipe.CraftMaterial1Count);
-        bool consumedMat2 = InventoryManager.Instance.Inventory.TryConsumeItem(_craftRecipe.CraftMaterial2ID, _craftRecipe.CraftMaterial2Count);
+        bool consumedMat1 = InventoryManager.Instance.TryConsumeItem(_craftRecipe.CraftMaterial1ID, _craftRecipe.CraftMaterial1Count);
+        bool consumedMat2 = InventoryManager.Instance.TryConsumeItem(_craftRecipe.CraftMaterial2ID, _craftRecipe.CraftMaterial2Count);
 
         if (!consumedMat1 || !consumedMat2)
         {
