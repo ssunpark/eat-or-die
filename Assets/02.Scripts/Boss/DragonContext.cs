@@ -31,5 +31,6 @@ public class DragonContext
         Movement.OnSpawned();
         Combat.OnSpawned();
         Sight.OnSpawned();
+        Stats.OnSpawned();
     }
 }

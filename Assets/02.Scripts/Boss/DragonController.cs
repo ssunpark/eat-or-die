@@ -76,10 +76,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public NetworkObject NetworkObject => Object;
 
+    // 네트워크 동기화 값
     [Networked]
-    private bool _isFightMode { get; set; }
-
-    public bool IsFightMode => _isFightMode;
+    public bool IsFightMode { get; set; }
 
     [Networked]
     public Vector2 AnimVelocity { get; set; }
@@ -89,10 +88,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     
     [Networked]
     public TickTimer BreathTimer { get; set; }
-
-    [Header("테스트")]
-    [SerializeField]
-    private float _hp;
+    
+    [Networked]
+    public float CurrentHeath { get; set; }
 
     private void Awake()
     {
@@ -112,11 +110,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         }
 
         _context.OnSpawned();
-    }
-
-    private void Update()
-    {
-        _hp = _context.Stats.CurrentHP;
     }
 
     public override void Render()
