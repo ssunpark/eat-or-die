@@ -11,6 +11,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	[SerializeField] private int _enemyId; // 몬스터 ID
 
 	[Networked] public EAnimationState AnimationState { get; set; }
+	private bool _hit;
 	
 	public NetworkObject NetworkObject => Object;
 
@@ -23,7 +24,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	private RangeDetector _rangeDetector;
 
 	[SerializeField] private float _currentHunger;
-	private float _takenDamage = 0f;
 	
 	public EnemyContext Context { get; private set; }
 
@@ -34,7 +34,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	[SerializeField] private HitBehaviour _hitBehaviour;
 	[SerializeField] private DieBehaviour _dieBehaviour;
 
-	private bool _hit = false;
 
 	private EnemyBehaviourMachine _behaviourMachine;
 
@@ -90,7 +89,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		if (_hit)
 		{
-			_currentHunger -= _takenDamage;
 			if (_currentHunger <= 0)
 			{
 				_behaviourMachine.ForceActivateState<DieBehaviour>();
@@ -98,7 +96,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			}
 			_behaviourMachine.ForceActivateState<HitBehaviour>();
 			_hit = false;
-			_takenDamage = 0f;
 		}
 		
 		if (_rangeDetector.Cast())
@@ -160,7 +157,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		{
 			float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
 			float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
-			_takenDamage += amount * (100 / (100 + defense));
+			_currentHunger = amount * (100 / (100 + defense));
 		
 			_hit = true;
 		}

@@ -1,51 +1,58 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Fusion.Addons.FSM;
 
 public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 {
-	private bool _isAttackFinished = false;
+	private EnemyStateMachine _attackStateMachine;
+	
+	public bool IsAttackFinished = false;
+
+	private AttackPrepareState _prepareState = new AttackPrepareState();
+	private AttackActionState _actionState = new AttackActionState();
+	
+	protected override void OnCollectChildStateMachines(List<IStateMachine> stateMachines)
+	{
+		AEnemyState[] stateList = new AEnemyState[]
+		{
+			_prepareState,
+			_actionState,
+		};
+		_attackStateMachine = new EnemyStateMachine("Attack State Machine", this, stateList);
+        
+		stateMachines.Add(_attackStateMachine);
+	}
 
 	protected override bool CanEnterState()
 	{
 		Vector3 toTarget = Machine.Context.Target.transform.position - transform.position;
 		float distance = toTarget.magnitude;
 		
-		// if (Machine.StateTime >= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackSpeed)
-		
-		if (distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
-		    && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle))
-		{
-			return true;
-		}
-
-		return false;
+		return distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
+		       && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle);
 	}
 	
 	protected override void OnEnterState()
 	{
-		_isAttackFinished = false;
-		Machine.Context.Owner.AnimationState = EAnimationState.Attack;
+		_attackStateMachine.TryActivateState(_prepareState);
+		
+		// _isAttackFinished = false;
+		// Machine.Context.Owner.AnimationState = EAnimationState.Attack;
 	}
 
 	protected override void OnFixedUpdate()
 	{
-		AnimatorStateInfo stateInfo = Machine.Context.Animator.GetCurrentAnimatorStateInfo(0);
 
-		if (!Machine.Context.Animator.IsInTransition(0) && stateInfo.normalizedTime >= 1f)
-		{
-			_isAttackFinished = true;
-			Machine.TryActivateState<IdleBehaviour>();
-		}
 	}
 
 	protected override void OnExitState()
 	{
-		_isAttackFinished = false;
+		IsAttackFinished = false;
 	}
 
 	protected override bool CanExitState(AEnemyStateBehaviour nextState)
 	{
-		return _isAttackFinished;
+		return IsAttackFinished;
 	}
 
 	public void OnActionMoment()

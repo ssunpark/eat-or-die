@@ -5,6 +5,7 @@ public class HitBehaviour : AEnemyStateBehaviour
 {
     protected override void OnEnterState()
     {
+        Debug.Log("Hit!");
         Machine.Context.Owner.AnimationState = EAnimationState.Hit;
     }
 
@@ -14,19 +15,17 @@ public class HitBehaviour : AEnemyStateBehaviour
 
         if (!Machine.Context.Animator.IsInTransition(0) && stateInfo.normalizedTime >= 1f)
         {
-            if (Machine.PreviousState is AttackBehaviour or HitBehaviour)
-            {
-                Machine.TryActivateState<IdleBehaviour>();
-            }
-            else
-            {
-                Machine.TryActivateState(Machine.PreviousState, true);
-            }
+            Machine.TryActivateState<IdleBehaviour>();
         }
     }
 
     protected override bool CanExitState(AEnemyStateBehaviour nextStateBehaviour)
     {
-        return nextStateBehaviour is not AttackBehaviour;
+        return nextStateBehaviour is IdleBehaviour;
+    }
+
+    protected override void OnExitState()
+    {
+        Debug.Log("Hit Exit!");
     }
 }
