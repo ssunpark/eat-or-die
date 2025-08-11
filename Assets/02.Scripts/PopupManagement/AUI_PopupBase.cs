@@ -4,18 +4,31 @@ public abstract class AUI_PopupBase : MonoBehaviour
 {
 	public abstract EPopupType Type { get; }
 
-	public virtual void Open() => gameObject.SetActive(true);
-	public virtual void Close() => gameObject.SetActive(false);
+	private AnimatePopup _animatePopup;
 
-	protected virtual void OnEnable()
+	public virtual void Open()
 	{
-		Debug.Log($"{Type}: OnEnable");
-		PopupManager.Instance?.Register(this);
+		gameObject.SetActive(true);
+		_animatePopup?.Open();
+		PopupManager.Instance.Register(this);
+	}
+	
+	public virtual void Close()
+	{
+		PopupManager.Instance.Unregister(this);
+		
+		if (_animatePopup == null)
+		{
+			gameObject.SetActive(false);
+		}
+		else
+		{
+			_animatePopup?.Close();
+		}
 	}
 
-	protected virtual void OnDisable()
+	protected virtual void Awake()
 	{
-		Debug.Log($"{Type}: OnDisable");
-		PopupManager.Instance?.Unregister(this);
+		_animatePopup = GetComponent<AnimatePopup>();
 	}
 }
