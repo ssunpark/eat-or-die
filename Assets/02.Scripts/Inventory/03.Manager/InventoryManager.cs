@@ -8,14 +8,13 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public Inventory Inventory => _inventory;
     public int InventorySize;
     
-    public List<Action> OnSlotUpdated;
-    public Action OnInventoryUpdated;
+    public event Action<int> OnSlotUpdated;
+    public event Action OnInventoryUpdated;
     public static event Action<ItemInstance> OnItemAcquired;
 
     private void Awake()
     {
         _inventory = new Inventory(InventorySize);
-        OnSlotUpdated = new List<Action>(new Action[InventorySize]);
     }
 
     public void OnClickMouseLeft(int slotIndex)
@@ -31,7 +30,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         {
             HandEntity.Instance.PickUpItem(_inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance));
         }
-        OnSlotUpdated[slotIndex]?.Invoke();
+        OnSlotUpdated?.Invoke(slotIndex);
         OnInventoryUpdated?.Invoke();
     }
     
@@ -61,7 +60,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
             }
         }
 
-        OnSlotUpdated[slotIndex]?.Invoke();
+        OnSlotUpdated?.Invoke(slotIndex);
         OnInventoryUpdated?.Invoke();
     }
 
