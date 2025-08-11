@@ -146,10 +146,10 @@ public class DragonCombat
                     _controller.LavaFloorPrefab, targetPos, Quaternion.identity,
                     onBeforeSpawned: (runner, obj) =>
                     {
-                        var proj = obj.GetComponent<LavaFloor>();
-                        proj.StartPosition = targetPos;
-                        proj.StartTick = _controller.Runner.Tick;
-                        proj.Duration = data.Duration;
+                        var floor = obj.GetComponent<LavaFloor>();
+                        floor.StartPosition = targetPos;
+                        floor.StartTick = _controller.Runner.Tick;
+                        floor.Duration = data.Duration;
                     });
             };
 
@@ -181,10 +181,11 @@ public class DragonCombat
         var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position, Quaternion.identity,
             onBeforeSpawned: (runner, obj) =>
         {
-            var proj = obj.GetComponent<BloodExplosion>();
-            proj.Duration = duration;
-            proj.TargetScale = targetSize;
-            proj.RemainDuration = remainDuration;
+            var blood = obj.GetComponent<BloodExplosion>();
+            blood.StartPosition = _controller.transform.position;
+            blood.Duration = duration;
+            blood.TargetScale = targetSize;
+            blood.RemainDuration = remainDuration;
         });
     }
 

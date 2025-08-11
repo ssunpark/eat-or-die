@@ -18,9 +18,12 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
 
     protected override void OnEnterState()
     {
-        _currentSubStateMachine = Context.Phase.CurrentPhase == EDragonPhase.Phase1 ? _phase1SubStateMachine : _phase2SubStateMachine;
-
         TryActiveRandomAttackSubState();
+    }
+
+    protected override void OnEnterStateRender()
+    {
+        _currentSubStateMachine = Context.Phase.CurrentPhase == EDragonPhase.Phase1 ? _phase1SubStateMachine : _phase2SubStateMachine;
     }
 
     private void TryActiveRandomAttackSubState()
@@ -48,6 +51,8 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
             new DragonMeleeAttack(Context, this, "Attack_RightScratch", Context.Parameter.LeftScratch
                 , () => Context.Combat.WindStormEffect())
         );
+        
+        _currentSubStateMachine = Context.Phase.CurrentPhase == EDragonPhase.Phase1 ? _phase1SubStateMachine : _phase2SubStateMachine;
 
         stateMachines.Add(_phase1SubStateMachine);
         stateMachines.Add(_phase2SubStateMachine);

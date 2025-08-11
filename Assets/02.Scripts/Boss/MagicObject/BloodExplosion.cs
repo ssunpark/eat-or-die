@@ -21,6 +21,8 @@ public class BloodExplosion : NetworkBehaviour
 
     // 네트워크 동기화되는 파라미터
     [Networked]
+    public Vector3 StartPosition { get; set; }
+    [Networked]
     private TickTimer ExplosionTimer { get; set; } // 서버가 정한 "데미지 시점"
     [Networked]
     public float Duration { get; set; }
@@ -36,6 +38,7 @@ public class BloodExplosion : NetworkBehaviour
 
     public override void Spawned()
     {
+        transform.position = StartPosition;
         ExplosionTimer = TickTimer.CreateFromSeconds(Runner, Duration);
         // VFX 초기화 (모든 클라)
         transform.localScale = Vector3.one * _startScale;
