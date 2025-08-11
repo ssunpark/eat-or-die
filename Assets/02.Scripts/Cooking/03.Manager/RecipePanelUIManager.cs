@@ -6,6 +6,7 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
     // private ItemInstance[] _ingredients;
     // public ItemInstance[] Ingredients => _ingredients;
     public UI_RecipeList RecipeListUI;
+    public int CurrentIngredientID;
     
     private void Start()
     {
@@ -27,14 +28,27 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
         //     .ToArray();
     }
 
-    public void UpdateRecipes(int ingredientID)
+    public void SetCurrentIngredientID(int ID)
+    {
+        CurrentIngredientID = ID;
+    }
+
+    public void UpdateAllRecipes()
+    {
+        var filteredRecipes = RecipeManager.Instance.RecipeList;
+
+        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {CurrentIngredientID}");
+        RecipeListUI.ShowFilteredRecipes(filteredRecipes);
+    }
+
+    public void UpdateRecipes()
     {
         var filteredRecipes = RecipeManager.Instance.RecipeList
             .Where(recipe => recipe.Ingredient2ID.HasValue)
-            .Where(recipe => recipe.Ingredient1ID == ingredientID || recipe.Ingredient2ID == ingredientID)
+            .Where(recipe => recipe.Ingredient1ID == CurrentIngredientID || recipe.Ingredient2ID == CurrentIngredientID)
             .ToList();
 
-        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {ingredientID}");
+        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {CurrentIngredientID}");
         RecipeListUI.ShowFilteredRecipes(filteredRecipes);
     }
 

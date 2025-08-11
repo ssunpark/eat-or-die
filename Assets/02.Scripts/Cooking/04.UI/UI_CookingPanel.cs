@@ -8,7 +8,6 @@ public class UI_CookingPanel : AUI_PopupBase
     public GameObject CookingPanel;
     public UI_RecipeIngredient UIRecipeIngredient;
     public UI_RecipeList UIRecipeList;
-
     private bool _isInitialized;
 
     private void Start()

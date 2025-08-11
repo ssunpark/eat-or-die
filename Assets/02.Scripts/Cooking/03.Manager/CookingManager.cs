@@ -15,6 +15,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public static event Action<string> OnAlertMessage; // 문자열 알림용
     public static event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
     public static event Action<ItemInstance> OnCompletedPopupStarted;
+    public static event Action OnItemAdded;
     
     public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
     private bool _isCooking;
@@ -171,6 +172,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         OnCookingSlotUpdated.ForEach(action => action?.Invoke());
     }
     
+    
     private void GiveItemToInventory(int itemId)
     {
         var resultItem = ItemManager.Instance.GetItem(itemId);
@@ -185,6 +187,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
         RPC_BroadcastCookingResult(itemId);
         OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem, 1));
+        OnItemAdded?.Invoke();
         
     }
     
