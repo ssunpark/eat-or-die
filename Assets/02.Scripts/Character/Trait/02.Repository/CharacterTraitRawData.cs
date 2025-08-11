@@ -10,7 +10,7 @@ public class CharacterTraitRawData
     public string Name { get; set; }
     [Name("Description")]
     public string Description { get; set; }
-    [Name("ModifierType")]
+    [Name("EStatModifierType")]
     public EStatModifierType ModifierType { get; set; }
     [Name("MaxLevel")]
     public int MaxLevel { get; set; }

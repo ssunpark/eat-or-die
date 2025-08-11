@@ -3,13 +3,65 @@ using System.Collections.Generic;
 using Fusion;
 using Redcode.Pools;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using static ProjectileManager;
+using System.Threading.Tasks;
 
 public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
 {
+    private const string PARTICLE_CSV_PATH = "/ParticlesCSV/Particles.csv"; // StreamingAssets 기준
     private Dictionary<ParticleSystem, Pool<ParticleSystem>> _sharedPools = new();
     private Dictionary<string, ParticleSystem> _particlePrefabs = new();
     public IReadOnlyDictionary<ParticleSystem, Pool<ParticleSystem>> ExplodeEffectPool => _sharedPools;
+
+    public async Task InitFromCsvAsync(string relativeCsvPath = PARTICLE_CSV_PATH)
+    {
+        var fullPath = $"{Application.streamingAssetsPath}{relativeCsvPath}";
+        List<ParticleRawData> rows;
+        try
+        {
+            rows = CSVLoader<ParticleRawData>.LoadCSV(fullPath);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[ParticleManager] CSV 로드 실패: {fullPath}\n{e}");
+            return;
+        }
+
+        foreach (var row in rows)
+        {
+            if (string.IsNullOrWhiteSpace(row.ParticleKey) || string.IsNullOrWhiteSpace(row.AddressablePath))
+                continue;
+
+            // 이미 등록되어 있으면 스킵
+            if (_particlePrefabs.ContainsKey(row.ParticleKey))
+                continue;
+
+            GameObject prefab = null;
+            try
+            {
+                var handle = Addressables.LoadAssetAsync<GameObject>(row.AddressablePath);
+                prefab = await handle.Task;
+                if (prefab == null)
+                {
+                    Debug.LogError($"[ParticleManager] Addressables 로드 실패: {row.AddressablePath}");
+                    continue;
+                }
+                // Addressables.Release(handle); // 풀의 프리팹 참조가 필요하므로 해제하지 않음
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[ParticleManager] Addressables 로드 중 예외: {row.AddressablePath}\n{e}");
+                continue;
+            }
+
+            var particleSystem = prefab.GetComponent<ParticleSystem>();
+            _particlePrefabs[row.ParticleKey] = particleSystem;
+            GetOrCreateSharedPool(particleSystem, transform);
+        }
+
+        Debug.Log($"[ParticleManager] CSV 기반 파티클 초기화 완료. Count={_particlePrefabs.Count}");
+    }
 
     public void Init(IList<ProjectileEntry> projectiles)
     {
@@ -69,14 +121,15 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
             Debug.LogError($"Particle prefab with key '{particleKey}' not found.");
         }
     }
-
     private ParticleSystem GetParticlePrefab(string particleKey)
     {
         if (_particlePrefabs.TryGetValue(particleKey, out var prefab))
-        {
             return prefab;
-        }
-        Debug.LogWarning($"Particle prefab with key '{particleKey}' not found.");
+
+        foreach (var kv in _particlePrefabs)
+            if (kv.Value != null && kv.Value.name == particleKey)
+                return kv.Value;
+
         return null;
     }
 

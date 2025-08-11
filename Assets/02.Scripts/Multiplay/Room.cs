@@ -21,10 +21,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
-
-        // NetworkRunner에게 이 스크립트가 콜백을 수신하겠다고 등록
-        _runner.AddCallbacks(this);
-        
+        await ParticleManager.Instance.InitFromCsvAsync();
         SceneRef scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         NetworkSceneInfo sceneInfo = new();
         if (scene.IsValid) {
