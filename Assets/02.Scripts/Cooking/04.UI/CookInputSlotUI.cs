@@ -1,8 +1,8 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 //수현
 public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
 {
@@ -52,7 +52,6 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
         IconImage.sprite = ItemManager.Instance.GetItem(itemInstanceInSlot.ID).ItemDefinition.Icon;
         QuantityText.text = itemInstanceInSlot.Quantity.ToString();
         IconImage.gameObject.SetActive(true);
-        QuantityText.gameObject.SetActive(itemInstanceInSlot.Quantity > 1);
+        QuantityText.gameObject.SetActive(itemInstanceInSlot.Quantity > 0); //
     }
-    
 }

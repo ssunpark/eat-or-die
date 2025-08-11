@@ -11,6 +11,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
     private Inventory _inputIngredientInventory;
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
+
     public static event Action OnCookOutputUpdated;
     public static event Action<string> OnAlertMessage; // 문자열 알림용
     public static event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
@@ -72,8 +73,8 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         }
         OnCookingSlotUpdated[slotIndex]?.Invoke();
     }
-    
-    private bool HasEmptySlot()
+
+    public bool HasEmptySlot()
     {
         return IngredientInventory.SlotList.Exists(slot => slot.IsEmpty);
     }
@@ -143,11 +144,16 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     
     public void ProcessCookingResult()
     {
+        var quantityToCook = Mathf.Min(
+            IngredientInventory.SlotList[0].ItemInstance.Quantity,
+            IngredientInventory.SlotList[1].ItemInstance.Quantity
+        );
+        
         int resultItemId = TryCook();
-        ConsumeInputIngredients();
-        GiveItemToInventory(resultItemId);
+        ConsumeInputIngredients(quantityToCook);
+        GiveItemToInventory(resultItemId, quantityToCook);
         ReturnRecipesToInventory();
-        OnCookOutputUpdated?.Invoke();
+        // OnCookOutputUpdated?.Invoke();
     }
     
     public void ReturnRecipesToInventory()
@@ -162,18 +168,18 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         }
         OnCookingSlotUpdated.ForEach(action => action?.Invoke());
     }
-    
-    public void ConsumeInputIngredients()
+
+    public void ConsumeInputIngredients(int quantity)
     {
         foreach (var slot in IngredientInventory.SlotList)
         {
-            slot.UseItem();
+            slot.UseItem(quantity);
         }
         OnCookingSlotUpdated.ForEach(action => action?.Invoke());
     }
-    
-    
-    private void GiveItemToInventory(int itemId)
+
+
+    private void GiveItemToInventory(int itemId, int quantity)
     {
         var resultItem = ItemManager.Instance.GetItem(itemId);
         if (resultItem == null)
@@ -182,7 +188,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             return;
         }
 
-        InventoryManager.Instance.PickItemFromGround(new ItemInstance(resultItem, 1));
+        InventoryManager.Instance.PickItemFromGround(new ItemInstance(resultItem, quantity));
         // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
         RPC_BroadcastCookingResult(itemId);
@@ -250,5 +256,9 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         var itemInstance = new ItemInstance(resultItem, 1);
 
         CookingFinished?.Invoke(itemInstance); // 레시피를 업데이트 시키는 이벤트
+    }
+
+    private void CheckOutput()
+    {
     }
 }

@@ -72,10 +72,10 @@ public class UI_IngredientButton : MonoBehaviour
         RecipePanelUIManager.Instance.UpdateRecipes();
     }
 
-    public void OnClickAllCategoryButton()
-    {
-        RecipePanelUIManager.Instance.UpdateAllRecipes();
-    }
+    // public void OnClickAllCategoryButton()
+    // {
+    //     RecipePanelUIManager.Instance.UpdateAllRecipes();
+    // }
 
     public ItemDefinition GetIngredient()
     {

@@ -12,15 +12,15 @@ public class UI_RecipeList : MonoBehaviour
     private void OnEnable()
     {
         RoomRecipeStateManager.OnRecipeUnlocked += HandleRecipeUnlocked;
-        CookingManager.OnItemAdded += RefreshRecipeButtons;
+        // CookingManager.OnItemAdded += RefreshRecipeButtons;
     }
     
     private void OnDisable()
     {
-        RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
+        // RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
         if (CookingManager.Instance != null)
         {
-            CookingManager.OnItemAdded -= RefreshRecipeButtons;
+            // CookingManager.OnItemAdded -= RefreshRecipeButtons;
         }
     }
 
@@ -34,9 +34,10 @@ public class UI_RecipeList : MonoBehaviour
             var buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var recipeButton = buttonObj.GetComponent<UI_RecipeButton>();
             recipeButton.Refresh(recipe);
-            buttonObj.SetActive(false); // 처음엔 꺼둠
+            // buttonObj.SetActive(false); // 처음엔 꺼둠
             _recipeButtonList.Add(recipeButton);
         }
+
     }
 
 
