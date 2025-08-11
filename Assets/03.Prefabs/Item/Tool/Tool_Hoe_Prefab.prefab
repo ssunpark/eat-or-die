@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1869646302037864
+--- !u!1 &455341416503104857
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4348734009491608}
-  - component: {fileID: 33447419763942638}
-  - component: {fileID: 23902844237502080}
+  - component: {fileID: 4933265084396304743}
+  - component: {fileID: 7028372849735979179}
   m_Layer: 0
   m_Name: Tool_Hoe_Prefab
   m_TagString: Untagged
@@ -18,36 +17,93 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4348734009491608
+--- !u!4 &4933265084396304743
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869646302037864}
+  m_GameObject: {fileID: 455341416503104857}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8715620717835127648}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &33447419763942638
+--- !u!114 &7028372849735979179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455341416503104857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windupKey: 
+  _swingKey: Swing_Default
+  _hitKey: Hit_Default
+  _useStartKey: Use_Start_Hoe
+  _useLoopKey: 
+  _useEndKey: 
+  _useSuccessKey: Use_Success_Hoe
+  _useFailKey: 
+  _useSpawn: {fileID: 0}
+  _mustbeChild: 0
+--- !u!1 &491210347345935561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8715620717835127648}
+  - component: {fileID: 2039647600588916059}
+  - component: {fileID: 8389714584096184080}
+  - component: {fileID: 4689014058255700565}
+  m_Layer: 0
+  m_Name: Tool_Hoe_Prefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8715620717835127648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491210347345935561}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.8106503, y: 0.010304609, z: -0.58525676, w: -0.014644401}
+  m_LocalPosition: {x: 0.067, y: -0.277, z: -0.043}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4933265084396304743}
+  m_LocalEulerAnglesHint: {x: -182.052, y: -71.656006, z: -0.024993896}
+--- !u!33 &2039647600588916059
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869646302037864}
+  m_GameObject: {fileID: 491210347345935561}
   m_Mesh: {fileID: 5761186703049666091, guid: a7f2cb31a71fe4a49a7e05b9bf2c301c, type: 3}
---- !u!23 &23902844237502080
+--- !u!23 &8389714584096184080
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1869646302037864}
+  m_GameObject: {fileID: 491210347345935561}
   m_Enabled: 1
   m_CastShadows: 2
   m_ReceiveShadows: 1
@@ -86,3 +142,25 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4689014058255700565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491210347345935561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windupKey: 
+  _swingKey: Swing_Default
+  _hitKey: Hit_Default
+  _useStartKey: Use_Start_Hoe
+  _useLoopKey: 
+  _useEndKey: 
+  _useSuccessKey: Use_Success_Hoe
+  _useFailKey: 
+  _useSpawn: {fileID: 0}
+  _mustbeChild: 0
