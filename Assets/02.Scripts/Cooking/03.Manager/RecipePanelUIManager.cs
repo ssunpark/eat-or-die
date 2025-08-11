@@ -5,16 +5,13 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
     private ItemInstance[] _ingredients;
     public ItemInstance[] Ingredients => _ingredients;
-
-    // public UI_RecipeIngredient IngredientListUI;
     public UI_RecipeList RecipeListUI;
+    
     private void Start()
     {
         InventoryManager.Instance.OnInventoryUpdated += UpdateIngredients;
     }
     
-    // InventoryManager에 등록된 재료를 조건(ID)으로 필터
-    // 디버그로 확인하고 이벤트 호출
     public void UpdateIngredients()
     {
         Debug.Log("RecipePanelUIManager의 UpdateIngredients 메서드 진입");
@@ -28,7 +25,6 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
             .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
             .Select(slot => slot.ItemInstance)
             .ToArray();
-        // IngredientListUI.ShowFilteredIngredients();
     }
 
     public void UpdateRecipes(int ingredientID)
@@ -44,7 +40,6 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 
     public bool IsKnownIngredient(int ingredientID)
     {
-        // return RoomInfoManager.Instance.CurrentRoomInfo.KnownIngredients.Contains(ingredientID);
         return RoomRecipeStateManager.Instance.IsUnlockedIngredients(ingredientID);
     }
 
@@ -70,7 +65,6 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
                 return false;
             }
         }
-        
         return true;
     }
 }
