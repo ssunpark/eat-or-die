@@ -6,7 +6,8 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     public ItemInstance ItemInstance;
     public bool IsHandEmpty => ItemInstance == null;
     
-    public Action OnItemPickedUp;
+    public event Action OnItemPickedUp;
+    public event Action OnItemDropped;
     
     public void PickUpItem(ItemInstance itemInstance)
     {
@@ -41,5 +42,6 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     {
         ItemInstance = null;
         OnItemPickedUp?.Invoke();
+        OnItemDropped?.Invoke();
     }
 }
