@@ -4,14 +4,15 @@ using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
 
+
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
 public enum EUseItemMode : byte
 {
     Self = 0,
-    Give = 1
+    Give = 1,
+    Targeted = 2
 }
 public class FSMStateInstances
 {
@@ -228,7 +229,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (closest.TryGetComponent(out NetworkObject net))
         {
-            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Self);
+            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Targeted);
             return true;
         }
 
@@ -309,7 +310,11 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     {
         _playerFSM.ForceActivateState((int)state);
     }
-
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    public void RPC_GrantExpOrder([RpcTarget] PlayerRef player, string actionName)
+    {
+        PlayerNetworkObject.ExpHandler.GrantExp(actionName);
+    }
     private bool TryGetPlayerUnderCursor(out NetworkObject targetPlayer)
     {
         targetPlayer = null;

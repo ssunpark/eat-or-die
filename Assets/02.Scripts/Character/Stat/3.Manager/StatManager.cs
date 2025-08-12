@@ -89,4 +89,16 @@ public class StatManager
             stat.ModifierRemoved += onRemove;
         }
     }
+
+    public void UnregisterModifierCallback(
+    EStatType type,
+    Action<EStatType, StatModifier> onAdd,
+    Action<EStatType, StatModifier> onRemove)
+    {
+        if (_stats.TryGetValue(type, out var stat))
+        {
+            stat.ModifierAdded -= onAdd;
+            stat.ModifierRemoved -= onRemove;
+        }
+    }
 }

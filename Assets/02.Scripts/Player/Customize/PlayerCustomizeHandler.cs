@@ -16,6 +16,7 @@ public enum ECustomizationPart
 public class PlayerCustomizeHandler : NetworkBehaviour
 {
     [SerializeField] private ECharacterType _classType;
+    public ECharacterType ClassType => _classType;
     [Networked, OnChangedRender(nameof(ApplyNickname))] public string Nickname { get; set; }
     [Networked, OnChangedRender(nameof(ApplyCustomization))] private CustomizationData _customData { get; set; }
 
@@ -36,6 +37,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
                 var nickname = "Player"+UnityEngine.Random.Range(100,999); // 기본 닉네임
                 var customData = new CustomizationData(); // 빈 커스터마이징 데이터
                 Rpc_SetCharacterInfo(classType, nickname, customData);
+                InitializePlayerHUD();
                 return;
             }
             var holder = CustomizationDataHolder.Instance;
@@ -46,6 +48,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
             }
             Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
             SendNicknameToHost();
+            InitializePlayerHUD();
         }
         else
         {
@@ -147,5 +150,22 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         _customData = data;
 
         PlayerInfoManager.Instance.UpdateNickname(Object.InputAuthority, nickname);
+    }
+
+    private void InitializePlayerHUD()
+    {
+        GameObject hudObject = GameObject.FindGameObjectWithTag("PlayerHUD");
+        if (hudObject != null)
+        {
+            var profilePanel = hudObject.GetComponentInChildren<ProfilePanel>(true);
+            if (profilePanel != null)
+            {
+                profilePanel.Bind(this);
+            }
+            else
+            {
+                Debug.LogWarning("[PlayerCustomizeHandler] ProfilePanel 컴포넌트를 찾을 수 없습니다.");
+            }
+        }
     }
 }

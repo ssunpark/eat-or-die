@@ -49,6 +49,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
                 Debug.LogWarning("PlayerInteractState: Interact target is null. Cannot perform interaction.");
                 return;
             }
+            GrantExpOrder("HarvestPlant");
             _fsm.Interact.Interact(_target);
         }
     }
