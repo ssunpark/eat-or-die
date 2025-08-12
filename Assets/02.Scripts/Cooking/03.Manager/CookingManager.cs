@@ -20,8 +20,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     
     public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
     private bool _isCooking;
-    private float _cookTime = 4f;
-    private float _t;
 
     public void SetCurrentCookingPot(CookingPotInteractable cookingPot)
     {
@@ -79,7 +77,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         return IngredientInventory.SlotList.Exists(slot => slot.IsEmpty);
     }
     
-    public void OnCookingCompleted()
+    public void OnCookingCompleted(bool p)
     {
         // 실제로는 PlayerState의 OnEndState 메서드 내부에서 이 함수가 호출됨
         if (!_isCooking)
@@ -92,7 +90,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         _currentCookingPot.Rpc_EndCooking();
         _isCooking = false;
         
-        if (_t >= _cookTime)
+        if (p)
         {
             ProcessCookingResult();
         }
@@ -102,7 +100,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             OnAlertMessage?.Invoke("요리가 취소되었습니다.");
         }
         
-        _t = 0; // _t 초기화
         // _amICooking = false;
     }
     
@@ -204,17 +201,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
 
-    private void Update()
-    {
-        // 네트워크 연결 이후 작동하게 하기 위함
-        if(!IsSpawned) return;
-        
-        if (_isCooking)
-        {
-            _t += Time.deltaTime;
-        }
-    }
-    
     public void TryStartCook()
     {
         if (HasEmptySlot())

@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlayerCookingState : APlayerStateBase
 {
     private bool _isCookCompleted = false;
+    private float _cookTime = 4f;
     public PlayerCookingState(PlayerFSM controller) : base(controller) 
     {
         AnimState = "Cook";
@@ -24,10 +25,10 @@ public class PlayerCookingState : APlayerStateBase
     {
         KCC.Move(Vector3.zero);
 
-        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]*2 && !_isCookCompleted)
+        if (Machine.StateTime >= _cookTime && !_isCookCompleted)
         {
             _isCookCompleted = true;
-            CookingManager.Instance.OnCookingCompleted();
+            CookingManager.Instance.OnCookingCompleted(true);
 
             GrantExpOrder("RetrieveCookedFood");
             RequestActivateState();
@@ -38,7 +39,7 @@ public class PlayerCookingState : APlayerStateBase
         if (_fsm.HasInputAuthority)
         {
             if (_isCookCompleted) return;
-            CookingManager.Instance.OnCookingCompleted();
+            CookingManager.Instance.OnCookingCompleted(false);
             _isCookCompleted = false;
         }
     }
