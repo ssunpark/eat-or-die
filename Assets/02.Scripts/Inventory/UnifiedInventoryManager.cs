@@ -8,6 +8,7 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
 
     private void Start()
     {
+        QuickSlotManager.Instance.OnUseItem += OnPossessionUpdated;
         SharedStorageManager.Instance.OnStorageUpdated += OnPossessionUpdated; // 창고 내용물이 바뀔 때
         HandEntity.Instance.OnItemDropped += OnPossessionUpdated; // 아이템을 필드에 드랍할 때
     }
@@ -62,8 +63,26 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
     
     public int GetItemCount(int itemID)
     {
-        return InventoryManager.Instance.GetItemCount(itemID)
-             + QuickSlotManager.Instance.GetItemCount(itemID)
-             + SharedStorageManager.Instance.GetItemCount(itemID);
+        return GetLocalItemCount(itemID) + GetNetworkedItemCount(itemID);
     }
+    
+    public int GetLocalItemCount(int itemID)
+    {
+        return InventoryManager.Instance.GetItemCount(itemID)
+             + QuickSlotManager.Instance.GetItemCount(itemID);
+    }
+    
+    public int GetNetworkedItemCount(int itemID)
+    {
+        return SharedStorageManager.Instance.GetItemCount(itemID);
+    }
+
+    // public bool TryConsumeItem(int itemID, int amount)
+    // {
+    //     // 로컬 아이템 갯수가 더 많으면 그냥 쓰고 종료
+    //     // 로컬 아이템이 부족하면 네트워크 창고에서 아이템 회수 시도
+    //     // 회수 후 아이템 부족하면 누가 먼저 가져간거
+    //     
+    //     OnPossessionUpdated?.Invoke();
+    // }
 }
