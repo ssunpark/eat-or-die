@@ -52,4 +52,18 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
         OnItemAcquired?.Invoke(itemInstance);
         OnPossessionUpdated?.Invoke();
     }
+
+    public bool HaveItem(int itemID)
+    {
+        return InventoryManager.Instance.HaveItem(itemID)
+            || QuickSlotManager.Instance.HaveItem(itemID)
+            || SharedStorageManager.Instance.HaveItem(itemID);
+    }
+    
+    public int GetItemCount(int itemID)
+    {
+        return InventoryManager.Instance.GetItemCount(itemID)
+             + QuickSlotManager.Instance.GetItemCount(itemID)
+             + SharedStorageManager.Instance.GetItemCount(itemID);
+    }
 }

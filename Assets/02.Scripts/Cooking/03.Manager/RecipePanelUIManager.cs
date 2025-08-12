@@ -47,18 +47,18 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 
         if (!ingredient2ID.HasValue)
         {
-            return InventoryManager.Instance.HaveItem(ingredient1ID);
+            return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID);
         }
 
         // 재료가 2개인 레시피의 경우
         if (ingredient1ID == ingredient2ID.Value)
         {
-            return InventoryManager.Instance.GetItemCount(ingredient1ID) >= 2;
+            return UnifiedInventoryManager.Instance.GetItemCount(ingredient1ID) >= 2;
         }
         else
         {
-            return InventoryManager.Instance.HaveItem(ingredient1ID) &&
-                   InventoryManager.Instance.HaveItem(ingredient2ID.Value);
+            return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID) &&
+                   UnifiedInventoryManager.Instance.HaveItem(ingredient2ID.Value);
         }
     }
 }

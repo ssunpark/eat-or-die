@@ -161,4 +161,14 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 		OnEntireQuickSlotUpdated?.Invoke();
 	}
+	
+	public bool HaveItem(int itemID)
+	{
+		return _quickSlots.HaveItem(itemID);
+	}
+	
+	public int GetItemCount(int itemID)
+	{
+		return _quickSlots.GetItemCount(itemID);
+	}
 }

@@ -16,6 +16,33 @@ public class SharedStorage : NetworkBehaviour
     {
         _changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
     }
+
+    public bool HaveItem(int ItemID)
+    {
+        foreach (NetworkedItem networkedItem in Items)
+        {
+            if (networkedItem.ID == ItemID && networkedItem.Quantity > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    public int GetItemCount(int itemID)
+    {
+        int count = 0;
+        
+        foreach (NetworkedItem networkedItem in Items)
+        {
+            if (networkedItem.ID == itemID)
+            {
+                count += networkedItem.Quantity;
+            }
+        }
+        return count;
+    }
     
     public override void Render()
     {
