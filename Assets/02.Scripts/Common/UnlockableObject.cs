@@ -4,7 +4,7 @@ using UnityEngine;
 public class UnlockableObject : NetworkBehaviour
 {
     [Networked, OnChangedRender(nameof(OnUnlock))]
-    private bool IsUnlocked { get; set; }
+    private bool IsUnlocked { get; set; } = true;
 
     [SerializeField]
     private GameObject _unlockTarget;
