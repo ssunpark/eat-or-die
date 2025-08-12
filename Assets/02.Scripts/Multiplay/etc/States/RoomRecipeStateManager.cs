@@ -4,20 +4,20 @@ using Fusion;
 
 public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateManager>
 {
-    public static event Action<Recipe> OnRecipeUnlocked;
-    public static event Action<int> OnIngredientUnlocked;
+    public event Action<Recipe> OnRecipeUnlocked;
+    public event Action<int> OnIngredientUnlocked;
 
     private void OnEnable()
     {
         InventoryManager.OnItemAcquired += HandleIngredientDiscovered;
-        CookingManager.CookingFinished += HandleCookingFinished;
+        CookingManager.Instance.CookingFinished += HandleCookingFinished;
 
     }
     
     private void OnDisable()
     {
         InventoryManager.OnItemAcquired -= HandleIngredientDiscovered;
-        CookingManager.CookingFinished -= HandleCookingFinished;
+        CookingManager.Instance.CookingFinished -= HandleCookingFinished;
     
     }
 

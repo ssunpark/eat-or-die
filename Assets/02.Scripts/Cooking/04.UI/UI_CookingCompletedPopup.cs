@@ -17,13 +17,13 @@ public class UI_CookingCompletedPopup : MonoBehaviour
 
     private void OnEnable()
     {
-        CookingManager.OnCompletedPopupStarted += ShowPopup;
+        CookingManager.Instance.OnCompletedPopupStarted += ShowPopup;
         Hide();
     }
 
     private void OnDisable()
     {
-        CookingManager.OnCompletedPopupStarted -= ShowPopup;
+        CookingManager.Instance.OnCompletedPopupStarted -= ShowPopup;
     }
 
     private void ShowPopup(ItemInstance itemInstance)

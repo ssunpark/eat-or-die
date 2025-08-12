@@ -12,11 +12,11 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     private Inventory _inputIngredientInventory;
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
 
-    public static event Action OnCookOutputUpdated;
-    public static event Action<string> OnAlertMessage; // 문자열 알림용
-    public static event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
-    public static event Action<ItemInstance> OnCompletedPopupStarted;
-    public static event Action OnItemAdded;
+    public Action OnCookOutputUpdated;
+    public event Action<string> OnAlertMessage; // 문자열 알림용
+    public event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
+    public event Action<ItemInstance> OnCompletedPopupStarted;
+    public event Action OnItemAdded;
     
     public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
     private bool _isCooking;

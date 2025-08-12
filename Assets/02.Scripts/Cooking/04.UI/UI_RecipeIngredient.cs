@@ -20,12 +20,12 @@ public class UI_RecipeIngredient : MonoBehaviour
     
     private void OnEnable()
     {
-        RoomRecipeStateManager.OnIngredientUnlocked += HandleIngredientUnlocked;
+        RoomRecipeStateManager.Instance.OnIngredientUnlocked += HandleIngredientUnlocked;
     }
 
     private void OnDisable()
     {
-        RoomRecipeStateManager.OnIngredientUnlocked -= HandleIngredientUnlocked;
+        RoomRecipeStateManager.Instance.OnIngredientUnlocked -= HandleIngredientUnlocked;
     }
     
     public void Init()

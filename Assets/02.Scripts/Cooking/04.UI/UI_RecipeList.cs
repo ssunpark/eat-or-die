@@ -11,7 +11,7 @@ public class UI_RecipeList : MonoBehaviour
 
     private void OnEnable()
     {
-        RoomRecipeStateManager.OnRecipeUnlocked += HandleRecipeUnlocked;
+        RoomRecipeStateManager.Instance.OnRecipeUnlocked += HandleRecipeUnlocked;
         // CookingManager.OnItemAdded += RefreshRecipeButtons;
     }
     
