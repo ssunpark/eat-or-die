@@ -233,14 +233,24 @@ public class Player : CharacterBase, IAttackable
 
         if (current / max > 0.2)
         {
-            return;
+            if (PlayerFSM.StateMachine.ActiveState is PlayerBerserkState)
+            {
+                if (PlayerFSM.EnableDebugLog)
+                {
+                    Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
+                }
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
+                _prevHunger = current;
+                return;
+            }
         }
 
         if (current <= 0)
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerDeadState)
             {
-                _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
+                if (PlayerFSM.EnableDebugLog)
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
                 return;
             }
         }
@@ -248,7 +258,8 @@ public class Player : CharacterBase, IAttackable
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerBerserkState)
             {
-                Debug.Log("[Player] Entering Berserk State due to low hunger.");
+                if (PlayerFSM.EnableDebugLog)
+                    Debug.Log("[Player] Entering Berserk State due to low hunger.");
                 _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
                 _prevHunger = current;
                 return;
@@ -258,7 +269,10 @@ public class Player : CharacterBase, IAttackable
         {
             if (PlayerFSM.StateMachine.ActiveState is PlayerBerserkState)
             {
-                Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
+                if (PlayerFSM.EnableDebugLog)
+                {
+                    Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
+                }
                 _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
                 _prevHunger = current;
                 return;

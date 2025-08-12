@@ -122,9 +122,7 @@ public class TraitUIEntry : MonoBehaviour
 
     public void OnClickOpenSkillTree()
     {
-        var popup = Instantiate(PopupPrefab, _canvas.transform, false);
-        popup.GetComponent<SkillTreePopup>().SetData(_traitManager, _data);
-        popup.SetActive(true);
-        popup.GetComponent<Popup>().Open();
+        PopupPrefab.GetComponent<SkillTreePopup>().SetData(_traitManager, _data);
+        PopupPrefab.GetComponent<DefaultPopup>().Open();
     }
 }
