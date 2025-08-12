@@ -5,57 +5,79 @@ public class BerserkAttack : ABerserkSubStateBase
 {
     public BerserkAttack(PlayerFSM fsm) : base(fsm) {
         AnimState = "Attack";
-        _positionOffset = new Vector3(0f, 0.2f, 0.5f);
+        _positionOffset = new Vector3(0f, 0.7f, 0.3f);
     }
     private Vector3 _positionOffset;
-    private float _meleeDamage;
-    private float _magicDamage;
     private float _knockbackStrength = 5f;
     private float _hitStunLength = 0.5f;
-    private float _totalDamageMultiplier = 1f;
-    private float _bossDamageMultiplier = 1f;
     private float _attackSpeed = 1f;
     private float _animationTime;
+    private bool _isRenderInitialized = false;
+
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
     {
-        LazySet();
+        base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        _meleeDamage = _stat.GetStat(EStatType.MeleeDamage);
-        _magicDamage = _stat.GetStat(EStatType.MagicDamage);
-        //_knockbackStrength = _stat.GetStat(EStatType.KnockbackStrength);
-        //_hitStunLength = _stat.GetStat(EStatType.HitStunLength);
-        _totalDamageMultiplier = _stat.GetStat(EStatType.TotalDamage);
-        _bossDamageMultiplier = _stat.GetStat(EStatType.BossDamage);
-
-        _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
-        _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
-        Anim.SetFloat("AttackSpeed", _attackSpeed);
         float baseClipLength = _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState];
         _animationTime = Mathf.Max(baseClipLength / _attackSpeed, 0.06f);
     }
+    private Vector3 _direction;
 
     protected override void OnEnterStateRender()
     {
-        LazySet();
-        _attackSpeed = _stat?.GetStat(EStatType.AttackSpeed) ?? 1f;
+        base.OnEnterStateRender();
+        _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
+
         Anim.SetFloat("AttackSpeed", _attackSpeed);
-        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+        _isRenderInitialized = true;
+
+        if (_fsm.HasInputAuthority || _fsm.HasStateAuthority)
+        {
+            _direction = GetMouseDirection();
+        }
     }
 
+    protected override void OnExitState()
+    {
+        _fsm.HitTargets.Clear();
+        _isRenderInitialized = false;
+    }
+
+    protected override int GetNetworkDataWordCount() => 1;
+    protected override void OnFixedUpdate()
+    {
+        if (!_fsm.HasStateAuthority) return;
+        if (Machine.StateTime >= _animationTime && _isRenderInitialized)
+        {
+            Machine.ForceActivateState<BerserkChase>();
+            return;
+        }
+        else
+        {
+            KCC.SetLookRotation(Quaternion.LookRotation(_direction));
+            KCC.Move(Vector3.zero);
+        }
+    }
+
+    private Vector3 GetMouseDirection()
+    {
+        Vector3 dir = _fsm.CurrentInput.mousePosition - _fsm.transform.position;
+        var normalizedDir = dir.normalized;
+        normalizedDir.y = 0;
+        return normalizedDir;
+    }
     public override void OnActionMoment()
     {
         Vector3 attackOrigin = _fsm.transform.position + _fsm.transform.rotation * _positionOffset;
-        Vector3 direction = KCC.GetLookRotation();
-        Vector2 dir2d = new Vector2(direction.x, direction.z);
         EAttackType attackType = _fsm.PlayerNetworkObject.ItemHolder.AttackType;
         float meleeDamage = _stat.GetStat(EStatType.MeleeDamage);
         float magicDamage = _stat.GetStat(EStatType.MagicDamage);
         float totalDamageMultiplier = _stat.GetStat(EStatType.TotalDamage);
         float bossDamageMultiplier = _stat.GetStat(EStatType.BossDamage);
 
-        AttackInfo attackInfo = new AttackInfo()
+        AttackInfo attackInfo = new()
         {
             MeleeDamage = meleeDamage,
             MagicDamage = magicDamage,
@@ -73,7 +95,7 @@ public class BerserkAttack : ABerserkSubStateBase
                 break;
             case EAttackType.RangeWeapon:
                 if (_fsm.HasStateAuthority)
-                PerformRangedAttack(attackOrigin, dir2d, projectileKey, attackInfo);
+                    PerformRangedAttack(attackOrigin, _direction, projectileKey, attackInfo);
                 break;
             default:
                 Debug.LogWarning($"[PlayerAttackState] Unsupported attack type: {attackType}");
@@ -101,16 +123,18 @@ public class BerserkAttack : ABerserkSubStateBase
             Debug.LogError("[PlayerAttackState] Spawned object does not have Projectile component.");
             return;
         }
-
+        PlayAttackVfx(EAttackPhase.Swing, attackOrigin);
         projectile.Initialize(
-            attackInfo: attackInfo
+            attackInfo: attackInfo,
+            layerMask: _fsm.BerserkLayerMask
         );
     }
     private void PerformMeleeAttack(Vector3 attackOrigin, AttackInfo attackInfo)
     {
         int result = Machine.Runner.GetPhysicsScene().OverlapSphere(attackOrigin, _stat.GetStat(EStatType.AttackRange), _hitsColliders,
-                            _fsm.attackableLayerMask, QueryTriggerInteraction.Collide);
+                            _fsm.BerserkLayerMask, QueryTriggerInteraction.Collide);
 
+        PlayAttackVfx(EAttackPhase.Swing, attackOrigin);
         for (int i = 0; i < result; i++)
         {
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
@@ -121,7 +145,7 @@ public class BerserkAttack : ABerserkSubStateBase
                 continue;
             }
 
-
+            PlayAttackVfx(EAttackPhase.Hit, _hitsColliders[i].transform.position + (Vector3.up * 0.7f));
             target.OnHitLocal(attackInfo);
 
             if (i >= _fsm.HitTargets.Count)
@@ -131,18 +155,27 @@ public class BerserkAttack : ABerserkSubStateBase
         }
     }
 
-    protected override void OnExitState()
+    private void PlayAttackVfx(EAttackPhase phase, Vector3 pos)
     {
-        _fsm.HitTargets.Clear();
-    }
-    protected override void OnFixedUpdate()
-    {
-        if (!_fsm.HasStateAuthority) return;
-        KCC.Move(Vector3.zero);
-        if (Machine.StateTime >= _animationTime)
+        var go = _fsm.ItemHolder?.HeldItemObject;
+        string key = null;
+
+        if (go == null)
         {
-            Machine.ForceActivateState<BerserkChase>();
-            return;
+            key = $"{phase.ToString()}_Unarmed";
         }
+        else if (go.TryGetComponent<IAttackVfxProvider>(out var vfx))
+        {
+            key = vfx.GetEffectKey(phase);
+
+        }
+        if (string.IsNullOrEmpty(key))
+            key = $"{phase.ToString()}_Default";
+
+        var rot = Quaternion.LookRotation(_direction);
+
+
+        Debug.Log($"[PlayerAttackState] Playing attack VFX: {key} at position: {pos}, rotation: {rot}");
+        ParticleManager.Instance.PlayByKeyLocal(key, pos, rot);
     }
 }

@@ -6,7 +6,7 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     public PlayerAttackState(PlayerFSM controller) : base(controller)
     {
         AnimState = "Attack";
-        _positionOffset = new Vector3(0f, 0.2f, 0.5f);
+        _positionOffset = new Vector3(0f, 0.7f, 0.3f);
         StateId = (int)EPlayerState.Attack;
     }
     private Vector3 _positionOffset;
@@ -37,7 +37,7 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
 
         if (_fsm.HasInputAuthority || _fsm.HasStateAuthority)
         {
-            _direction = GetMouseDirection(); 
+            _direction = GetMouseDirection();
         }
     }
 
@@ -93,7 +93,10 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
         float magicDamage = _stat.GetStat(EStatType.MagicDamage);
         float totalDamageMultiplier = _stat.GetStat(EStatType.TotalDamage);
         float bossDamageMultiplier = _stat.GetStat(EStatType.BossDamage);
-
+        if (_fsm.EnableDebugLog)
+        {
+            Debug.Log($"[PlayerAttackState] Attack Range: {_stat.GetStat(EStatType.AttackRange)}");
+        }
         AttackInfo attackInfo = new()
         {
             MeleeDamage = meleeDamage,
@@ -140,16 +143,24 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             Debug.LogError("[PlayerAttackState] Spawned object does not have Projectile component.");
             return;
         }
-
+        PlayAttackVfx(EAttackPhase.Swing, attackOrigin);
         projectile.Initialize(
-            attackInfo: attackInfo
+            attackInfo: attackInfo,
+            layerMask: _fsm.attackableLayerMask
         );
     }
     private void PerformMeleeAttack(Vector3 attackOrigin, AttackInfo attackInfo)
     {
         int result = Machine.Runner.GetPhysicsScene().OverlapSphere(attackOrigin, _stat.GetStat(EStatType.AttackRange), _hitsColliders,
                             _fsm.attackableLayerMask, QueryTriggerInteraction.Collide);
+        
+        PlayAttackVfx(EAttackPhase.Swing, attackOrigin);
 
+        if(result > 0)
+        {
+            if(_fsm.HasStateAuthority)
+                GrantExpOrder("MeleeAttackHit");
+        }
         for (int i = 0; i < result; i++)
         {
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();
@@ -160,7 +171,7 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
                 continue;
             }
 
-            
+            PlayAttackVfx(EAttackPhase.Hit, _hitsColliders[i].transform.position+(Vector3.up*0.7f));
             target.OnHitLocal(attackInfo);
 
             if (i >= _fsm.HitTargets.Count)
@@ -168,5 +179,29 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             else
                 _fsm.HitTargets.Set(i, target.NetworkObject);
         }
+    }
+
+    private void PlayAttackVfx(EAttackPhase phase, Vector3 pos)
+    {
+        var go = _fsm.ItemHolder?.HeldItemObject;
+        string key = null;
+
+        if (go == null)
+        {
+            key = $"{phase.ToString()}_Unarmed";
+        }
+        else if (go.TryGetComponent<IAttackVfxProvider>(out var vfx))
+        {
+            key = vfx.GetEffectKey(phase);
+            
+        }
+        if (string.IsNullOrEmpty(key))
+            key = $"{phase.ToString()}_Default";
+
+        var rot = Quaternion.LookRotation(_direction);
+
+
+        Debug.Log($"[PlayerAttackState] Playing attack VFX: {key} at position: {pos}, rotation: {rot}");
+        ParticleManager.Instance.PlayByKeyLocal(key, pos, rot);
     }
 }
