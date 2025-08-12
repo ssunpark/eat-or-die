@@ -355,7 +355,7 @@ public class SkillManagerWindow : EditorWindow
         Undo.RecordObject(mgr, "Skill Upgrade");
         try
         {
-            mgr.Upgrade(id, newLevel);
+            mgr.Upgrade(id);
             EditorUtility.SetDirty(mgr);
             ShowNotify($"Upgrade: ID {id} -> Lv {newLevel}");
             RefreshSnapshots(force: true);

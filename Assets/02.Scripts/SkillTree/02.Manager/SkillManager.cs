@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SkillManager : BehaviourSingleton<SkillManager>
@@ -13,6 +14,8 @@ public class SkillManager : BehaviourSingleton<SkillManager>
     // 현재 활성 핸들러(있을 때만 값 존재)
     private readonly Dictionary<int, ISkillHandler> _handlers = new();
 
+    public event Action OnDataChanged;
+
     private void Awake()
     {
         _hub = new SkillEventHub();
@@ -20,7 +23,7 @@ public class SkillManager : BehaviourSingleton<SkillManager>
 
         var list = CSVLoader<SkillRawData>.LoadCSV($"{Application.streamingAssetsPath}{SKILL_CSV_PATH}");
         foreach (var raw in list)
-            _skills[raw.Id] = new Skill(raw, 0);
+            _skills[raw.Id] = new Skill(raw);
     }
 
     // 활성화 + 레벨 지정
@@ -43,15 +46,16 @@ public class SkillManager : BehaviourSingleton<SkillManager>
 
         if (level > 0)
             _hub.Subscribe(handler);
+        
+        OnDataChanged?.Invoke();
     }
 
-    // 수치만 변하는 경우 인플레이스 갱신(가능하면)
-    public void Upgrade(int id, int newLevel)
+    public void Upgrade(int id)
     {
-        if (!_skills.TryGetValue(id, out var skill))
+        if (!_skills.TryGetValue(id, out var skill) && !skill.TryUpgradeLevel())
             return;
 
-        Active(id, newLevel);
+        Active(id, skill.Level);
     }
 
     public void Inactive(int id)
