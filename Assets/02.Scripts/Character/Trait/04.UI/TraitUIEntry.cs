@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Ricimi;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +21,15 @@ public class TraitUIEntry : MonoBehaviour
 
     private TraitManager _traitManager;
     private CharacterTraitData _data;
+
+    public GameObject PopupPrefab;
+
+    protected Canvas _canvas;
+
+    protected void Start()
+    {
+        _canvas = GetComponentInParent<Canvas>();
+    }
 
     public void Bind(TraitManager traitManager, IEnumerable<CharacterTraitData> allData)
     {
@@ -107,5 +118,13 @@ public class TraitUIEntry : MonoBehaviour
 
         float ratio = expPerLevel <= 0f ? 0f : Mathf.Clamp01(trait.CurrentExp / expPerLevel);
         _expSlider.value = ratio;
+    }
+
+    public void OnClickOpenSkillTree()
+    {
+        var popup = Instantiate(PopupPrefab, _canvas.transform, false);
+        popup.GetComponent<SkillTreePopup>().SetData(_traitManager, _data);
+        popup.SetActive(true);
+        popup.GetComponent<Popup>().Open();
     }
 }
