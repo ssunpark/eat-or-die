@@ -20,7 +20,10 @@ public class UI_CraftItemList : MonoBehaviour
     private void OnDisable()
     {
         // CraftRecipeManager.Instance.OnDataLoaded -= CreateButtons;
-        InventoryManager.Instance.OnInventoryUpdated -= RefrehCraftRecipButtons;
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.OnInventoryUpdated -= RefrehCraftRecipButtons;
+        }
     }
 
     public void Init()
@@ -31,7 +34,7 @@ public class UI_CraftItemList : MonoBehaviour
         {
             var buttonObj = Instantiate(CraftItemPrefab, Container.transform);
             var craftRecipeButton = buttonObj.GetComponent<UI_CraftItemButton>();
-            craftRecipeButton.Refresh(craftRecipe); // 처음엔 craft가 가능한지에 대해서 리프레시, 요리솥 SetDetail 리프레시
+            craftRecipeButton.Init(craftRecipe); // 처음엔 craft가 가능한지에 대해서 리프레시, 요리솥 SetDetail 리프레시
             _craftItemButtonList.Add(craftRecipeButton);
         }
     }
@@ -73,8 +76,10 @@ public class UI_CraftItemList : MonoBehaviour
 
     public void RefrehCraftRecipButtons()
     {
+        Debug.Log("RefrehCraftRecipButtons 메서드 진입!");
         foreach (var button in _craftItemButtonList)
         {
+            Debug.Log("foreach문 진입");
             button.CanCraft();
             button.gameObject.SetActive(true);
         }

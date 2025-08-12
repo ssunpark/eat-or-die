@@ -2,14 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum CraftCategory
-{
-    All, // 전체
-    Tool, // 도구
-    Weapon, // 무기
-    Equipment // 장비
-}
-
 public class UI_CraftItemButton : MonoBehaviour
 {
     public Image IconImage;
@@ -20,14 +12,20 @@ public class UI_CraftItemButton : MonoBehaviour
     public int CraftRecipeID => _data.CraftResultID;
     private ItemProfile _itemProfile;
 
-    public void Refresh(CraftRecipe data)
+    public void Init(CraftRecipe data)
     {
         _data = data;
-        // 인벤토리 기준으로 만들 수 있는지에 대한 여부 리프레시 > 아이콘이 인벤토리 상태에 따라 만들 수 있으면 활성화, 만들 수 없으면 비활성화
-        // IconImage.sprite = itemProfile.ItemDefinition.Icon;
-        // ItemNameText.text = data.CraftRecipeName;
+        ItemNameText.text = _data.CraftRecipeName;
+        ItemProfile itemProfile = ItemManager.Instance.GetItem(_data.CraftResultID);
+        IconImage.sprite = itemProfile.ItemDefinition.Icon;
     }
 
+    public void Refresh(CraftRecipe data)
+    {
+        Debug.Log("인벤토리에서 만들 수 있는지 아이콘으로 표시하는 부분은 리프레시해야 함!");
+    }
+
+    // 이게 사실상 리프레시할때마다 호출 필요한 함수
     public void CanCraft()
     {
         var haveMat1 = InventoryManager.Instance.GetItemCount(_data.CraftMaterial1ID);
@@ -44,6 +42,13 @@ public class UI_CraftItemButton : MonoBehaviour
         button.colors = colors;
     }
 
+    public void OnClickItemButton()
+    {
+        Debug.Log("버튼 클릭!!!");
+        Debug.Log("이 부분은 이제 각각의 아이템에 대한 세부 사항을 리프레시하는 기능 들어감");
+    }
+
+    // 이건 나중에 setdetail 창에서 제작하기 클릭할때 연결할 부분
     public void OnClick()
     {
         var consumedMat1 = InventoryManager.Instance.TryConsumeItem(_data.CraftMaterial1ID, _data.CraftMaterial1Count);
