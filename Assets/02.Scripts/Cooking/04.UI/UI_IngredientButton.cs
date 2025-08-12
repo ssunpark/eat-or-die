@@ -40,17 +40,11 @@ public class UI_IngredientButton : MonoBehaviour
             LockButton();
             return;
         }
-
-        if (itemDefinition.Icon != null)
+        else
         {
             IconImage.sprite = itemDefinition.Icon;
             IconImage.gameObject.SetActive(true);
             UnlockButton();
-        }
-        else
-        {
-            IconImage.gameObject.SetActive(false);
-            LockButton();
         }
     }
 
@@ -62,7 +56,7 @@ public class UI_IngredientButton : MonoBehaviour
 
     public void LockButton()
     {
-        IngredientButton.interactable = true;
+        IngredientButton.interactable = false;
         IconImage.color = lockedColor;
     }
 

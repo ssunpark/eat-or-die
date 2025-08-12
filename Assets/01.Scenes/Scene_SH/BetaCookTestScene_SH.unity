@@ -3315,6 +3315,8 @@ GameObject:
   - component: {fileID: 83938815}
   - component: {fileID: 83938814}
   - component: {fileID: 83938816}
+  - component: {fileID: 83938818}
+  - component: {fileID: 83938817}
   m_Layer: 5
   m_Name: CookingPanel
   m_TagString: Untagged
@@ -3396,6 +3398,44 @@ MonoBehaviour:
   CookingPanel: {fileID: 83938812}
   UIRecipeIngredient: {fileID: 1462177835}
   UIRecipeList: {fileID: 554568369}
+--- !u!114 &83938817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83938812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb8bf384e28c864cbfd51f727dbda60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BackgroundColor: {r: 0.039215688, g: 0.039215688, b: 0.039215688, a: 0.6}
+  DestroyTime: 0.1
+  BackgroundFade: 1
+  BlockBackgroundInput: 0
+--- !u!95 &83938818
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83938812}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ee7a3479233ad4835a9fdccccf03e0d8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &85549456
 GameObject:
   m_ObjectHideFlags: 0
@@ -47909,7 +47949,7 @@ MonoBehaviour:
     m_Top: 20
     m_Bottom: 20
   m_ChildAlignment: 1
-  m_Spacing: 20
+  m_Spacing: 40
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -101118,7 +101158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7654784995476626807, guid: 23c95e5744776854d9e18e9e2adb0509, type: 3}
       propertyPath: _persistentRoomID
-      value: SuhyeonTest33
+      value: SuhyeonTest34
       objectReference: {fileID: 0}
     - target: {fileID: 8721197579616937535, guid: 23c95e5744776854d9e18e9e2adb0509, type: 3}
       propertyPath: SortKey
@@ -105247,10 +105287,10 @@ RectTransform:
   - {fileID: 3041153234840734331}
   m_Father: {fileID: 1081692591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 90, y: 90}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 50, y: -50}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8048163325780592067
 MonoBehaviour:
