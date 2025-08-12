@@ -39,7 +39,7 @@ public class SharedStorage : NetworkBehaviour
 
         if (itemInSlot.ID == 0) return;
 
-        RPC_PutItemToLocal(info.Source, itemInSlot);
+        RPC_ItemToLocal(info.Source, itemInSlot);
 
         Items.Set(slotIndex, new NetworkedItem { ID = 0 });
     }
@@ -48,13 +48,15 @@ public class SharedStorage : NetworkBehaviour
     public void RPC_TryTakeOneItem(int slotIndex, NetworkedItem itemInHand, RpcInfo info = default)
     {
         if (slotIndex < 0 || slotIndex >= STORAGE_SIZE) return;
-        
+
         NetworkedItem itemInSlot = Items.Get(slotIndex);
         
         if (itemInSlot.ID == 0) return;
 
         if (itemInHand.ID == 0 || itemInHand.ID == itemInSlot.ID)
         {
+            if (itemInHand.ID != 0 && itemInHand.Quantity >= itemInHand.MaxQuantity) return;
+            
             int remainingQuantity = itemInSlot.Quantity - 1;
             
             Items.Set(slotIndex, new NetworkedItem
@@ -65,10 +67,10 @@ public class SharedStorage : NetworkBehaviour
                 MaxQuantity = itemInSlot.MaxQuantity
             });
 
-            RPC_PutItemToLocal(info.Source, new NetworkedItem
+            RPC_ItemToLocal(info.Source, new NetworkedItem
             {
                 ID = itemInSlot.ID,
-                Quantity = 1,
+                Quantity = itemInHand.Quantity + 1,
                 Durability = itemInSlot.Durability,
                 MaxQuantity = itemInSlot.MaxQuantity
             });
@@ -81,13 +83,19 @@ public class SharedStorage : NetworkBehaviour
         else
         {
             Items.Set(slotIndex, itemInHand);
-            RPC_PutItemToLocal(info.Source, itemInSlot);
+            RPC_ItemToLocal(info.Source, itemInSlot);
         }
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    private void RPC_PutItemToLocal([RpcTarget] PlayerRef player, NetworkedItem item)
+    private void RPC_ItemToLocal([RpcTarget] PlayerRef player, NetworkedItem item)
     {
+        if (item.ID == 0)
+        {
+            SharedStorageManager.Instance.GetItemFromStorage(null);
+            return;
+        }
+        
         ItemProfile itemProfile = ItemManager.Instance.GetItem(item.ID);
         ItemInstance itemInstance = new ItemInstance(itemProfile, item.Quantity, item.Durability);
 
@@ -105,6 +113,7 @@ public class SharedStorage : NetworkBehaviour
         if (itemInSlot.ID == 0)
         {
             Items.Set(slotIndex, item);
+            RPC_ItemToLocal(info.Source, new NetworkedItem { ID = 0 });
         }
         else if (itemInSlot.ID == item.ID) // 같은 아이템인 경우
         {
@@ -127,7 +136,7 @@ public class SharedStorage : NetworkBehaviour
                     Durability = item.Durability,
                     MaxQuantity = item.MaxQuantity
                 };
-                RPC_PutItemToLocal(info.Source, remainItem);
+                RPC_ItemToLocal(info.Source, remainItem);
             }
             else
             {
@@ -138,12 +147,13 @@ public class SharedStorage : NetworkBehaviour
                     Durability = itemInSlot.Durability,
                     MaxQuantity = itemInSlot.MaxQuantity
                 });
+                RPC_ItemToLocal(info.Source, new NetworkedItem { ID = 0 });
             }
         }
         else
         {
-            RPC_PutItemToLocal(info.Source, itemInSlot);
             Items.Set(slotIndex, item);
+            RPC_ItemToLocal(info.Source, itemInSlot);
         }
     }
 
