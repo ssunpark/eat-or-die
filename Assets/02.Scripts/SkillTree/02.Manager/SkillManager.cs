@@ -26,7 +26,8 @@ public class SkillManager : BehaviourSingleton<SkillManager>
     // 활성화 + 레벨 지정
     public void Active(int id, int level)
     {
-        if (!_skills.TryGetValue(id, out var skill)) return;
+        if (!_skills.TryGetValue(id, out var skill))
+            return;
 
         // 기존 구독/핸들러 정리
         if (_handlers.ContainsKey(id))
@@ -47,14 +48,16 @@ public class SkillManager : BehaviourSingleton<SkillManager>
     // 수치만 변하는 경우 인플레이스 갱신(가능하면)
     public void Upgrade(int id, int newLevel)
     {
-        if (!_skills.TryGetValue(id, out var skill)) return;
+        if (!_skills.TryGetValue(id, out var skill))
+            return;
 
         Active(id, newLevel);
     }
 
     public void Inactive(int id)
     {
-        if (!_skills.TryGetValue(id, out var skill)) return;
+        if (!_skills.TryGetValue(id, out var skill))
+            return;
 
         // 구독/핸들러 정리
         if (_handlers.ContainsKey(id))
@@ -70,6 +73,9 @@ public class SkillManager : BehaviourSingleton<SkillManager>
     public void Publish<TPayload>(ESkillEventType type, SkillContext ctx, TPayload payload)
         where TPayload : ISkillPayload
         => _hub.Publish(type, ctx, payload);
+
+    public void Publish(ESkillEventType type, SkillContext ctx)
+        => _hub.Publish(type, ctx, null);
 
     // 선택: 조회 헬퍼
     public bool TryGetSkill(int id, out Skill s) => _skills.TryGetValue(id, out s);

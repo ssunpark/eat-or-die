@@ -1,6 +1,6 @@
 ID,Name,Description,ETraitType,ECalculateType,Position,MaxLevel,EContextType,ETriggerType,TriggerValue,EffectName,EStatType,FixedValue,NValue,EBuffType,BuffValue,BuffDuration,EAffectStatType,AffectStatValue,AffectStatValue2,IconPath(Addressable)
 1100001,먹어야 산다,"배고픔이 절반 이하일 때, 음식의 배고픔 회복 효과가 N% 증가합니다.",Vitality,Multiplicative,0,5,OnEat,HungerBelowThreshold,0.5,HungerRestore,,,0.02,,,,HungerRestore,0.02,2%,
-1100002,가짜 배고픔,"5초간 정지하면, 이후 가만히 있는 동안 1초마다 최대 배고픔의 N%만큼 증가합니다.",Vitality,Multiplicative,1,5,OnAnyContext,WhileStationary,5,HungerRestoreByMaxHunger,,,0.02,RestoreHungerByMaxHungerBuff,0.0002,1,,,,
+1100002,가짜 배고픔,"5초간 정지하면, 이후 가만히 있는 동안 1초마다 최대 배고픔의 N%만큼 증가합니다.",Vitality,Multiplicative,1,5,OnIdle,"WhileStationary, EveryOneSecond",5,HungerRestoreByMaxHunger,,,0.002,RestoreHungerByMaxHungerBuff,0.002,1,,,,
 1100003,건강한 체질,"배고픔이 70% 이상일 때, 음식 효과가 N% 증가됩니다.",Vitality,Multiplicative,2,5,OnEat,HungerAboveThreshold,0.7,FoodEffectBoost,,,0.06,,,,FoodEffectValue,0.06,6%,
 1100004,꼭꼭 씹어먹어라,"음식을 먹을 때, 추가로 N%만큼 배고픔을 회복합니다.",Vitality,Multiplicative,3,5,OnEat,Always,,HungerRestore,,,0.04,,,,ExtraHungerRestore,0.04,4%,
 1100005,마지막 한 입,"죽음 직전, 1의 배고픔으로 버틸 확률이 N% 증가합니다.",Vitality,Multiplicative,4,5,OnDamaged,OnDeath,,,,,0.01,,,,SurviveWithOneHunger,0.01,1%,

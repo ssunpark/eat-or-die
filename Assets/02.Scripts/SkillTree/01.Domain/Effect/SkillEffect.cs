@@ -1,32 +1,52 @@
 ﻿// 음식 효과 배율 증가
+
+using UnityEngine;
+
 public class FoodEffectBoost : ISkillEffect<OnEatPayload>
 {
-    public float Percent; // CSV의 NValue
+    private readonly float _percent; // CSV의 NValue
 
     public FoodEffectBoost(float percent)
     {
-        Percent = percent;
+        _percent = percent;
     }
 
     public void Execute(OnEatPayload  payload, SkillContext context)
     {
-        payload.Multiplier *= (1f + Percent);
+        payload.Multiplier *= (1f + _percent);
     }
 }
 
 // 배고픔 즉시 회복
 public class HungerRestore : ISkillEffect<OnEatPayload>
 {
-    public float Ratio; // BaseRestore 기준 비율 (NValue)
+    private readonly float _ratio; // BaseRestore 기준 비율 (NValue)
 
     public HungerRestore(float ratio)
     {
-        Ratio = ratio;
+        _ratio = ratio;
     }
 
     public void Execute(OnEatPayload  payload, SkillContext context)
     {
-        payload.ExtraRestore += payload.BaseRestore * Ratio;
+        payload.ExtraRestore = payload.BaseRestore * _ratio;
+    }
+}
+
+// 배고픔 비율 회복
+public class HungerRestoreByRatio : ISkillEffect
+{
+    private readonly float _ratio;
+
+    public HungerRestoreByRatio(float ratio)
+    {
+        _ratio = ratio;
+    }
+
+    public void Execute(ISkillPayload payload, SkillContext context)
+    {
+        Debug.Log($"Heal{context.MaxHunger * _ratio}");
+        context.Player.TryHealOrDamage(context.MaxHunger * _ratio);
     }
 }
 

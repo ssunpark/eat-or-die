@@ -34,9 +34,7 @@ public class ItemEatEffectPipeline : IItemUsePipeline
         SkillManager.Instance.Publish(ESkillEventType.OnEat, context, eatPayload);
 
         // 최종 적용 (회복)
-        var finalAmount = eatPayload.BaseRestore + eatPayload.ExtraRestore;
-        _hungerEffect.Value = finalAmount;
-        _hungerEffect.Use(target);
+        _hungerEffect.Use(target, eatPayload.ExtraRestore);
 
         // 최종 적용 (버프)
         foreach (var effect in _useEffects)

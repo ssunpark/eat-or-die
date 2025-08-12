@@ -13,5 +13,6 @@
     OnDeath,
     OnNChance,
     WhileMoving,
-    WhileStationary
+    WhileStationary,
+    EveryOneSecond
 }

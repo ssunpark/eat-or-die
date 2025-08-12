@@ -18,7 +18,7 @@ public class SkillRawData
     public int Position { get; set; }
 
     [Name("EContextType")]
-    public ESkillEventType EContextType { get; set; }
+    public ESkillEventType EEventType { get; set; }
 
     [Name("ETriggerType")]
     [TypeConverter(typeof(ESkillTriggerTypeArrayConverter))]

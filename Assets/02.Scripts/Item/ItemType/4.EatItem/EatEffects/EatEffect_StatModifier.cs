@@ -22,5 +22,6 @@ public class EatEffect_StatModifier : IUseEffect, ISkillModifiable
     {
         Debug.Log($"{_statType}이 {_value * MultiplyValue}만큼 {_modifierType}연산으로 {_duration}초간 증가합니다.");
         target.GetComponent<Player>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value * MultiplyValue, Food,true, _duration));
+        MultiplyValue = 1f;
     }
 }

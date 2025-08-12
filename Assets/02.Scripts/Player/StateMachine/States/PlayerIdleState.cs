@@ -27,6 +27,8 @@ public class PlayerIdleState : APlayerStateBase
     }
     protected override void OnFixedUpdateInput()
     {
+        SkillManager.Instance.Publish(ESkillEventType.OnIdle, _skillContext.Context);
+        
         var input = _fsm.CurrentInput.direction;
         if (!Mathf.Approximately(input.sqrMagnitude, 0f))
         {

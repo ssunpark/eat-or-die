@@ -11,6 +11,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
     protected TraitExpHandler _expHandler;
     public SimpleKCC KCC;
     public Animator Anim;
+    protected ActorContextHolder _skillContext;
 
     protected bool _shouldPlayAnimation = true;
     public string AnimState;
@@ -23,6 +24,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
         _fsm = fsm;
         KCC = fsm.GetComponent<SimpleKCC>();
         Anim = fsm.GetComponent<Animator>();
+        _skillContext = fsm.GetComponent<ActorContextHolder>();
     }
 
     protected bool IsInteractTargetExists()
@@ -93,6 +95,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
         _stat ??= _fsm.PlayerNetworkObject?.Stat;
         _resource ??= _fsm.PlayerNetworkObject?.Resource;
         _expHandler ??= _fsm.PlayerNetworkObject?.ExpHandler;
+        _skillContext ??= _fsm.GetComponent<ActorContextHolder>();
         _isLazyInitialized = true;
     }
 

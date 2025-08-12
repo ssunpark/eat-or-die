@@ -14,6 +14,9 @@ public class SkillEventFactory
 
             ESkillEffectType.FoodEffectBoost
                 => new SkillEffectAdapter<OnEatPayload>(new FoodEffectBoost(n)),
+            
+            ESkillEffectType.HungerRestoreByMaxHunger
+                => new HungerRestoreByRatio(n),
 
             _ => throw new ArgumentOutOfRangeException(nameof(rawData.ESkillEffectType))
         };
@@ -24,8 +27,10 @@ public class SkillEventFactory
             var v = rawData.TriggerValue ?? 0f;
             ISkillTrigger<ISkillPayload> trig = t switch
             {
-                ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerBelowThreshold(v),
-                ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerAboveThreshold(v),
+                ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerThreshold(v, false),
+                ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerThreshold(v, true),
+                ESkillTriggerType.WhileStationary => new SkillTrigger_IdleThreshold(v),
+                ESkillTriggerType.EveryOneSecond => new SkillTrigger_EveryOneSecond(),
                 ESkillTriggerType.Always => new SkillTrigger_Always(),
                 _ => new SkillTrigger_Always()
             };
@@ -34,12 +39,7 @@ public class SkillEventFactory
 
         if (triggers.Count == 0)
             triggers.Add(new SkillTrigger_Always());
-        
-        var eventType = rawData.EContextType; // ESkillEventType
-        return eventType switch
-        {
-            ESkillEventType.OnEat => new SkillHandler(rawData.Id, eventType, triggers, effect),
-            _ => throw new ArgumentOutOfRangeException(nameof(rawData.EContextType))
-        };
+
+        return new SkillHandler(rawData.Id, rawData.EEventType, triggers, effect);
     }
 }
