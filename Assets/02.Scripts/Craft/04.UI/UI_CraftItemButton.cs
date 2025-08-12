@@ -48,7 +48,7 @@ public class UI_CraftItemButton : MonoBehaviour
         }
 
         ItemInstance craftedItemInstance = new ItemInstance(_itemProfile, 1);
-        InventoryManager.Instance.PickItemFromGround(craftedItemInstance);
+        InventoryManager.Instance.AddItemToInventory(craftedItemInstance);
 
         Debug.Log($"{_itemProfile.ItemDefinition.Name} 제작 성공!");
         

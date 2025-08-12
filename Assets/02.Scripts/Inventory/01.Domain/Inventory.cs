@@ -105,7 +105,7 @@ public class Inventory
         }
     }
 
-    public ItemInstance PickItemFromGround(ItemInstance itemInstance)
+    public ItemInstance AddItemToInventory(ItemInstance itemInstance)
     {
         foreach (Slot slot in SlotList)
         {
@@ -128,7 +128,12 @@ public class Inventory
                 }
             }
         }
-        
+
+        return itemInstance;
+    }
+
+    public ItemInstance AddItemToEmptySlot(ItemInstance itemInstance)
+    {
         foreach (Slot slot in SlotList)
         {
             if (slot.IsEmpty)

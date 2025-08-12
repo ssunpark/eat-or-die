@@ -9,14 +9,14 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
 
     private void OnEnable()
     {
-        InventoryManager.OnItemAcquired += HandleIngredientDiscovered;
+        UnifiedInventoryManager.Instance.OnItemAcquired += HandleIngredientDiscovered;
         CookingManager.Instance.CookingFinished += HandleCookingFinished;
 
     }
     
     private void OnDisable()
     {
-        InventoryManager.OnItemAcquired -= HandleIngredientDiscovered;
+        UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
         CookingManager.Instance.CookingFinished -= HandleCookingFinished;
     
     }
