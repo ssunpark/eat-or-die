@@ -2,31 +2,39 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 수현
+public enum CraftCategory
+{
+    All, // 전체
+    Tool, // 도구
+    Weapon, // 무기
+    Equipment // 장비
+}
+
 public class UI_CraftItemButton : MonoBehaviour
 {
     public Image IconImage;
     public TextMeshProUGUI ItemNameText;
-    
-    private CraftRecipe _craftRecipe;
-    private ItemProfile _itemProfile;
-    
-    public void Refresh(CraftRecipe craftRecipe, ItemProfile itemProfile)
-    {
-        _craftRecipe = craftRecipe;
-        _itemProfile = itemProfile;
+    public Image CanCraftIcon;
 
-        IconImage.sprite = itemProfile.ItemDefinition.Icon;
-        ItemNameText.text = craftRecipe.CraftRecipeName;
+    private CraftRecipe _data;
+    public int CraftRecipeID => _data.CraftResultID;
+    private ItemProfile _itemProfile;
+
+    public void Refresh(CraftRecipe data)
+    {
+        _data = data;
+        // 인벤토리 기준으로 만들 수 있는지에 대한 여부 리프레시 > 아이콘이 인벤토리 상태에 따라 만들 수 있으면 활성화, 만들 수 없으면 비활성화
+        // IconImage.sprite = itemProfile.ItemDefinition.Icon;
+        // ItemNameText.text = data.CraftRecipeName;
     }
 
-    public void CanInteractable()
+    public void CanCraft()
     {
-        int haveMat1 = InventoryManager.Instance.GetItemCount(_craftRecipe.CraftMaterial1ID);
-        int haveMat2 = InventoryManager.Instance.GetItemCount(_craftRecipe.CraftMaterial2ID);
+        var haveMat1 = InventoryManager.Instance.GetItemCount(_data.CraftMaterial1ID);
+        var haveMat2 = InventoryManager.Instance.GetItemCount(_data.CraftMaterial2ID);
 
-        bool canCraft = haveMat1 >= _craftRecipe.CraftMaterial1Count &&
-                        haveMat2 >= _craftRecipe.CraftMaterial2Count;
+        var canCraft = haveMat1 >= _data.CraftMaterial1Count &&
+                       haveMat2 >= _data.CraftMaterial2Count;
         
         Button button = GetComponent<Button>();
         button.interactable = canCraft;
@@ -38,8 +46,8 @@ public class UI_CraftItemButton : MonoBehaviour
 
     public void OnClick()
     {
-        bool consumedMat1 = InventoryManager.Instance.TryConsumeItem(_craftRecipe.CraftMaterial1ID, _craftRecipe.CraftMaterial1Count);
-        bool consumedMat2 = InventoryManager.Instance.TryConsumeItem(_craftRecipe.CraftMaterial2ID, _craftRecipe.CraftMaterial2Count);
+        var consumedMat1 = InventoryManager.Instance.TryConsumeItem(_data.CraftMaterial1ID, _data.CraftMaterial1Count);
+        var consumedMat2 = InventoryManager.Instance.TryConsumeItem(_data.CraftMaterial2ID, _data.CraftMaterial2Count);
 
         if (!consumedMat1 || !consumedMat2)
         {

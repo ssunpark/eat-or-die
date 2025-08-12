@@ -1,10 +1,9 @@
 using CsvHelper.Configuration.Attributes;
-using UnityEngine;
+
 // 수현
 public class CraftRecipe
 {
-    [Name("ID")]
-    public int ID { get; set; }
+    [Name("ID")] public int ID { get; set; } // 이건 사용하지 않는다.
     
     [Name("CraftMaterial1ID")]
     public int CraftMaterial1ID { get; set; }
