@@ -10,10 +10,6 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     
     public void PickUpItem(ItemInstance itemInstance)
     {
-        if (itemInstance != null)
-        {
-            Debug.Log($"Item picked up: {itemInstance.ID}");
-        }
         ItemInstance = itemInstance;
         OnItemPickedUp?.Invoke();
     }
@@ -25,6 +21,14 @@ public class HandEntity : BehaviourSingleton<HandEntity>
 
     public bool TryAddItem(ItemInstance itemInstance)
     {
+        if (itemInstance == null) return false;
+        
+        if (IsHandEmpty) 
+        {
+            PickUpItem(itemInstance);
+            return true;
+        }
+        
         if (itemInstance.ID != ItemInstance.ID) return false;
 
         if (!ItemInstance.TryAdd(itemInstance.Quantity)) return false;
