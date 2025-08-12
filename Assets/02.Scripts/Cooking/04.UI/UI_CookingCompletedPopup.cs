@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class UI_CookingCompletedPopup : MonoBehaviour
 {
@@ -18,13 +17,13 @@ public class UI_CookingCompletedPopup : MonoBehaviour
 
     private void OnEnable()
     {
-        CookingManager.CookingFinished += ShowPopup;
+        CookingManager.Instance.OnCompletedPopupStarted += ShowPopup;
         Hide();
     }
 
     private void OnDisable()
     {
-        CookingManager.CookingFinished -= ShowPopup;
+        if(CookingManager.Instance != null) CookingManager.Instance.OnCompletedPopupStarted -= ShowPopup;
     }
 
     private void ShowPopup(ItemInstance itemInstance)

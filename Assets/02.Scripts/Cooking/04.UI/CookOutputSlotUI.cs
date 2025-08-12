@@ -1,72 +1,72 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CookOutputSlotUI : MonoBehaviour, IPointerDownHandler
+public class CookOutputSlotUI : MonoBehaviour
 {
-    public int SlotIndex;
     public Image IconImage;
     public TextMeshProUGUI QuantityText;
 
+    public Color lockedColor = Color.gray;
+
+    public Sprite unknownIcon; 
+
     private void Start()
     {
-        IconImage.gameObject.SetActive(false);
-        QuantityText.gameObject.SetActive(false);
-
-        CookingManager.OnCookOutputUpdated += UpdateSlotUI;
+        Clear();
+        CookingManager.Instance.OnCookingSlotUpdated[0] += UpdateSlotUI_ActualResult;
+        CookingManager.Instance.OnCookingSlotUpdated[1] += UpdateSlotUI_ActualResult;
     }
-
-    public void OnPointerDown(PointerEventData eventData)
+    
+    private void UpdateSlotUI_ActualResult()
     {
-        if (eventData.button == PointerEventData.InputButton.Left)
+        if (CookingManager.Instance.HasEmptySlot())
         {
-            TakeOutItem();
-        }
-    }
-
-    // 결과 슬롯의 아이콘과 수량 갱신
-    private void TakeOutItem()
-    {
-        var foodInventory = CookingManager.Instance.FoodInventory;
-        var slot = foodInventory.SlotList[SlotIndex];
-        if (slot.IsEmpty) return;
-
-        if (HandEntity.Instance.IsHandEmpty)
-        {
-            // 한 개만 손으로 집기
-            HandEntity.Instance.PickUpItem(foodInventory.PopSingleItemInSlot(SlotIndex));
-        }
-        else
-        {
-            if (HandEntity.Instance.ItemInstance.ID == slot.ItemInstance.ID)
-            {
-                // 스택 합치기
-                ItemInstance popped = foodInventory.PopSingleItemInSlot(SlotIndex);
-                if (!HandEntity.Instance.TryAddItem(popped))
-                {
-                    // 손에 더 못 넣으면 다시 인벤토리에 넣기
-                    slot.AddItem(popped);
-                }
-            }
-        }
-
-        UpdateSlotUI();
-    }
-
-    public void UpdateSlotUI()
-    {
-        var itemInSlot = CookingManager.Instance.FoodInventory.SlotList[SlotIndex].ItemInstance;
-        if (itemInSlot == null)
-        {
-            IconImage.gameObject.SetActive(false);
-            QuantityText.gameObject.SetActive(false);
+            Clear();
             return;
         }
 
-        IconImage.sprite = ItemManager.Instance.GetItem(itemInSlot.ID).ItemDefinition.Icon;
-        QuantityText.text = itemInSlot.Quantity.ToString();
-        IconImage.gameObject.SetActive(true);
-        QuantityText.gameObject.SetActive(itemInSlot.Quantity > 1);
+        var quantityToCook = Mathf.Min(
+            CookingManager.Instance.IngredientInventory.SlotList[0].ItemInstance.Quantity,
+            CookingManager.Instance.IngredientInventory.SlotList[1].ItemInstance.Quantity
+        );
+
+        var itemId = CookingManager.Instance.TryCook();
+        var resultItem = ItemManager.Instance.GetItem(itemId);
+
+        // 재료 1개 이상일 떄부터 갯수 텍스트 띄우기
+        // if (quantityToCook > 1)
+        // {
+        QuantityText.text = quantityToCook.ToString();
+        // }
+
+        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == resultItem.ItemDefinition.ID);
+        var isKnown = RecipePanelUIManager.Instance.IsKnownRecipe(recipe.ID);
+        var canMake = RecipePanelUIManager.Instance.CanMakeRecipe(recipe);
+
+        if (!isKnown)
+        {
+            IconImage.sprite = unknownIcon;
+            IconImage.color = lockedColor;
+            IconImage.gameObject.SetActive(true);
+            IconImage.color = lockedColor;
+            return;
+        }
+
+        if (resultItem != null)
+        {
+            IconImage.sprite = resultItem.ItemDefinition.Icon;
+            IconImage.gameObject.SetActive(true);
+
+            IconImage.color = lockedColor;
+        }
+        
+        
+    }
+
+    private void Clear()
+    {
+        IconImage.color = Color.clear;
+        QuantityText.text = "";
     }
 }
