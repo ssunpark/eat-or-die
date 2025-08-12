@@ -94,4 +94,12 @@ public class SkillManager : BehaviourSingleton<SkillManager>
     public bool TryGetSkill(int id, out Skill s) => _skills.TryGetValue(id, out s);
     public int GetLevel(int id) => _skills.TryGetValue(id, out var s) ? s.Level : 0;
     public bool IsActive(int id) => GetLevel(id) > 0;
+    public string GetName(int id) => _skills.TryGetValue(id, out var s) ? s.Meta.Name : String.Empty;
+    public string GetLevelName(int id) => $"LV.{GetLevel(id)} {GetName(id)}";
+    private string GetDescription(int id) => _skills.TryGetValue(id, out var s) ? s.Meta.Description : "";
+    public string GetRichTextDescription(int id, int level, Color color)
+    {
+        var text = RichTextUtil.ColorizePlaceholders(GetDescription(id), color);
+        return string.Format(text, _skills[id].Meta.NValue * level);
+    }
 }

@@ -1,14 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_SkillNode : MonoBehaviour
 {
     [SerializeField]
-    private Sprite _activeSprite;
-    [SerializeField]
-    private Sprite _inactiveSprite;
+    private UI_SkillDescription _skillDescription;
     
+    [SerializeField]
     private Image _image;
+    
+    [SerializeField]
+    private Color _activeColor;
+    [SerializeField]
+    private Color _inactiveColor;
     
     private int _id;
 
@@ -19,7 +24,13 @@ public class UI_SkillNode : MonoBehaviour
 
     public void Refresh()
     {
-        bool isActive = SkillManager.Instance.IsActive(_id);
-        _image.sprite = isActive ? _activeSprite : _inactiveSprite;
+        var manager = SkillManager.Instance;
+        bool isActive = manager.IsActive(_id);
+        _image.color = isActive ? _activeColor : _inactiveColor;
+
+        var name = manager.GetLevelName(_id);
+        var currentDescription = manager.GetRichTextDescription(_id, manager.GetLevel(_id), _skillDescription.DescriptionPointColor);
+        var upgradeDescription = manager.GetLevel(_id) < 5 ? manager.GetRichTextDescription(_id, manager.GetLevel(_id) + 1, _skillDescription.DescriptionPointColor) : String.Empty;
+        _skillDescription.Refresh(name, currentDescription, upgradeDescription);
     }
 }
