@@ -1,17 +1,16 @@
-using System;
-
 public class Skill
 {
-    public readonly int Index;
+    public SkillRawData Meta { get; }
+    public int Level { get; set; }
     
-    // 스킬 도메인
-    public Skill(int index)
+    public Skill(SkillRawData meta, int level)
     {
-        if (index < 0 || index > 5)
-        {
-            throw new Exception($"{index}는 유효하지 않은 스킬의 인덱스입니다. 스킬의 인덱스는 1~5입니다.");
-        }
+        Meta = meta;
+        Level = level;
+    }
+
+    public void UpgradeLevel(int level)
+    {
         
-        Index = index;
     }
 }

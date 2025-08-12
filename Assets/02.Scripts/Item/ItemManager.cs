@@ -65,8 +65,6 @@ public class ItemManager : NetworkBehaviour
         var weaponItemRawData = CSVLoader<WeaponItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{WEAPON_CSV_PATH}");
         foreach (var data in weaponItemRawData)
         {
-            GameObject poolParent = new GameObject($"{data.ID}_Pool");
-            poolParent.transform.SetParent(transform);
             var weaponItem = _itemFactory.CreateItem(data);
             _itemDictionary[data.ID] = weaponItem;
         }

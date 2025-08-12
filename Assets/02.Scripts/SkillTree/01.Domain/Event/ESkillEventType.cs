@@ -16,5 +16,6 @@
     OnMove,
     OnSkillUpgrade,
     OnStop,
-    OnTrade
+    OnTrade,
+    OnDead
 }

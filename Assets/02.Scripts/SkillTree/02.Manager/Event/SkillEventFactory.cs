@@ -1,19 +1,45 @@
-﻿public class SkillEventFactory
+﻿using System;
+using System.Collections.Generic;
+
+public class SkillEventFactory
 {
-    public IRuntimeSkill CreateSkillNode(SkillRawData rawData, int level = 0)
+    public ISkillHandler CreateSkillNode(SkillRawData rawData, int level = 0)
     {
         var n = rawData.NValue * level;
         
-        var skillEffect = rawData.ESkillEffectType switch
+        ISkillEffect effect = rawData.ESkillEffectType switch
         {
-            ESkillEffectType.HungerRestore => new HungerRestore(n),
+            ESkillEffectType.HungerRestore
+                => new SkillEffectAdapter<OnEatPayload>(new HungerRestore(n)),
+
+            ESkillEffectType.FoodEffectBoost
+                => new SkillEffectAdapter<OnEatPayload>(new FoodEffectBoost(n)),
+
+            _ => throw new ArgumentOutOfRangeException(nameof(rawData.ESkillEffectType))
         };
         
-        var skill = rawData.EContextType switch
+        var triggers = new List<ISkillTrigger<ISkillPayload>>();
+        foreach (var t in rawData.ETriggerTypes)
         {
-            ESkillEventType.OnEat => new SkillEvent<OnEatPayload>(rawData.Id, ESkillEventType.OnEat, skillEffect),
-        };
+            var v = rawData.TriggerValue ?? 0f;
+            ISkillTrigger<ISkillPayload> trig = t switch
+            {
+                ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerBelowThreshold(v),
+                ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerAboveThreshold(v),
+                ESkillTriggerType.Always => new SkillTrigger_Always(),
+                _ => new SkillTrigger_Always()
+            };
+            triggers.Add(trig);
+        }
 
-        return skill;
+        if (triggers.Count == 0)
+            triggers.Add(new SkillTrigger_Always());
+        
+        var eventType = rawData.EContextType; // ESkillEventType
+        return eventType switch
+        {
+            ESkillEventType.OnEat => new SkillHandler(rawData.Id, eventType, triggers, effect),
+            _ => throw new ArgumentOutOfRangeException(nameof(rawData.EContextType))
+        };
     }
 }

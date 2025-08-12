@@ -13,20 +13,17 @@ public class ItemProfile
     // 스텟 변경, 상호작용 태그 변경
     private readonly List<IItemHoldEffect> _holdEffect;
     
-    // 아이템 기능
+    // 아이템 기능 실행 파이프라인
     // 먹기, 설치, 상호작용
-    private readonly List<IUseEffect> _useEffect;
+    private readonly IItemUsePipeline _pipeline;
 
-    public ItemProfile(ItemDefinition itemDefinition, List<IItemHoldEffect> holdEffect, List<IUseEffect> useEffect, Pool<Transform> prefabPool, Transform poolParent)
+    public ItemProfile(ItemDefinition itemDefinition, List<IItemHoldEffect> holdEffect, IItemUsePipeline pipeline, Pool<Transform> prefabPool, Transform poolParent)
     {
         ItemDefinition = itemDefinition;
-        _useEffect = useEffect;
         _holdEffect = holdEffect;
         _itemPrefabPool = prefabPool;
         _poolParent = poolParent;
-
-        // 풀링
-        _itemPrefabPool = Pool.Create(ItemDefinition.Prefab.transform, 0, _poolParent.transform);
+        _pipeline = pipeline;
     }
 
     public void HoldItem(GameObject target)
@@ -35,7 +32,6 @@ public class ItemProfile
         {
             effect.Hold(target);
         }
-        // 아이템 오브젝트 장착
     }
 
     public void UnHoldItem(GameObject target, GameObject item)
@@ -63,15 +59,7 @@ public class ItemProfile
 
     public bool TryUseItem(GameObject target)
     {
-        if (_useEffect.Count <= 0)
-        {
-            return false;
-        }
-
-        foreach (var effect in _useEffect)
-        {
-            effect.Use(target);
-        }
+        _pipeline?.Run(target);
         
         return true;
     }

@@ -1,17 +1,17 @@
 ﻿public enum ESkillTriggerType
 {
     Always,
-    OnConsecutiveAttack,
-    OnNChance,
-    OnBossAttack,
-    OnCookHarvested,
-    OnDeath,
-    WhileStationary,
-    HungerBelowThreshold,
     HungerAboveThreshold,
-    IsMad,
-    IsHarvested,
+    HungerBelowThreshold,
     IsCooked,
+    IsHarvested,
+    IsMad,
+    OnBossAttack,
+    OnConsecutiveAttack,
+    OnCook_Harvested,
     OnCriticalHit,
-    WhileMoving
+    OnDeath,
+    OnNChance,
+    WhileMoving,
+    WhileStationary
 }

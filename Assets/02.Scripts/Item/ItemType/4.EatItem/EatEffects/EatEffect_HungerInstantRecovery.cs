@@ -2,7 +2,8 @@
 
 public class EatEffect_HungerInstantRecovery : IUseEffect
 {
-    private readonly float _value;
+    public float Value { get => _value; set => _value = value; }
+    private float _value;
     private string _description;
     public string Description => _description;
 
@@ -14,6 +15,7 @@ public class EatEffect_HungerInstantRecovery : IUseEffect
 
     public void Use(GameObject target)
     {
+        Debug.Log($"배고픔이 {_value}만큼 즉시 회복됩니다.");
         target.GetComponent<Player>().TryHealOrDamage(_value);
     }
 }

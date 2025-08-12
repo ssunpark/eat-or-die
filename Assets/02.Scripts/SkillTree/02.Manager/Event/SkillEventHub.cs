@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 public class SkillEventHub : ISkillEventHub
 {
-    private readonly Dictionary<ESkillEventType, List<IRuntimeSkill>> _routes = new();
+    private readonly Dictionary<ESkillEventType, List<ISkillHandler>> _routes = new();
     
-    public void Subscribe(IRuntimeSkill node)
+    public void Subscribe(ISkillHandler node)
     {
         if (!_routes.TryGetValue(node.EventType, out var list))
-            _routes[node.EventType] = list = new List<IRuntimeSkill>();
+            _routes[node.EventType] = list = new List<ISkillHandler>();
 
         list.Add(node);
     }
 
-    public void Unsubscribe(IRuntimeSkill node)
+    public void Unsubscribe(ISkillHandler node)
     {
         if (_routes.TryGetValue(node.EventType, out var list))
             list.Remove(node);

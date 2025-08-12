@@ -18,16 +18,15 @@ public class SkillManagerWindow : EditorWindow
     private double _lastAutoRefresh;
     private bool _autoRefresh = true;
 
-    // Reflection 캐시
-    private FieldInfo _fiRawCache;
-    private FieldInfo _fiActiveSkills;
-    private PropertyInfo _piRuntimeLevel;
+    // Reflection 캐시 (바뀐 매니저 필드에 맞춤)
+    private FieldInfo _fiSkills;    // Dictionary<int, Skill>
+    private FieldInfo _fiHandlers;  // Dictionary<int, ISkillHandler>
 
     // 데이터 스냅샷 (표시에만 사용)
     private List<(int id, string name)> _dbView = new();
     private List<(int id, int level, string runtimeName)> _activeView = new();
 
-    [MenuItem("Tools/Skills/Skill Manager Window")]
+    [MenuItem("Tools/Skill Manager Window")]
     private static void Open()
     {
         var win = GetWindow<SkillManagerWindow>("Skill Manager");
@@ -50,7 +49,6 @@ public class SkillManagerWindow : EditorWindow
 
     private void OnPlayModeChanged(PlayModeStateChange change)
     {
-        // 플레이 모드 전환 시 리플레시
         RefreshSnapshots(force: true);
     }
 
@@ -58,7 +56,6 @@ public class SkillManagerWindow : EditorWindow
     {
         if (_autoRefresh && EditorApplication.isPlaying)
         {
-            // 너무 자주 리프레시하지 않도록 0.25s 쿨다운
             if (EditorApplication.timeSinceStartup - _lastAutoRefresh > 0.25f)
             {
                 _lastAutoRefresh = EditorApplication.timeSinceStartup;
@@ -118,9 +115,7 @@ public class SkillManagerWindow : EditorWindow
     // ──────────────────────────────────────────────────────────────────────────────
     private void DrawDatabasePanel()
     {
-        EditorGUILayout.LabelField("스킬 DB (CSV 캐시)", EditorStyles.boldLabel);
-        EditorGUILayout.HelpBox("SkillManager의 _rawDataCache를 reflection으로 조회하여 표시합니다.", MessageType.None);
-
+        EditorGUILayout.LabelField("스킬 DB (SkillManager._skills)", EditorStyles.boldLabel);
         using (var scroll = new EditorGUILayout.ScrollViewScope(_leftScroll, GUILayout.Height(position.height * 0.55f)))
         {
             _leftScroll = scroll.scrollPosition;
@@ -180,7 +175,7 @@ public class SkillManagerWindow : EditorWindow
                 {
                     GUILayout.Label($"ID: {id}", GUILayout.Width(80));
                     GUILayout.Label($"Lv.{level}", GUILayout.Width(70));
-                    GUILayout.Label(string.IsNullOrEmpty(rname) ? "(Runtime)" : rname);
+                    GUILayout.Label(string.IsNullOrEmpty(rname) ? "(Runtime 없음)" : rname);
                     GUILayout.FlexibleSpace();
 
                     using (new EditorGUI.DisabledScope(!EditorApplication.isPlaying))
@@ -229,23 +224,19 @@ public class SkillManagerWindow : EditorWindow
     private void TryBindReflection()
     {
         var smType = typeof(SkillManager);
-        _fiRawCache = smType.GetField("_rawDataCache", BindingFlags.Instance | BindingFlags.NonPublic);
-        _fiActiveSkills = smType.GetField("_activeSkills", BindingFlags.Instance | BindingFlags.NonPublic);
-
-        // IRuntimeSkill.Level (public get) 추정
-        // 런타임 타입을 모를 수 있으므로 런타임에 발견 시 캐시
-        _piRuntimeLevel = null;
+        _fiSkills   = smType.GetField("_skills",   BindingFlags.Instance | BindingFlags.NonPublic);
+        _fiHandlers = smType.GetField("_handlers", BindingFlags.Instance | BindingFlags.NonPublic);
     }
 
     private SkillManager GetSkillManagerInstance()
     {
-        // BehaviourSingleton<SkillManager>.Instance 를 못쓸 수도 있으니 FindObjectOfType로 보조
+        // BehaviourSingleton.Instance가 없을 수 있으니 보조로 FindObjectOfType 사용
         var inst = FindObjectOfType<SkillManager>();
         return inst;
     }
 
     // ──────────────────────────────────────────────────────────────────────────────
-    // 내부: 스냅샷 생성
+    // 내부: 스냅샷 생성 (바뀐 구조에 맞게)
     // ──────────────────────────────────────────────────────────────────────────────
     private void RefreshSnapshots(bool force)
     {
@@ -253,35 +244,40 @@ public class SkillManagerWindow : EditorWindow
         _dbView.Clear();
         _activeView.Clear();
 
-        if (!mgr)
-            return;
+        if (!mgr) return;
 
         try
         {
-            // DB (id, name)
-            var rawDictObj = _fiRawCache?.GetValue(mgr) as IDictionary;
-            if (rawDictObj != null)
+            // _skills: Dictionary<int, Skill>
+            var skillsDict = _fiSkills?.GetValue(mgr) as IDictionary;
+            // _handlers: Dictionary<int, ISkillHandler> (활성 런타임만)
+            var handlersDict = _fiHandlers?.GetValue(mgr) as IDictionary;
+
+            if (skillsDict != null)
             {
-                foreach (DictionaryEntry kv in rawDictObj)
+                foreach (DictionaryEntry kv in skillsDict)
                 {
                     int id = (int)kv.Key;
-                    string name = ExtractNameFromRaw(kv.Value);
+                    object skillObj = kv.Value;
+
+                    // Skill.Meta에서 이름 뽑기
+                    string name = ExtractNameFromSkill(skillObj);
+
+                    // DB 뷰(좌측)
                     _dbView.Add((id, name));
-                }
-            }
 
-            // Active (id, level, runtimeName)
-            var activeDictObj = _fiActiveSkills?.GetValue(mgr) as IDictionary;
-            if (activeDictObj != null)
-            {
-                foreach (DictionaryEntry kv in activeDictObj)
-                {
-                    int id = (int)kv.Key;
-                    object runtimeSkill = kv.Value;
-
-                    int level = ExtractLevelFromRuntime(runtimeSkill);
-                    string rname = runtimeSkill != null ? runtimeSkill.GetType().Name : "";
-                    _activeView.Add((id, level, rname));
+                    // 활성 뷰(우측): Level > 0
+                    var level = ExtractLevelFromSkill(skillObj);
+                    if (level > 0)
+                    {
+                        string runtimeName = "";
+                        if (handlersDict != null && handlersDict.Contains(id))
+                        {
+                            var handler = handlersDict[id];
+                            runtimeName = handler != null ? handler.GetType().Name : "";
+                        }
+                        _activeView.Add((id, level, runtimeName));
+                    }
                 }
             }
         }
@@ -291,41 +287,41 @@ public class SkillManagerWindow : EditorWindow
         }
     }
 
-    private string ExtractNameFromRaw(object raw)
+    private int ExtractLevelFromSkill(object skillObj)
     {
-        if (raw == null) return "";
-        // SkillRawData 안에 Name, Title, DisplayName 같은 속성이 있을 수 있으니 우선순위로 시도
-        var t = raw.GetType();
-        var pName = t.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
-        if (pName != null && pName.PropertyType == typeof(string)) return (string)pName.GetValue(raw);
-
-        var pTitle = t.GetProperty("Title", BindingFlags.Public | BindingFlags.Instance);
-        if (pTitle != null && pTitle.PropertyType == typeof(string)) return (string)pTitle.GetValue(raw);
-
-        var pDisp = t.GetProperty("DisplayName", BindingFlags.Public | BindingFlags.Instance);
-        if (pDisp != null && pDisp.PropertyType == typeof(string)) return (string)pDisp.GetValue(raw);
-
-        return ""; // 이름 정보가 없을 수 있음
-    }
-
-    private int ExtractLevelFromRuntime(object runtimeSkill)
-    {
-        if (runtimeSkill == null) return 0;
-
-        if (_piRuntimeLevel == null)
+        if (skillObj == null) return 0;
+        var t = skillObj.GetType();
+        var pLevel = t.GetProperty("Level", BindingFlags.Public | BindingFlags.Instance);
+        if (pLevel != null && pLevel.PropertyType == typeof(int))
         {
-            // 최초 한 번만 Level 프로퍼티를 찾아 캐시
-            _piRuntimeLevel = runtimeSkill.GetType().GetProperty("Level", BindingFlags.Public | BindingFlags.Instance);
-        }
-
-        if (_piRuntimeLevel != null && _piRuntimeLevel.PropertyType == typeof(int))
-        {
-            try { return (int)_piRuntimeLevel.GetValue(runtimeSkill); }
+            try { return (int)pLevel.GetValue(skillObj); }
             catch { /* ignore */ }
         }
-
-        // Level이 없을 경우 0 처리
         return 0;
+    }
+
+    private string ExtractNameFromSkill(object skillObj)
+    {
+        if (skillObj == null) return "";
+        var t = skillObj.GetType();
+        var pMeta = t.GetProperty("Meta", BindingFlags.Public | BindingFlags.Instance);
+        if (pMeta == null) return "";
+
+        var meta = pMeta.GetValue(skillObj);
+        if (meta == null) return "";
+
+        // SkillRawData 안의 이름 필드 추정
+        var mt = meta.GetType();
+        var pName = mt.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
+        if (pName != null && pName.PropertyType == typeof(string)) return (string)pName.GetValue(meta);
+
+        var pTitle = mt.GetProperty("Title", BindingFlags.Public | BindingFlags.Instance);
+        if (pTitle != null && pTitle.PropertyType == typeof(string)) return (string)pTitle.GetValue(meta);
+
+        var pDisp = mt.GetProperty("DisplayName", BindingFlags.Public | BindingFlags.Instance);
+        if (pDisp != null && pDisp.PropertyType == typeof(string)) return (string)pDisp.GetValue(meta);
+
+        return "";
     }
 
     // ──────────────────────────────────────────────────────────────────────────────

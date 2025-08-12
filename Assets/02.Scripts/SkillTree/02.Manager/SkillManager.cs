@@ -1,62 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class SkillManager : BehaviourSingleton<SkillManager>
 {
     private const string SKILL_CSV_PATH = "/SkillCSV/Skill.csv";
-    
-    private readonly ISkillEventHub _hub;
-    private readonly SkillEventFactory _factory;
 
-    // 스킬 기본 정보 캐싱
-    private readonly Dictionary<int, SkillRawData> _rawDataCache = new();
-    // 현재 액티브 된 스킬 추적
-    private readonly Dictionary<int, IRuntimeSkill> _activeSkills = new();
+    private ISkillEventHub _hub;
+    private SkillEventFactory _factory;
 
-    public SkillManager(ISkillEventHub hub, SkillEventFactory factory)
-    {
-        _hub = hub;
-        _factory = factory;
-    }
+    // 데이터 전부(레벨 0부터)
+    private readonly Dictionary<int, Skill> _skills = new();
+    // 현재 활성 핸들러(있을 때만 값 존재)
+    private readonly Dictionary<int, ISkillHandler> _handlers = new();
 
     private void Awake()
     {
+        _hub = new SkillEventHub();
+        _factory = new SkillEventFactory();
+
         var list = CSVLoader<SkillRawData>.LoadCSV($"{Application.streamingAssetsPath}{SKILL_CSV_PATH}");
         foreach (var raw in list)
-        {
-            _rawDataCache[raw.Id] = raw;
-        }
+            _skills[raw.Id] = new Skill(raw, 0);
     }
 
+    // 활성화 + 레벨 지정
     public void Active(int id, int level)
     {
-        if (!_rawDataCache.TryGetValue(id, out var raw)) return;
+        if (!_skills.TryGetValue(id, out var skill)) return;
 
-        // 새 노드 생성
-        var node = _factory.CreateSkillNode(raw, level);
+        // 기존 구독/핸들러 정리
+        if (_handlers.ContainsKey(id))
+        {
+            _hub.Unsubscribe(_handlers[id]);
+            _handlers.Remove(id);
+        }
 
-        // 기존 노드 있으면 해제
-        if (_activeSkills.TryGetValue(id, out var old))
-            _hub.Unsubscribe(old);
+        // 새 핸들러 생성 + 구독
+        var handler = _factory.CreateSkillNode(skill.Meta, level);
+        _handlers[id] = handler;
+        skill.Level = level; // 데이터 갱신
 
-        _activeSkills[id] = node;
-        _hub.Subscribe(node);
+        if (level > 0)
+            _hub.Subscribe(handler);
     }
-    
+
+    // 수치만 변하는 경우 인플레이스 갱신(가능하면)
+    public void Upgrade(int id, int newLevel)
+    {
+        if (!_skills.TryGetValue(id, out var skill)) return;
+
+        Active(id, newLevel);
+    }
+
     public void Inactive(int id)
     {
-        if (_activeSkills.Remove(id, out var node))
+        if (!_skills.TryGetValue(id, out var skill)) return;
+
+        // 구독/핸들러 정리
+        if (_handlers.ContainsKey(id))
         {
-            _hub.Unsubscribe(node);
+            _hub.Unsubscribe(_handlers[id]);
+            _handlers.Remove(id);
         }
+
+        // 데이터만 레벨 0으로
+        skill.Level = 0;
     }
-    
-    public void Upgrade(int id, int newLevel) => Active(id, newLevel);
-    
+
     public void Publish<TPayload>(ESkillEventType type, SkillContext ctx, TPayload payload)
         where TPayload : ISkillPayload
-    {
-        _hub.Publish(type, ctx, payload);
-    }
+        => _hub.Publish(type, ctx, payload);
+
+    // 선택: 조회 헬퍼
+    public bool TryGetSkill(int id, out Skill s) => _skills.TryGetValue(id, out s);
+    public int GetLevel(int id) => _skills.TryGetValue(id, out var s) ? s.Level : 0;
+    public bool IsActive(int id) => GetLevel(id) > 0;
 }

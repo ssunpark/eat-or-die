@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
-public class EatEffect_ManaInstantRecovery : IUseEffect
+public class EatEffect_ManaInstantRecovery : IUseEffect, ISkillModifiable
 {
     private readonly float _value;
     private string _description;
     public string Description => _description;
+    public float MultiplyValue { get; set; }
 
     public EatEffect_ManaInstantRecovery(float value)
     {
@@ -14,6 +15,6 @@ public class EatEffect_ManaInstantRecovery : IUseEffect
 
     public void Use(GameObject target)
     {
-        target.GetComponent<Player>().Resource.RestoreMana(_value);
+        target.GetComponent<Player>().Resource.RestoreMana(_value * MultiplyValue);
     }
 }

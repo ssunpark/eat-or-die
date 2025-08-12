@@ -21,7 +21,8 @@ public class SkillRawData
     public ESkillEventType EContextType { get; set; }
 
     [Name("ETriggerType")]
-    public ESkillTriggerType ETriggerType { get; set; }
+    [TypeConverter(typeof(ESkillTriggerTypeArrayConverter))]
+    public ESkillTriggerType[] ETriggerTypes { get; set; }
 
     [Name("TriggerValue")]
     public float? TriggerValue { get; set; }

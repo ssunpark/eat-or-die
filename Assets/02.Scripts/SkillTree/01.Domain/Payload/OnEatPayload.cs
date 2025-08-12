@@ -1,6 +1,6 @@
 ﻿using Fusion;
 
-public sealed class OnEatPayload : ISkillPayload
+public class OnEatPayload : ISkillPayload
 {
     /// <summary>음식을 먹는 주체</summary>
     public readonly NetworkObject Eater;
@@ -14,7 +14,7 @@ public sealed class OnEatPayload : ISkillPayload
     /// <summary>음식이 재료(수확물)인지 여부</summary>
     public readonly bool IsIngredient;
 
-    /// <summary>효과 적용 후 배율 (기본 1.0f)</summary>
+    /// <summary>효과 적용 배율 (기본 1.0f)</summary>
     public float Multiplier;
 
     /// <summary>추가 회복량</summary>

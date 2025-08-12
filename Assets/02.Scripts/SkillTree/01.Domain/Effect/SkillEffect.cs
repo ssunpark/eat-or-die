@@ -3,7 +3,12 @@ public class FoodEffectBoost : ISkillEffect<OnEatPayload>
 {
     public float Percent; // CSV의 NValue
 
-    public void Execute(OnEatPayload payload, SkillContext context)
+    public FoodEffectBoost(float percent)
+    {
+        Percent = percent;
+    }
+
+    public void Execute(OnEatPayload  payload, SkillContext context)
     {
         payload.Multiplier *= (1f + Percent);
     }
@@ -19,7 +24,7 @@ public class HungerRestore : ISkillEffect<OnEatPayload>
         Ratio = ratio;
     }
 
-    public void Execute(OnEatPayload payload, SkillContext context)
+    public void Execute(OnEatPayload  payload, SkillContext context)
     {
         payload.ExtraRestore += payload.BaseRestore * Ratio;
     }
