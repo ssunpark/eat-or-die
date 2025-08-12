@@ -21,7 +21,7 @@ public class UI_CookingMessage : MonoBehaviour
 
     private void OnDisable()
     {
-        CookingManager.Instance.OnAlertMessage -= ShowAlert;
+        if(CookingManager.Instance != null) CookingManager.Instance.OnAlertMessage -= ShowAlert;
     }
 
     public void ShowAlert(string message)

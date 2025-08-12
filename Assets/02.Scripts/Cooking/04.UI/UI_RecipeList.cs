@@ -18,9 +18,9 @@ public class UI_RecipeList : MonoBehaviour
     
     private void OnDisable()
     {
-        InventoryManager.Instance.OnInventoryUpdated -= RefreshRecipeButtons;
+        if(InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshRecipeButtons;
         // RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
-        if (CookingManager.Instance != null)
+        // if (CookingManager.Instance != null)
         {
             // CookingManager.OnItemAdded -= RefreshRecipeButtons;
         }

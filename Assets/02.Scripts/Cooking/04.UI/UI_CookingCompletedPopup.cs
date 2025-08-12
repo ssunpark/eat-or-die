@@ -23,7 +23,7 @@ public class UI_CookingCompletedPopup : MonoBehaviour
 
     private void OnDisable()
     {
-        CookingManager.Instance.OnCompletedPopupStarted -= ShowPopup;
+        if(CookingManager.Instance != null) CookingManager.Instance.OnCompletedPopupStarted -= ShowPopup;
     }
 
     private void ShowPopup(ItemInstance itemInstance)
