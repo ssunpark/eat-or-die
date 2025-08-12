@@ -12,13 +12,17 @@ public class UI_RecipeList : MonoBehaviour
     private void OnEnable()
     {
         RoomRecipeStateManager.Instance.OnRecipeUnlocked += HandleRecipeUnlocked;
-        InventoryManager.Instance.OnInventoryUpdated += RefreshRecipeButtons;
+        UnifiedInventoryManager.Instance.OnPossessionUpdated += RefreshRecipeButtons;
+        // InventoryManager.Instance.OnInventoryUpdated += RefreshRecipeButtons;
         // CookingManager.OnItemAdded += RefreshRecipeButtons;
     }
     
     private void OnDisable()
     {
-        if(InventoryManager.Instance != null) InventoryManager.Instance.OnInventoryUpdated -= RefreshRecipeButtons;
+        if (UnifiedInventoryManager.Instance != null)
+        {
+            UnifiedInventoryManager.Instance.OnPossessionUpdated -= RefreshRecipeButtons;
+        }
         // RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
         // if (CookingManager.Instance != null)
         {

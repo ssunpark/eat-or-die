@@ -62,4 +62,14 @@ public class SharedStorageManager : BehaviourSingleton<SharedStorageManager>
     {
         return _currentSharedStorage.GetItemInSlot(slotIndex);
     }
+
+    public bool HaveItem(int itemID)
+    {
+        return _currentSharedStorage.HaveItem(itemID);
+    }
+
+    public int GetItemCount(int itemID)
+    {
+        return _currentSharedStorage.GetItemCount(itemID);
+    }
 }
