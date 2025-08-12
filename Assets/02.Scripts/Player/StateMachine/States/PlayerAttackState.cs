@@ -155,6 +155,12 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
                             _fsm.attackableLayerMask, QueryTriggerInteraction.Collide);
         
         PlayAttackVfx(EAttackPhase.Swing, attackOrigin);
+
+        if(result > 0)
+        {
+            if(_fsm.HasStateAuthority)
+                GrantExpOrder("MeleeAttackHit");
+        }
         for (int i = 0; i < result; i++)
         {
             IAttackable target = _hitsColliders[i].GetComponent<IAttackable>();

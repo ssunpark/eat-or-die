@@ -84,12 +84,6 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
         }
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RequestPlayParticle(string particleKey, Vector3 position, Quaternion rotation)
-    {
-        RpcPlayParticle(particleKey, position, rotation);
-    }
-
     public ParticleSystem PlayByKeyLocalAsChild(string particleKey, Transform parent, Vector3 localPos, Quaternion localRot)
     {
         var prefab = GetParticlePrefab(particleKey);
@@ -188,5 +182,11 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
             Debug.LogWarning($"[ParticleManager] Particle key not found: {particleKey}");
         }
 #endif
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestPlayParticle(string key, Vector3 worldPos, Quaternion rot)
+    {
+        RpcPlayParticle(key, worldPos, rot);
     }
 }

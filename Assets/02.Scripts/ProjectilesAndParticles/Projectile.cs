@@ -11,6 +11,7 @@ public class Projectile : NetworkBehaviour
     public LayerMask HitMask;
     public float Speed = 10f;
     public float Lifetime = 5f;
+    [SerializeField] private bool _areYouPlayersProjectileAndMagicProjectile = false;
     private AttackInfo _attackInfo;
     private Collider _collider;
     [Networked] private float _magicDamage { get; set; }
@@ -82,6 +83,10 @@ public class Projectile : NetworkBehaviour
                 _attackInfo.TotalDamageMultiplier = _totalDamageMultiplier;
                 _attackInfo.Attacker = Attacker;
                 _hitObject.OnHitLocal(_attackInfo);
+                if(_areYouPlayersProjectileAndMagicProjectile)
+                {
+                    RPC_GrantExpOrder(Attacker.InputAuthority, "MagicAttackHit");
+                }
             }
             else
             {
@@ -142,6 +147,11 @@ public class Projectile : NetworkBehaviour
         }
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    protected void RPC_GrantExpOrder([RpcTarget] PlayerRef player, string actionName)
+    {
+        Attacker.GetComponent<Player>().ExpHandler.GrantExp(actionName);
+    }
     private void DestroySelf()
     {
         Runner.Despawn(Object);
