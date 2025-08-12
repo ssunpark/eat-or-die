@@ -1,14 +1,15 @@
+using Fusion;
 using UnityEngine;
 
-public class StorageInteractable : MonoBehaviour, IInteractable
+public class StorageInteractable : NetworkBehaviour, IInteractable
 {
-    [SerializeField] SharedStorage _sharedStorage;
-    
+    [SerializeField] private SharedStorage _sharedStorage;
+
     public bool IsImmediate => true;
 
     public void Interact()
     {
         Debug.Log("창고를 열어라");
-        SharedStorageManager.Instance.OpenStorage(_sharedStorage);
+        SharedStorageManager.Instance.RegisterStorage(_sharedStorage);
     }
 }

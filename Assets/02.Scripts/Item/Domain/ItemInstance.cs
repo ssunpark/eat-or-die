@@ -155,4 +155,15 @@ public class ItemInstance
         _durability -= amount;
         return true;
     }
+    
+    public NetworkedItem ToNetworkedItem()
+    {
+        return new NetworkedItem
+        {
+            ID = ID,
+            Quantity = _quantity,
+            Durability = _durability,
+            MaxQuantity = MaxQuantity
+        };
+    }
 }

@@ -6,5 +6,6 @@
     Cook,
     Recipe,
     Shop,
-    Craft
+    Craft,
+    Storage,
 }

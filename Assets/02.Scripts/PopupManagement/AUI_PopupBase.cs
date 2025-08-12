@@ -8,6 +8,8 @@ public abstract class AUI_PopupBase : MonoBehaviour
 
 	public virtual void Open()
 	{
+		if (gameObject.activeInHierarchy) return;
+		
 		gameObject.SetActive(true);
 		_animatePopup?.Open();
 		PopupManager.Instance.Register(this);

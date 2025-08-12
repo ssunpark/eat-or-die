@@ -22,6 +22,15 @@ public class Slot
         }
     }
 
+    public void UseItem(int quantity)
+    {
+        ItemInstance.TryRemove(quantity);
+        if (ItemInstance.Quantity == 0)
+        {
+            RemoveItem();
+        }
+    }
+    
     public ItemInstance GetItem()
     {
         return ItemInstance;
