@@ -18,14 +18,14 @@ public class UI_SkillDescription : MonoBehaviour
     {
         _skill.text = skillText;
         
-        RichTextUtil.RecolorAll(descriptionText, DescriptionPointColor);
+        descriptionText = RichTextUtil.RecolorAll(descriptionText, DescriptionPointColor);
         _description.text = descriptionText;
 
         if (string.IsNullOrEmpty(upgradeText))
         {
             return;
         }
-        RichTextUtil.RecolorAll(upgradeText, UpgradeDescriptionPointColor);
+        upgradeText = RichTextUtil.RecolorAll(upgradeText, UpgradeDescriptionPointColor);
         _upgradeDescription.text = upgradeText;
     }
 }

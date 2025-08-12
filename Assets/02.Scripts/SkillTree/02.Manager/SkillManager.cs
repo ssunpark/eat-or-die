@@ -81,6 +81,8 @@ public class SkillManager : BehaviourSingleton<SkillManager>
 
         // 데이터만 레벨 0으로
         skill.Level = 0;
+        
+        OnDataChanged?.Invoke();
     }
 
     public void Publish<TPayload>(ESkillEventType type, SkillContext ctx, TPayload payload)
