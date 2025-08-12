@@ -11,6 +11,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	
 	public event Action OnEntireQuickSlotUpdated;
 	public event Action<int> OnQuickSlotUpdated;
+	public event Action OnUseItem;
 	
 	private void Awake()
 	{
@@ -35,6 +36,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
             removeCallback?.Invoke();
         }
         
+        OnUseItem?.Invoke();
         OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
     }
     

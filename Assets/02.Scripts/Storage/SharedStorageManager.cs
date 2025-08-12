@@ -60,16 +60,22 @@ public class SharedStorageManager : BehaviourSingleton<SharedStorageManager>
     
     public NetworkedItem GetItemInSlot(int slotIndex)
     {
+        if (_currentSharedStorage == null) return new NetworkedItem { ID = 0 };
+        
         return _currentSharedStorage.GetItemInSlot(slotIndex);
     }
 
     public bool HaveItem(int itemID)
     {
+        if (_currentSharedStorage == null) return false;
+        
         return _currentSharedStorage.HaveItem(itemID);
     }
 
     public int GetItemCount(int itemID)
     {
+        if (_currentSharedStorage == null) return 0;
+        
         return _currentSharedStorage.GetItemCount(itemID);
     }
 }
