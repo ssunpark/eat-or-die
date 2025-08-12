@@ -8,7 +8,7 @@ public class SharedStorageManager : BehaviourSingleton<SharedStorageManager>
     public event Action OnStorageUpdated;
     public event Action OnOpenStorage;
 
-    public void OpenStorage(SharedStorage sharedStorage)
+    public void RegisterStorage(SharedStorage sharedStorage)
     {
         if (_currentSharedStorage != null)
         {

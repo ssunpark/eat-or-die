@@ -10,6 +10,6 @@ public class StorageInteractable : NetworkBehaviour, IInteractable
     public void Interact()
     {
         Debug.Log("창고를 열어라");
-        SharedStorageManager.Instance.OpenStorage(_sharedStorage);
+        SharedStorageManager.Instance.RegisterStorage(_sharedStorage);
     }
 }
