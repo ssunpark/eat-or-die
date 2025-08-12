@@ -33,6 +33,7 @@ public static class StatNameLocalization
 
         { EStatType.HarvestBonusChance, "수확 보너스 확률" },
         { EStatType.CookBonusChance, "요리 보너스 확률" },
+        {EStatType.EvadeChance, "회피 확률" }
     };
 
     public static string Get(EStatType type)
