@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SkillManager : BehaviourSingleton<SkillManager>
@@ -25,6 +26,12 @@ public class SkillManager : BehaviourSingleton<SkillManager>
         foreach (var raw in list)
             _skills[raw.Id] = new Skill(raw);
     }
+    
+    public List<Skill> GetSkills(ETraitType traitType) 
+        => _skills
+            .Where(x => x.Value.Meta.ETraitType == traitType)
+            .Select(x => x.Value)
+            .ToList();
 
     // 활성화 + 레벨 지정
     public void Active(int id, int level)
@@ -46,6 +53,8 @@ public class SkillManager : BehaviourSingleton<SkillManager>
 
         if (level > 0)
             _hub.Subscribe(handler);
+
+        Publish(ESkillEventType.OnSkillUpgrade, PlayerInfoManager.Instance.LocalPlayer.GetComponent<ActorContextHolder>().Context);
         
         OnDataChanged?.Invoke();
     }

@@ -8,13 +8,10 @@ public sealed class ActorContextHolder : NetworkBehaviour
     {
         var player = GetComponent<Player>();
         Context = new SkillContext(player); // 필요 데이터 주입
-        SkillContextManager.Instance.Add(Object.Id, Context);
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
-        SkillContextManager.Instance.Remove(Object.Id);
-
         Context = null;
     }
 }
