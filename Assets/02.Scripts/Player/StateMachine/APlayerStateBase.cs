@@ -81,10 +81,12 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
     /// </summary>
     protected virtual void OnFixedUpdateState() { }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
     protected void GrantExpOrder(string actionName, int? @int = null)
     {
-        _expHandler.GrantExp(actionName, @int);
+        if (@int.HasValue) {
+            Debug.LogError("담당자: 남경민!!!!!!!!!!!!!!!!!!!!!!!!!");
+                }
+        _fsm.RPC_GrantExpOrder(_fsm.Object.InputAuthority, actionName);
     }
 
     protected void LazySet()

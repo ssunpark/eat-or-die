@@ -29,6 +29,8 @@
 
     HarvestBonusChance,
     CookBonusChance,
+
+    EvadeChance,
     
     EnemyHunger,
     EnemyMoveSpeed,

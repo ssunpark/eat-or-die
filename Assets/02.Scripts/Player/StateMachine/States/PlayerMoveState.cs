@@ -30,6 +30,7 @@ public class PlayerMoveState : APlayerStateBase
         _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
         _fsm.CanInteract = true;
         _fsm.CanUseItem = true;
+        
     }
 
     protected override void OnFixedUpdateInput()
@@ -70,12 +71,7 @@ public class PlayerMoveState : APlayerStateBase
             KCC.Move(Vector3.zero);
             return;
         }
-        _moveExpTimer += Machine.Runner.DeltaTime;
-        if (_moveExpTimer >= 1f)
-        {
-            GrantExpOrder("MovePerSecond");
-            _moveExpTimer = 0f;
-        }
+        
 
         Vector2 normalized = moveInput.normalized;
         Vector3 movementDirection = new Vector3(normalized.x, 0, normalized.y);
@@ -94,6 +90,12 @@ public class PlayerMoveState : APlayerStateBase
             Move();
         }
         _resource.ConsumeHunger(_hungerConsumptionOvertime * Machine.Runner.DeltaTime);
+        _moveExpTimer += Machine.Runner.DeltaTime;
+        if (_moveExpTimer >= 1f)
+        {
+            GrantExpOrder("MovePerSecond");
+            _moveExpTimer = 0f;
+        }
     }
 
     protected override void OnExitState()
