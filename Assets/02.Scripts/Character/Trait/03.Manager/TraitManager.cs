@@ -5,13 +5,15 @@ using System.Linq;
 
 public class TraitManager
 {
-    public event Action<ETraitType, int> OnTraitLeveledUp; // (타입, 레벨 증가량)
-    public event Action<ETraitType, int> OnTraitExpGained; // (타입, 획득량)
+    public event Action<ETraitType, int> OnTraitLeveledUp;    // (타입, 레벨 증가량)
+    public event Action<ETraitType, int> OnTraitExpGained;    // (타입, 획득량)
+    public event Action<ETraitType> OnSkillPointChanged; // (타입, 수치)
 
     private Dictionary<ETraitType, int> _skillPoints = new(); // 5레벨 단위 포인트
     private Dictionary<ETraitType, Trait> _traitDict;
     private readonly StatManager _statManager;
     private List<CharacterTraitData> _originalTraitDataList;
+
     public TraitManager(ITraitDataRepository repo, StatManager statManager)
     {
         _statManager = statManager;
@@ -29,8 +31,9 @@ public class TraitManager
 
         _originalTraitDataList = repo.GetCharacterTraitData();
     }
-    
+
     public IEnumerable<CharacterTraitData> GetAllTraitData() => _originalTraitDataList;
+
     public void AddExp(ETraitType type, int amount, CharacterTraitData traitData)
     {
         if (!_traitDict.TryGetValue(type, out var trait))
@@ -38,9 +41,11 @@ public class TraitManager
             Debug.LogWarning($"[TraitManager] 알 수 없는 특성 타입: {type}");
             return;
         }
+
         //Debug.Log($"[TraitManager] {type} 특성에 경험치 추가: {amount}");
         int prevLevel = trait.Level;
-        if (prevLevel == trait.MaxLevel) return;
+        if (prevLevel == trait.MaxLevel)
+            return;
         trait.AddExp(amount);
         OnTraitExpGained?.Invoke(type, amount);
 
@@ -56,11 +61,16 @@ public class TraitManager
                 int gainedPoint = newPoint - prevPoint;
                 _skillPoints.TryAdd(type, 0);
                 _skillPoints[type] += gainedPoint;
+                OnSkillPointChanged?.Invoke(type);
+                Debug.Log($"스킬 포인트 획득{type}: {_skillPoints[type]}");
             }
-            if(trait.Level == trait.MaxLevel)
+
+            if (trait.Level == trait.MaxLevel)
             {
                 _skillPoints.TryAdd(type, 0);
                 _skillPoints[type] += 5;
+                OnSkillPointChanged?.Invoke(type);
+                Debug.Log($"스킬 포인트 획득{type}: {_skillPoints[type]}");
             }
             //Debug.Log($"[TraitManager] {type} 레벨업: {prevLevel} -> {trait.Level}, 획득 경험치: {amount}");
         }
@@ -93,7 +103,8 @@ public class TraitManager
 
     public void ForceSetLevel(ETraitType type, int level, CharacterTraitData traitData)
     {
-        if (!_traitDict.TryGetValue(type, out var trait)) return;
+        if (!_traitDict.TryGetValue(type, out var trait))
+            return;
 
         int oldLevel = trait.Level;
         trait.SetLevel(level);
@@ -135,6 +146,7 @@ public class TraitManager
             kvp.Value.SetLevel(0);
             _statManager.RemoveModifiersFrom(kvp.Key);
         }
+
         _skillPoints.Clear();
     }
 
@@ -142,5 +154,18 @@ public class TraitManager
     {
         _traitDict.TryGetValue(type, out var trait);
         return trait;
+    }
+    
+    public int GetSkillPoints(ETraitType type) => _skillPoints.GetValueOrDefault(type, 0);
+
+    public bool TryUseSkillPoint(ETraitType type)
+    {
+        if (!_skillPoints.TryGetValue(type, out var sp) && sp <= 0)
+        {
+            return false;
+        }
+
+        _skillPoints[type] -= 1;
+        return true;
     }
 }

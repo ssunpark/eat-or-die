@@ -35,6 +35,7 @@ public class TraitUIEntry : MonoBehaviour
     {
         _traitManager = traitManager;
         _data = allData?.FirstOrDefault(d => d.TraitType == TraitType);
+        PopupPrefab.GetComponent<SkillTreePopup>().SetData(_traitManager, _data);
 
         if (_data == null)
         {
@@ -122,7 +123,6 @@ public class TraitUIEntry : MonoBehaviour
 
     public void OnClickOpenSkillTree()
     {
-        PopupPrefab.GetComponent<SkillTreePopup>().SetData(_traitManager, _data);
         PopupPrefab.GetComponent<DefaultPopup>().Open();
     }
 }
