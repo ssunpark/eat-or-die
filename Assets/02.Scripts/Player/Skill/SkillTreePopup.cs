@@ -56,6 +56,9 @@ public class SkillTreePopup : MonoBehaviour
     private void OnDisable()
     {
         if (_traitManager != null)
+        {
             _traitManager.OnTraitLeveledUp -= OnTraitLeveledUp;
+            _traitManager.OnSkillPointChanged -= OnSkillPointChanged;
+        }
     }
 }

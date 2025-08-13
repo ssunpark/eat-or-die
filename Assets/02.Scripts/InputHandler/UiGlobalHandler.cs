@@ -94,17 +94,18 @@ public class UiGlobalHandler : MonoBehaviour
         if (_traitsPanel != null)
             _traitsPanel.Unbind();
 
-        //여기다 스킬트리 Unbind
+        if (_skillTree != null)
+            _skillTree.Unbind();
     }
 
     private void BindPlayer()
     {
         var local = FindLocalPlayer();
-        if (local != null && _traitsPanel != null && _statsPanel != null)
+        if (local != null && _traitsPanel != null && _statsPanel != null && _skillTree != null)
         {
             _traitsPanel.BindLocal(local);
             _statsPanel.BindLocal(local);
-            // 여기다 스킬트리 Bind
+            _skillTree.BindLocal(local);
         }
     }
 

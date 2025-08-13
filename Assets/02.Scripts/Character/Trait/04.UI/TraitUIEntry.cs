@@ -18,6 +18,7 @@ public class TraitUIEntry : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _currentLvText;   // Value/TraitCurrentLevel
     [SerializeField] private TextMeshProUGUI _maxLvText;       // Value/TraitMaxLevel
     [SerializeField] private Slider _expSlider;                // ExpSlider
+    [SerializeField] private GameObject _skillPointPointer;
 
     private TraitManager _traitManager;
     private CharacterTraitData _data;
@@ -53,9 +54,11 @@ public class TraitUIEntry : MonoBehaviour
         });
 
         RefreshLevelAndExp();
+        OnSkillPointChanged(TraitType);
 
         _traitManager.OnTraitLeveledUp += OnTraitLeveledUp;
         _traitManager.OnTraitExpGained += OnTraitExpGained;
+        _traitManager.OnSkillPointChanged += OnSkillPointChanged;
     }
 
     public void Unbind()
@@ -64,6 +67,7 @@ public class TraitUIEntry : MonoBehaviour
         {
             _traitManager.OnTraitLeveledUp -= OnTraitLeveledUp;
             _traitManager.OnTraitExpGained -= OnTraitExpGained;
+            _traitManager.OnSkillPointChanged -= OnSkillPointChanged;
         }
         _traitManager = null;
         _data = null;
@@ -84,6 +88,13 @@ public class TraitUIEntry : MonoBehaviour
     {
         if (type != TraitType) return;
         RefreshExpOnly();
+    }
+
+    private void OnSkillPointChanged(ETraitType type)
+    {
+        if (type != TraitType) return;
+        
+        _skillPointPointer.SetActive(_traitManager.GetSkillPoints(type) > 0);
     }
 
     // ---- UI Update ----
