@@ -3,30 +3,22 @@ using UnityEngine;
 
 public class TraceState : AEnemyState
 {
-    protected override bool CanEnterState()
-    {
-        return (Context.Target != null);
-    }
-
     protected override void OnEnterState()
     {
+        Debug.Log("Enter Trace State");
         Context.Agent.isStopped = false;
         Context.Owner.AnimationState = EAnimationState.RunForward;
     }
 
     protected override void OnFixedUpdate()
     {
-        if (ParentBehaviour.Machine.TryActivateState<AttackBehaviour>(true))
-        {
-            return;
-        }
+        if (Context.Animator.IsInTransition(0)) return;
         
         Context.Agent.SetDestination(Context.Target.transform.position);
         
-        if (!Context.Animator.IsInTransition(0))
-        {
-            Context.Mover.Move();
-        }
+        Context.Mover.Move();
+        
+        ParentBehaviour.Machine.TryActivateState<AttackBehaviour>();
     }
 
     protected override void OnExitState()
