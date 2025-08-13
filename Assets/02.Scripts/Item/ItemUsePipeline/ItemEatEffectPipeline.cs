@@ -31,7 +31,7 @@ public class ItemEatEffectPipeline : IItemUsePipeline
         );
 
         // 스킬 적용 (한 번만)
-        SkillManager.Instance.Publish(ESkillEventType.OnEat, context, eatPayload);
+        player.Skill.Publish(ESkillEventType.OnEat, context, eatPayload);
 
         // 최종 적용 (회복)
         _hungerEffect.Use(target, eatPayload.ExtraRestore);
