@@ -66,16 +66,65 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
       propertyPath: m_Name
-      value: SFF_Potato_Crop_Dried Variant
+      value: Crop_Potato_Prefab_Dried
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1836631957662537615, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7682895320123000179, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8280271591645924072, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 475800870174941996}
     - targetCorrespondingSourceObject: {fileID: 8280271591645924072, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 624674644693207263}
+    - targetCorrespondingSourceObject: {fileID: 8280271591645924072, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6601918220174608344}
+    - targetCorrespondingSourceObject: {fileID: 7682895320123000179, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6409410212794680464}
+    - targetCorrespondingSourceObject: {fileID: 1836631957662537615, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7430525425819590077}
   m_SourcePrefab: {fileID: 100100000, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+--- !u!1 &2725443061454927423 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7682895320123000179, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+  m_PrefabInstance: {fileID: 5714391249665110860}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6409410212794680464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2725443061454927423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4441947488990263716 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8280271591645924072, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
@@ -103,3 +152,94 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2417044266754172962, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+--- !u!114 &6601918220174608344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4441947488990263716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &4867530560298192413 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+  m_PrefabInstance: {fileID: 5714391249665110860}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &475800870174941996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4867530560298192413}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  complexMaskingMode: 2
+  drawingMode: 1
+  outlineLayer: 0
+  outlineTargets:
+  - CutoutMask: 8
+    renderer: {fileID: 8211149789041272640}
+    SubmeshIndex: 0
+    BoundsMode: 0
+    Bounds:
+      m_Center: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0.5}
+    CutoutThreshold: 0.5
+    CullMode: 2
+    cutoutTextureName: 
+    cutoutTextureIndex: 0
+  renderStyle: 1
+  outlineParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  backParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+  frontParameters:
+    enabled: 1
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    dilateShift: 1
+    blurShift: 1
+    fillPass:
+      shader: {fileID: 0}
+      serializedProperties: []
+--- !u!1 &6210639363013387459 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1836631957662537615, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+  m_PrefabInstance: {fileID: 5714391249665110860}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7430525425819590077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6210639363013387459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!23 &8211149789041272640 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -4702244363496352756, guid: 27d656ad59f8ba84eb377191c70d76b6, type: 3}
+  m_PrefabInstance: {fileID: 5714391249665110860}
+  m_PrefabAsset: {fileID: 0}

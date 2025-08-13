@@ -79,7 +79,7 @@ public class ItemManager : NetworkBehaviour
         
         // 설치 아이템
         var craftRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{CRAFT_CSV_PATH}");
-        seedRawDataList.ForEach(x => x.ItemType = EItemType.Craft);
+        craftRawDataList.ForEach(x => x.ItemType = EItemType.Craft);
         
         var usableRawDataList = toolRawDataList;
         usableRawDataList.AddRange(seedRawDataList);

@@ -20,10 +20,14 @@ public class MoveBehaviour : AEnemyStateBehaviour
         
         stateMachines.Add(_moveStateMachine);
     }
-
-    protected override bool CanEnterState()
+    
+    protected override void OnFixedUpdate()
     {
-        return (Machine.Context.Target != null);
+        if (Machine.Context.Target == null)
+        {
+            Debug.Log("No Target Found");
+            Machine.TryActivateState<IdleBehaviour>();
+        }
     }
 
     protected override void OnEnterState()

@@ -16,9 +16,15 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
     
     private void OnDisable()
     {
-        UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
-        CookingManager.Instance.CookingFinished -= HandleCookingFinished;
-    
+        if (UnifiedInventoryManager.Instance != null)
+        {
+            UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
+        }
+
+        if (CookingManager.Instance != null)
+        {
+            CookingManager.Instance.CookingFinished -= HandleCookingFinished;
+        }
     }
 
     public bool IsUnlockedIngredients(int ingredientID)
