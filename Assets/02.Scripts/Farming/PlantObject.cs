@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using EPOOutline;
+using Fusion;
 using Redcode.Pools;
 using UnityEngine;
 
@@ -14,6 +15,9 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     private GameObject _plantObject;
     private SeedData _seedData;
+    [SerializeField] private OutlineController _outlineController;
+    [SerializeField] private LayerMask InteractableLayer;
+    [SerializeField] private LayerMask NotInteractableLayer;
 
     private float _growthTime;
 
@@ -113,5 +117,14 @@ public class PlantObject : NetworkBehaviour, IInteractable
     {
         ApplyVisual();
         FarmingManager.Instance.TryGetSeedData(PlantID, out _seedData);
+        if(GrowthLevel<_seedData.MaxGrowthLevel - 1)
+        {
+            gameObject.layer = Mathf.RoundToInt(Mathf.Log(NotInteractableLayer.value, 2));
+        }
+        else
+        {
+            gameObject.layer = Mathf.RoundToInt(Mathf.Log(InteractableLayer.value, 2));
+            _outlineController.OutlineObject = _plantObject.GetComponent<Outlinable>();
+        }
     }
 }

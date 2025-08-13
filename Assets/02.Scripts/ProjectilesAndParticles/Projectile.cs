@@ -24,9 +24,11 @@ public class Projectile : NetworkBehaviour
     public ParticleSystem ExplodeEffect;
     [Networked] private TickTimer LifeTimer { get; set; }
     [Networked]
-    private bool _isHit_networked { get; set; }
+    private NetworkBool _isHit_networked { get; set; }
 
-    bool _isHit;
+
+
+    bool _spawned;
     IAttackable _hitObject;
     [Networked, OnChangedRender(nameof(TargetSet))] private NetworkObject _target { get; set; }
 
@@ -47,14 +49,17 @@ public class Projectile : NetworkBehaviour
         {
             LifeTimer = TickTimer.CreateFromSeconds(Runner, Lifetime);
             _target = null;
+            _isHit_networked = false;
+
         }
         _collider = GetComponent<Collider>();
         _collider.enabled = false;
-        _isHit = false;
+        _spawned = true;
     }
 
     public override void FixedUpdateNetwork()
     {
+        if (Object.IsValid == false || !_spawned) return;
         if (Object.HasStateAuthority)
         {
             transform.position += transform.forward * Speed * Runner.DeltaTime;
@@ -62,10 +67,10 @@ public class Projectile : NetworkBehaviour
             if (LifeTimer.Expired(Runner))
             {
                 DestroySelf();
+                return;
             }
         }
-
-        if (_isHit_networked)
+        if (Object.IsValid && _isHit_networked)
         {
 
             if (_target != null)
@@ -83,7 +88,7 @@ public class Projectile : NetworkBehaviour
                 _attackInfo.TotalDamageMultiplier = _totalDamageMultiplier;
                 _attackInfo.Attacker = Attacker;
                 _hitObject.OnHitLocal(_attackInfo);
-                if(_areYouPlayersProjectileAndMagicProjectile)
+                if (_areYouPlayersProjectileAndMagicProjectile)
                 {
                     RPC_GrantExpOrder(Attacker.InputAuthority, "MagicAttackHit");
                 }
@@ -122,28 +127,31 @@ public class Projectile : NetworkBehaviour
     {
         if (_isHit_networked)
         {
-            Debug.LogWarning("Projectile has already hit something, ignoring further collisions.");
             return;
         }
-        if ((HitMask.value & (1 << other.gameObject.layer)) == 0)
-        {
-            Debug.Log($"Projectile {gameObject.name} hit an object not in HitMask: {other.gameObject.name}");
-            return;
-        }
-        if (other.TryGetComponent<IAttackable>(out var target))
+        else if (other.TryGetComponent<IAttackable>(out var target))
         {
             if (target.NetworkObject == Attacker)
             {
-                Debug.LogWarning($"Projectile {gameObject.name} hit its own attacker: {target.NetworkObject.name}");
+                // 공격자 자신은 안때림
+                return;
+            }
+            if((HitMask.value & (1 << other.gameObject.layer)) == 0)
+            {
+                // 마스크에 맞지 않는 레이어는 안때림
                 return;
             }
             if (Runner.IsServer)
             {
                 _target = target.NetworkObject;
-                _collider.enabled = false;
-                _isHit_networked = true;
-                ParticleManager.Instance.RpcPlayParticle(ExplodeEffect.name, transform.position, Quaternion.identity);
             }
+        }
+        if (Runner.IsServer)
+        {
+
+            _collider.enabled = false;
+            _isHit_networked = true;
+            ParticleManager.Instance.RpcPlayParticle(ExplodeEffect.name, transform.position, Quaternion.identity);
         }
     }
 
@@ -154,6 +162,7 @@ public class Projectile : NetworkBehaviour
     }
     private void DestroySelf()
     {
+        _spawned = false;
         Runner.Despawn(Object);
     }
 }
