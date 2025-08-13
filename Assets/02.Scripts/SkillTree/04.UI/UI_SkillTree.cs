@@ -9,7 +9,7 @@ public class UI_SkillTree : MonoBehaviour
     
     private SkillManager _skillManager;
 
-    public void Bind(Player localPlayer)
+    public void BindLocal(Player localPlayer)
     {
         _skillManager = localPlayer.Skill;
         _skillManager.OnDataChanged += Refresh;
@@ -27,5 +27,10 @@ public class UI_SkillTree : MonoBehaviour
         {
             group.Refresh();
         }
+    }
+
+    public void Unbind()
+    {
+        _skillManager.OnDataChanged -= Refresh;
     }
 }

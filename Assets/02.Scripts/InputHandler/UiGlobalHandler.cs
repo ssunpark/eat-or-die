@@ -11,6 +11,7 @@ public class UiGlobalHandler : MonoBehaviour
     [SerializeField] private StatsPanel _statsPanel;        // StatsPanel (동일 팝업 아래에 있음, TraitsPanel과는 다른 오브젝트)
     [SerializeField] private AUI_PopupBase _partyPopup;     // 파티 HP 창 루트(= DefaultPopup/AnimatePopup 포함)
     [SerializeField] private UI_HUDPartyHP _partyHud;       // 파티 HP 본문(선택)
+    [SerializeField] private UI_SkillTree _skillTree;
     private AUI_PopupBase _statsPopup;
 
     // 액션/맵
@@ -69,10 +70,11 @@ public class UiGlobalHandler : MonoBehaviour
         if (open)
         {
             var local = FindLocalPlayer();
-            if (local != null && _traitsPanel != null && _statsPanel != null)
+            if (local != null && _traitsPanel != null && _statsPanel != null && _skillTree != null)
             {
                 _traitsPanel.BindLocal(local);
                 _statsPanel.BindLocal(local);
+                _skillTree.BindLocal(local);
             }
                 
 
@@ -80,6 +82,7 @@ public class UiGlobalHandler : MonoBehaviour
         }
         else
         {
+            _skillTree?.Unbind();
             _statsPanel?.Unbind();
             if (_statsPopup.gameObject.activeInHierarchy)
             {

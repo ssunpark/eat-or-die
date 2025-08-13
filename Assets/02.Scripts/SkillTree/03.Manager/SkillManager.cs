@@ -14,6 +14,8 @@ public class SkillManager
     private readonly Dictionary<int, Skill> _skills = new();
     // 현재 활성 핸들러(있을 때만 값 존재)
     private readonly Dictionary<int, ISkillHandler> _handlers = new();
+    
+    public SkillContext Context { get; private set; }
 
     public event Action OnDataChanged;
 
@@ -25,6 +27,7 @@ public class SkillManager
         _hub = new SkillEventHub();
         _factory = new SkillEventFactory();
         _repository = new SkillRepository();
+        Context = new SkillContext(PlayerInfoManager.Instance.LocalPlayer);
         
         foreach (var skill in _repository.LoadSkillRawDataList())
         {
@@ -95,7 +98,7 @@ public class SkillManager
         if (level > 0)
             _hub.Subscribe(handler);
 
-        Publish(ESkillEventType.OnSkillUpgrade, PlayerInfoManager.Instance.LocalPlayer.GetComponent<ActorContextHolder>().Context);
+        Publish(ESkillEventType.OnSkillUpgrade, Context);
         
         OnDataChanged?.Invoke();
     }
@@ -133,7 +136,7 @@ public class SkillManager
         if (skill.Level > 0)
             _hub.Subscribe(handler);
 
-        Publish(ESkillEventType.OnSkillUpgrade, PlayerInfoManager.Instance.LocalPlayer.GetComponent<ActorContextHolder>().Context);
+        Publish(ESkillEventType.OnSkillUpgrade, Context);
         
         OnDataChanged?.Invoke();
     }
