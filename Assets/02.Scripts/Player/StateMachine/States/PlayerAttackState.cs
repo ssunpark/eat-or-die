@@ -130,6 +130,11 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
             Debug.LogWarning("[PlayerAttackState] ProjectileKey is null or empty. Using default.");
             projectileKey = "DefaultProjectile";
         }
+        if(ProjectileManager.Instance == null)
+        {
+            Debug.LogError("[PlayerAttackState] ProjectileManager instance is null. Cannot perform ranged attack.");
+            return;
+        }
         GameObject projectilePrefab = ProjectileManager.Instance.GetProjectile(projectileKey);
         if (projectilePrefab == null)
         {
