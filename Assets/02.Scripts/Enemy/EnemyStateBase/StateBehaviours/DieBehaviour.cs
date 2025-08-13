@@ -46,8 +46,8 @@ public class DieBehaviour : AEnemyStateBehaviour
             ItemManager.Instance.RPC_CreateItemObject(
                 drop1ID,
                 Random.Range(1, drop1Quantity),
-                1f,
-                Machine.Context.Owner.transform.position + Vector3.up * 0.5f,
+                ItemManager.Instance.GetItem(drop1ID).ItemDefinition.MaxDurability,
+                Machine.Context.Owner.transform.position,
                 Quaternion.identity);
         }
         
@@ -56,8 +56,8 @@ public class DieBehaviour : AEnemyStateBehaviour
             ItemManager.Instance.RPC_CreateItemObject(
                 drop2ID,
                 Random.Range(1, drop2Quantity),
-                1f,
-                Machine.Context.Owner.transform.position + Vector3.up * 0.5f,
+                ItemManager.Instance.GetItem(drop2ID).ItemDefinition.MaxDurability,
+                Machine.Context.Owner.transform.position,
                 Quaternion.identity);
         }
     }
