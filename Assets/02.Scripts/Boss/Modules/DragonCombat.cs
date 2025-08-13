@@ -86,6 +86,8 @@ public class DragonCombat
         var param = _controller.ParamLoader.RightScratch_Special;
         projectile.Fire(direction, param.Speed, param.LifeTime, param.Damage,
             () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
+        
+        projectile.GetComponent<EffectVisualController>().Appear(param.LifeTime, 2f, 2f);
     }
 
     #endregion
