@@ -111,7 +111,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         return _inventory.GetAllSlots();
     }
 
-    public void DropAllItems(Vector3 position = default)
+    public void DropAllItems(Vector3 position)
     {
         List<Slot> slots = GetAllSlots();
 

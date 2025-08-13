@@ -8,7 +8,7 @@ public class EnemySpawner : MonoBehaviour
     
     public float SpawnDuration = 5f; // Spawn 간격
     private float _spawnTimer = 0f;
-    private int _autoRemaining = 0;
+    private int _autoRemaining = 1;
 
     private void Update()
     {

@@ -874,6 +874,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _priority: 0
   _checkPriorityOnExit: 1
+  IsAttackFinished: 0
+  _attackableLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &8081015046990048740
 GameObject:
   m_ObjectHideFlags: 0
@@ -1088,8 +1092,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73f3a8cbab27fe64da0f695bc7d753d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyId: 800001
-  HitCountTemp: 0
+  EnemyID: 800001
+  _AnimationState: 0
   _currentHunger: 0
   _spawnBehaviour: {fileID: 5266104994893125905}
   _idleBehaviour: {fileID: 8098781592835120505}
