@@ -28,14 +28,22 @@ public class SkillTreePopup : MonoBehaviour
 
         // 첫 표시
         RefreshLevel();
+        OnSkillPointChanged(_data.TraitType);
 
         _traitManager.OnTraitLeveledUp += OnTraitLeveledUp;
+        _traitManager.OnSkillPointChanged += OnSkillPointChanged;
     }
 
     private void OnTraitLeveledUp(ETraitType type, int diff)
     {
         if (_data != null && type == _data.TraitType)
             RefreshLevel();
+    }
+
+    private void OnSkillPointChanged(ETraitType type)
+    {
+        if (_data != null && type == _data.TraitType)
+            _skillPointText.text = _traitManager.GetSkillPoints(type).ToString();
     }
 
     private void RefreshLevel()
@@ -48,6 +56,9 @@ public class SkillTreePopup : MonoBehaviour
     private void OnDisable()
     {
         if (_traitManager != null)
+        {
             _traitManager.OnTraitLeveledUp -= OnTraitLeveledUp;
+            _traitManager.OnSkillPointChanged -= OnSkillPointChanged;
+        }
     }
 }
