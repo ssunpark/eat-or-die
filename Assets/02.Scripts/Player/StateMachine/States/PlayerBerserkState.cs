@@ -25,6 +25,7 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
     protected override void OnEnterState()
     {
         base.OnEnterState();
+        _skill?.Publish(ESkillEventType.OnMad, _skill.Context, new StatePayload(true));
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         KCC.Move(Vector3.zero); // 이동 멈춤
@@ -40,6 +41,11 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
     protected override void OnFixedUpdateState()
     {
         _resource.ConsumeHunger(Machine.Runner.DeltaTime * _stat.GetStat(EStatType.HungerConsumptionOverTime) * 2);
+    }
+
+    protected override void OnExitState()
+    {
+        _skill?.Publish(ESkillEventType.OnMad, _skill.Context, new StatePayload(false));
     }
 
     public void OnActionMoment()
