@@ -139,6 +139,7 @@ public class PlayerItemHolder: NetworkBehaviour
         var heldItem = ItemManager.Instance.GetItem(HoldItemID);
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
         _heldItemObject = null;
+        HeldItemInstance = null;
         HoldItemID = -1;
 
         AttackType = EAttackType.MeleeWeapon;
