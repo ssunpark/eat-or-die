@@ -61,5 +61,15 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
                    UnifiedInventoryManager.Instance.HaveItem(ingredient2ID.Value);
         }
     }
+
+    public void ActiveHoverUI()
+    {
+        Debug.Log("ActiveHoverUI");
+    }
+
+    public void DeactiveHoverUI()
+    {
+        Debug.Log("DeactiveHoverUI");
+    }
 }
 
