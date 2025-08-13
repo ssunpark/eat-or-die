@@ -26,12 +26,12 @@ public class PlayerItemHolder: NetworkBehaviour
     [SerializeField] private List<AnimatorOverrideEntry> _overrideList;
 
     private Dictionary<string,AnimatorOverrideController> _animatorOverrideMap = new();
-    public int HoldItemID { get; private set; }
+    [Networked]
+    public int HoldItemID { get; set; }
     public override void Spawned()
     {
         if (HoldItemID > 0)
         {
-            Debug.Log($"[PlayerItemHolder] Spawned - Item with ID {HoldItemID} is being held. Synchronizing state.");
             _HoldItemLogic(HoldItemID);
         }
     }
@@ -140,7 +140,8 @@ public class PlayerItemHolder: NetworkBehaviour
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
         _heldItemObject = null;
         HeldItemInstance = null;
-        HoldItemID = -1;
+        if(Runner.IsServer)
+            HoldItemID = -1;
 
         AttackType = EAttackType.MeleeWeapon;
         ProjectileKey = "DefaultProjectile";
@@ -150,7 +151,8 @@ public class PlayerItemHolder: NetworkBehaviour
     private void RPC_RequestHoldItem(int itemId)
     {
         _HoldItemLogic(itemId);
-        HoldItemID = itemId;
+        if(Runner.IsServer)
+            HoldItemID = itemId;
     }
     Coroutine _setHoldItemCoroutine;
     public void ApplyAnimatorOverride(string key)

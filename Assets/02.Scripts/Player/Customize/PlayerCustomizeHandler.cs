@@ -67,6 +67,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
                 _customizeSelections[part] = 0;
             }
         }
+        _partsRoot = transform.Find("Characters/Parts");
     }
 
     private void ApplyNickname()
@@ -90,7 +91,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     }
     private void ApplyCustomization()
     {
-        var root = transform.Find("Characters/Parts");
+        var root = _partsRoot != null ? _partsRoot : transform.Find("Characters/Parts");
         if (root == null) return;
 
         foreach (var (category, index) in _customData.AsEnumerable())
@@ -98,6 +99,8 @@ public class PlayerCustomizeHandler : NetworkBehaviour
             if (index <= 0) continue;
             ActivatePart(root, category, index);
         }
+
+        SetArmor();
     }
 
     private void ActivatePart(Transform root, string category, short index)
@@ -167,5 +170,103 @@ public class PlayerCustomizeHandler : NetworkBehaviour
                 Debug.LogWarning("[PlayerCustomizeHandler] ProfilePanel 컴포넌트를 찾을 수 없습니다.");
             }
         }
+    }
+    private Transform _partsRoot;
+
+    [Networked, OnChangedRender(nameof(OnEquipFlagsChanged))]
+    public NetworkBool EquipedHelmet { get; set; } = false;
+    [Networked, OnChangedRender(nameof(OnEquipFlagsChanged))]
+    public NetworkBool EquipedArmor { get; set; } = false;
+    [Networked, OnChangedRender(nameof(OnEquipFlagsChanged))]
+    public NetworkBool EquipedLeggings { get; set; } = false;
+    [Networked, OnChangedRender(nameof(OnEquipFlagsChanged))]
+    public NetworkBool EquipedBoots { get; set; } = false;
+
+    private void OnEquipFlagsChanged() => SetArmor();
+    [SerializeField] private List<GameObject> _helmetPrefabs;
+    [SerializeField] private List<GameObject> _armorPrefabs;
+    [SerializeField] private List<GameObject> _leggingsPrefabs;
+    [SerializeField] private List<GameObject> _bootsPrefabs;
+    private GameObject _savedTop;
+    private GameObject _savedBottom;
+    private GameObject _currentArmor;
+    private GameObject _currentLeggings;
+    private GameObject GetActiveChild(string category)
+    {
+        var t = (_partsRoot ?? transform.Find("Characters/Parts"))?.Find(category);
+        if (t == null) return null;
+
+        for (int i = 0; i < t.childCount; i++)
+        {
+            var go = t.GetChild(i).gameObject;
+            if (go.activeSelf) return go;
+        }
+        return null;
+    }
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_EquipOrUnequipSomething(EArmorType type, bool equip)
+    {
+        switch (type)
+        {
+            case EArmorType.Helmet: EquipedHelmet = equip; break;
+            case EArmorType.Chestplate: EquipedArmor = equip; break;
+            case EArmorType.Leggings: EquipedLeggings = equip; break;
+            case EArmorType.Boots: EquipedBoots = equip; break;
+            default:
+                Debug.LogWarning($"[PlayerCustomizeHandler] 알 수 없는 장비 타입: {type}");
+                break;
+        }
+        SetArmor();
+    }
+
+    public void SetArmor()
+    {
+        int classIdx = (int)_classType;
+
+        // --- Helmet ---
+        if (_helmetPrefabs != null && classIdx < _helmetPrefabs.Count)
+            _helmetPrefabs[classIdx].SetActive(EquipedHelmet);
+
+        // --- Chestplate(상의) ---
+        if (_armorPrefabs != null && classIdx < _armorPrefabs.Count)
+        {
+            if (EquipedArmor)
+            {
+                // 아직 저장 안 했다면 현재 Top을 저장
+                if (_savedTop == null) _savedTop = GetActiveChild("Top");
+                if (_savedTop != null) _savedTop.SetActive(false);
+
+                _currentArmor = _armorPrefabs[classIdx];
+                _currentArmor.SetActive(true);
+            }
+            else
+            {
+                // 장비 해제: 장비 끄고 저장된 Top 복원
+                if (_currentArmor != null) _currentArmor.SetActive(false);
+                if (_savedTop != null) { _savedTop.SetActive(true); _savedTop = null; }
+            }
+        }
+
+        // --- Leggings(하의) ---
+        if (_leggingsPrefabs != null && classIdx < _leggingsPrefabs.Count)
+        {
+            if (EquipedLeggings)
+            {
+                if (_savedBottom == null) _savedBottom = GetActiveChild("Bottom");
+                if (_savedBottom != null) _savedBottom.SetActive(false);
+
+                _currentLeggings = _leggingsPrefabs[classIdx];
+                _currentLeggings.SetActive(true);
+            }
+            else
+            {
+                if (_currentLeggings != null) _currentLeggings.SetActive(false);
+                if (_savedBottom != null) { _savedBottom.SetActive(true); _savedBottom = null; }
+            }
+        }
+
+        // --- Boots ---
+        if (_bootsPrefabs != null && classIdx < _bootsPrefabs.Count)
+            _bootsPrefabs[classIdx].SetActive(EquipedBoots);
     }
 }
