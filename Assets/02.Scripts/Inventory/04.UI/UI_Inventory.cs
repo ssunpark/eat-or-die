@@ -21,6 +21,7 @@ public class UI_Inventory : AUI_PopupBase
 
         InventoryManager.Instance.OnSlotUpdated += UpdateSlotUI;
         InventoryManager.Instance.OnInventoryUpdated += UpdateInventoryUI;
+        InventoryManager.Instance.OnOpenInventory += ToggleInventory;
         Close();
     }
 

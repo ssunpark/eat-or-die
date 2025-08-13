@@ -134,7 +134,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)
     {
-        _stateMachine.CollectStateMachines(stateMachines);
+        _stateMachine?.CollectStateMachines(stateMachines);
     }
 
     public void OnEntryMoment()
