@@ -57,6 +57,7 @@ public class UiGlobalHandler : MonoBehaviour
     {
         _toggleTraits.performed -= OnToggleTraits;
         _toggleParty.performed -= OnToggleParty;
+        _mapGlobal.Disable();
     }
 
     // ===== Traits =====
