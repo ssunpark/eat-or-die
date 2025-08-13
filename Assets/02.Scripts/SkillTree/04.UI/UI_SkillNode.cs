@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_SkillNode : MonoBehaviour
+public class UI_SkillNode : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField]
     private UI_SkillDescription _skillDescription;
@@ -71,5 +72,10 @@ public class UI_SkillNode : MonoBehaviour
         {
             Refresh();
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Refresh();
     }
 }

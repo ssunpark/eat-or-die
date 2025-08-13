@@ -47,4 +47,6 @@ public class Skill
     public void ResetLevel() => Level = 0;
 
     public void SetLevel(int level) => Level = level;
+    
+    public SkillDTO ToDTO() => new SkillDTO(Meta.Id, Level); 
 }
