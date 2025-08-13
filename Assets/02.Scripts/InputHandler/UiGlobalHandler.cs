@@ -24,7 +24,7 @@ public class UiGlobalHandler : MonoBehaviour
     private InputActionMap _mapUI;
     private InputActionMap _mapGlobal;
 
-    public int _modalCount; // UI 맵 켜둘지 결정 (Traits 같은 모달 팝업 수)
+    private int _modalCount; // UI 맵 켜둘지 결정 (Traits 같은 모달 팝업 수)
 
     private void Start()
     {
