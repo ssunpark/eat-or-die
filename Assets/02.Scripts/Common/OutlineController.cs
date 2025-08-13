@@ -12,7 +12,6 @@ public class OutlineController : MonoBehaviour
         {
             if (value == null)
             {
-                Debug.LogWarning($"{name} 아웃라인 넣어주세요");
             }
             _outlineObject = value;
         }
