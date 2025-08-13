@@ -1,4 +1,5 @@
 ﻿using System;
+using EPOOutline;
 using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -7,7 +8,7 @@ using Random = UnityEngine.Random;
 public class SeedGround : NetworkBehaviour
 {
     private const string SEED_TAG = "Seed";
-    
+    [SerializeField] private OutlineController _outlineController;
     [Networked, OnChangedRender(nameof(OnIsPlantedChanged))]
     public bool IsPlanted { get; set; }
     
@@ -65,5 +66,6 @@ public class SeedGround : NetworkBehaviour
     private void OnIsPlantedChanged()
     {
         gameObject.tag = IsPlanted ? "Untagged" : SEED_TAG;
+        _outlineController.enabled = !IsPlanted;
     }
 }

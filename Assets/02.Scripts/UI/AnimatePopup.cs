@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,6 +30,7 @@ public class AnimatePopup : MonoBehaviour
     
     public void Close()
     {
+        if (!gameObject.activeInHierarchy) return;
         if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Open"))
         {
             _animator.Play("Close");
@@ -41,6 +42,7 @@ public class AnimatePopup : MonoBehaviour
     private IEnumerator RunPopupDeactivate()
     {
         yield return new WaitForSeconds(DestroyTime);
+        if(_background!=null)
         Destroy(_background);
         gameObject.SetActive(false);
     }

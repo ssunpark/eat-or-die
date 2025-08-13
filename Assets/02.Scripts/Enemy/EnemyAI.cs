@@ -8,7 +8,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(StateMachineController))]
 public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
 {
-	[SerializeField] private int _enemyId; // 몬스터 ID
+	public int EnemyID; // 몬스터 ID
 
 	[Networked] public EAnimationState AnimationState { get; set; }
 	private bool _hit;
@@ -48,7 +48,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
-		EnemyStatManager = new EnemyStatManager(_enemyId);
+		EnemyStatManager = new EnemyStatManager(EnemyID);
 
 		_currentHunger = EnemyStatManager.GetStat(EStatType.EnemyHunger);
 		_animator = GetComponent<Animator>();
@@ -155,9 +155,14 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	{
 		if (HasStateAuthority)
 		{
-			float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
-			float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
-			_currentHunger = amount * (100 / (100 + defense));
+			float meleeAmount = attack.MeleeDamage * attack.TotalDamageMultiplier;
+			float magicAmount = attack.MagicDamage * attack.TotalDamageMultiplier;
+			float meleeDefense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+			float magicDefense = EnemyStatManager.GetStat(EStatType.EnemyMagicDefense);
+			
+			float totalDamage = meleeAmount * (100 / (100 + meleeDefense)) + magicAmount * (100 / (100 + magicDefense));
+
+			_currentHunger -= totalDamage;
 		
 			_hit = true;
 		}

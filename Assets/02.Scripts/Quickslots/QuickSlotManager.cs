@@ -148,7 +148,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		return _quickSlots.GetAllSlots();
 	}
 
-	public void DropAllItems(Vector3 position = default)
+	public void DropAllItems(Vector3 position)
 	{
 		List<Slot> slots = GetAllSlots();
 

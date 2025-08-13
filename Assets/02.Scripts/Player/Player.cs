@@ -316,20 +316,6 @@ public class Player : CharacterBase, IAttackable
             var hudHP = hudObject.GetComponentInChildren<UI_HUDPlayerHP>(true);
             if (hudHP != null)
                 hudHP.Initialize(Resource, Stat);
-
-            var traitsPanel = hudObject.GetComponentInChildren<TraitsPanel>(true);
-            if (traitsPanel != null)
-                traitsPanel.BindLocal(this);
-
-            var statsPanel = hudObject.GetComponentInChildren<StatsPanel>(true);
-            if (statsPanel != null)
-            {
-                statsPanel.BindLocal(this);
-            }
-            else
-            {
-                Debug.LogWarning("[Player] StatsPanel not found in PlayerHUD.");
-            }
         }
     }
 

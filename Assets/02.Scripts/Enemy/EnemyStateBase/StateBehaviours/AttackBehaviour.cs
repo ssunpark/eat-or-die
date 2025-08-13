@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion.Addons.FSM;
+using UnityEngine.Analytics;
 
 public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 {
@@ -10,6 +11,9 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 
 	private AttackPrepareState _prepareState = new AttackPrepareState();
 	private AttackActionState _actionState = new AttackActionState();
+	
+	// 공격 감지 레이어
+	[SerializeField] private LayerMask _attackableLayer;
 	
 	protected override void OnCollectChildStateMachines(List<IStateMachine> stateMachines)
 	{
@@ -57,6 +61,25 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 
 	public void OnActionMoment()
 	{
+		// 오버랩 스피어로 공격 대상이 범위안에 있는지 탐지
+		Collider[] hitColliders = Physics.OverlapSphere(transform.position, Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange), _attackableLayer);
+		foreach (Collider targetCollider in hitColliders)
+		{
+			// 공격대상이 Attack 각도 밖에 있으면 return
+			Vector3 toTarget = targetCollider.transform.position - transform.position;
+			if (Vector3.Angle(toTarget, transform.forward) > Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle)) continue;
+				    
+			if (targetCollider.TryGetComponent(out IAttackable attackable))
+			{
+				AttackInfo attackInfo = new AttackInfo
+				{
+					MeleeDamage = Machine.Context.StatManager.GetStat(EStatType.EnemyDamage),
+					Attacker = Machine.Context.Owner.Object,
+					TotalDamageMultiplier = 1,
+				};
+				attackable.OnHitLocal(attackInfo);
+			}
+		}
 		Debug.Log("Attack Moment Triggered");
 	}
 }

@@ -1,5 +1,7 @@
+﻿using EPOOutline;
 using Fusion;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class FarmingGround : NetworkBehaviour
 {
@@ -21,8 +23,26 @@ public class FarmingGround : NetworkBehaviour
     [SerializeField]
     private Material _waterMaterial;
 
+    [SerializeField]
+    private List<GameObject> _plantPositions = new();
+
+    [Header("Outline")]
+    [SerializeField]
+    private OutlineController _outlineController;
+    [SerializeField]
+    private Outlinable _baseGroundOutlinable;
+    [SerializeField]
+    private Outlinable _plowedGroundOutlinable;
+
     private MeshRenderer _plowedGroundRenderer;
     private MeshRenderer _plowedSubGroundRenderer;
+
+    [Header("Layer")]
+    [SerializeField]
+    private LayerMask InteractableLayerMask = default;
+    [SerializeField]
+    private LayerMask NoooooLayerMask = default;
+
 
     private void Awake()
     {
@@ -52,9 +72,25 @@ public class FarmingGround : NetworkBehaviour
         {
             _baseGround.SetActive(false);
             _plowedGround.SetActive(true);
+            _outlineController.InactiveOutline();
             _plowedGroundRenderer.material = _waterMaterial;
             _plowedSubGroundRenderer.material = _waterMaterial;
         }
+
+        _outlineController.OutlineObject = State switch
+        {
+            EFarmingGroundState.None => _baseGroundOutlinable,
+            EFarmingGroundState.Hoe => _plowedGroundOutlinable,
+            _ => null
+        };
+
+        gameObject.layer = State switch
+        {
+            EFarmingGroundState.None => Mathf.RoundToInt(Mathf.Log(InteractableLayerMask.value, 2)),
+            EFarmingGroundState.Hoe => Mathf.RoundToInt(Mathf.Log(InteractableLayerMask.value, 2)),
+            EFarmingGroundState.WateringCan => Mathf.RoundToInt(Mathf.Log(NoooooLayerMask.value, 2)),
+            _ => Mathf.RoundToInt(Mathf.Log(NoooooLayerMask.value, 2))
+        };
     }
 
     public void Hoe()

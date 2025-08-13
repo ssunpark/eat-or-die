@@ -16,7 +16,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        if(_fsm.ItemUseTarget == null)
+        if (_fsm.ItemUseTarget == null)
         {
             Machine.ForceActivateState<PlayerIdleState>();
         }
@@ -28,7 +28,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         base.OnEnterStateRender();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
-        PlayUseVfx(EUsePhase.Start, _fsm.transform.position+Vector3.up);
+        PlayUseVfx(EUsePhase.Start, _fsm.transform.position + Vector3.up);
         if (_fsm.HasStateAuthority || _fsm.HasInputAuthority)
         {
             _target = _fsm.ItemUseTarget;
@@ -47,7 +47,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
             return;
         }
 
-        if(_fsm.UseItemMode == EUseItemMode.Self)
+        if (_fsm.UseItemMode == EUseItemMode.Self)
         {
             PlayUseVfx(EUsePhase.Success, _fsm.transform.position + (Vector3.up * 0.5f));
         }
@@ -70,14 +70,29 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
     }
     protected override void OnFixedUpdateInput()
     {
-        KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
             Debug.Log(_fsm.PlayerNetworkObject.AnimationClipLengths[AnimState]);
             RequestActivateState();
         }
     }
-
+    protected override void PostFixedUpdate()
+    {
+        if (_fsm.UseItemMode == EUseItemMode.Self)
+        {
+            KCC.Move(Vector3.zero);
+            return;
+        }
+        if (Machine.StateTime <= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            Vector3 lookDir = _fsm.ItemUseTarget != null
+                ? (_fsm.ItemUseTarget.transform.position - _fsm.transform.position).normalized
+                : Vector3.forward;
+            lookDir.y = 0f;
+            KCC.SetLookRotation(Quaternion.LookRotation(lookDir));
+            KCC.Move(Vector3.zero);
+        }
+    }
     private void PlayUseVfx(EUsePhase phase, Vector3 worldPos)
     {
         var go = _fsm.ItemHolder?.HeldItemObject;
