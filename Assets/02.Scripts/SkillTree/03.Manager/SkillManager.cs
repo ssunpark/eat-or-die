@@ -6,7 +6,7 @@ using UnityEngine;
 public class SkillManager
 {
     private readonly ISkillEventHub _hub;
-    private readonly SkillEventFactory _factory;
+    private readonly SkillHandlerFactory _factory;
     private readonly SkillRepository _repository;
     private readonly TraitManager _traitManager;
 
@@ -21,11 +21,11 @@ public class SkillManager
 
     public SkillManager(TraitManager traitManager)
     {
-        PlayerPrefs.DeleteAll();
+        // PlayerPrefs.DeleteAll();
         
         _traitManager = traitManager;
         _hub = new SkillEventHub();
-        _factory = new SkillEventFactory();
+        _factory = new SkillHandlerFactory();
         _repository = new SkillRepository();
         Context = new SkillContext(PlayerInfoManager.Instance.LocalPlayer);
         

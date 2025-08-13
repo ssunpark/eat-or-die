@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public class SkillEventFactory
+public class SkillHandlerFactory
 {
     public ISkillHandler CreateSkillNode(SkillRawData rawData, int level = 0)
     {
@@ -27,19 +27,19 @@ public class SkillEventFactory
         }
         
         var triggers = new List<ISkillTrigger<ISkillPayload>>();
-        foreach (var t in rawData.ETriggerTypes)
+        foreach (var triggerType in rawData.ETriggerTypes)
         {
-            var v = rawData.TriggerValue ?? 0f;
-            ISkillTrigger<ISkillPayload> trig = t switch
+            var triggerValue = rawData.TriggerValue ?? 0f;
+            ISkillTrigger<ISkillPayload> trigger = triggerType switch
             {
-                ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerThreshold(v, false),
-                ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerThreshold(v, true),
-                ESkillTriggerType.WhileStationary => new SkillTrigger_IdleThreshold(v),
+                ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerThreshold(triggerValue, false),
+                ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerThreshold(triggerValue, true),
+                ESkillTriggerType.WhileStationary => new SkillTrigger_IdleThreshold(triggerValue),
                 ESkillTriggerType.EveryOneSecond => new SkillTrigger_EveryOneSecond(),
                 ESkillTriggerType.Always => new SkillTrigger_Always(),
                 _ => new SkillTrigger_Always()
             };
-            triggers.Add(trig);
+            triggers.Add(trigger);
         }
 
         if (triggers.Count == 0)
