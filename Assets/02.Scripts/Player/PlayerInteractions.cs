@@ -28,7 +28,7 @@ public class PlayerInteractions : MonoBehaviour
     {
         // 상호작용 범위를 파란색 구체로 그립니다.
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, 2f);
+        Gizmos.DrawWireSphere(transform.position, 3f);
     }
 
     
