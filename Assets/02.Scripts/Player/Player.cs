@@ -341,8 +341,12 @@ public class Player : CharacterBase, IAttackable
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
         {
             //Todo: 이펙트 처리
-
             DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
+            if (Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
+            {
+                Debug.Log("[Player] Evaded damage from " + attack.Attacker);
+                return;
+            }
             float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
             float defense = Stat.GetStat(EStatType.Defense);
             float finalDmg = amount * (100 / (100 + defense));
