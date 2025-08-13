@@ -122,7 +122,8 @@ public class SkillEffect_StatBuff : ISkillEffect
 
     public void Execute(ISkillPayload payload, SkillContext context)
     {
-        context.Player.Stat.ApplyModifier(_statType, new StatModifier(EStatModifierType.Add, _changeValue, _source, true, _duration));
+        Debug.Log($"{_statType}이 {EStatModifierType.Multiply}연산으로 {_changeValue}만큼 {_duration}초 동안 증가했습니다.");
+        context.Player.Stat.ApplyModifier(_statType, new StatModifier(EStatModifierType.Multiply, _changeValue, _source, true, _duration));
     }
 
     public void Undo(SkillContext context)

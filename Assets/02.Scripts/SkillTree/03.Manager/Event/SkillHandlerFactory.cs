@@ -23,6 +23,8 @@ public class SkillHandlerFactory
                     rawData.BuffDuration ?? 0f),
             ESkillEffectType.StatChangeOnState
                 => new SkillEffectAdapter<StatePayload>(new SkillEffect_StatChangeOnState(rawData.EStatType ?? EStatType.MaxHunger, n, $"Skill_{rawData.Id}")),
+            ESkillEffectType.StatBuffNTime
+                => new SkillEffect_StatBuff(rawData.EStatType ?? EStatType.MaxHunger, rawData.FixedValue ?? 0f, $"Skill_{rawData.Id}", n),
             _ => null
         };
 
@@ -39,11 +41,12 @@ public class SkillHandlerFactory
             {
                 ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerThreshold(triggerValue, false),
                 ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerThreshold(triggerValue, true),
-                ESkillTriggerType.StateTime => new SkillTrigger_StateThreshold(triggerValue,
-                    rawData.EPlayerState ?? EPlayerState.Idle),
+                ESkillTriggerType.StateTime => new SkillTrigger_StateThreshold(triggerValue, rawData.EPlayerState ?? EPlayerState.Idle),
                 ESkillTriggerType.EveryOneSecond => new SkillTrigger_EveryOneSecond(),
                 ESkillTriggerType.OnNChance => new SkillTrigger_OnNChance(n),
                 ESkillTriggerType.IsState => new SkillTrigger_IsState(rawData.EPlayerState ?? EPlayerState.Idle),
+                ESkillTriggerType.IsHarvested => new SkillTrigger_FoodType(true),
+                ESkillTriggerType.IsCooked => new SkillTrigger_FoodType(false),
                 ESkillTriggerType.Always => new SkillTrigger_Always(),
                 _ => null
             };

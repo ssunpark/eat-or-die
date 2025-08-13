@@ -19,5 +19,6 @@
     ManaRestore,
     NpcDeal,
     ReturnIngredient,
-    StatChangeOnState
+    StatChangeOnState,
+    StatBuffNTime
 }
