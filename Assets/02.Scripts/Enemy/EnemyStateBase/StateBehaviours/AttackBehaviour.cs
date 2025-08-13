@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion.Addons.FSM;
-using UnityEditor.Timeline;
-using UnityEngine.Analytics;
 
 public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 {
