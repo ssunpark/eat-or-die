@@ -54,7 +54,9 @@ public class DragonMagicAttack_Lava : DragonSubStateBase, IAnimationActionNotify
                 Context.Transform.forward,
                 angle,
                 distance,
-                data
+                data,
+                _lavaParams.Damage,
+                _lavaParams.FloorDamage
             );
 
             Debug.Log($"Lava {_spawnCount + 1} 생성 (각도 {angle}, 거리 {distance})");

@@ -7,23 +7,25 @@ public class DirectionalProjectile : MonoBehaviour
     private float _speed;
     private float _lifeTime;
     private float _timer;
+    private float _damage;
     private bool _isFired = false;
 
     private Action _endCallback;
 
     // Fire 메서드: 방향, 속도, 생존 시간, 생존 시간 이후 콜백 설정
-    public void Fire(Vector3 direction, float speed, float lifeTime, Action endCallback)
+    public void Fire(Vector3 direction, float speed, float lifeTime, float damage, Action endCallback)
     {
         _direction = direction.normalized;
         var angle = Quaternion.LookRotation(_direction.normalized).eulerAngles.y;
         transform.rotation = Quaternion.Euler(transform.eulerAngles.x, angle, transform.eulerAngles.z);
         _speed = speed;
         _lifeTime = lifeTime;
+        _damage = damage;
         _timer = 0f;
         _isFired = true;
         _endCallback = endCallback;
     }
-    
+
     public void Fire(Vector3 direction, float speed)
     {
         _direction = direction.normalized;
@@ -48,7 +50,7 @@ public class DirectionalProjectile : MonoBehaviour
         {
             return;
         }
-        
+
         _timer += Time.deltaTime;
         if (_timer >= _lifeTime)
         {
@@ -62,7 +64,7 @@ public class DirectionalProjectile : MonoBehaviour
             }
         }
     }
-    
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player"))
@@ -73,7 +75,7 @@ public class DirectionalProjectile : MonoBehaviour
         {
             var attackinfo = new AttackInfo
             {
-                MeleeDamage = 10f,
+                MeleeDamage = _damage,
                 TotalDamageMultiplier = 1f
             };
             hit.OnHitLocal(attackinfo);

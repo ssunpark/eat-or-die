@@ -36,7 +36,7 @@ public class DragonCombat
         _controller.AttackDetector.angleX = angle;
     }
 
-    public void Attack()
+    public void Attack(float damage)
     {
         foreach (var collider in _controller.AttackDetector.DetectedColliders)
         {
@@ -44,7 +44,7 @@ public class DragonCombat
             {
                 var attackinfo = new AttackInfo
                 {
-                    MeleeDamage = 10f,
+                    MeleeDamage = damage,
                     TotalDamageMultiplier = 1f
                 };
                 attackable.OnHitLocal(attackinfo);
@@ -67,7 +67,7 @@ public class DragonCombat
 
         projectile.transform.position = spawnPoint;
         var param = _controller.ParamLoader.LeftScratch_Special;
-        projectile.Fire(_controller.transform.forward, param.Speed, param.LifeTime,
+        projectile.Fire(_controller.transform.forward, param.Speed, param.LifeTime, param.Damage,
             () => _controller.Pool.TakeDirectionalPool(DarkProjectileKey, projectile));
     }
 
@@ -84,7 +84,7 @@ public class DragonCombat
 
         projectile.transform.position = spawnPoint;
         var param = _controller.ParamLoader.RightScratch_Special;
-        projectile.Fire(direction, param.Speed, param.LifeTime,
+        projectile.Fire(direction, param.Speed, param.LifeTime, param.Damage,
             () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
     }
 
@@ -94,16 +94,17 @@ public class DragonCombat
 
     public TickTimer BreathTimer { get => _controller.BreathTimer; set => _controller.BreathTimer = value; }
     // 브레스
-    public void PlayBreath(float duration)
+    public void PlayBreath(float duration, float damage)
     {
         var vfx = _controller.Pool.BreathParticlePool.Get();
         vfx.transform.position = _controller.BreathPoint.position;
         vfx.transform.rotation = Quaternion.LookRotation(_controller.transform.forward);
-        vfx.Init(duration, _controller.HasStateAuthority, () => _controller.Pool.BreathParticlePool.Take(vfx));
+        vfx.Init(duration, _controller.HasStateAuthority, damage, () => _controller.Pool.BreathParticlePool.Take(vfx));
     }
 
     // Lava
-    public void FireLava(Vector3 forward, float angle, float distance, LavaProjectileData data)
+    public void FireLava(Vector3 forward, float angle, float distance, LavaProjectileData data,
+        float damage, float floorDamage)
     {
         var spawnPoint = _controller.BreathPoint.position;
 
@@ -113,7 +114,7 @@ public class DragonCombat
 
         // 지면 보정
         if (Physics.Raycast(targetPos + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f,
-                LayerMask.GetMask("Floor")))
+                LayerMask.GetMask("Ground")))
             targetPos = hit.point;
 
         // 권위에서만 네트워크 스폰
@@ -136,6 +137,7 @@ public class DragonCombat
                     proj.Height = data.Height;
                     proj.Duration = data.Duration;
                     proj.StartTick = startTick;
+                    proj.SetDamage(damage);
                 });
 
             // 도착 시 할 일
@@ -150,6 +152,7 @@ public class DragonCombat
                         floor.StartPosition = targetPos;
                         floor.StartTick = _controller.Runner.Tick;
                         floor.Duration = data.Duration;
+                        floor.SetDamage(floorDamage);
                     });
             };
 
@@ -158,12 +161,12 @@ public class DragonCombat
     }
 
     // Roar
-    public void PerformRoarAttack(float radius, int count, float duration)
+    public void PerformRoarAttack(float radius, int count, float duration, float floorDamage)
     {
         float interval = duration / count;
 
         // 공격 실행
-        _controller.RoarExplosion.Reset(radius, count, interval);
+        _controller.RoarExplosion.Reset(radius, count, interval, floorDamage);
 
         // 이펙트 시퀀스
         var effect = _controller.RoarEffect;
@@ -176,7 +179,7 @@ public class DragonCombat
             .AppendCallback(() => effect.SetActive(false));
     }
 
-    public void PerformBloodExplode(float duration, float targetSize, float remainDuration)
+    public void PerformBloodExplode(float duration, float targetSize, float remainDuration, float damage)
     {
         var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position, Quaternion.identity,
             onBeforeSpawned: (runner, obj) =>
@@ -186,6 +189,7 @@ public class DragonCombat
             blood.Duration = duration;
             blood.TargetScale = targetSize;
             blood.RemainDuration = remainDuration;
+            blood.SetDamage(damage);
         });
     }
 

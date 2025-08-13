@@ -2,7 +2,7 @@
   "Base": {
     "MoveSpeed": 3.0,
     "RotationSpeed": 140,
-    "HP": 3000,
+    "HP": 300,
     "PhaseThreshold": 0.5,
     "DetectRadius": 30.0,
     "FullAwarenessRadius": 1.0,
@@ -46,27 +46,33 @@
   },
   "Swipe": {
     "DetectRadius": 7.0,
-    "Angle": 100.0
+    "Angle": 100.0,
+    "Damage": 15.0
   },
   "RightScratch": {
     "DetectRadius": 7.0,
-    "Angle": 140.0
+    "Angle": 140.0,
+    "Damage": 20.0
   },
   "LeftScratch": {
     "DetectRadius": 7.0,
-    "Angle": 100.0
+    "Angle": 100.0,
+    "Damage": 18.0
   },
   "Bite": {
     "DetectRadius": 7.0,
-    "Angle": 60.0
+    "Angle": 60.0,
+    "Damage": 7.0
   },
   "LeftScratch_Special": {
     "Speed": 10.0,
-    "LifeTime": 5.0
+    "LifeTime": 5.0,
+    "Damage": 20.0
   },
   "RightScratch_Special": {
     "Speed": 10.0,
-    "LifeTime": 5.0
+    "LifeTime": 5.0,
+    "Damage": 8.0
   },
   "Magic": {
     "ContinueMagicProbability": 0.2,
@@ -75,7 +81,8 @@
   },
   "Breath": {
     "FireTime": 2.0,
-    "Duration": 3.0
+    "Duration": 3.0,
+    "Damage": 5.0
   },
   "Lava": {
     "StartDelay": 1.0,
@@ -85,18 +92,22 @@
     "LavaSpeed": 5.0,
     "LavaHeight": 5.0,
     "FloorDuration": 3.0,
-    "AngleList": [-30, 0, 30]
+    "AngleList": [-30, 0, 30],
+    "Damage": 10.0,
+    "FloorDamage": 3.0
   },
   "Roar": {
     "FireTime": 2.0,
     "Duration": 10.0,
     "Radius": 7.0,
     "Count": 8,
-    "Interval": 1.0
+    "Interval": 1.0,
+    "FloorDamage": 5.0
   },
   "Blood": {
     "ChargeDuration": 3.0,
     "TargetSize": 1.0,
-    "RemainDuration": 7.0
+    "RemainDuration": 7.0,
+    "Damage": 50
   }
 }

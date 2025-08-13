@@ -41,6 +41,9 @@ public class BloodExplosion : NetworkBehaviour
     private Tween _scaleTween;
 
     private float _timer;
+    
+    public float _damage;
+    public void SetDamage(float damage) => _damage = damage;
 
     public override void Spawned()
     {
@@ -114,7 +117,7 @@ public class BloodExplosion : NetworkBehaviour
 
             if (h.TryGetComponent(out IAttackable atk))
             {
-                atk.OnHitLocal(new AttackInfo { MeleeDamage = 10f, TotalDamageMultiplier = 1f });
+                atk.OnHitLocal(new AttackInfo { MeleeDamage = _damage, TotalDamageMultiplier = 1f });
             }
         }
     }
