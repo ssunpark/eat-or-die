@@ -25,6 +25,8 @@ public class UI_SkillNodeGroup : MonoBehaviour
         {
             _skillNodes[i].Bind(_skillManager, skills[i].Meta.Id);
         }
+
+        Refresh();
     }
 
     public void Refresh()

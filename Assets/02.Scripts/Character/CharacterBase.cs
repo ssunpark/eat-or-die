@@ -13,7 +13,7 @@ public abstract class CharacterBase : NetworkBehaviour, IStatUser
         Stat = new StatManager(statRepo);
         Trait = new TraitManager(traitRepo ?? new MockTraitDataRepository(), Stat);
         Resource = new ResourceManager(Stat);
-        Skill = new SkillManager();
+        Skill = new SkillManager(Trait);
     }
 
 }

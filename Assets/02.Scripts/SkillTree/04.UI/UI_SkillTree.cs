@@ -8,10 +8,10 @@ public class UI_SkillTree : MonoBehaviour
     private List<UI_SkillNodeGroup> _skillNodeGroups;
     
     private SkillManager _skillManager;
-    
-    public void Bind(Player loaclPlayer)
+
+    public void Bind(Player localPlayer)
     {
-        _skillManager = loaclPlayer.Skill;
+        _skillManager = localPlayer.Skill;
         _skillManager.OnDataChanged += Refresh;
         foreach (var group in _skillNodeGroups)
         {

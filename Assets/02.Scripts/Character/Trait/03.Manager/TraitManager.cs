@@ -158,24 +158,22 @@ public class TraitManager
         return trait;
     }
 
-    public void LoadAllSkillPoints()
+    public void LoadAllSkillPoints(ETraitType type)
     {
-        foreach (var sp in _skillPoints)
-        {
-            _skillPoints[sp.Key] = TraitLevelStorage.GetSkillPoint(sp.Key);
-        }
+        _skillPoints[type] = TraitLevelStorage.GetSkillPoint(type);
     }
     
     public int GetSkillPoints(ETraitType type) => _skillPoints.GetValueOrDefault(type, 0);
 
     public bool TryUseSkillPoint(ETraitType type)
     {
-        if (!_skillPoints.TryGetValue(type, out var sp) && sp <= 0)
+        if (!_skillPoints.TryGetValue(type, out var sp) || sp <= 0)
         {
             return false;
         }
 
         _skillPoints[type] -= 1;
+        OnSkillPointChanged?.Invoke(type);
         TraitLevelStorage.SetSkillPoint(type, _skillPoints[type]);
         
         return true;

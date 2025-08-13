@@ -18,8 +18,13 @@ public class SkillEventFactory
             ESkillEffectType.HungerRestoreByMaxHunger
                 => new HungerRestoreByRatio(n),
 
-            _ => throw new ArgumentOutOfRangeException(nameof(rawData.ESkillEffectType))
+            _ => null
         };
+
+        if (effect == null)
+        {
+            return null;
+        }
         
         var triggers = new List<ISkillTrigger<ISkillPayload>>();
         foreach (var t in rawData.ETriggerTypes)

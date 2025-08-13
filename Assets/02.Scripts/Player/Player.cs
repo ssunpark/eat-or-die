@@ -104,10 +104,11 @@ public class Player : CharacterBase, IAttackable
             var trait = Trait.GetTrait(type); // 내부 딕셔너리에서 가져오기
             trait?.SetLevel(level);
             trait?.AddExp(exp);
+            
+            Trait.LoadAllSkillPoints(type);
         }
 
         Trait.ReapplyAllTraitEffects(TraitDataList);
-        Trait.LoadAllSkillPoints();
     }
 
 

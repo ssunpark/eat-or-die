@@ -1,7 +1,11 @@
+using System.Collections.Generic;
+
 public class Skill
 {
-    public SkillRawData Meta { get; }
-    public int Level { get; set; }
+    private const int MAX_LEVEL = 5;
+    public readonly SkillRawData Meta;
+    public int Level { get; private set; }
+    private List<Skill> _parents = new List<Skill>();
     
     public Skill(SkillRawData meta)
     {
@@ -9,14 +13,38 @@ public class Skill
         Level = 0;
     }
 
-    public bool TryUpgradeLevel()
+    public void AddParent(Skill parent)
     {
-        if (Level < 5)
+        _parents.Add(parent);
+    }
+
+    public bool CheckUpgradeLevel()
+    {
+        bool parentTest = _parents.Count > 0 ? false : true;
+        foreach (var skill in _parents)
         {
-            Level += 1;
-            return true;
+            if (skill.Level >= MAX_LEVEL)
+            {
+                parentTest = true;
+            }
         }
 
-        return false;
+        if (!parentTest)
+        {
+            UI_Notification.Notify("상위 스킬을 먼저 5레벨 달성해야 합니다.");
+            return false;
+        }
+        
+        if (Level >= 5)
+        {
+            UI_Notification.Notify("최고 레벨입니다.");
+            return false;
+        }
+
+        return true;
     }
+
+    public void ResetLevel() => Level = 0;
+
+    public void SetLevel(int level) => Level = level;
 }

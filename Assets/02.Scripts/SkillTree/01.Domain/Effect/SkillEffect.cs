@@ -45,7 +45,11 @@ public class HungerRestoreByRatio : ISkillEffect
 
     public void Execute(ISkillPayload payload, SkillContext context)
     {
-        Debug.Log($"Heal{context.MaxHunger * _ratio}");
+        Debug.Log($"Skill: Heal{context.MaxHunger * _ratio}");
+        if (Mathf.Approximately(context.CurrentHunger, context.MaxHunger))
+        {
+            return;
+        }
         context.Player.TryHealOrDamageFromEat(context.MaxHunger * _ratio);
     }
 }

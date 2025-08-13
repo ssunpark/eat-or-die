@@ -371,7 +371,7 @@ public class SkillManagerWindow : EditorWindow
         TryRecordUndo(mgr, "Skill Upgrade");
         try
         {
-            mgr.Upgrade(id);
+            mgr.TryUpgrade(id);
             TrySetDirty(mgr);
             ShowNotify($"Upgrade: ID {id} -> Lv {newLevel}");
             RefreshSnapshots(force: true);
