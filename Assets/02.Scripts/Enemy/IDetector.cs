@@ -2,5 +2,5 @@
 
 public interface IDetector
 {
-    public void Detect();
+    public bool Detect();
 }
