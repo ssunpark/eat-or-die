@@ -5,7 +5,7 @@ public class SkillHandlerFactory
     public ISkillHandler CreateSkillNode(SkillRawData rawData, int level = 0)
     {
         var n = rawData.NValue * level;
-        
+
         ISkillEffect effect = rawData.ESkillEffectType switch
         {
             ESkillEffectType.HungerRestore
@@ -19,7 +19,10 @@ public class SkillHandlerFactory
             ESkillEffectType.StatChange
                 => new SkillEffect_StatChange(rawData.EStatType ?? EStatType.MaxHunger, n, $"Skill_{rawData.Id}"),
             ESkillEffectType.StatBuff
-                => new SkillEffect_StatBuff(rawData.EStatType ?? EStatType.MaxHunger, n, $"Skill_{rawData.Id}", rawData.BuffDuration ?? 0f),
+                => new SkillEffect_StatBuff(rawData.EStatType ?? EStatType.MaxHunger, n, $"Skill_{rawData.Id}",
+                    rawData.BuffDuration ?? 0f),
+            ESkillEffectType.StatChangeOnState
+                => new SkillEffectAdapter<StatePayload>(new SkillEffect_StatChangeOnState(rawData.EStatType ?? EStatType.MaxHunger, n, $"Skill_{rawData.Id}")),
             _ => null
         };
 
@@ -27,7 +30,7 @@ public class SkillHandlerFactory
         {
             return null;
         }
-        
+
         var triggers = new List<ISkillTrigger<ISkillPayload>>();
         foreach (var triggerType in rawData.ETriggerTypes)
         {
@@ -36,13 +39,19 @@ public class SkillHandlerFactory
             {
                 ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerThreshold(triggerValue, false),
                 ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerThreshold(triggerValue, true),
-                ESkillTriggerType.StateTime => new SkillTrigger_StateThreshold(triggerValue, rawData.EPlayerState ?? EPlayerState.Idle),
+                ESkillTriggerType.StateTime => new SkillTrigger_StateThreshold(triggerValue,
+                    rawData.EPlayerState ?? EPlayerState.Idle),
                 ESkillTriggerType.EveryOneSecond => new SkillTrigger_EveryOneSecond(),
                 ESkillTriggerType.OnNChance => new SkillTrigger_OnNChance(n),
                 ESkillTriggerType.IsState => new SkillTrigger_IsState(rawData.EPlayerState ?? EPlayerState.Idle),
                 ESkillTriggerType.Always => new SkillTrigger_Always(),
-                _ => new SkillTrigger_Always()
+                _ => null
             };
+            if (trigger == null)
+            {
+                return null;
+            }
+
             triggers.Add(trigger);
         }
 

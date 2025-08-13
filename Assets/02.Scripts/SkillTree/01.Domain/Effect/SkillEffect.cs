@@ -94,7 +94,7 @@ public class SkillEffect_StatChange : ISkillEffect
 
     public void Execute(ISkillPayload payload, SkillContext context)
     {
-        context.Player.Stat.ApplyModifier(_statType, new StatModifier(EStatModifierType.Add, _changeValue, _source));
+        context.Player.Stat.ApplyModifier(_statType, new StatModifier(EStatModifierType.Multiply, _changeValue, _source));
     }
 
     public void Undo(SkillContext context)
@@ -104,7 +104,7 @@ public class SkillEffect_StatChange : ISkillEffect
     }
 }
 
-// 공격 속도 시간 버프
+// 스텟 버프
 public class SkillEffect_StatBuff : ISkillEffect
 {
     private readonly EStatType _statType;
@@ -123,6 +123,39 @@ public class SkillEffect_StatBuff : ISkillEffect
     public void Execute(ISkillPayload payload, SkillContext context)
     {
         context.Player.Stat.ApplyModifier(_statType, new StatModifier(EStatModifierType.Add, _changeValue, _source, true, _duration));
+    }
+
+    public void Undo(SkillContext context)
+    {
+        Debug.Log($"{_source}로 변경된 스텟 제거");
+        context.Player.Stat.RemoveModifiersFrom(_source);
+    }
+}
+
+public class SkillEffect_StatChangeOnState : ISkillEffect<StatePayload>
+{
+    private readonly EStatType _statType;
+    private readonly float _changeValue; // 감소 비율
+    private readonly string _source;
+
+    public SkillEffect_StatChangeOnState(EStatType statType, float changeValue, string source)
+    {
+        _statType = statType;
+        _changeValue = changeValue;
+        _source = source;
+    }
+
+    public void Execute(StatePayload payload, SkillContext context)
+    {
+        if (payload.IsEnter)
+        {
+            context.Player.Stat.ApplyModifier(_statType, new StatModifier(EStatModifierType.Multiply, _changeValue, _source));
+        }
+        else
+        {
+            Debug.Log($"{_source}로 변경된 스텟 제거");
+            context.Player.Stat.RemoveModifiersFrom(_source);
+        }
     }
 
     public void Undo(SkillContext context)
