@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 public class UI_SkillDescription : MonoBehaviour
@@ -23,6 +24,7 @@ public class UI_SkillDescription : MonoBehaviour
 
         if (string.IsNullOrEmpty(upgradeText))
         {
+            _upgradeDescription.text = String.Empty;
             return;
         }
         upgradeText = RichTextUtil.RecolorAll(upgradeText, UpgradeDescriptionPointColor);
