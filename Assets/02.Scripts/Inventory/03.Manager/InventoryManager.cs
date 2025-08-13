@@ -89,6 +89,15 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     {
         return _inventory.GetItemCount(itemID);
     }
+
+    public int RequestConsumeItem(int itemID, int amount)
+    {
+        int consumed = GetItemCount(itemID);
+        
+        TryConsumeItem(itemID, consumed);
+        
+        return consumed;
+    }
     
     public bool TryConsumeItem(int itemID, int amount)
     {

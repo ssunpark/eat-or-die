@@ -40,6 +40,15 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
     }
     
+    public int RequestConsumeItem(int itemID, int amount)
+    {
+	    int consumed = GetItemCount(itemID);
+        
+	    TryConsumeItem(itemID, consumed);
+        
+	    return consumed;
+    }
+    
     public bool TryConsumeItem(int itemID, int amount)
     {
 	    bool result = _quickSlots.TryConsumeItem(itemID, amount);
