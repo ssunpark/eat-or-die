@@ -82,15 +82,18 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     [Networked]
     public Vector2 AnimVelocity { get; set; }
-    
+
     [Networked, OnChangedRender(nameof(OnAnimWaitIndexChanged))]
     public int AnimWaitIndex { get; set; }
-    
+
     [Networked]
     public TickTimer BreathTimer { get; set; }
-    
+
     [Networked]
     public float CurrentHeath { get; set; }
+
+    [Header("테스트")]
+    public bool Islocked;
 
     private void Awake()
     {
@@ -112,6 +115,11 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         _context.OnSpawned();
     }
 
+    private void Update()
+    {
+        Islocked = _context.Movement.IsLocked;
+    }
+
     public override void Render()
     {
         // 네트워크로 복제된 동일 값
@@ -123,7 +131,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SetFightLayerWeight(bool active)
     {
-        float weight = active ?  1f : 0f;
+        float weight = active ? 1f : 0f;
         int index = Animator.GetLayerIndex("Fight Layer");
         Animator.SetLayerWeight(index, weight);
         if (active)
@@ -170,15 +178,18 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         Animator.SetInteger("IdleIndex", AnimWaitIndex);
     }
-    
+
     public void OnHitLocal(AttackInfo attack)
     {
         if (HasStateAuthority)
         {
+            Target = attack.Attacker.gameObject;
             float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
             _context.Stats.TakeDamage(amount);
         }
     }
 
-    public void OnHitStateAuthority(AttackInfo attack) { }
+    public void OnHitStateAuthority(AttackInfo attack)
+    {
+    }
 }

@@ -1,4 +1,6 @@
-﻿public enum EDragonPhase
+﻿using System;
+
+public enum EDragonPhase
 {
     Phase1,
     Phase2,
