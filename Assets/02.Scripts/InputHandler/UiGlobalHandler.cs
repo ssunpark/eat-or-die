@@ -69,30 +69,42 @@ public class UiGlobalHandler : MonoBehaviour
         bool open = !_traitsPopup.gameObject.activeSelf;
         if (open)
         {
-            var local = FindLocalPlayer();
-            if (local != null && _traitsPanel != null && _statsPanel != null && _skillTree != null)
-            {
-                _traitsPanel.BindLocal(local);
-                _statsPanel.BindLocal(local);
-                _skillTree.BindLocal(local);
-            }
-                
+            BindPlayer();
 
             _traitsPopup.Open();
         }
         else
         {
-            _skillTree?.Unbind();
-            _statsPanel?.Unbind();
+            UnbindPlayer();
+
             if (_statsPopup.gameObject.activeInHierarchy)
             {
                 _statsPopup.Close();
             }
-
             _traitsPopup.Close();
-            if (_traitsPanel != null)
-                _traitsPanel.Unbind();
 
+
+        }
+    }
+
+    private void UnbindPlayer()
+    {
+        _statsPanel?.Unbind();
+
+        if (_traitsPanel != null)
+            _traitsPanel.Unbind();
+
+        //여기다 스킬트리 Unbind
+    }
+
+    private void BindPlayer()
+    {
+        var local = FindLocalPlayer();
+        if (local != null && _traitsPanel != null && _statsPanel != null)
+        {
+            _traitsPanel.BindLocal(local);
+            _statsPanel.BindLocal(local);
+            // 여기다 스킬트리 Bind
         }
     }
 
@@ -130,14 +142,22 @@ public class UiGlobalHandler : MonoBehaviour
         }
     }
 
-    private void OnModalOpened(AUI_PopupBase _)
+    private void OnModalOpened(AUI_PopupBase popupBase)
     {
+        if(popupBase == _traitsPopup)
+        {
+            BindPlayer();
+        }
         _modalCount++;
         EnsureMaps(true);
     }
 
-    private void OnModalClosed(AUI_PopupBase _)
+    private void OnModalClosed(AUI_PopupBase popupBase)
     {
+        if (popupBase == _traitsPopup)
+        {
+            UnbindPlayer();
+        }
         _modalCount = Mathf.Max(0, _modalCount - 1);
         EnsureMaps(_modalCount > 0);
     }
