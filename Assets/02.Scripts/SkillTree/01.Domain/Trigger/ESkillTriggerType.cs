@@ -5,7 +5,6 @@
     HungerBelowThreshold,
     IsCooked,
     IsHarvested,
-    IsMad,
     OnBossAttack,
     OnConsecutiveAttack,
     OnCook_Harvested,
@@ -13,6 +12,7 @@
     OnDeath,
     OnNChance,
     WhileMoving,
-    WhileStationary,
-    EveryOneSecond
+    EveryOneSecond,
+    IsState,
+    StateTime
 }

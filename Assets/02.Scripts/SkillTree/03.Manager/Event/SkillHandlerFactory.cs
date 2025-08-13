@@ -36,10 +36,10 @@ public class SkillHandlerFactory
             {
                 ESkillTriggerType.HungerBelowThreshold => new SkillTrigger_HungerThreshold(triggerValue, false),
                 ESkillTriggerType.HungerAboveThreshold => new SkillTrigger_HungerThreshold(triggerValue, true),
-                ESkillTriggerType.WhileStationary => new SkillTrigger_IdleThreshold(triggerValue),
+                ESkillTriggerType.StateTime => new SkillTrigger_StateThreshold(triggerValue, rawData.EPlayerState ?? EPlayerState.Idle),
                 ESkillTriggerType.EveryOneSecond => new SkillTrigger_EveryOneSecond(),
                 ESkillTriggerType.OnNChance => new SkillTrigger_OnNChance(n),
-                ESkillTriggerType.IsMad => new SkillTrigger_IsMad(),
+                ESkillTriggerType.IsState => new SkillTrigger_IsState(rawData.EPlayerState ?? EPlayerState.Idle),
                 ESkillTriggerType.Always => new SkillTrigger_Always(),
                 _ => new SkillTrigger_Always()
             };
