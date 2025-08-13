@@ -8,11 +8,17 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public int InventorySize;
     
     public event Action<int> OnSlotUpdated;
+    public event Action OnOpenInventory;
     public event Action OnInventoryUpdated;
 
     private void Awake()
     {
         _inventory = new Inventory(InventorySize);
+    }
+    
+    public void OpenInventory()
+    {
+        OnOpenInventory?.Invoke();
     }
 
     public void OnClickMouseLeft(int slotIndex)
