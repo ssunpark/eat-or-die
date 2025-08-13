@@ -62,7 +62,7 @@ public class SkillManager
                     break;
 
                 case 5:
-                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 3));
+                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 2));
                     break;
             }
         }
