@@ -230,8 +230,8 @@ public class SkillManagerWindow : EditorWindow
 
     private SkillManager GetSkillManagerInstance()
     {
-        // BehaviourSingleton.Instance가 없을 수 있으니 보조로 FindObjectOfType 사용
-        var inst = FindObjectOfType<SkillManager>();
+        // 로컬 플레이어가 들고 있는 순수 C# SkillManager 접근
+        var inst = PlayerInfoManager.Instance?.LocalPlayer?.Skill;
         return inst;
     }
 
@@ -244,7 +244,7 @@ public class SkillManagerWindow : EditorWindow
         _dbView.Clear();
         _activeView.Clear();
 
-        if (!mgr) return;
+        if (mgr == null) return;
 
         try
         {
@@ -325,18 +325,34 @@ public class SkillManagerWindow : EditorWindow
     }
 
     // ──────────────────────────────────────────────────────────────────────────────
+    // Undo/SetDirty: UnityEngine.Object일 때만 안전하게 시도
+    // ──────────────────────────────────────────────────────────────────────────────
+    private static void TryRecordUndo(object target, string name)
+    {
+        // 에디트 모드에서만 의미 있음 + UnityEngine.Object만 가능
+        if (!EditorApplication.isPlaying && target is UnityEngine.Object uo)
+            Undo.RecordObject(uo, name);
+    }
+
+    private static void TrySetDirty(object target)
+    {
+        if (target is UnityEngine.Object uo)
+            EditorUtility.SetDirty(uo);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────────
     // 내부: 호출 (Active/Upgrade/Inactive)
     // ──────────────────────────────────────────────────────────────────────────────
     private void CallActive(int id, int level)
     {
         var mgr = GetSkillManagerInstance();
-        if (!mgr) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
+        if (mgr == null) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
 
-        Undo.RecordObject(mgr, "Skill Active");
+        TryRecordUndo(mgr, "Skill Active");
         try
         {
             mgr.Active(id, level);
-            EditorUtility.SetDirty(mgr);
+            TrySetDirty(mgr);
             ShowNotify($"Active: ID {id}, Lv {level}");
             RefreshSnapshots(force: true);
         }
@@ -350,13 +366,13 @@ public class SkillManagerWindow : EditorWindow
     private void CallUpgrade(int id, int newLevel)
     {
         var mgr = GetSkillManagerInstance();
-        if (!mgr) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
+        if (mgr == null) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
 
-        Undo.RecordObject(mgr, "Skill Upgrade");
+        TryRecordUndo(mgr, "Skill Upgrade");
         try
         {
             mgr.Upgrade(id);
-            EditorUtility.SetDirty(mgr);
+            TrySetDirty(mgr);
             ShowNotify($"Upgrade: ID {id} -> Lv {newLevel}");
             RefreshSnapshots(force: true);
         }
@@ -370,13 +386,13 @@ public class SkillManagerWindow : EditorWindow
     private void CallInactive(int id)
     {
         var mgr = GetSkillManagerInstance();
-        if (!mgr) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
+        if (mgr == null) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
 
-        Undo.RecordObject(mgr, "Skill Inactive");
+        TryRecordUndo(mgr, "Skill Inactive");
         try
         {
             mgr.Inactive(id);
-            EditorUtility.SetDirty(mgr);
+            TrySetDirty(mgr);
             ShowNotify($"Inactive: ID {id}");
             RefreshSnapshots(force: true);
         }

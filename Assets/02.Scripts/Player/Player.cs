@@ -107,6 +107,7 @@ public class Player : CharacterBase, IAttackable
         }
 
         Trait.ReapplyAllTraitEffects(TraitDataList);
+        Trait.LoadAllSkillPoints();
     }
 
 
@@ -330,6 +331,9 @@ public class Player : CharacterBase, IAttackable
             {
                 Debug.LogWarning("[Player] StatsPanel not found in PlayerHUD.");
             }
+
+            var skillTreePanel = hudObject.GetComponentInChildren<UI_SkillTree>(true);
+            skillTreePanel?.Bind(this);
         }
     }
 

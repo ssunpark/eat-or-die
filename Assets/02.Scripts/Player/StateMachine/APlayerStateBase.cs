@@ -9,6 +9,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
     protected ResourceManager _resource;
     protected NetworkInputData _input;
     protected TraitExpHandler _expHandler;
+    protected SkillManager _skill;
     public SimpleKCC KCC;
     public Animator Anim;
     protected ActorContextHolder _skillContext;
@@ -97,6 +98,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
         _stat ??= _fsm.PlayerNetworkObject?.Stat;
         _resource ??= _fsm.PlayerNetworkObject?.Resource;
         _expHandler ??= _fsm.PlayerNetworkObject?.ExpHandler;
+        _skill ??= _fsm.PlayerNetworkObject?.Skill;
         _skillContext ??= _fsm.GetComponent<ActorContextHolder>();
         _isLazyInitialized = true;
     }

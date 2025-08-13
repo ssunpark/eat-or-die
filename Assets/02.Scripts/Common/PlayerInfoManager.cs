@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class PlayerInfoManager : NetworkBehaviourSingleton<PlayerInfoManager>, I
 
     private static Dictionary<PlayerRef, Player> _playerControllers = new();
     public static IDictionary<PlayerRef, Player> PlayerControllers => _playerControllers;
+    
+    public Player LocalPlayer => _playerControllers.FirstOrDefault(pair => pair.Value.HasInputAuthority).Value;
 
     public event Action<PlayerRef, int> OnPlayerUnregistered;
 

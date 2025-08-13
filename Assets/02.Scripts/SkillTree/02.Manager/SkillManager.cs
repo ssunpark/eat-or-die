@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SkillManager : BehaviourSingleton<SkillManager>
+public class SkillManager
 {
     private const string SKILL_CSV_PATH = "/SkillCSV/Skill.csv";
 
@@ -17,7 +17,7 @@ public class SkillManager : BehaviourSingleton<SkillManager>
 
     public event Action OnDataChanged;
 
-    private void Awake()
+    public SkillManager()
     {
         _hub = new SkillEventHub();
         _factory = new SkillEventFactory();

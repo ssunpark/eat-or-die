@@ -62,6 +62,7 @@ public class TraitManager
                 _skillPoints.TryAdd(type, 0);
                 _skillPoints[type] += gainedPoint;
                 OnSkillPointChanged?.Invoke(type);
+                TraitLevelStorage.SetSkillPoint(type, _skillPoints[type]);
                 Debug.Log($"스킬 포인트 획득{type}: {_skillPoints[type]}");
             }
 
@@ -70,6 +71,7 @@ public class TraitManager
                 _skillPoints.TryAdd(type, 0);
                 _skillPoints[type] += 5;
                 OnSkillPointChanged?.Invoke(type);
+                TraitLevelStorage.SetSkillPoint(type, _skillPoints[type]);
                 Debug.Log($"스킬 포인트 획득{type}: {_skillPoints[type]}");
             }
             //Debug.Log($"[TraitManager] {type} 레벨업: {prevLevel} -> {trait.Level}, 획득 경험치: {amount}");
@@ -155,6 +157,14 @@ public class TraitManager
         _traitDict.TryGetValue(type, out var trait);
         return trait;
     }
+
+    public void LoadAllSkillPoints()
+    {
+        foreach (var sp in _skillPoints)
+        {
+            _skillPoints[sp.Key] = TraitLevelStorage.GetSkillPoint(sp.Key);
+        }
+    }
     
     public int GetSkillPoints(ETraitType type) => _skillPoints.GetValueOrDefault(type, 0);
 
@@ -166,6 +176,8 @@ public class TraitManager
         }
 
         _skillPoints[type] -= 1;
+        TraitLevelStorage.SetSkillPoint(type, _skillPoints[type]);
+        
         return true;
     }
 }

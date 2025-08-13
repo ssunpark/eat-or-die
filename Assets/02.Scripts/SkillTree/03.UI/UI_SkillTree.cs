@@ -7,12 +7,15 @@ public class UI_SkillTree : MonoBehaviour
     [SerializeField]
     private List<UI_SkillNodeGroup> _skillNodeGroups;
     
-    private void Start()
+    private SkillManager _skillManager;
+    
+    public void Bind(Player loaclPlayer)
     {
-        SkillManager.Instance.OnDataChanged += Refresh;
+        _skillManager = loaclPlayer.Skill;
+        _skillManager.OnDataChanged += Refresh;
         foreach (var group in _skillNodeGroups)
         {
-            group.Bind(SkillManager.Instance.GetSkills(group.TraitType));
+            group.Bind(_skillManager);
         }
 
         Refresh();
