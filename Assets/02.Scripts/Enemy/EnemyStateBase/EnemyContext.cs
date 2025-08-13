@@ -1,4 +1,4 @@
-﻿using Unity.VisualScripting;
+﻿using RaycastPro.Detectors;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,4 +12,5 @@ public class EnemyContext
     public NavMeshAgent Agent;
     public IMoveable Mover;
     public IDetector Detector;
+    public RangeDetector RaycastComponent;
 }
