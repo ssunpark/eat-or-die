@@ -1,56 +1,45 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 수현
 public class UI_CraftItemButton : MonoBehaviour
 {
     public Image IconImage;
-    public TextMeshProUGUI ItemNameText;
-    
-    private CraftRecipe _craftRecipe;
-    private ItemProfile _itemProfile;
-    
-    public void Refresh(CraftRecipe craftRecipe, ItemProfile itemProfile)
-    {
-        _craftRecipe = craftRecipe;
-        _itemProfile = itemProfile;
 
+    public Image CraftIndicatiorIcon;
+    // public TextMeshProUGUI ItemNameText;
+
+    private CraftRecipe _data;
+    public int CraftRecipeID => _data.CraftResultID;
+    // private ItemProfile _itemProfile;
+
+    public void Init(CraftRecipe data)
+    {
+        _data = data;
+        ItemProfile itemProfile = ItemManager.Instance.GetItem(_data.CraftResultID);
         IconImage.sprite = itemProfile.ItemDefinition.Icon;
-        ItemNameText.text = craftRecipe.CraftRecipeName;
     }
 
-    public void CanInteractable()
+    // 이게 사실상 리프레시할때마다 호출 필요한 함수
+    public void CanCraft()
     {
-        int haveMat1 = InventoryManager.Instance.GetItemCount(_craftRecipe.CraftMaterial1ID);
-        int haveMat2 = InventoryManager.Instance.GetItemCount(_craftRecipe.CraftMaterial2ID);
+        var haveMat1 = UnifiedInventoryManager.Instance.GetItemCount(_data.CraftMaterial1ID);
+        var haveMat2 = UnifiedInventoryManager.Instance.GetItemCount(_data.CraftMaterial2ID);
 
-        bool canCraft = haveMat1 >= _craftRecipe.CraftMaterial1Count &&
-                        haveMat2 >= _craftRecipe.CraftMaterial2Count;
-        
-        Button button = GetComponent<Button>();
-        button.interactable = canCraft;
-        
-        ColorBlock colors = button.colors;
-        colors.normalColor = canCraft ? Color.white : Color.gray;
-        button.colors = colors;
-    }
+        var canCraft = haveMat1 >= _data.CraftMaterial1Count &&
+                       haveMat2 >= _data.CraftMaterial2Count;
 
-    public void OnClick()
-    {
-        bool consumedMat1 = InventoryManager.Instance.TryConsumeItem(_craftRecipe.CraftMaterial1ID, _craftRecipe.CraftMaterial1Count);
-        bool consumedMat2 = InventoryManager.Instance.TryConsumeItem(_craftRecipe.CraftMaterial2ID, _craftRecipe.CraftMaterial2Count);
-
-        if (!consumedMat1 || !consumedMat2)
+        if (canCraft)
         {
-            Debug.Log("재료가 부족하여 제작에 실패했습니다.");
-            return;
+            CraftIndicatiorIcon.gameObject.SetActive(true);
         }
+        else
+        {
+            CraftIndicatiorIcon.gameObject.SetActive(false);
+        }
+    }
 
-        ItemInstance craftedItemInstance = new ItemInstance(_itemProfile, 1);
-        InventoryManager.Instance.AddItemToInventory(craftedItemInstance);
-
-        Debug.Log($"{_itemProfile.ItemDefinition.Name} 제작 성공!");
-        
+    public void OnClickItemButton()
+    {
+        CraftRecipeUIManager.Instance.SelectCraftItem(_data);
     }
 }
