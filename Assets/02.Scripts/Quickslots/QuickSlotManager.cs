@@ -86,7 +86,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	{
 		SetSelectedSlot(slotIndex);
 
-		if (PopupManager.Instance.IsOpen(EPopupType.Inventory))
+		if (PopupManager.Instance.IsOpen(EPopupType.Inventory) || PopupManager.Instance.IsOpen(EPopupType.Storage))
 		{
 			HandSwap();
 		}

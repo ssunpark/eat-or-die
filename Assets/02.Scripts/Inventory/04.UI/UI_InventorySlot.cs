@@ -1,19 +1,30 @@
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
+public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public int SlotIndex;
     public Image IconImage;
+    public GameObject QuantityIndicator;
     public TextMeshProUGUI QuantityText;
+    public TextMeshProUGUI LabelText;
+    public UI_Tooltip ItemTooltip;
+    public CanvasGroup Selected;
+    
+    private bool _isSlotEmpty => !IconImage.gameObject.activeInHierarchy;
     
     public void Initialize(int slotIndex)
     {
         SlotIndex = slotIndex;
         IconImage.gameObject.SetActive(false);
-        QuantityText.gameObject.SetActive(false);
+        QuantityIndicator.gameObject.SetActive(false);
+        if (ItemTooltip == null)
+        {
+            ItemTooltip = GetComponent<UI_Tooltip>();
+        }
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -34,13 +45,29 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler
         if (itemInstanceInSlot == null)
         {
             IconImage.gameObject.SetActive(false);
-            QuantityText.gameObject.SetActive(false);
+            QuantityIndicator.gameObject.SetActive(false);
+            LabelText.text = string.Empty;
             return;
         }
         
         IconImage.sprite = ItemManager.Instance.GetItem(itemInstanceInSlot.ID).ItemDefinition.Icon;
         QuantityText.text = itemInstanceInSlot.Quantity.ToString();
+        LabelText.text = itemInstanceInSlot.ItemProfile.ItemDefinition.Name;
         IconImage.gameObject.SetActive(true);
-        QuantityText.gameObject.SetActive(itemInstanceInSlot.Quantity > 1);
+        QuantityIndicator.gameObject.SetActive(itemInstanceInSlot.Quantity > 1);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Selected?.DOFade(1.0f, 0.1f).SetEase(Ease.InOutQuad);
+        if (_isSlotEmpty) return;
+		
+        ItemTooltip.OnPointerEnter();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Selected?.DOFade(0.0f, 0.1f).SetEase(Ease.InOutQuad);
+        ItemTooltip.OnPointerExit();
     }
 }

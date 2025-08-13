@@ -50,7 +50,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "SScene",
+            SessionName = "SScenesss",
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
