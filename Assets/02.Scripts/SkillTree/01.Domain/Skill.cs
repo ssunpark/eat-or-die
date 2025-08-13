@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class Skill
 {
-    private const int MAX_LEVEL = 5;
+    public const int MAX_LEVEL = 5;
     public readonly SkillRawData Meta;
     public int Level { get; private set; }
     private List<Skill> _parents = new List<Skill>();
@@ -20,7 +20,7 @@ public class Skill
 
     public bool CheckUpgradeLevel()
     {
-        bool parentTest = _parents.Count > 0 ? false : true;
+        bool parentTest = _parents.Count <= 0;
         foreach (var skill in _parents)
         {
             if (skill.Level >= MAX_LEVEL)

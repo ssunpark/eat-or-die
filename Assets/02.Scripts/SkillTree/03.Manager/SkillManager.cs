@@ -18,16 +18,18 @@ public class SkillManager
     public SkillContext Context { get; private set; }
 
     public event Action OnDataChanged;
+    
+    private bool _isRestoring;
 
-    public SkillManager(TraitManager traitManager)
+    public SkillManager(Player player)
     {
-        // PlayerPrefs.DeleteAll();
+        PlayerPrefs.DeleteAll();
         
-        _traitManager = traitManager;
+        _traitManager = player.Trait;
         _hub = new SkillEventHub();
         _factory = new SkillHandlerFactory();
         _repository = new SkillRepository();
-        Context = new SkillContext(PlayerInfoManager.Instance.LocalPlayer);
+        Context = new SkillContext(player);
         
         foreach (var skill in _repository.LoadSkillRawDataList())
         {
@@ -35,6 +37,7 @@ public class SkillManager
         }
 
         SetSkillTree();
+        LoadFromDisk();
     }
 
     private void SetSkillTree()
@@ -138,7 +141,9 @@ public class SkillManager
 
         Publish(ESkillEventType.OnSkillUpgrade, Context);
         
-        OnDataChanged?.Invoke();
+        NotifyChangedAndAutoSave();
+        
+        SaveToDisk();
     }
 
     public bool TryUpgrade(int id)
@@ -178,8 +183,8 @@ public class SkillManager
 
         // 데이터만 레벨 0으로
         skill.ResetLevel();
-        
-        OnDataChanged?.Invoke();
+
+        NotifyChangedAndAutoSave();
     }
 
     public void Publish<TPayload>(ESkillEventType type, SkillContext ctx, TPayload payload)
@@ -188,8 +193,48 @@ public class SkillManager
 
     public void Publish(ESkillEventType type, SkillContext ctx)
         => _hub.Publish(type, ctx, null);
+    
+    private void NotifyChangedAndAutoSave()
+    {
+        if (_isRestoring) return; // 로드 중이면 아무 것도 안 함
+        OnDataChanged?.Invoke();
+        SaveToDisk();
+    }
+    
+    public void SaveToDisk()
+    {
+        _repository.SaveSkillDataList(_skills.Values);
+    }
+    
+    public void LoadFromDisk()
+    {
+        var list = _repository.LoadSkillDataList();
 
-    // 선택: 조회 헬퍼
+        _isRestoring = true;
+        
+        // 모두 비활성화
+        foreach (var id in _skills.Keys.ToList())
+            Inactive(id);
+        
+        // 저장 항목 복구
+        foreach (var e in list)
+        {
+            if (_skills.ContainsKey(e.Id))
+            {
+                int clamped = Mathf.Clamp(e.Level, 0, Skill.MAX_LEVEL);
+                if (clamped > 0)
+                    Active(e.Id, clamped); // 핸들러/구독 복원
+            }
+        }
+
+        _isRestoring = false;
+
+        OnDataChanged?.Invoke();
+
+        SaveToDisk();
+    }
+
+    // 조회 헬퍼
     public bool TryGetSkill(int id, out Skill s) => _skills.TryGetValue(id, out s);
     public int GetLevel(int id) => _skills.TryGetValue(id, out var s) ? s.Level : 0;
     public bool IsActive(int id) => GetLevel(id) > 0;

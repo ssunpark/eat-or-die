@@ -21,7 +21,7 @@ public class ItemEatEffectPipeline : IItemUsePipeline
         if (!player)
             return false;
 
-        var context = new SkillContext(player);
+        var context = player.Skill.Context;
 
         var eatPayload = new OnEatPayload(
             eater: player.NetworkObject,

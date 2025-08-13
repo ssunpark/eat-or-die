@@ -28,7 +28,8 @@ public class Player : CharacterBase, IAttackable
     private Animator _animator;
     bool _isReset;
     public SimpleKCC SimpleKCC { get; private set; }
-
+    public SkillManager Skill { get; private set; }
+    
     public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
     {
         TraitDataList = dataList;
@@ -82,6 +83,7 @@ public class Player : CharacterBase, IAttackable
         PlayerFSM = GetComponent<PlayerFSM>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         SimpleKCC = GetComponent<SimpleKCC>();
+        Skill = new SkillManager(this);
     }
     private IEnumerator WaitAndLoadTraits()
     {

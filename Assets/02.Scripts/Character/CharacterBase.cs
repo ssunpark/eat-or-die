@@ -6,14 +6,12 @@ public abstract class CharacterBase : NetworkBehaviour, IStatUser
     public ResourceManager Resource { get; protected set; }
 
     public TraitManager Trait { get; protected set; }
-    public SkillManager Skill { get; protected set; }
 
     public virtual void InitializeCharacter(IStatDataRepository statRepo, ITraitDataRepository traitRepo)
     {
         Stat = new StatManager(statRepo);
         Trait = new TraitManager(traitRepo ?? new MockTraitDataRepository(), Stat);
         Resource = new ResourceManager(Stat);
-        Skill = new SkillManager(Trait);
     }
 
 }
