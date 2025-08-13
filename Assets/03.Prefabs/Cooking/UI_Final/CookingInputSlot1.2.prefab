@@ -186,7 +186,6 @@ GameObject:
   - component: {fileID: 2073371450451626176}
   - component: {fileID: 5450220621790450360}
   - component: {fileID: 4754899174496798316}
-  - component: {fileID: 2109954379733012631}
   m_Layer: 5
   m_Name: BG_CookingInputSlotUIScript
   m_TagString: Untagged
@@ -251,21 +250,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 2
---- !u!114 &2109954379733012631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2956248393406697539}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea81f7898c6a4b847bf015f4125c9120, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SlotIndex: 0
-  IconImage: {fileID: 7550672354049565616}
-  QuantityText: {fileID: 6608869323476594156}
 --- !u!1 &3458594350916975648
 GameObject:
   m_ObjectHideFlags: 0
@@ -634,9 +618,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3880417033590086280}
-  - component: {fileID: 3198679019508474258}
-  - component: {fileID: 2530780871994684224}
   - component: {fileID: 1289765047202624916}
+  - component: {fileID: 2977617513739864378}
   m_Layer: 5
   m_Name: CookingInputSlot1.2
   m_TagString: Untagged
@@ -668,55 +651,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 1}
---- !u!114 &3198679019508474258
+--- !u!114 &1289765047202624916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6164665156996845118}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Script: {fileID: 11500000, guid: 4185fcb3cbdbe4396911bf8c89d10be0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 0.5019608}
-    m_PressedColor: {r: 0.7764706, g: 0.7908497, b: 0.81960785, a: 0.14901961}
-    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 0.29803923}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 4754899174496798316}
-  toggleTransition: 1
-  graphic: {fileID: 3661888068381350555}
-  m_Group: {fileID: 0}
-  onValueChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_IsOn: 0
---- !u!114 &2530780871994684224
+  tooltip: {fileID: 5853900170868040980}
+  fadeTime: 0.1
+--- !u!114 &2977617513739864378
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -731,20 +680,6 @@ MonoBehaviour:
   SlotIndex: 0
   IconImage: {fileID: 7550672354049565616}
   QuantityText: {fileID: 6608869323476594156}
---- !u!114 &1289765047202624916
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6164665156996845118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4185fcb3cbdbe4396911bf8c89d10be0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tooltip: {fileID: 5853900170868040980}
-  fadeTime: 0.1
 --- !u!1 &7548054023051925504
 GameObject:
   m_ObjectHideFlags: 0
