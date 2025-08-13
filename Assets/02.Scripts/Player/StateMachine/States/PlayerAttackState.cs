@@ -15,6 +15,8 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     private float _attackSpeed = 1f;
     private float _animationTime;
     private bool _isRenderInitialized = false;
+    private int _attackCount = 0;
+    private float _attackStackTimeThreshold = 2f;
 
     private Collider[] _hitsColliders = new Collider[8];
     protected override void OnEnterState()
@@ -30,15 +32,23 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
-        _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
 
         Anim.SetFloat("AttackSpeed", _attackSpeed);
         _isRenderInitialized = true;
 
-        if (_fsm.HasInputAuthority || _fsm.HasStateAuthority)
+        if(Machine.Runner.LocalRenderTime - _fsm.LastAttackTime < _attackStackTimeThreshold)
         {
-            _direction = GetMouseDirection();
+            Debug.Log("Local Render Time = "+Machine.Runner.LocalRenderTime);
+            Debug.Log("Last Attack Time = "+_fsm.LastAttackTime);
+            _attackCount = Mathf.Min(_attackCount + 1, 3); // Limit to 3 consecutive attacks
         }
+        else
+        {
+            _attackCount = 0;
+        }
+        _direction = GetMouseDirection();
+        _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
+        Debug.Log($"[PlayerAttackState] Attack Count: {_attackCount}");
     }
 
     protected override void OnExitState()
@@ -206,7 +216,6 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
         var rot = Quaternion.LookRotation(_direction);
 
 
-        Debug.Log($"[PlayerAttackState] Playing attack VFX: {key} at position: {pos}, rotation: {rot}");
         ParticleManager.Instance.PlayByKeyLocal(key, pos, rot);
     }
 }

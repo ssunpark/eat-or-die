@@ -166,15 +166,15 @@ public static class CharacterStatPreset
         };
 
         // 누락된 항목 0으로 채우기
-        foreach (var stat in System.Enum.GetValues(typeof(EStatType)).Cast<EStatType>())
-        {
-            if (!baseStat.ContainsKey(stat))
-            {
-                Debug.LogWarning($"{type}: base stat [{stat}] doesn't exist! Set to 0");
-                baseStat[stat] = 0f;
-            }
+        //foreach (var stat in System.Enum.GetValues(typeof(EStatType)).Cast<EStatType>())
+        //{
+        //    if (!baseStat.ContainsKey(stat))
+        //    {
+        //        Debug.LogWarning($"{type}: base stat [{stat}] doesn't exist! Set to 0");
+        //        baseStat[stat] = 0f;
+        //    }
                 
-        }
+        //}
 
         return baseStat;
     }
