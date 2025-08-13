@@ -25,6 +25,8 @@ public class SkillHandlerFactory
                 => new SkillEffectAdapter<StatePayload>(new SkillEffect_StatChangeOnState(rawData.EStatType ?? EStatType.MaxHunger, n, $"Skill_{rawData.Id}")),
             ESkillEffectType.StatBuffNTime
                 => new SkillEffect_StatBuff(rawData.EStatType ?? EStatType.MaxHunger, rawData.FixedValue ?? 0f, $"Skill_{rawData.Id}", n),
+            ESkillEffectType.AddItem
+                => new SkillEffectAdapter<IItemPayload>(new SkillEffect_AddItem()),
             _ => null
         };
 

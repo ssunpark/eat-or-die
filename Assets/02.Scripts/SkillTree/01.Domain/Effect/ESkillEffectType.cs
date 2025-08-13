@@ -20,5 +20,6 @@
     NpcDeal,
     ReturnIngredient,
     StatChangeOnState,
-    StatBuffNTime
+    StatBuffNTime,
+    AddItem
 }

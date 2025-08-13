@@ -35,7 +35,7 @@ public class PlayerMoveState : APlayerStateBase
 
     protected override void OnFixedUpdateInput()
     {
-        _skill?.Publish(ESkillEventType.OnMove, _skill.Context);
+        _skill?.Publish(ESkillEventType.OnMove);
         Move();
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
         {

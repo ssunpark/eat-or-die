@@ -133,6 +133,7 @@ public class SkillEffect_StatBuff : ISkillEffect
     }
 }
 
+// 상태에 따른 스탯 변화
 public class SkillEffect_StatChangeOnState : ISkillEffect<StatePayload>
 {
     private readonly EStatType _statType;
@@ -163,5 +164,19 @@ public class SkillEffect_StatChangeOnState : ISkillEffect<StatePayload>
     {
         Debug.Log($"{_source}로 변경된 스텟 제거");
         context.Player.Stat.RemoveModifiersFrom(_source);
+    }
+}
+
+// 아이템 획득
+public class SkillEffect_AddItem : ISkillEffect<IItemPayload>
+{
+    public void Execute(IItemPayload payload, SkillContext context)
+    {
+        var item = ItemManager.Instance.GetItem(payload.ItemId);
+        UnifiedInventoryManager.Instance.AddItem(new ItemInstance(item, 1));
+    }
+
+    public void Undo(SkillContext context)
+    {
     }
 }
