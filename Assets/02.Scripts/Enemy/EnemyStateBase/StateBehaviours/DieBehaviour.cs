@@ -1,3 +1,4 @@
+using ExitGames.Client.Photon.StructWrapping;
 using Fusion;
 using UnityEngine;
 using Fusion.Addons.FSM;
@@ -13,15 +14,51 @@ public class DieBehaviour : AEnemyStateBehaviour
 
     protected override void OnFixedUpdate()
     {
-        if (Machine.StateTime >= _despawnTime)
-        {
-            NetworkObject owner = GetComponentInParent<NetworkObject>();
-            Runner.Despawn(owner);
-        }
+        if (Machine.StateTime <= _despawnTime) return;
+        
+        DropItems();
+        NetworkObject owner = GetComponentInParent<NetworkObject>();
+        Runner.Despawn(owner);
     }
 
     protected override bool CanExitState(AEnemyStateBehaviour nextState)
     {
         return false;
+    }
+
+    private void DropItems()
+    {
+        float drop1Rate = EnemyDataManager.Instance.EnemyRawDataDictionary[Machine.Context.Owner.EnemyID]
+            .DropItem1Rate;
+        float drop2Rate = EnemyDataManager.Instance.EnemyRawDataDictionary[Machine.Context.Owner.EnemyID]
+            .DropItem2Rate;
+        int drop1ID = EnemyDataManager.Instance.EnemyRawDataDictionary[Machine.Context.Owner.EnemyID]
+            .DropItem1ID;
+        int drop2ID = EnemyDataManager.Instance.EnemyRawDataDictionary[Machine.Context.Owner.EnemyID]
+            .DropItem2ID;
+        int drop1Quantity = EnemyDataManager.Instance.EnemyRawDataDictionary[Machine.Context.Owner.EnemyID]
+            .DropItem1Count;
+        int drop2Quantity = EnemyDataManager.Instance.EnemyRawDataDictionary[Machine.Context.Owner.EnemyID]
+            .DropItem2Count;
+        
+        if (Random.value < drop1Rate)
+        {
+            ItemManager.Instance.RPC_CreateItemObject(
+                drop1ID,
+                Random.Range(1, drop1Quantity),
+                1f,
+                Machine.Context.Owner.transform.position + Vector3.up * 0.5f,
+                Quaternion.identity);
+        }
+        
+        if (Random.value < drop2Rate)
+        {
+            ItemManager.Instance.RPC_CreateItemObject(
+                drop2ID,
+                Random.Range(1, drop2Quantity),
+                1f,
+                Machine.Context.Owner.transform.position + Vector3.up * 0.5f,
+                Quaternion.identity);
+        }
     }
 }
