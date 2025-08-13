@@ -13,16 +13,14 @@ public class UI_CraftItemList : MonoBehaviour
     private void OnEnable()
     {
         RefrehCraftRecipButtons();
-        // CraftRecipeManager.Instance.OnDataLoaded += CreateButtons;
-        InventoryManager.Instance.OnInventoryUpdated += RefrehCraftRecipButtons;
+        UnifiedInventoryManager.Instance.OnPossessionUpdated += RefrehCraftRecipButtons;
     }
 
     private void OnDisable()
     {
-        // CraftRecipeManager.Instance.OnDataLoaded -= CreateButtons;
         if (InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.OnInventoryUpdated -= RefrehCraftRecipButtons;
+            UnifiedInventoryManager.Instance.OnPossessionUpdated -= RefrehCraftRecipButtons;
         }
     }
 
@@ -57,31 +55,11 @@ public class UI_CraftItemList : MonoBehaviour
         }
     }
 
-    // private void CreateAllButtons(int minID, int maxID, GameObject container)
-    // {
-    //     List<CraftRecipe> craftRecipes = CraftRecipeManager.Instance.GetAll();
-    //     foreach (var craftRecipe in craftRecipes)
-    //     {
-    //         if (craftRecipe.CraftResultID < minID || craftRecipe.CraftResultID >= maxID) continue;
-    //         ItemProfile itemProfile = ItemManager.Instance.GetItem(craftRecipe.CraftResultID);
-    //         if (itemProfile == null || itemProfile.ItemDefinition == null) continue;
-    //         
-    //         GameObject btn = Instantiate(CraftItemPrefab, container.transform);
-    //         UI_CraftItemButton craftItemButtons = btn.GetComponent<UI_CraftItemButton>();
-    //         craftItemButtons.Refresh(craftRecipe);
-    //         btn.SetActive(false);
-    //         _craftItemButtons.Add(craftItemButtons);
-    //     }
-    // }
-
     public void RefrehCraftRecipButtons()
     {
-        Debug.Log("RefrehCraftRecipButtons 메서드 진입!");
         foreach (var button in _craftItemButtonList)
         {
-            Debug.Log("foreach문 진입");
             button.CanCraft();
-            button.gameObject.SetActive(true);
         }
     }
 }

@@ -11,7 +11,6 @@ public class UI_CraftPanel : AUI_PopupBase
     private void Start()
     {
         CraftPanel.SetActive(false);
-        CraftItemList.Init();
     }
 
     public override void Open()

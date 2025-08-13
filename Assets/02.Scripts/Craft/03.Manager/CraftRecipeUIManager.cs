@@ -3,18 +3,21 @@ using UnityEngine;
 
 public class CraftRecipeUIManager : BehaviourSingleton<CraftRecipeUIManager>
 {
-    public UI_CraftItemList CraftItemListUI;
+    [SerializeField] private UI_CraftItemList CraftItemListUI;
+    [SerializeField] private UI_CraftDetailPanel CraftDetailPanelUI;
 
+    private void Start()
+    {
+        CraftDetailPanelUI.CreateIngredientButtons();
+    }
     public void UpdateAllCraftItems()
     {
-        Debug.Log("UpdateAllCraftItems");
         var allCraftRecipes = CraftRecipeManager.Instance.CraftRecipeList;
         CraftItemListUI.ShowFilterCraftItems(allCraftRecipes);
     }
 
     public void UpdateToolItems()
     {
-        Debug.Log("UpdateToolItems");
         var filteredToolRecipes = CraftRecipeManager.Instance.CraftRecipeList
             .Where(recipe => recipe.CraftResultID >= 400000 && recipe.CraftResultID < 600000)
             .ToList();
@@ -23,7 +26,6 @@ public class CraftRecipeUIManager : BehaviourSingleton<CraftRecipeUIManager>
 
     public void UpdateWeaponItems()
     {
-        Debug.Log("UpdateWeaponItems");
         var filteredWeaponRecipes = CraftRecipeManager.Instance.CraftRecipeList
             .Where(recipe => recipe.CraftResultID >= 600000 && recipe.CraftResultID < 700000)
             .ToList();
@@ -32,11 +34,16 @@ public class CraftRecipeUIManager : BehaviourSingleton<CraftRecipeUIManager>
 
     public void UpdateEquipItems()
     {
-        Debug.Log("UpdateEquipItems");
         var filteredEquipRecipes = CraftRecipeManager.Instance.CraftRecipeList
             .Where(recipe => recipe.CraftResultID >= 700000 && recipe.CraftResultID < 800000)
             .ToList();
 
         CraftItemListUI.ShowFilterCraftItems(filteredEquipRecipes);
+    }
+
+    public void SelectCraftItem(CraftRecipe craftRecipe)
+    {
+        CraftDetailPanelUI.UpdateDetails(craftRecipe);
+        CraftDetailPanelUI.RefreshCraftCount();
     }
 }
