@@ -62,6 +62,9 @@ public class StatUIItem : MonoBehaviour
             case EStatType.CritChance:
             case EStatType.HarvestBonusChance:
             case EStatType.CookBonusChance:
+            case EStatType.EvadeChance:
+            case EStatType.HungerConsumeReduction:
+
                 return $"{(v * 100f):0.#}%";
 
             default:
