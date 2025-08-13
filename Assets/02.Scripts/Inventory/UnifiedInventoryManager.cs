@@ -79,6 +79,11 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
 
     public bool TryConsumeLocalItem(int itemID, int amount)
     {
+        if (GetLocalItemCount(itemID) < amount)
+        {
+            return false;
+        }
+        
         int consumed = QuickSlotManager.Instance.RequestConsumeItem(itemID, amount);
 
         if (consumed < amount)
