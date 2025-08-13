@@ -33,10 +33,8 @@ public class BerserkAttack : ABerserkSubStateBase
         Anim.SetFloat("AttackSpeed", _attackSpeed);
         _isRenderInitialized = true;
 
-        if (_fsm.HasInputAuthority || _fsm.HasStateAuthority)
-        {
-            _direction = GetMouseDirection();
-        }
+        Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
+        _direction = _fsm.transform.forward;
     }
 
     protected override void OnExitState()
@@ -61,13 +59,6 @@ public class BerserkAttack : ABerserkSubStateBase
         }
     }
 
-    private Vector3 GetMouseDirection()
-    {
-        Vector3 dir = _fsm.CurrentInput.mousePosition - _fsm.transform.position;
-        var normalizedDir = dir.normalized;
-        normalizedDir.y = 0;
-        return normalizedDir;
-    }
     public override void OnActionMoment()
     {
         Vector3 attackOrigin = _fsm.transform.position + _fsm.transform.rotation * _positionOffset;
