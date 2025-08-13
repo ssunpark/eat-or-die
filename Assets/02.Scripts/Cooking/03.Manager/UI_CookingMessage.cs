@@ -1,8 +1,8 @@
-using System;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+
 // 수현
 public class UI_CookingMessage : MonoBehaviour
 {
@@ -15,13 +15,13 @@ public class UI_CookingMessage : MonoBehaviour
     private void OnEnable()
     {
         // 요리 관련 경고 메시지 구독
-        CookingManager.OnAlertMessage += ShowAlert;
+        CookingManager.Instance.OnAlertMessage += ShowAlert;
         Hide();
     }
 
     private void OnDisable()
     {
-        CookingManager.OnAlertMessage -= ShowAlert;
+        if(CookingManager.Instance != null) CookingManager.Instance.OnAlertMessage -= ShowAlert;
     }
 
     public void ShowAlert(string message)

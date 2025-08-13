@@ -40,17 +40,11 @@ public class UI_IngredientButton : MonoBehaviour
             LockButton();
             return;
         }
-
-        if (itemDefinition.Icon != null)
+        else
         {
             IconImage.sprite = itemDefinition.Icon;
             IconImage.gameObject.SetActive(true);
             UnlockButton();
-        }
-        else
-        {
-            IconImage.gameObject.SetActive(false);
-            LockButton();
         }
     }
 
@@ -62,14 +56,20 @@ public class UI_IngredientButton : MonoBehaviour
 
     public void LockButton()
     {
-        IngredientButton.interactable = true;
+        IngredientButton.interactable = false;
         IconImage.color = lockedColor;
     }
 
     public void OnClickButton()
     {
-        RecipePanelUIManager.Instance.UpdateRecipes(IngredientID);
+        RecipePanelUIManager.Instance.SetCurrentIngredientID(IngredientID);
+        RecipePanelUIManager.Instance.UpdateRecipes();
     }
+
+    // public void OnClickAllCategoryButton()
+    // {
+    //     RecipePanelUIManager.Instance.UpdateAllRecipes();
+    // }
 
     public ItemDefinition GetIngredient()
     {

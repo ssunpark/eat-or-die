@@ -5,12 +5,10 @@ using UnityEngine;
 public class InventoryManager : BehaviourSingleton<InventoryManager>
 {
     private Inventory _inventory;
-    public Inventory Inventory => _inventory;
     public int InventorySize;
     
     public event Action<int> OnSlotUpdated;
     public event Action OnInventoryUpdated;
-    public static event Action<ItemInstance> OnItemAcquired;
 
     private void Awake()
     {
@@ -64,14 +62,68 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         OnInventoryUpdated?.Invoke();
     }
 
-    public void PickItemFromGround(ItemInstance itemInstance)
+    public ItemInstance AddItemToInventory(ItemInstance itemInstance)
     {
-        ItemInstance remain = _inventory.PickItemFromGround(itemInstance);
+        ItemInstance remain = _inventory.AddItemToInventory(itemInstance);
         
         OnInventoryUpdated?.Invoke();
-        OnItemAcquired?.Invoke(itemInstance);
-        if (remain == null) return;
         
-        ItemManager.Instance.RPC_CreateItemObject(remain.ID, remain.Quantity, remain.Durability, Vector3.zero, Quaternion.identity);
+        return remain;
+    }
+
+    public ItemInstance AddItemToEmptySlot(ItemInstance itemInstance)
+    {
+        ItemInstance remain = _inventory.AddItemToEmptySlot(itemInstance);
+        
+        OnInventoryUpdated?.Invoke();
+
+        return remain;
+    }
+
+    public bool HaveItem(int itemID)
+    {
+        return _inventory.HaveItem(itemID);
+    }
+
+    public int GetItemCount(int itemID)
+    {
+        return _inventory.GetItemCount(itemID);
+    }
+    
+    public bool TryConsumeItem(int itemID, int amount)
+    {
+        bool result = _inventory.TryConsumeItem(itemID, amount);
+        
+        if (result)
+        {
+            OnInventoryUpdated?.Invoke();
+        }
+        return result;
+    }
+
+    public ItemInstance GetItemInSlot(int slotIndex)
+    {
+        return _inventory.GetItemInSlot(slotIndex);
+    }
+    
+    public List<Slot> GetAllSlots()
+    {
+        return _inventory.GetAllSlots();
+    }
+
+    public void DropAllItems(Vector3 position)
+    {
+        List<Slot> slots = GetAllSlots();
+
+        foreach (Slot slot in slots)
+        {
+            if (!slot.IsEmpty)
+            {
+                ItemInstance item = slot.GetItem();
+                ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity);
+                slot.RemoveItem();
+            }
+        }
+        OnInventoryUpdated?.Invoke();
     }
 }

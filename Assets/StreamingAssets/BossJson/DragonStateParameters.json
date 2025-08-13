@@ -1,0 +1,102 @@
+{
+  "Base": {
+    "MoveSpeed": 3.0,
+    "RotationSpeed": 140,
+    "HP": 3000,
+    "PhaseThreshold": 0.5,
+    "DetectRadius": 30.0,
+    "FullAwarenessRadius": 1.0,
+    "FOVAngle": 100.0,
+    "AnimSmoothSpeed": 1.0,
+    "MeleeAttackDistance": 8.0
+  },
+  "Patrol": {
+    "PatrolDuration": 5.0,
+    "WalkRadius": 30.0,
+    "MinWalkRadius": 10.0
+  },
+  "Wait": {
+    "WaitDuration": 3.0
+  },
+  "Alert": {
+    "ChaseProbability": 0.3,
+    "MagicProbability": 0.5,
+    "LookDuration": 4.0,
+    "AngleRange": 60.0,
+    "MinAngleRange": 30.0,
+    "WalkRange": 15.0,
+    "MinDistance": 20.0
+  },
+  "Chase": {
+    "ChaseSpeed": 15.0,
+    "RotationSpeed": 420.0,
+    "SidestepProbability": 0.5,
+    "MinSidestepAngle": 30.0,
+    "MaxSidestepAngle": 60.0,
+    "SidestepRange": 5.0,
+    "MinSidestepDistance": 8.0
+  },
+  "Attack": {
+    "ContinueAttackChance": 0.7
+  },
+  "Prepare": {
+    "PrepareChance": 0.6,
+    "PrepareDuration": 2.0,
+    "MinDistanceToFinishPrepare": 5.0
+  },
+  "Swipe": {
+    "DetectRadius": 7.0,
+    "Angle": 100.0
+  },
+  "RightScratch": {
+    "DetectRadius": 7.0,
+    "Angle": 140.0
+  },
+  "LeftScratch": {
+    "DetectRadius": 7.0,
+    "Angle": 100.0
+  },
+  "Bite": {
+    "DetectRadius": 7.0,
+    "Angle": 60.0
+  },
+  "LeftScratch_Special": {
+    "Speed": 10.0,
+    "LifeTime": 5.0
+  },
+  "RightScratch_Special": {
+    "Speed": 10.0,
+    "LifeTime": 5.0
+  },
+  "Magic": {
+    "ContinueMagicProbability": 0.2,
+    "NearMagicRange": 12.0,
+    "NearMagicProbability": 0.8
+  },
+  "Breath": {
+    "FireTime": 2.0,
+    "Duration": 3.0
+  },
+  "Lava": {
+    "StartDelay": 1.0,
+    "Interval": 0.3,
+    "MinDistance": 5.0,
+    "MaxDistance": 15.0,
+    "LavaSpeed": 5.0,
+    "LavaHeight": 5.0,
+    "FloorDuration": 3.0,
+    "AngleList": [-30, 0, 30]
+  },
+  "Roar": {
+    "FireTime": 2.0,
+    "Duration": 10.0,
+    "Radius": 7.0,
+    "Count": 8,
+    "Interval": 1.0
+  },
+  "Blood": {
+    "ChargeDuration": 3.0,
+    "TargetSize": 1.0,
+    "RemainDuration": 7.0
+  }
+}

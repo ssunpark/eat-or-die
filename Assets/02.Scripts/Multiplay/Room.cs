@@ -12,7 +12,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     
     private GameObject _localPlayer;
     public GameObject LocalPlayer => _localPlayer;
-
+    public event Action<NetworkRunner> OnGameStarted;
     public void SetLocalPlayer(GameObject player) => _localPlayer = player;
 
     private PlayerInfoManager _playerInfoManager;
@@ -50,13 +50,19 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "Scene",
+            SessionName = "SScenesss",
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
-        
+
+        OnGameStarted?.Invoke(_runner);
     }
 
+
+    // =========================================================
+    // dev용
+    [SerializeField] private NetworkPrefabRef _cheatProxyPrefab;
+    // =========================================================
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         // 이 콜백은 모든 클라이언트에서 호출되지만, RPC 호출은 호스트(서버)만 해야 함
@@ -70,6 +76,16 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
             // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
             RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
+
+
+
+            // =========================================================
+            // dev용
+            var proxy = runner.Spawn(_cheatProxyPrefab, Vector3.zero, Quaternion.identity, player);
+            proxy.name = $"CheatExecutor_{player.RawEncoded}";
+            // =========================================================
+
+
         }
     }
 
@@ -99,7 +115,10 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
-    public void OnSceneLoadDone(NetworkRunner runner) { }
+    public void OnSceneLoadDone(NetworkRunner runner)
+    {
+        OnGameStarted?.Invoke(runner);
+    }
     public void OnSceneLoadStart(NetworkRunner runner) { }
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }

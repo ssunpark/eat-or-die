@@ -1,10 +1,22 @@
-using EPOOutline;
+﻿using EPOOutline;
 using UnityEngine;
 
 public class OutlineController : MonoBehaviour
 {
     [SerializeField]
     private Outlinable _outlineObject;
+    public Outlinable OutlineObject
+    {
+        get => _outlineObject;
+        set
+        {
+            if (value == null)
+            {
+            }
+            _outlineObject = value;
+        }
+    }
+
 
     public void SetOutlineActive(bool active)
     {
@@ -15,7 +27,7 @@ public class OutlineController : MonoBehaviour
         }
         _outlineObject.enabled = active;
     }
-    
+
     public void ActiveOutline() => SetOutlineActive(true);
     public void InactiveOutline() => SetOutlineActive(false);
 }

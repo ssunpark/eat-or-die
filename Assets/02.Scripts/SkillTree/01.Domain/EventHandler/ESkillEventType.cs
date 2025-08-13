@@ -1,0 +1,21 @@
+﻿public enum ESkillEventType
+{
+    OnActive,
+    OnAnyContext,
+    OnAttack,
+    OnCook,
+    OnDamaged,
+    OnEat,
+    OnFlashback,
+    OnFloorTransition,
+    OnHarvest,
+    OnIdle,
+    OnMad,
+    OnMagicAttack,
+    OnMeleeAttack,
+    OnMove,
+    OnSkillUpgrade,
+    OnStop,
+    OnTrade,
+    OnDead
+}

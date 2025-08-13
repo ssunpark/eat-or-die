@@ -9,6 +9,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
     protected ResourceManager _resource;
     protected NetworkInputData _input;
     protected TraitExpHandler _expHandler;
+    protected SkillManager _skill;
     public SimpleKCC KCC;
     public Animator Anim;
 
@@ -81,10 +82,12 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
     /// </summary>
     protected virtual void OnFixedUpdateState() { }
 
-    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
     protected void GrantExpOrder(string actionName, int? @int = null)
     {
-        _expHandler.GrantExp(actionName, @int);
+        if (@int.HasValue) {
+            Debug.LogError("담당자: 남경민!!!!!!!!!!!!!!!!!!!!!!!!!");
+                }
+        _fsm.RPC_GrantExpOrder(_fsm.Object.InputAuthority, actionName);
     }
 
     protected void LazySet()
@@ -93,6 +96,7 @@ public abstract class APlayerStateBase : State<APlayerStateBase>
         _stat ??= _fsm.PlayerNetworkObject?.Stat;
         _resource ??= _fsm.PlayerNetworkObject?.Resource;
         _expHandler ??= _fsm.PlayerNetworkObject?.ExpHandler;
+        _skill ??= _fsm.PlayerNetworkObject?.Skill;
         _isLazyInitialized = true;
     }
 

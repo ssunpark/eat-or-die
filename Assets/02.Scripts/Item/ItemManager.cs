@@ -65,8 +65,6 @@ public class ItemManager : NetworkBehaviour
         var weaponItemRawData = CSVLoader<WeaponItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{WEAPON_CSV_PATH}");
         foreach (var data in weaponItemRawData)
         {
-            GameObject poolParent = new GameObject($"{data.ID}_Pool");
-            poolParent.transform.SetParent(transform);
             var weaponItem = _itemFactory.CreateItem(data);
             _itemDictionary[data.ID] = weaponItem;
         }
@@ -81,7 +79,7 @@ public class ItemManager : NetworkBehaviour
         
         // 설치 아이템
         var craftRawDataList = CSVLoader<UsableItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{CRAFT_CSV_PATH}");
-        seedRawDataList.ForEach(x => x.ItemType = EItemType.Craft);
+        craftRawDataList.ForEach(x => x.ItemType = EItemType.Craft);
         
         var usableRawDataList = toolRawDataList;
         usableRawDataList.AddRange(seedRawDataList);

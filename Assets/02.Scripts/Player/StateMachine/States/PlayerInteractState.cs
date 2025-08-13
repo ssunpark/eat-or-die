@@ -34,10 +34,22 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     }
     protected override void OnFixedUpdateInput()
     {
-        KCC.Move(Vector3.zero);
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
             RequestActivateState();
+        }
+    }
+
+    protected override void PostFixedUpdate()
+    {
+        if (Machine.StateTime <= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
+        {
+            Vector3 lookDir = _fsm.InteractTarget != null
+                ? (_fsm.InteractTarget.transform.position - _fsm.transform.position).normalized
+                : Vector3.forward;
+            lookDir.y = 0f;
+            KCC.SetLookRotation(Quaternion.LookRotation(lookDir));
+            KCC.Move(Vector3.zero);
         }
     }
     void IAnimationActionNotify.OnActionMoment()
@@ -49,6 +61,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
                 Debug.LogWarning("PlayerInteractState: Interact target is null. Cannot perform interaction.");
                 return;
             }
+            GrantExpOrder("HarvestPlant");
             _fsm.Interact.Interact(_target);
         }
     }

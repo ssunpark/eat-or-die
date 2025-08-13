@@ -3,38 +3,30 @@ using UnityEngine;
 
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
-    private ItemInstance[] _ingredients;
-    public ItemInstance[] Ingredients => _ingredients;
     public UI_RecipeList RecipeListUI;
-    
-    private void Start()
+    public int CurrentIngredientID;
+
+    public void SetCurrentIngredientID(int ID)
     {
-        InventoryManager.Instance.OnInventoryUpdated += UpdateIngredients;
-    }
-    
-    public void UpdateIngredients()
-    {
-        Debug.Log("RecipePanelUIManager의 UpdateIngredients 메서드 진입");
-        var validIngredientIDs = RecipeManager.Instance.RecipeList
-            .Where(recipe => recipe.Ingredient2ID.HasValue) // 재료 2개짜리만
-            .SelectMany(recipe => new[] { recipe.Ingredient1ID, recipe.Ingredient2ID.Value }) // 양쪽 다 꺼냄
-            .Distinct()
-            .ToHashSet();
-        
-        _ingredients = InventoryManager.Instance.Inventory.SlotList
-            .Where(slot => slot.ItemInstance != null && slot.ItemInstance.ID >= 200000 && slot.ItemInstance.ID < 300000 && validIngredientIDs.Contains(slot.ItemInstance.ID))
-            .Select(slot => slot.ItemInstance)
-            .ToArray();
+        CurrentIngredientID = ID;
     }
 
-    public void UpdateRecipes(int ingredientID)
+    public void UpdateAllRecipes()
+    {
+        var filteredRecipes = RecipeManager.Instance.RecipeList;
+
+        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {CurrentIngredientID}");
+        RecipeListUI.ShowFilteredRecipes(filteredRecipes);
+    }
+
+    public void UpdateRecipes()
     {
         var filteredRecipes = RecipeManager.Instance.RecipeList
             .Where(recipe => recipe.Ingredient2ID.HasValue)
-            .Where(recipe => recipe.Ingredient1ID == ingredientID || recipe.Ingredient2ID == ingredientID)
+            .Where(recipe => recipe.Ingredient1ID == CurrentIngredientID || recipe.Ingredient2ID == CurrentIngredientID)
             .ToList();
 
-        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {ingredientID}");
+        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {CurrentIngredientID}");
         RecipeListUI.ShowFilteredRecipes(filteredRecipes);
     }
 
@@ -52,20 +44,22 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
     {
         int ingredient1ID = recipe.Ingredient1ID;
         int? ingredient2ID = recipe.Ingredient2ID;
-    
-        if (!InventoryManager.Instance.Inventory.HaveItem(ingredient1ID))
+
+        if (!ingredient2ID.HasValue)
         {
-            return false;
+            return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID);
         }
 
-        if (ingredient2ID.HasValue)
+        // 재료가 2개인 레시피의 경우
+        if (ingredient1ID == ingredient2ID.Value)
         {
-            if (!InventoryManager.Instance.Inventory.HaveItem(ingredient2ID.Value))
-            {
-                return false;
-            }
+            return UnifiedInventoryManager.Instance.GetItemCount(ingredient1ID) >= 2;
         }
-        return true;
+        else
+        {
+            return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID) &&
+                   UnifiedInventoryManager.Instance.HaveItem(ingredient2ID.Value);
+        }
     }
 }
 

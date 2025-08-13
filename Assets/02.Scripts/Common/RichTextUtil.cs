@@ -6,6 +6,9 @@ public static class RichTextUtil
     private static readonly Regex ColorOpenTag = new(@"<color=([^>]+)>", RegexOptions.IgnoreCase);
     private static readonly Regex ColorCloseTag = new(@"</color>", RegexOptions.IgnoreCase);
 
+    // 플레이스홀더 패턴: {0}, {1:...}, {2}% 등
+    private static readonly Regex PlaceholderAnyRegex = new(@"\{(\d+)(:[^\}]*)?\}%?", RegexOptions.Compiled);
+
     // --- HEX or color name ---
     public static string RecolorAll(string input, string newHexOrName)
     {
@@ -26,7 +29,7 @@ public static class RichTextUtil
         int count = 0;
         return ColorOpenTag.Replace(input, m =>
         {
-            if (count++ == index) return $"<color={newHexOrName}>";
+            if (count++ == index) return $"<color={newHexOrName}>"; 
             return m.Value;
         });
     }
@@ -41,5 +44,25 @@ public static class RichTextUtil
     {
         string hex = $"#{ColorUtility.ToHtmlStringRGB(color)}";
         return RecolorAt(input, index, hex);
+    }
+
+    /// <summary>
+    /// 문자열 내 모든 {n} 플레이스홀더를 지정 색상으로 감쌉니다.
+    /// </summary>
+    public static string ColorizePlaceholders(string input, string colorHex)
+    {
+        if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(colorHex))
+            return input;
+
+        return PlaceholderAnyRegex.Replace(input, m =>
+        {
+            return $"<color={colorHex}>{m.Value}</color>";
+        });
+    }
+
+    public static string ColorizePlaceholders(string input, Color color)
+    {
+        string hex = $"#{ColorUtility.ToHtmlStringRGB(color)}";
+        return ColorizePlaceholders(input, hex);
     }
 }

@@ -42,35 +42,8 @@ public class PlayerDeadState : APlayerStateBase
     private void DropAllItems()
     {
         _fsm.ItemHolder.SetHoldItem(null);
-        if (InventoryManager.Instance != null)
-        {
-            var inv = InventoryManager.Instance.Inventory;
-            for (int i = 0; i < inv.SlotList.Count; i++)
-            {
-                var slot = inv.SlotList[i];
-                if (!slot.IsEmpty)
-                {
-                    var item = slot.ItemInstance;
-                    ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, _fsm.transform.position, Quaternion.identity);
-                    slot.RemoveItem();
-                }
-            }
-        }
-
-        if (QuickSlotManager.Instance != null)
-        {
-            var qs = QuickSlotManager.Instance.Quickslots;
-            for (int i = 0; i < qs.SlotList.Count; i++)
-            {
-                var slot = qs.SlotList[i];
-                if (!slot.IsEmpty)
-                {
-                    var item = slot.ItemInstance;
-                    ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, _fsm.transform.position, Quaternion.identity);
-                    slot.RemoveItem();
-                }
-            }
-        }
+     
+        UnifiedInventoryManager.Instance.DropAllItems(_fsm.transform.position);
     }
 
 }

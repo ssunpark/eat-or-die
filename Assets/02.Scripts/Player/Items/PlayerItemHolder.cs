@@ -7,10 +7,11 @@ public class PlayerItemHolder: NetworkBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private Transform _handTransform;
-    private PlayerFSM _playerController;
+    private PlayerFSM _playerFSM;
     public EAttackType AttackType = EAttackType.MeleeWeapon;
     public ItemInstance HeldItemInstance { get; private set; }
     private GameObject _heldItemObject;
+    public GameObject HeldItemObject => _heldItemObject;
     public string InteractionTag;
 
     private Player _player;
@@ -25,12 +26,12 @@ public class PlayerItemHolder: NetworkBehaviour
     [SerializeField] private List<AnimatorOverrideEntry> _overrideList;
 
     private Dictionary<string,AnimatorOverrideController> _animatorOverrideMap = new();
-    public int HoldItemID { get; private set; }
+    [Networked]
+    public int HoldItemID { get; set; }
     public override void Spawned()
     {
         if (HoldItemID > 0)
         {
-            Debug.Log($"[PlayerItemHolder] Spawned - Item with ID {HoldItemID} is being held. Synchronizing state.");
             _HoldItemLogic(HoldItemID);
         }
     }
@@ -62,8 +63,8 @@ public class PlayerItemHolder: NetworkBehaviour
         _heldItemObject = changedHoldItem.GetHoldItemObject();
         _heldItemObject.transform.SetParent(_handTransform);
 
-        _heldItemObject.transform.localPosition = new Vector3(0.07f, 0.14f, -0.02f);
-        _heldItemObject.transform.localRotation = Quaternion.Euler(-180f, 0f, 0f);
+        _heldItemObject.transform.localPosition = new Vector3(0f, 0f, 0f);
+        _heldItemObject.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
         _heldItemObject.transform.localScale = Vector3.one;
 
 
@@ -76,25 +77,33 @@ public class PlayerItemHolder: NetworkBehaviour
         {
             _animatorOverrideMap[entry.key] = entry.controller;
         }
-        _playerController = GetComponent<PlayerFSM>();
+        _playerFSM = GetComponent<PlayerFSM>();
     }
 
     public void UseItem(GameObject target)
     {
-        Debug.Log($"[PlayerItemHolder] UseItem Called. Target: {target.name}");
         QuickSlotManager.Instance.UseItem(target, RPC_RequestUnholdItem);
     }
     
 
     public void SetHoldItem(ItemInstance itemInstance)
     {
-        Debug.Log($"[PlayerItemHolder] SetHoldItem Called.");
+        if (_setHoldItemCoroutine != null)
+        {
+            StopCoroutine(_setHoldItemCoroutine);
+            _setHoldItemCoroutine = null;
+        }
+        StartCoroutine(SetHoldItemCoroutine(itemInstance));
+    }
 
+    private IEnumerator SetHoldItemCoroutine(ItemInstance itemInstance)
+    {
+        yield return new WaitUntil(CanChangeItem);
         HeldItemInstance = itemInstance;
 
         if (HasInputAuthority)
         {
-            if(itemInstance == null)
+            if (itemInstance == null)
             {
                 RPC_RequestUnholdItem();
             }
@@ -102,7 +111,24 @@ public class PlayerItemHolder: NetworkBehaviour
                 RPC_RequestHoldItem(itemInstance.ID);
         }
     }
-    
+
+    private bool CanChangeItem()
+    {
+        if(_playerFSM == null || _playerFSM.StateMachine == null)
+        {
+            return false;
+        }
+        if(_playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Idle||
+            _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Move ||
+           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Hit ||
+           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Recover ||
+           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Cooking)
+        {
+            return true;
+        }
+        return false;
+    }
+
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
     private void RPC_RequestUnholdItem()
     {
@@ -113,7 +139,9 @@ public class PlayerItemHolder: NetworkBehaviour
         var heldItem = ItemManager.Instance.GetItem(HoldItemID);
         heldItem?.UnHoldItem(gameObject, _heldItemObject);
         _heldItemObject = null;
-        HoldItemID = -1;
+        HeldItemInstance = null;
+        if(Runner.IsServer)
+            HoldItemID = -1;
 
         AttackType = EAttackType.MeleeWeapon;
         ProjectileKey = "DefaultProjectile";
@@ -123,22 +151,12 @@ public class PlayerItemHolder: NetworkBehaviour
     private void RPC_RequestHoldItem(int itemId)
     {
         _HoldItemLogic(itemId);
-        HoldItemID = itemId;
+        if(Runner.IsServer)
+            HoldItemID = itemId;
     }
-    Coroutine _applyOverrideCoroutine;
+    Coroutine _setHoldItemCoroutine;
     public void ApplyAnimatorOverride(string key)
     {
-        if (_applyOverrideCoroutine != null)
-        {
-            StopCoroutine(_applyOverrideCoroutine);
-            _applyOverrideCoroutine = null;
-        }
-        _applyOverrideCoroutine = StartCoroutine(ApplyOverrideCoroutine(key));
-    }
-
-    private IEnumerator ApplyOverrideCoroutine(string key)
-    {
-        yield return new WaitUntil(() => _playerController.StateMachine.ActiveStateId == 0 || _playerController.StateMachine.ActiveStateId == 1);
         if (_animatorOverrideMap.TryGetValue(key, out var controller))
         {
             _animator.runtimeAnimatorController = controller;

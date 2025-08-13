@@ -4,14 +4,15 @@ using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
 
+
 #if UNITY_EDITOR
-using UnityEditor;
 #endif
 
 public enum EUseItemMode : byte
 {
     Self = 0,
-    Give = 1
+    Give = 1,
+    Targeted = 2
 }
 public class FSMStateInstances
 {
@@ -85,7 +86,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public NetworkInputData CurrentInput => _currentInput;
     public NetworkInputData PreviousInput => _previousInput;
 
-    public const float INTERACTABLE_DISTANCE = 2f;
+    public const float INTERACTABLE_DISTANCE = 3f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
     private const float _useItemMaxDistance = 2.0f;
     [Networked]
@@ -150,6 +151,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 if (!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
                 {
+                    InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
                     RPC_SetInteractTarget(null);
                 }
             }
@@ -158,6 +160,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
                 {
+                    ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
                     RPC_SetItemUseTargetAndMode(null, EUseItemMode.Self);
                 }
             }
@@ -188,101 +191,66 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed")
             return false;
 
+        // ▶ Player 대상: 기존 로직 유지(커서 우선 + 자기 자신 fallback)
         if (requiredTag == "Player")
         {
-            // 커서 대상 우선
             if (TryGetPlayerUnderCursor(out var playerUnderCursor))
             {
+                if (ItemUseTarget != playerUnderCursor)
+                    ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
                 RPC_SetItemUseTargetAndMode(playerUnderCursor, EUseItemMode.Give);
+                playerUnderCursor.GetComponent<OutlineController>()?.SetOutlineActive(true);
                 return true;
             }
 
-            // 커서에 유효 대상이 없으면 자기 자신
+            // 커서에 유효한 다른 플레이어가 없으면 자기 자신
+            if (ItemUseTarget != PlayerNetworkObject.Object)
+                ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
             RPC_SetItemUseTargetAndMode(PlayerNetworkObject.Object, EUseItemMode.Self);
             return true;
         }
-        Vector3 interactionPoint = transform.position + transform.forward;
 
-        int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, INTERACTABLE_DISTANCE, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
-
-        GameObject closest = null;
-        float shortestDistance = float.MaxValue;
-
-        for (int i = 0; i < result; i++)
+        // ▶ 그 외 태그: 커서가 가리키는 오브젝트 기반
+        if (TryGetTaggedObjectUnderCursor(requiredTag, _useItemMaxDistance, out var net))
         {
-            GameObject obj = _testColliders[i].gameObject;
+            if (ItemUseTarget != net)
+                ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
 
-            if (!obj.CompareTag(requiredTag))
-                continue;
-
-            float distance = Vector3.Distance(transform.position, obj.transform.position);
-            if (distance < shortestDistance)
-            {
-                shortestDistance = distance;
-                closest = obj;
-            }
-        }
-
-        if (closest == null)
-            return false;
-
-        if (closest.TryGetComponent(out NetworkObject net))
-        {
-            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Self);
+            RPC_SetItemUseTargetAndMode(net, EUseItemMode.Targeted);
+            net.GetComponent<OutlineController>()?.SetOutlineActive(true);
             return true;
         }
 
-        Debug.LogWarning($"[PlayerController] Closest usable object has no NetworkObject: {closest.name}");
         return false;
     }
 
     private bool TestInteraction(bool interactPressed)
     {
         if (!InputReader.Instance.HaveControl())
-        {
-            return false;
-        }
-        Vector3 interactionPoint = transform.position + transform.forward;
-
-        int result = Runner.GetPhysicsScene().OverlapSphere(interactionPoint, 2f, _testColliders, InteractLayerMask, QueryTriggerInteraction.Collide);
-
-        IInteractable closestInteractable = null;
-        float shortestDistance = float.MaxValue;
-
-        for (int i = 0; i < result; i++)
-        {
-            if (_testColliders[i].TryGetComponent<IInteractable>(out var interactable))
-            {
-                float distance = Vector3.Distance(_testColliders[i].transform.position, interactionPoint);
-                if (distance < shortestDistance)
-                {
-                    shortestDistance = distance;
-                    closestInteractable = interactable;
-                }
-            }
-        }
-
-        if (closestInteractable == null)
             return false;
 
-        if (interactPressed)
-        {
-            if (closestInteractable.IsImmediate)
-            {
-                closestInteractable.Interact();
-                return false;
-            }
-        }
-        if (closestInteractable is Component comp && comp.TryGetComponent(out NetworkObject net))
-        {
-            RPC_SetInteractTarget(net);
-            return true;
-        }
-        Debug.LogWarning($"[PlayerController] Interactable object does not have NetworkObject.");
+        if (!TryGetInteractableUnderCursor(INTERACTABLE_DISTANCE, out var interactable, out var net))
+            return false;
 
-        return false;
+        if (interactPressed && interactable.IsImmediate)
+        {
+            interactable.Interact(); // 로컬 즉시형 처리
+            return false;
+        }
 
+        // 즉시형이 아니면 하이라이트 + 서버에 타깃 통지
+        var comp = (Component)interactable;
+
+        if (InteractTarget != net)
+            InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
+        comp.GetComponent<OutlineController>()?.SetOutlineActive(true);
+        RPC_SetInteractTarget(net);
+        return true;
     }
+
 
 
     public void SetInput(NetworkInputData input)
@@ -309,7 +277,11 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     {
         _playerFSM.ForceActivateState((int)state);
     }
-
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    public void RPC_GrantExpOrder([RpcTarget] PlayerRef player, string actionName)
+    {
+        PlayerNetworkObject.ExpHandler.GrantExp(actionName);
+    }
     private bool TryGetPlayerUnderCursor(out NetworkObject targetPlayer)
     {
         targetPlayer = null;
@@ -353,6 +325,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 {
                     Debug.Log($"[PlayerFSM] Player is within use item distance: {dist}");
                 }
+                if (netObj == PlayerNetworkObject.Object)
+                {
+                    if (EnableDebugLog)
+                    {
+                        Debug.Log($"[PlayerFSM] target is me");
+                        return false;
+                    }
+                }
                 targetPlayer = netObj;
                 return true;
             }
@@ -363,5 +343,69 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         }
         return false;
     }
+    private bool TryGetHitUnderCursor(out RaycastHit hit)
+    {
+        hit = default;
+        var cam = Camera.main;
+        if (cam == null) return false;
 
+        var ray = cam.ScreenPointToRay(Input.mousePosition);
+#if UNITY_EDITOR
+        if (EnableDebugLog)
+            Debug.DrawRay(ray.origin, ray.direction * MAX_RAYCAST_DISTANCE, Color.cyan, 0.1f);
+#endif
+        var scene = Runner.GetPhysicsScene();
+        return scene.Raycast(ray.origin, ray.direction, out hit, MAX_RAYCAST_DISTANCE, InteractLayerMask, QueryTriggerInteraction.Collide);
+    }
+
+    private bool TryGetTaggedObjectUnderCursor(string requiredTag, float maxDistance, out NetworkObject net)
+    {
+        net = null;
+        if (!TryGetHitUnderCursor(out var hit)) return false;
+
+        var go = hit.collider.gameObject;
+        // 태그 확인 (자식 콜라이더일 수 있으니 root까지 확인)
+        var tagged = go.CompareTag(requiredTag) ? go : go.transform.root.gameObject;
+        if (!tagged.CompareTag(requiredTag)) return false;
+
+        // 거리 확인 (플레이어 기준)
+        if (Vector3.Distance(transform.position, tagged.transform.position) > maxDistance) return false;
+
+        // NetworkObject 구득 (부모 포함)
+        if (!tagged.TryGetComponent(out net))
+            net = tagged.GetComponentInParent<NetworkObject>();
+
+        return net != null;
+    }
+
+    private bool TryGetInteractableUnderCursor(float maxDistance, out IInteractable interactable, out NetworkObject net)
+    {
+        interactable = null;
+        net = null;
+
+        if (!TryGetHitUnderCursor(out var hit)) { 
+            if( EnableDebugLog )
+                Debug.Log("[PlayerFSM] No hit detected under cursor for interaction.");
+            return false; }
+        interactable = hit.collider.GetComponentInParent<IInteractable>();
+        if (interactable == null)
+        {
+            if (EnableDebugLog)
+                Debug.Log("[PlayerFSM] No interactable component found on hit object.");
+            return false;
+        }
+        
+        var comp = (Component)interactable;
+        if (Vector3.Distance(transform.position, comp.transform.position) > maxDistance)
+        {
+            if (EnableDebugLog)
+                Debug.Log($"[PlayerFSM] Interactable {comp.name} is too far away ({Vector3.Distance(transform.position, comp.transform.position)} > {maxDistance}).");
+            return false;
+        }
+
+        comp.TryGetComponent(out net);
+        if (net == null) net = comp.GetComponentInParent<NetworkObject>();
+
+        return net != null;
+    }
 }

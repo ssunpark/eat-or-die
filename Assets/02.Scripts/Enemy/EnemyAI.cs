@@ -8,9 +8,10 @@ using UnityEngine.AI;
 [RequireComponent(typeof(StateMachineController))]
 public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetector, IAttackable
 {
-	[SerializeField] private int _enemyId; // 몬스터 ID
+	public int EnemyID; // 몬스터 ID
 
 	[Networked] public EAnimationState AnimationState { get; set; }
+	private bool _hit;
 	
 	public NetworkObject NetworkObject => Object;
 
@@ -20,10 +21,9 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	
 	public EnemyStatManager EnemyStatManager;
 
-	private RangeDetector _rangeDetector;
+	private RangeDetector _raycastComponent;
 
 	[SerializeField] private float _currentHunger;
-	private float _takenDamage = 0f;
 	
 	public EnemyContext Context { get; private set; }
 
@@ -34,22 +34,22 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	[SerializeField] private HitBehaviour _hitBehaviour;
 	[SerializeField] private DieBehaviour _dieBehaviour;
 
-	private bool _hit = false;
 
 	private EnemyBehaviourMachine _behaviourMachine;
 
 	public override void Spawned()
 	{
-		_rangeDetector = GetComponent<RangeDetector>();
+		_raycastComponent = GetComponent<RangeDetector>();
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		
 		Context.Agent.updatePosition = false;
 		Context.Agent.updateRotation = false;
+		Context.Agent.updateUpAxis = false;
 	}
 
 	public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
-		EnemyStatManager = new EnemyStatManager(_enemyId);
+		EnemyStatManager = new EnemyStatManager(EnemyID);
 
 		_currentHunger = EnemyStatManager.GetStat(EStatType.EnemyHunger);
 		_animator = GetComponent<Animator>();
@@ -64,6 +64,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			Agent = GetComponent<NavMeshAgent>(),
 			Mover = this,
 			Detector = this,
+			RaycastComponent = GetComponent<RangeDetector>(),
 		};
 		
 		AEnemyStateBehaviour[] stateList = new AEnemyStateBehaviour[]
@@ -90,7 +91,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		if (_hit)
 		{
-			_currentHunger -= _takenDamage;
 			if (_currentHunger <= 0)
 			{
 				_behaviourMachine.ForceActivateState<DieBehaviour>();
@@ -98,12 +98,6 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			}
 			_behaviourMachine.ForceActivateState<HitBehaviour>();
 			_hit = false;
-			_takenDamage = 0f;
-		}
-		
-		if (_rangeDetector.Cast())
-		{
-			Detect();
 		}
 	}
 	
@@ -123,7 +117,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	private void PlayAnimation()
 	{
 		if (_animator == null) return;
-        
+		
 		string stateName = AnimationState.ToString();
 		_animator.CrossFade(stateName, 0.1f);
 	}
@@ -142,25 +136,36 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		transform.position += direction * Context.Agent.speed * Runner.DeltaTime;
 	}
 
-	public void Detect()
+	public bool Detect()
 	{
-		Context.Target = _rangeDetector.NearestMember.gameObject;
+		Collider closestTarget = _raycastComponent.NearestMember;
+		
+		Context.Target = closestTarget.gameObject;
 		
 		float distance = Vector3.Distance(transform.position, Context.Target.transform.position);
 		
-		if (distance <= _rangeDetector.Radius)
+		if (distance <= _raycastComponent.Radius)
 		{
+			Debug.Log("Try Activate Move Behaviour:" + distance + "Radius:" + _raycastComponent.Radius);
 			_behaviourMachine.TryActivateState<MoveBehaviour>();
+			return true;
 		}
+
+		return false;
 	}
 
 	public void OnHitLocal(AttackInfo attack)
 	{
 		if (HasStateAuthority)
 		{
-			float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
-			float defense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
-			_takenDamage += amount * (100 / (100 + defense));
+			float meleeAmount = attack.MeleeDamage * attack.TotalDamageMultiplier;
+			float magicAmount = attack.MagicDamage * attack.TotalDamageMultiplier;
+			float meleeDefense = EnemyStatManager.GetStat(EStatType.EnemyMeleeDefense);
+			float magicDefense = EnemyStatManager.GetStat(EStatType.EnemyMagicDefense);
+			
+			float totalDamage = meleeAmount * (100 / (100 + meleeDefense)) + magicAmount * (100 / (100 + magicDefense));
+
+			_currentHunger -= totalDamage;
 		
 			_hit = true;
 		}

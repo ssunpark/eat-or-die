@@ -4,21 +4,27 @@ using Fusion;
 
 public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateManager>
 {
-    public static event Action<Recipe> OnRecipeUnlocked;
-    public static event Action<int> OnIngredientUnlocked;
+    public event Action<Recipe> OnRecipeUnlocked;
+    public event Action<int> OnIngredientUnlocked;
 
     private void OnEnable()
     {
-        InventoryManager.OnItemAcquired += HandleIngredientDiscovered;
-        CookingManager.CookingFinished += HandleCookingFinished;
+        UnifiedInventoryManager.Instance.OnItemAcquired += HandleIngredientDiscovered;
+        CookingManager.Instance.CookingFinished += HandleCookingFinished;
 
     }
     
     private void OnDisable()
     {
-        InventoryManager.OnItemAcquired -= HandleIngredientDiscovered;
-        CookingManager.CookingFinished -= HandleCookingFinished;
-    
+        if (UnifiedInventoryManager.Instance != null)
+        {
+            UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
+        }
+
+        if (CookingManager.Instance != null)
+        {
+            CookingManager.Instance.CookingFinished -= HandleCookingFinished;
+        }
     }
 
     public bool IsUnlockedIngredients(int ingredientID)
@@ -93,6 +99,7 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
     
     private void HandleCookingFinished(ItemInstance cookedItem)
     {
+        
         var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == cookedItem.ID);
         if (recipe == null) return;
 

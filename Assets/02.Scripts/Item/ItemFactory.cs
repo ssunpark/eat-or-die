@@ -37,12 +37,10 @@ public class ItemFactory
     public ItemProfile CreateItem(EatItemRawData rawData)
     {
         var holdEffectList = new List<IItemHoldEffect>();
-        var effectList = new List<IUseEffect>();
         var extraDescription = new List<string>();
 
         // 기본 배고픔
         var hungerEffect = new EatEffect_HungerInstantRecovery(rawData.HungerRestore);
-        effectList.Add(hungerEffect);
         extraDescription.Add(hungerEffect.Description);
 
         var rawEffects = new (EStatType? type, float? value, float? duration)[]
@@ -53,6 +51,7 @@ public class ItemFactory
         };
 
         // 섭취 버프
+        var effectList = new List<IUseEffect>();
         foreach (var (type, value, duration) in rawEffects)
         {
             if (type is EStatType statType)
@@ -82,7 +81,9 @@ public class ItemFactory
             prefabAddressablePath: rawData.PrefabPath);
 
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemDefinition.Prefab, _itemPoolParent);
-        return new ItemProfile(itemDefinition, holdEffectList, effectList, pool, poolParent);
+
+        var pipeline = new ItemEatEffectPipeline(hungerEffect, effectList, rawData.IsIngredient);
+        return new ItemProfile(itemDefinition, holdEffectList, pipeline, pool, poolParent);
     }
 
     public ItemProfile CreateItem(WeaponItemRawData rawData)
@@ -172,7 +173,9 @@ public class ItemFactory
         var holdEffectList = new List<IItemHoldEffect>() { holdAnimatorEffect, holdInteractionEffect };
 
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemDefinition.Prefab, _itemPoolParent);
-        return new ItemProfile(itemDefinition, holdEffectList, effectList, pool, poolParent);
+
+        var pipeline = new ItemEffectBasePipeline(effectList);
+        return new ItemProfile(itemDefinition, holdEffectList, pipeline, pool, poolParent);
     }
 
     private (Pool<Transform>, Transform) GetOrCreateSharedPool(string key, GameObject prefab, Transform poolParent)

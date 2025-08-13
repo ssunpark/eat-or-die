@@ -28,7 +28,8 @@ public class Player : CharacterBase, IAttackable
     private Animator _animator;
     bool _isReset;
     public SimpleKCC SimpleKCC { get; private set; }
-
+    public SkillManager Skill { get; private set; }
+    
     public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
     {
         TraitDataList = dataList;
@@ -69,18 +70,20 @@ public class Player : CharacterBase, IAttackable
             if (ExpHandler != null && TraitDataList != null)
             {
                 LoadTraitsFromStorage();
+
+                InitializePlayerHUD();
             }
             else
             {
                 StartCoroutine(WaitAndLoadTraits());
             }
-                InitializePlayerHUD();
         }
 
         _animator = GetComponent<Animator>();
         PlayerFSM = GetComponent<PlayerFSM>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         SimpleKCC = GetComponent<SimpleKCC>();
+        Skill = new SkillManager(this);
     }
     private IEnumerator WaitAndLoadTraits()
     {
@@ -90,6 +93,7 @@ public class Player : CharacterBase, IAttackable
         }
 
         LoadTraitsFromStorage();
+        InitializePlayerHUD();
     }
     public void LoadTraitsFromStorage()
     {
@@ -102,6 +106,8 @@ public class Player : CharacterBase, IAttackable
             var trait = Trait.GetTrait(type); // 내부 딕셔너리에서 가져오기
             trait?.SetLevel(level);
             trait?.AddExp(exp);
+            
+            Trait.LoadAllSkillPoints(type);
         }
 
         Trait.ReapplyAllTraitEffects(TraitDataList);
@@ -115,7 +121,7 @@ public class Player : CharacterBase, IAttackable
 
     public override void FixedUpdateNetwork()
     {
-        if(PlayerFSM == null)
+        if (PlayerFSM == null)
         {
             PlayerFSM = GetComponent<PlayerFSM>();
         }
@@ -130,13 +136,13 @@ public class Player : CharacterBase, IAttackable
         }
         else if (HasStateAuthority)
         {
-            if(Runner.TryGetInputForPlayer<NetworkInputData>(Object.InputAuthority,out var input))
+            if (Runner.TryGetInputForPlayer<NetworkInputData>(Object.InputAuthority, out var input))
             {
                 PlayerFSM.SetInput(input);
             }
-            
+
         }
-        if(HasStateAuthority)
+        if (HasStateAuthority)
         {
             if (_nextState != null)
             {
@@ -159,7 +165,7 @@ public class Player : CharacterBase, IAttackable
             {
                 Debug.Log("[Client] Requesting state change to: " + state);
                 Debug.Log($"[Client] input: {HasInputAuthority}, id: {Object.Id}");
-                Rpc_RequestState(state); 
+                Rpc_RequestState(state);
             }
         }
     }
@@ -168,7 +174,7 @@ public class Player : CharacterBase, IAttackable
     public void Rpc_RequestState(EPlayerState state)
     {
         Debug.Log("[Host] Requesting state change to: " + state);
-        
+
         if (PlayerFSM.StateMachine.ActiveState.StateId != (int)state)
         {
             _nextState = PlayerFSM.StateMachine.GetState((int)state);
@@ -181,17 +187,19 @@ public class Player : CharacterBase, IAttackable
     APlayerStateBase _nextState = null;
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_HealOrDamage(float amount)
+    public void RPC_HealOrDamageFromEat(float amount)
     {
-        if(amount > 0)
+        if (amount > 0)
         {
             Resource.RestoreHunger(amount);
+            ParticleManager.Instance.RpcPlayParticle("Use_Success_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
             // 힐
         }
-        else if(amount <0)
+        else if (amount < 0)
         {
             Resource.ConsumeHunger(-amount);
-            _takedDamage = true;
+
+            ParticleManager.Instance.RpcPlayParticle("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
             // 데미지
         }
         else
@@ -200,9 +208,9 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
-    public void TryHealOrDamage(float amount)
+    public void TryHealOrDamageFromEat(float amount)
     {
-        RPC_HealOrDamage(amount);
+        RPC_HealOrDamageFromEat(amount);
     }
 
     private void EvaluateCurrentHunger(float current, float max)
@@ -226,17 +234,27 @@ public class Player : CharacterBase, IAttackable
                 return;
             }
         }
-        
+
         if (current / max > 0.2)
         {
-            return;
+            if (PlayerFSM.StateMachine.ActiveState is PlayerBerserkState)
+            {
+                if (PlayerFSM.EnableDebugLog)
+                {
+                    Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
+                }
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
+                _prevHunger = current;
+                return;
+            }
         }
 
         if (current <= 0)
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerDeadState)
             {
-                _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
+                if (PlayerFSM.EnableDebugLog)
+                    _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
                 return;
             }
         }
@@ -244,7 +262,8 @@ public class Player : CharacterBase, IAttackable
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerBerserkState)
             {
-                Debug.Log("[Player] Entering Berserk State due to low hunger.");
+                if (PlayerFSM.EnableDebugLog)
+                    Debug.Log("[Player] Entering Berserk State due to low hunger.");
                 _nextState = PlayerFSM.StateMachine.GetState<PlayerBerserkState>();
                 _prevHunger = current;
                 return;
@@ -254,7 +273,10 @@ public class Player : CharacterBase, IAttackable
         {
             if (PlayerFSM.StateMachine.ActiveState is PlayerBerserkState)
             {
-                Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
+                if (PlayerFSM.EnableDebugLog)
+                {
+                    Debug.Log("[Player] Exiting Berserk State due to hunger recovery.");
+                }
                 _nextState = PlayerFSM.StateMachine.GetState<PlayerRecoverState>();
                 _prevHunger = current;
                 return;
@@ -279,7 +301,7 @@ public class Player : CharacterBase, IAttackable
     public void CacheAnimationLengths()
     {
         _animationClipLengths = new();
-        if(_animator==null) _animator = GetComponent<Animator>();
+        if (_animator == null) _animator = GetComponent<Animator>();
         var controller = _animator.runtimeAnimatorController;
 
         foreach (var clip in controller.animationClips)
@@ -289,26 +311,15 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
-    
+
     private void InitializePlayerHUD()
     {
-        // 나중에 UIManager를 통해 HUD를 관리할 예정
         GameObject hudObject = GameObject.FindGameObjectWithTag("PlayerHUD");
         if (hudObject != null)
         {
-            UI_HUDPlayerHP hudHP = hudObject.GetComponent<UI_HUDPlayerHP>();
+            var hudHP = hudObject.GetComponentInChildren<UI_HUDPlayerHP>(true);
             if (hudHP != null)
-            {
-                hudHP.Initialize(Resource, Stat); // ResourceManager와 StatManager 전달
-            }
-            else
-            {
-                Debug.LogError($"HUD 오브젝트 'PlayerHUD'에 UI_HUDPlayerHP 스크립트가 없습니다.");
-            }
-        }
-        else
-        {
-            Debug.LogError($"씬에서 태그 'PlayerHUD'를 가진 HUD 오브젝트를 찾을 수 없습니다.");
+                hudHP.Initialize(Resource, Stat);
         }
     }
 
@@ -321,7 +332,7 @@ public class Player : CharacterBase, IAttackable
         {
             OnHitStateAuthority(attack);
         }
-        
+
         //Todo: 맞는 이펙트? 재생
     }
 
