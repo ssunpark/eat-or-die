@@ -13,10 +13,10 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
         HandEntity.Instance.OnItemDropped += OnPossessionUpdated; // 아이템을 필드에 드랍할 때
     }
 
-    public void DropAllItems()
+    public void DropAllItems(Vector3 position)
     {
-        InventoryManager.Instance.DropAllItems();
-        QuickSlotManager.Instance.DropAllItems();
+        InventoryManager.Instance.DropAllItems(position);
+        QuickSlotManager.Instance.DropAllItems(position);
         
         OnPossessionUpdated?.Invoke();
     }

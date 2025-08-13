@@ -43,7 +43,7 @@ public class PlayerDeadState : APlayerStateBase
     {
         _fsm.ItemHolder.SetHoldItem(null);
      
-        UnifiedInventoryManager.Instance.DropAllItems();
+        UnifiedInventoryManager.Instance.DropAllItems(_fsm.transform.position);
     }
 
 }

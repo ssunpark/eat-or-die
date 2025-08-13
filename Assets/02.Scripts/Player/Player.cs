@@ -104,8 +104,6 @@ public class Player : CharacterBase, IAttackable
             var trait = Trait.GetTrait(type); // 내부 딕셔너리에서 가져오기
             trait?.SetLevel(level);
             trait?.AddExp(exp);
-            
-            Trait.LoadAllSkillPoints(type);
         }
 
         Trait.ReapplyAllTraitEffects(TraitDataList);
@@ -318,23 +316,6 @@ public class Player : CharacterBase, IAttackable
             var hudHP = hudObject.GetComponentInChildren<UI_HUDPlayerHP>(true);
             if (hudHP != null)
                 hudHP.Initialize(Resource, Stat);
-
-            var traitsPanel = hudObject.GetComponentInChildren<TraitsPanel>(true);
-            if (traitsPanel != null)
-                traitsPanel.BindLocal(this);
-
-            var statsPanel = hudObject.GetComponentInChildren<StatsPanel>(true);
-            if (statsPanel != null)
-            {
-                statsPanel.BindLocal(this);
-            }
-            else
-            {
-                Debug.LogWarning("[Player] StatsPanel not found in PlayerHUD.");
-            }
-
-            var skillTreePanel = hudObject.GetComponentInChildren<UI_SkillTree>(true);
-            skillTreePanel?.Bind(this);
         }
     }
 
