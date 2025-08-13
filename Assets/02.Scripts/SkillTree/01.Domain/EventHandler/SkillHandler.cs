@@ -31,4 +31,9 @@ public class SkillHandler : ISkillHandler
         Effect.Execute(payload, context);
         return true;
     }
+
+    public void Undo(SkillContext context)
+    {
+        Effect.Undo(context);
+    }
 }

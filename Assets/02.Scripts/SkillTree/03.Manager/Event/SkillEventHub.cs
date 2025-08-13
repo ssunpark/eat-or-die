@@ -13,10 +13,16 @@ public class SkillEventHub : ISkillEventHub
         list.Add(node);
     }
 
-    public void Unsubscribe(ISkillHandler node)
+    public void Unsubscribe(ISkillHandler node, SkillContext context)
     {
         if (_routes.TryGetValue(node.EventType, out var list))
+        {
+            foreach (var handler in list)
+            {
+                handler.Undo(context);
+            }
             list.Remove(node);
+        }
     }
 
     public void Publish(ESkillEventType type, SkillContext context, ISkillPayload payload)

@@ -1,9 +1,11 @@
 ﻿public interface ISkillEffect<TPayload> where TPayload : ISkillPayload
 {
-    void Execute(TPayload payload, SkillContext context);
+    public void Execute(TPayload payload, SkillContext context);
+    public void Undo(SkillContext context);
 }
 
 public interface ISkillEffect
 {
-    void Execute(ISkillPayload payload, SkillContext context);
+    public void Execute(ISkillPayload payload, SkillContext context);
+    public void Undo(SkillContext context);
 }

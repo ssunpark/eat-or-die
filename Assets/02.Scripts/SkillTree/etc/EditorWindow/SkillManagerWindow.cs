@@ -23,8 +23,8 @@ public class SkillManagerWindow : EditorWindow
     private FieldInfo _fiHandlers;  // Dictionary<int, ISkillHandler>
 
     // 데이터 스냅샷 (표시에만 사용)
-    private List<(int id, string name)> _dbView = new();
-    private List<(int id, int level, string runtimeName)> _activeView = new();
+    private readonly List<(int id, string name)> _dbView = new();
+    private readonly List<(int id, int level, string runtimeName)> _activeView = new();
 
     [MenuItem("Tools/Skill Manager Window")]
     private static void Open()
@@ -50,6 +50,7 @@ public class SkillManagerWindow : EditorWindow
     private void OnPlayModeChanged(PlayModeStateChange change)
     {
         RefreshSnapshots(force: true);
+        Repaint();
     }
 
     private void OnEditorUpdate()
@@ -248,9 +249,7 @@ public class SkillManagerWindow : EditorWindow
 
         try
         {
-            // _skills: Dictionary<int, Skill>
             var skillsDict = _fiSkills?.GetValue(mgr) as IDictionary;
-            // _handlers: Dictionary<int, ISkillHandler> (활성 런타임만)
             var handlersDict = _fiHandlers?.GetValue(mgr) as IDictionary;
 
             if (skillsDict != null)
@@ -259,14 +258,9 @@ public class SkillManagerWindow : EditorWindow
                 {
                     int id = (int)kv.Key;
                     object skillObj = kv.Value;
-
-                    // Skill.Meta에서 이름 뽑기
                     string name = ExtractNameFromSkill(skillObj);
-
-                    // DB 뷰(좌측)
                     _dbView.Add((id, name));
 
-                    // 활성 뷰(우측): Level > 0
                     var level = ExtractLevelFromSkill(skillObj);
                     if (level > 0)
                     {
@@ -276,7 +270,8 @@ public class SkillManagerWindow : EditorWindow
                             var handler = handlersDict[id];
                             runtimeName = handler != null ? handler.GetType().Name : "";
                         }
-                        _activeView.Add((id, level, runtimeName));
+                        // 이름 포함해서 활성 뷰에 추가
+                        _activeView.Add((id, level, name + " | " + runtimeName));
                     }
                 }
             }
@@ -300,28 +295,63 @@ public class SkillManagerWindow : EditorWindow
         return 0;
     }
 
+    // ★ 핵심 수정: Meta가 '필드'일 수도 있고, 그 안의 Name도 Property/Field 모두 대응
     private string ExtractNameFromSkill(object skillObj)
     {
-        if (skillObj == null) return "";
+        if (skillObj == null) return string.Empty;
         var t = skillObj.GetType();
-        var pMeta = t.GetProperty("Meta", BindingFlags.Public | BindingFlags.Instance);
-        if (pMeta == null) return "";
 
-        var meta = pMeta.GetValue(skillObj);
-        if (meta == null) return "";
+        object meta = null;
+        try
+        {
+            var pMeta = t.GetProperty("Meta", BindingFlags.Public | BindingFlags.Instance);
+            if (pMeta != null)
+                meta = pMeta.GetValue(skillObj);
 
-        // SkillRawData 안의 이름 필드 추정
+            if (meta == null)
+            {
+                var fMeta = t.GetField("Meta", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (fMeta != null)
+                    meta = fMeta.GetValue(skillObj);
+            }
+        }
+        catch { }
+
+        if (meta == null) return string.Empty;
+
         var mt = meta.GetType();
-        var pName = mt.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
-        if (pName != null && pName.PropertyType == typeof(string)) return (string)pName.GetValue(meta);
+        string result = null;
 
-        var pTitle = mt.GetProperty("Title", BindingFlags.Public | BindingFlags.Instance);
-        if (pTitle != null && pTitle.PropertyType == typeof(string)) return (string)pTitle.GetValue(meta);
+        try
+        {
+            var pName = mt.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
+            if (pName != null && pName.PropertyType == typeof(string))
+                result = pName.GetValue(meta) as string;
 
-        var pDisp = mt.GetProperty("DisplayName", BindingFlags.Public | BindingFlags.Instance);
-        if (pDisp != null && pDisp.PropertyType == typeof(string)) return (string)pDisp.GetValue(meta);
+            if (string.IsNullOrEmpty(result))
+            {
+                var fName = mt.GetField("Name", BindingFlags.Public | BindingFlags.Instance);
+                if (fName != null && fName.FieldType == typeof(string))
+                    result = fName.GetValue(meta) as string;
+            }
 
-        return "";
+            if (string.IsNullOrEmpty(result))
+            {
+                var pTitle = mt.GetProperty("Title", BindingFlags.Public | BindingFlags.Instance);
+                if (pTitle != null && pTitle.PropertyType == typeof(string))
+                    result = pTitle.GetValue(meta) as string;
+            }
+
+            if (string.IsNullOrEmpty(result))
+            {
+                var pDisp = mt.GetProperty("DisplayName", BindingFlags.Public | BindingFlags.Instance);
+                if (pDisp != null && pDisp.PropertyType == typeof(string))
+                    result = pDisp.GetValue(meta) as string;
+            }
+        }
+        catch { }
+
+        return result ?? string.Empty;
     }
 
     // ──────────────────────────────────────────────────────────────────────────────

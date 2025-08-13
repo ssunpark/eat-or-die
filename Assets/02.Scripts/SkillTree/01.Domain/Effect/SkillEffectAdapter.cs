@@ -8,4 +8,9 @@
         if (payload is TPayload typedPayload)
             _effect.Execute(typedPayload, context);
     }
+
+    public void Undo(SkillContext context)
+    {
+        _effect.Undo(context);
+    }
 }

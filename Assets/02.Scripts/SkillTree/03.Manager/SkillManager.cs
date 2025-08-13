@@ -23,7 +23,7 @@ public class SkillManager
 
     public SkillManager(Player player)
     {
-        PlayerPrefs.DeleteAll();
+        // PlayerPrefs.DeleteAll();
         
         _traitManager = player.Trait;
         _hub = new SkillEventHub();
@@ -83,7 +83,7 @@ public class SkillManager
         // 기존 구독/핸들러 정리
         if (_handlers.ContainsKey(id))
         {
-            _hub.Unsubscribe(_handlers[id]);
+            _hub.Unsubscribe(_handlers[id], Context);
             _handlers.Remove(id);
         }
 
@@ -114,7 +114,7 @@ public class SkillManager
         // 기존 구독/핸들러 정리
         if (_handlers.ContainsKey(id))
         {
-            _hub.Unsubscribe(_handlers[id]);
+            _hub.Unsubscribe(_handlers[id], Context);
             _handlers.Remove(id);
         }
 
@@ -177,7 +177,7 @@ public class SkillManager
         // 구독/핸들러 정리
         if (_handlers.ContainsKey(id))
         {
-            _hub.Unsubscribe(_handlers[id]);
+            _hub.Unsubscribe(_handlers[id], Context);
             _handlers.Remove(id);
         }
 

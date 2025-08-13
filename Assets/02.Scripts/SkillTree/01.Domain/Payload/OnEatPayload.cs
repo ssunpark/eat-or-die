@@ -39,4 +39,6 @@ public class OnEatPayload : ISkillPayload
         ExtraRestore = 0f;
         ExtraData = null;
     }
+
+    public string SkillID { get; }
 }
