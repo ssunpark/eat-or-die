@@ -184,7 +184,7 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
 #endif
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_RequestPlayParticle(string key, Vector3 worldPos, Quaternion rot)
     {
         RpcPlayParticle(key, worldPos, rot);

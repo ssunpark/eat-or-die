@@ -38,7 +38,11 @@ public class PlayerCookingState : APlayerStateBase
     {
         if (_fsm.HasInputAuthority)
         {
-            if (_isCookCompleted) return;
+            if (_isCookCompleted)
+            {
+                _isCookCompleted = false;
+                return;
+            }
             CookingManager.Instance.OnCookingCompleted(false);
             _isCookCompleted = false;
         }
