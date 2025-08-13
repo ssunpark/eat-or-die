@@ -24,13 +24,7 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (eventData.pointerEnter.GetComponent<UI_InventorySlot>() != null)
-            {
-                InventoryManager.Instance.OnClickMouseRight(SlotIndex);
-            }else if (eventData.pointerEnter.GetComponent<CookInputSlotUI>() != null)
-            {
-                CookingManager.Instance.OnClickMouseRight(SlotIndex);
-            }
+            CookingManager.Instance.OnClickMouseRight(SlotIndex);
         }
     }
     
