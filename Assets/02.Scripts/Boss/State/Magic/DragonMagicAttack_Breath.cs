@@ -44,7 +44,7 @@ public class DragonMagicAttack_Breath : DragonSubStateBase, IAnimationEntryActio
 
     public void OnEntryMoment()
     {
-        Context.Combat.PlayBreath(_breathParams.Duration);
+        Context.Combat.PlayBreath(_breathParams.Duration, _breathParams.Damage);
     }
 
     public void OnExitMoment()

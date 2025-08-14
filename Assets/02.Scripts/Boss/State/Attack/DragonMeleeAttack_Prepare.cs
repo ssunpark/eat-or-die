@@ -13,11 +13,6 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
 
     protected override bool CanEnterState()
     {
-        if (Context.Movement.IsLocked)
-        {
-            return false;
-        }
-        
         float distance = Context.Sight.Distance;
         float prepareRandom = Random.Range(0f, 1f);
         return distance < _prepareParams.MinDistanceToFinishPrepare && 
@@ -31,11 +26,6 @@ public class DragonMeleeAttack_Prepare : DragonSubStateBase
 
     protected override void OnFixedUpdate()
     {
-        if (Context.Movement.IsLocked)
-        {
-            return;
-        }
-        
         Context.Movement.MaintainDistanceAndLookAtTarget(Machine.Runner.DeltaTime, _prepareParams.MinDistanceToFinishPrepare);
 
         // 거리 측정

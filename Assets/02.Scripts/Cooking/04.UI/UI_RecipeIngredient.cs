@@ -25,7 +25,10 @@ public class UI_RecipeIngredient : MonoBehaviour
 
     private void OnDisable()
     {
-        RoomRecipeStateManager.Instance.OnIngredientUnlocked -= HandleIngredientUnlocked;
+        if (RoomRecipeStateManager.Instance != null)
+        {
+            RoomRecipeStateManager.Instance.OnIngredientUnlocked -= HandleIngredientUnlocked;
+        }
     }
     
     public void Init()

@@ -40,6 +40,9 @@ public class LavaProjectile : NetworkBehaviour
     private bool _arrived;
     private float _travelTime;          // distance / Speed
     private Action _onArrivedAuthority; // 권위에서만 설정/호출
+    
+    public float _damage;
+    public void SetDamage(float damage) => _damage = damage;
 
     public void SetArrivedAction(Action callback)
     {
@@ -111,7 +114,7 @@ public class LavaProjectile : NetworkBehaviour
 
         if (other.TryGetComponent(out IAttackable hit))
         {
-            hit.OnHitLocal(new AttackInfo { MeleeDamage = 10f, TotalDamageMultiplier = 1f });
+            hit.OnHitLocal(new AttackInfo { MeleeDamage = _damage, TotalDamageMultiplier = 1f });
         }
     }
 }

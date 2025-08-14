@@ -17,6 +17,7 @@ public class DragonBreathEffect : MonoBehaviour
     private float _currentLength = 0f;
     private float _timer = 0f;
     private float _despawnTime = 0f;
+    private float _damage;
     private Action _onEndCallback;
 
     private bool _isState;
@@ -27,13 +28,14 @@ public class DragonBreathEffect : MonoBehaviour
         _collider.isTrigger = true;
     }
 
-    public void Init(float particleDuration, bool isState, Action onDespawnCallback = null)
+    public void Init(float particleDuration, bool isState, float damage, Action onDespawnCallback = null)
     {
         _isState = isState;
         _onEndCallback = onDespawnCallback;
         _timer = 0f;
         _currentLength = 0f;
         _despawnTime = particleDuration;
+        _damage = damage;
         
         // 파티클 재생
         var main1 = _mainParticle.main;
@@ -99,7 +101,7 @@ public class DragonBreathEffect : MonoBehaviour
         {
             var attackinfo = new AttackInfo
             {
-                MeleeDamage = 10f,
+                MeleeDamage = _damage,
                 TotalDamageMultiplier = 1f
             };
             hit.OnHitLocal(attackinfo);

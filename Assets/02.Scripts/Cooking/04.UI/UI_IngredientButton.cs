@@ -1,8 +1,10 @@
+using System.Text;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 // 수현
-public class UI_IngredientButton : MonoBehaviour
+public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // public TextMeshProUGUI IngredientNameTextUI;
     public Image IconImage;
@@ -74,5 +76,33 @@ public class UI_IngredientButton : MonoBehaviour
     public ItemDefinition GetIngredient()
     {
         return _data;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log("OnPointerEnter");
+
+        if (_data == null || !RecipePanelUIManager.Instance.IsKnownIngredient(IngredientID))
+        {
+            return;
+        }
+
+        var itemProfile = ItemManager.Instance.GetItem(IngredientID);
+        if (itemProfile == null)
+        {
+            return;
+        }
+
+        var sb = new StringBuilder();
+
+        sb.Append($"<b>{itemProfile.ItemDefinition.Name}</b>");
+        CookTooltipManager.Instance.Show(sb.ToString());
+    }
+
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        Debug.Log("OnPointerExit");
+        CookTooltipManager.Instance.Hide();
     }
 }

@@ -18,7 +18,7 @@ public class UI_CraftIgredientButton : MonoBehaviour
         _craftingredientIcon.sprite = itemProfile.ItemDefinition.Icon;
         _craftingredientNameText.text = itemProfile.ItemDefinition.Name;
 
-        var currentCount = InventoryManager.Instance.GetItemCount(ingredientID);
+        var currentCount = UnifiedInventoryManager.Instance.GetItemCount(ingredientID);
         _currentCountText.text = currentCount.ToString();
         _isRequiredCountText.text = requiredCount.ToString();
         _currentCountText.color = currentCount >= requiredCount ? _hasEnoughColor : _notEnoughColor;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -20,6 +21,18 @@ public class UI_CraftDetailPanel : MonoBehaviour
     private ItemProfile _itemProfile;
     private readonly List<UI_CraftIgredientButton> _ingredientButtons = new();
 
+    private void OnEnable()
+    {
+        UnifiedInventoryManager.Instance.OnPossessionUpdated += RefreshCraftCount;
+    }
+
+    private void OnDisable()
+    {
+        if (UnifiedInventoryManager.Instance != null)
+        {
+            UnifiedInventoryManager.Instance.OnPossessionUpdated += RefreshCraftCount;
+        }
+    }
 
     public void UpdateDetails(CraftRecipe craftRecipe)
     {
@@ -48,7 +61,7 @@ public class UI_CraftDetailPanel : MonoBehaviour
 
         _descriptionText.text = _itemProfile.ItemDefinition.Description;
 
-        var resultItemCount = InventoryManager.Instance.GetItemCount(craftRecipe.CraftResultID);
+        var resultItemCount = UnifiedInventoryManager.Instance.GetItemCount(craftRecipe.CraftResultID);
         _currentCraftReipeCountText.text = $"{resultItemCount}";
     }
 
@@ -81,8 +94,8 @@ public class UI_CraftDetailPanel : MonoBehaviour
         if (_currentCraftRecipe == null || _itemProfile == null) return;
 
         // 4. 재료를 소모하기 전에, 만들 수 있는지 '확인'부터 합니다.
-        var haveMat1 = InventoryManager.Instance.GetItemCount(_currentCraftRecipe.CraftMaterial1ID);
-        var haveMat2 = InventoryManager.Instance.GetItemCount(_currentCraftRecipe.CraftMaterial2ID);
+        var haveMat1 = UnifiedInventoryManager.Instance.GetItemCount(_currentCraftRecipe.CraftMaterial1ID);
+        var haveMat2 = UnifiedInventoryManager.Instance.GetItemCount(_currentCraftRecipe.CraftMaterial2ID);
         
         bool canCraft = haveMat1 >= _currentCraftRecipe.CraftMaterial1Count;
         if (_currentCraftRecipe.CraftMaterial2ID > 0)
@@ -97,10 +110,10 @@ public class UI_CraftDetailPanel : MonoBehaviour
         }
 
         // 5. 만들 수 있는게 확인되면, 재료를 '소모'합니다.
-        InventoryManager.Instance.TryConsumeItem(_currentCraftRecipe.CraftMaterial1ID, _currentCraftRecipe.CraftMaterial1Count);
+        UnifiedInventoryManager.Instance.TryConsumeLocalItem(_currentCraftRecipe.CraftMaterial1ID, _currentCraftRecipe.CraftMaterial1Count);
         if (_currentCraftRecipe.CraftMaterial2ID > 0)
         {
-            InventoryManager.Instance.TryConsumeItem(_currentCraftRecipe.CraftMaterial2ID, _currentCraftRecipe.CraftMaterial2Count);
+            UnifiedInventoryManager.Instance.TryConsumeLocalItem(_currentCraftRecipe.CraftMaterial2ID, _currentCraftRecipe.CraftMaterial2Count);
         }
 
         // 6. 아이템을 생성하고 인벤토리에 추가합니다.
