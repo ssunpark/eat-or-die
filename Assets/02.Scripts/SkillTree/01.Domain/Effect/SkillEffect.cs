@@ -173,7 +173,7 @@ public class SkillEffect_AddItem : ISkillEffect<IItemPayload>
     public void Execute(IItemPayload payload, SkillContext context)
     {
         var item = ItemManager.Instance.GetItem(payload.ItemId);
-        UnifiedInventoryManager.Instance.AddItem(new ItemInstance(item, 1));
+        UnifiedInventoryManager.Instance.AddItem(new ItemInstance(item, payload.ItemQuantity));
     }
 
     public void Undo(SkillContext context)

@@ -186,8 +186,11 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         }
 
         // InventoryManager.Instance.AddItemToInventory(new ItemInstance(resultItem, quantity));
-        var localPlayer = PlayerInfoManager.Instance.LocalPlayer;
-        localPlayer.Skill.Publish(ESkillEventType.OnCook, new CookPayload(itemId));
+        for (int i = 0; i < quantity; i++)
+        {
+            var localPlayer = PlayerInfoManager.Instance.LocalPlayer;
+            localPlayer.Skill.Publish(ESkillEventType.OnCook, new CookPayload(itemId, 1));
+        }
         UnifiedInventoryManager.Instance.AddItem(new ItemInstance(resultItem, quantity));
         // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));

@@ -5,11 +5,13 @@ using UnityEngine;
 public class CookPayload : ISkillPayload, IItemPayload
 {
     public readonly int CookedId;
+    public readonly int Quantity;
     public List<int> IngredientIds = new();
 
-    public CookPayload(int cookedId)
+    public CookPayload(int cookedId, int quantity)
     {
         CookedId = cookedId;
+        Quantity = quantity;
         Recipe recipe = RecipeManager.Instance.RecipeList.First(x => x.ResultID == CookedId);
         IngredientIds.Add(recipe.Ingredient1ID);
         if (recipe.Ingredient2ID != null)
@@ -20,8 +22,9 @@ public class CookPayload : ISkillPayload, IItemPayload
 
     private int GetRandomIngredients()
     {
-        return Random.Range(0, IngredientIds.Count);
+        return IngredientIds[Random.Range(0, IngredientIds.Count)];
     }
 
     public int ItemId => GetRandomIngredients();
+    public int ItemQuantity => Quantity;
 }
