@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class UI_Inventory : AUI_PopupBase
@@ -21,22 +21,23 @@ public class UI_Inventory : AUI_PopupBase
 
         InventoryManager.Instance.OnSlotUpdated += UpdateSlotUI;
         InventoryManager.Instance.OnInventoryUpdated += UpdateInventoryUI;
+        //InventoryManager.Instance.OnOpenInventory += ToggleInventory;
         Close();
     }
 
-    public void ToggleInventory()
-    {
-        bool isActive = gameObject.activeSelf;
+    //public void ToggleInventory()
+    //{
+    //    bool isActive = gameObject.activeSelf;
 
-        if (isActive)
-        {
-            Close();
-        }
-        else
-        {
-            Open();
-        }
-    }
+    //    if (isActive)
+    //    {
+    //        Close();
+    //    }
+    //    else
+    //    {
+    //        Open();
+    //    }
+    //}
 
     private void UpdateInventoryUI()
     {
