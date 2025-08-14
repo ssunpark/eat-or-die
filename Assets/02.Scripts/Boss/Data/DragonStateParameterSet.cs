@@ -120,6 +120,7 @@ public class DragonStateParameterSet
     {
         public float DetectRadius;
         public float Angle;
+        public float Damage;
     }
 
     [Serializable]
@@ -127,13 +128,7 @@ public class DragonStateParameterSet
     {
         public float Speed;
         public float LifeTime;
-    }
-
-    [Serializable]
-    public class BiteParams
-    {
-        public float DetectRadius;
-        public float Angle;
+        public float Damage;
     }
 
     [Serializable]
@@ -149,6 +144,7 @@ public class DragonStateParameterSet
     {
         public float FireTime; // 브레스 시작 시점 (예: 준비 동작 후)
         public float Duration; // 브레스 지속 시간
+        public float Damage;
     }
 
     [Serializable]
@@ -161,6 +157,8 @@ public class DragonStateParameterSet
         public float LavaSpeed;     // 투사체 이동 속도
         public float LavaHeight;    // 투사체 포물선 높이
         public float FloorDuration; // 바닥 지속 시간
+        public float Damage;
+        public float FloorDamage;
 
         public float[] AngleList;
     }
@@ -172,6 +170,7 @@ public class DragonStateParameterSet
         public float Duration; // 기술 전체 지속 시간
         public float Radius;   // 기술 반경
         public int Count;      // 폭발 생성 갯수
+        public float FloorDamage;
     }
 
     [Serializable]
@@ -180,5 +179,6 @@ public class DragonStateParameterSet
         public float ChargeDuration; // 모으는 시간
         public float TargetSize;     // 커지는 크기
         public float RemainDuration;
+        public float Damage;
     }
 }

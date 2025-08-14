@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DG.Tweening;
+using Fusion;
 using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
@@ -32,17 +33,24 @@ public class ItemObject : NetworkBehaviour, IPickable
     private bool _hasOwnerLocal;
     public bool HasOwnerLocal { get => _hasOwnerLocal; set => _hasOwnerLocal = value; }
 
+    [Header("아이템 표준 크기")]
+    [SerializeField]
+    private float _normalizeSize = 1f;
+    [Header("아이템 흡수")]
     [SerializeField]
     private float _absorbSpeed = 10f;
     [SerializeField]
     private float _absorbThreshold = 0.1f;
     [SerializeField]
-    private float _pickableTime = 1f;
+    private float _pickableTime = 4f;
 
     private Transform _target;
     private Collider _collider;
 
     private GameObject _itemObject;
+
+    private Quaternion _itemRotationSnapShot;
+    private Vector3 _itemPositionSnapShot;
 
     private void Awake()
     {
@@ -51,9 +59,11 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     public override void Spawned()
     {
-        transform.position = SpawnPosition;
+        transform.position = SpawnPosition + (Vector3.up * 0.5f);
         _itemObject = ItemManager.Instance.GetItem(ItemID).GetHoldItemObject();
         ApplyVisual();
+        
+        StartFloatingAndRotating();
     }
 
     private void Update()
@@ -75,9 +85,9 @@ public class ItemObject : NetworkBehaviour, IPickable
             {
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
-                    var itemData = ItemManager.Instance.GetItem(ItemID);
-                    itemData.ReturnHoldItemToPool(_itemObject);
-                    var item = new ItemInstance(itemData, Quantity, Durability, ExtraInfo);
+                    var itemProfile = ItemManager.Instance.GetItem(ItemID);
+                    ReturnItemToPool(itemProfile);
+                    var item = new ItemInstance(itemProfile, Quantity, Durability, ExtraInfo);
                     UnifiedInventoryManager.Instance.AddItem(item);
                     RPC_Despawn();
                 }
@@ -85,6 +95,22 @@ public class ItemObject : NetworkBehaviour, IPickable
                 _target = null;
             }
         }
+    }
+    
+    private void StartFloatingAndRotating()
+    {
+        // 기준 위치
+        Vector3 startPos = transform.position;
+
+        // 위아래 이동 (Y축)
+        transform.DOMoveY(startPos.y + 1f, 1f) // 위로 1 높이 이동
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo);
+
+        // 회전 (Y축 기준)
+        transform.DORotate(new Vector3(0f, 360f, 0f), 3f, RotateMode.FastBeyond360)
+            .SetEase(Ease.Linear)
+            .SetLoops(-1, LoopType.Restart);
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -99,6 +125,7 @@ public class ItemObject : NetworkBehaviour, IPickable
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_Pick(NetworkId targetNetworkId)
     {
+        transform.DOKill();
         _collider.enabled = false;
         _targetID = targetNetworkId;
         _target = Runner.FindObject(targetNetworkId)?.transform;
@@ -107,10 +134,23 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void ApplyVisual()
     {
         _itemObject.transform.SetParent(transform);
-        _itemObject.transform.localPosition = new Vector3(0f, 0.7f, 0f);
-        // _itemObject.transform.localRotation = Quaternion.identity;
+        _itemObject.transform.localPosition = Vector3.zero;
+        _itemObject.transform.localRotation = Quaternion.identity;
         
-        NormalizeVisualScale(_itemObject, 1f);
+        var actualObject = _itemObject.transform.GetChild(0);
+        _itemRotationSnapShot = actualObject.localRotation; // 원본 회전을 기록
+        _itemPositionSnapShot = actualObject.localPosition;
+        actualObject.localRotation = Quaternion.identity;
+        actualObject.localPosition = Vector3.zero;
+        
+        NormalizeVisualScale(_itemObject, _normalizeSize);
+    }
+
+    private void ReturnItemToPool(ItemProfile itemProfile)
+    {
+        _itemObject.transform.GetChild(0).localPosition = _itemPositionSnapShot;
+        _itemObject.transform.GetChild(0).localRotation = _itemRotationSnapShot;
+        itemProfile.ReturnHoldItemToPool(_itemObject);
     }
     
     private void NormalizeVisualScale(GameObject obj, float targetSize)

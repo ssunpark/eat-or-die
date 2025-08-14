@@ -77,12 +77,22 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
         return SharedStorageManager.Instance.GetItemCount(itemID);
     }
 
-    // public bool TryConsumeItem(int itemID, int amount)
-    // {
-    //     // 로컬 아이템 갯수가 더 많으면 그냥 쓰고 종료
-    //     // 로컬 아이템이 부족하면 네트워크 창고에서 아이템 회수 시도
-    //     // 회수 후 아이템 부족하면 누가 먼저 가져간거
-    //     
-    //     OnPossessionUpdated?.Invoke();
-    // }
+    public bool TryConsumeLocalItem(int itemID, int amount)
+    {
+        if (GetLocalItemCount(itemID) < amount)
+        {
+            return false;
+        }
+        
+        int consumed = QuickSlotManager.Instance.RequestConsumeItem(itemID, amount);
+
+        if (consumed < amount)
+        {
+            consumed += InventoryManager.Instance.RequestConsumeItem(itemID, amount - consumed);
+        }
+        
+        OnPossessionUpdated?.Invoke();
+
+        return consumed == amount;
+    }
 }

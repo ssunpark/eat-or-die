@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +8,20 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public int InventorySize;
     
     public event Action<int> OnSlotUpdated;
+    public event Action OnOpenInventory;
     public event Action OnInventoryUpdated;
 
     private void Awake()
     {
         _inventory = new Inventory(InventorySize);
     }
+    
+    //public void OpenInventory()
+    //{
+    //    OnOpenInventory?.Invoke();
+    //}
+    // UIGlobalManager가 관리하게 바꿨습니다. 만약 인벤토리를 열때 무언가 초기화가 필요하다면...
+    // 몰라
 
     public void OnClickMouseLeft(int slotIndex)
     {
@@ -88,6 +96,15 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public int GetItemCount(int itemID)
     {
         return _inventory.GetItemCount(itemID);
+    }
+
+    public int RequestConsumeItem(int itemID, int amount)
+    {
+        int consumed = GetItemCount(itemID);
+        
+        TryConsumeItem(itemID, consumed);
+        
+        return consumed;
     }
     
     public bool TryConsumeItem(int itemID, int amount)

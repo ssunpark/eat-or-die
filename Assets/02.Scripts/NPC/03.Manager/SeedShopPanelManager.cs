@@ -69,6 +69,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 
         if (selected != null && npcItem != null)
         {
+            Debug.Log($"[SeedShop] 선택된 시드 아이템: {selected.ItemDefinition.ID} - {selected.ItemDefinition.Name}");
             SeedItemDetailUI.SetDetail(selected, npcItem);
         }
         

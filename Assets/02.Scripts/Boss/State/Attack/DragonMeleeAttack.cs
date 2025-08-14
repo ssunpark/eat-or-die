@@ -47,7 +47,7 @@ public class DragonMeleeAttack : DragonSubStateBase, IAnimationActionNotify, IAn
 
     public void OnActionMoment()
     {
-        Context.Combat.Attack();
+        Context.Combat.Attack(_normalAttackParams.Damage);
         _specialAttack?.Invoke();
     }
 

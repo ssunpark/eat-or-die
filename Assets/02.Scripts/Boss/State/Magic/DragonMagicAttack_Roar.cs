@@ -51,7 +51,8 @@ public class DragonMagicAttack_Roar : DragonSubStateBase, IAnimationEntryActionN
         Context.Combat.PerformRoarAttack(
             _roarParams.Radius,
             _roarParams.Count,
-            _roarParams.Duration
+            _roarParams.Duration,
+            _roarParams.FloorDamage
         );
     }
 }

@@ -15,7 +15,9 @@ public class RoarExplosion : NetworkBehaviour
     private float _startAngle;
     private Coroutine _spawnRoutine;
 
-    public void Reset(float radius, int count, float interval)
+    private float _floorDamage;
+
+    public void Reset(float radius, int count, float interval, float floorDamage)
     {
         if (!HasStateAuthority)
             return; // 권위만 실행
@@ -24,6 +26,7 @@ public class RoarExplosion : NetworkBehaviour
         _spawnCount = count;
         _spawnInterval = interval;
         _startAngle = Random.Range(0f, 360f);
+        _floorDamage = floorDamage;
 
         if (_spawnRoutine != null)
             StopCoroutine(_spawnRoutine);
@@ -44,10 +47,11 @@ public class RoarExplosion : NetworkBehaviour
             var floor = Runner.Spawn(_lavaFloorPrefab, pos, Quaternion.identity,
                 onBeforeSpawned: (runner, obj) =>
                 {
-                    var proj = obj.GetComponent<LavaFloor>();
-                    proj.StartPosition = pos;
-                    proj.StartTick = Runner.Tick;
-                    proj.Duration = _spawnInterval * 2f;
+                    var floor = obj.GetComponent<LavaFloor>();
+                    floor.StartPosition = pos;
+                    floor.StartTick = Runner.Tick;
+                    floor.Duration = _spawnInterval * 2f;
+                    floor.SetDamage(_floorDamage);
                 });
 
             yield return new WaitForSeconds(_spawnInterval);
