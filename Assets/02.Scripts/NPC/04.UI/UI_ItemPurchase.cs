@@ -141,7 +141,7 @@ public class UI_ItemPurchase : MonoBehaviour
         // }
         
         ItemInstance newItemInstance = new ItemInstance(_itemProfile, _selectedCount);
-        InventoryManager.Instance.AddItemToInventory(newItemInstance);
+        UnifiedInventoryManager.Instance.AddItem(newItemInstance);
 
         // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
 
