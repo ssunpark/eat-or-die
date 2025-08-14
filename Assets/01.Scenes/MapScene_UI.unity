@@ -16847,6 +16847,10 @@ PrefabInstance:
       propertyPath: SortKey
       value: 1360052216
       objectReference: {fileID: 0}
+    - target: {fileID: 3632360107692796047, guid: 23e3648df65e7424f82900d9fdd0ead1, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4515667360525277008, guid: 23e3648df65e7424f82900d9fdd0ead1, type: 3}
       propertyPath: m_Name
       value: SeedShopNpc1.2
@@ -50787,6 +50791,7 @@ GameObject:
   - component: {fileID: 256653346}
   - component: {fileID: 256653345}
   - component: {fileID: 256653344}
+  - component: {fileID: 256653351}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -50924,7 +50929,7 @@ Camera:
   m_HDR: 1
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
-  m_ForceIntoRT: 0
+  m_ForceIntoRT: 1
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
@@ -50958,6 +50963,31 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 29.484, y: 162.067, z: 0}
+--- !u!114 &256653351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256653343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb42831ee5422f409e7f24f9e7488ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stage: 1
+  renderingStrategy: 0
+  renderingMode: 0
+  outlineLayerMask: -1
+  primaryBufferSizeMode: 0
+  primaryRendererScale: 0.75
+  primarySizeReference: 800
+  blurShift: 1
+  dilateShift: 1
+  dilateIterations: 1
+  dilateQuality: 0
+  blurIterations: 1
+  blurType: 1
 --- !u!1001 &256681077
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -118082,7 +118112,6 @@ GameObject:
   - component: {fileID: 600146783}
   - component: {fileID: 600146782}
   - component: {fileID: 600146781}
-  - component: {fileID: 600146780}
   m_Layer: 5
   m_Name: HUD
   m_TagString: PlayerHUD
@@ -118090,24 +118119,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &600146780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 600146779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64c1da5eff8195641ac8fcc31de8b60c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _traitsPopup: {fileID: 2110352461}
-  _traitsPanel: {fileID: 2110352460}
-  _statsPanel: {fileID: 2110352459}
-  _partyPopup: {fileID: 2031272714}
-  _partyHud: {fileID: 2031272712}
-  _skillTree: {fileID: 2110352457}
 --- !u!114 &600146781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143835,6 +143846,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: f8004061ab6ee514baa180230ee204b7, type: 3}
   m_PrefabInstance: {fileID: 706855253}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &706910697 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5470537503874109453, guid: 9257cbec3308dad4888727c3ee09a9f4, type: 3}
+  m_PrefabInstance: {fileID: 2110352456}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d843ebf8e209f6644b712f9fbaba02fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &707556898
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -164731,6 +164753,10 @@ PrefabInstance:
     - target: {fileID: 7279991928883283037, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: SortKey
       value: 4195586403
+      objectReference: {fileID: 0}
+    - target: {fileID: 7905724009587087709, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8030104166941938854, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: SortKey
@@ -187609,6 +187635,7 @@ GameObject:
   - component: {fileID: 936213296}
   - component: {fileID: 936213295}
   - component: {fileID: 936213294}
+  - component: {fileID: 936213298}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -187693,7 +187720,6 @@ RectTransform:
   m_Children:
   - {fileID: 1668119263}
   - {fileID: 1157544727}
-  - {fileID: 1637515836}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -187701,6 +187727,30 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &936213298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936213293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64c1da5eff8195641ac8fcc31de8b60c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _traitsPopup: {fileID: 2110352461}
+  _traitsPanel: {fileID: 2110352460}
+  _statsPanel: {fileID: 2110352459}
+  _partyPopup: {fileID: 2031272714}
+  _partyHud: {fileID: 2031272712}
+  _skillTree: {fileID: 2110352457}
+  _profilePanel: {fileID: 706910697}
+  _inventoryPanel: {fileID: 1668119264}
+  _inputBlockPopups:
+  - {fileID: 151372847}
+  - {fileID: 1605970022}
+  - {fileID: 1517983912}
 --- !u!1001 &936614593
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -326359,6 +326409,10 @@ PrefabInstance:
       propertyPath: SortKey
       value: 3878690321
       objectReference: {fileID: 0}
+    - target: {fileID: 3632360107692796047, guid: 23e3648df65e7424f82900d9fdd0ead1, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4515667360525277008, guid: 23e3648df65e7424f82900d9fdd0ead1, type: 3}
       propertyPath: m_Name
       value: SeedShopNpc1.2 (1)
@@ -330082,41 +330136,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 416180, guid: b2422d159a2884643ba9d94d7a1c57de, type: 3}
   m_PrefabInstance: {fileID: 1637088533}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1637515835
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1637515836}
-  m_Layer: 5
-  m_Name: l----------Crafting-----------l
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1637515836
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1637515835}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 936213297}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1637699929
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -335333,6 +335352,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3187254932794315092, guid: 9fdbbb407d9ac5f4b908be51a950d6d8, type: 3}
   m_PrefabInstance: {fileID: 1668119262}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1668119264 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2529182585746052215, guid: 9fdbbb407d9ac5f4b908be51a950d6d8, type: 3}
+  m_PrefabInstance: {fileID: 1668119262}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c116a987d27b3fe42be2acaa831b2b26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1668510856
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -418778,7 +418808,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1336255999908413284, guid: 9257cbec3308dad4888727c3ee09a9f4, type: 3}
       propertyPath: m_Name
-      value: FuckingStatusTraitSkilltreePopup
+      value: StatusTraitSkilltreePopup
       objectReference: {fileID: 0}
     - target: {fileID: 1336255999908413284, guid: 9257cbec3308dad4888727c3ee09a9f4, type: 3}
       propertyPath: m_TagString
