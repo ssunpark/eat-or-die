@@ -1,12 +1,44 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &4008888446202228586
+--- !u!1 &5703038790057598127
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7333679421389167906}
+  m_Layer: 0
+  m_Name: Food_Pumpkin_Prefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7333679421389167906
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5703038790057598127}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6407270010098382325}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &6872927742142190110
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 7333679421389167906}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 522616db7aa584c44a584d69212d674d, type: 3}
       propertyPath: m_RootOrder
@@ -14,7 +46,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 522616db7aa584c44a584d69212d674d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 522616db7aa584c44a584d69212d674d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -30,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 522616db7aa584c44a584d69212d674d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 522616db7aa584c44a584d69212d674d, type: 3}
       propertyPath: m_LocalRotation.y
@@ -62,26 +94,25 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 522616db7aa584c44a584d69212d674d, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3680066196955310616}
+      addedObject: {fileID: 6616312482496288620}
   m_SourcePrefab: {fileID: 100100000, guid: 522616db7aa584c44a584d69212d674d, type: 3}
---- !u!1 &4279271890456941115 stripped
+--- !u!1 &6026065392770559823 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 522616db7aa584c44a584d69212d674d, type: 3}
-  m_PrefabInstance: {fileID: 4008888446202228586}
+  m_PrefabInstance: {fileID: 6872927742142190110}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3680066196955310616
+--- !u!114 &6616312482496288620
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4279271890456941115}
+  m_GameObject: {fileID: 6026065392770559823}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawn: {fileID: 0}
   _windupKey: 
   _swingKey: Swing_Default
   _hitKey: Hit_Default
@@ -90,3 +121,10 @@ MonoBehaviour:
   _useEndKey: 
   _useSuccessKey: 
   _useFailKey: 
+  _useSpawn: {fileID: 0}
+  _mustbeChild: 0
+--- !u!4 &6407270010098382325 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 522616db7aa584c44a584d69212d674d, type: 3}
+  m_PrefabInstance: {fileID: 6872927742142190110}
+  m_PrefabAsset: {fileID: 0}
