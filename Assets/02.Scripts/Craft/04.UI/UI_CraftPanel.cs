@@ -6,7 +6,9 @@ public class UI_CraftPanel : AUI_PopupBase
     public GameObject CraftPanel;
     public UI_CraftItemList CraftItemList;
     private bool _isInitalized;
+    public UI_CraftDetailPanel UICraftDetailPanel;
 
+    
 
     private void Start()
     {
@@ -26,5 +28,7 @@ public class UI_CraftPanel : AUI_PopupBase
     private void Init()
     {
         CraftItemList.Init();
+        // UICraftDetailPanel.CreateIngredientButtons();
+        UICraftDetailPanel.RefreshCraftCount();
     }
 }
