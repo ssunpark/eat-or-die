@@ -33,6 +33,10 @@ public class ItemObject : NetworkBehaviour, IPickable
     private bool _hasOwnerLocal;
     public bool HasOwnerLocal { get => _hasOwnerLocal; set => _hasOwnerLocal = value; }
 
+    [Header("아이템 표준 크기")]
+    [SerializeField]
+    private float _normalizeSize = 1f;
+    [Header("아이템 흡수")]
     [SerializeField]
     private float _absorbSpeed = 10f;
     [SerializeField]
@@ -139,7 +143,7 @@ public class ItemObject : NetworkBehaviour, IPickable
         actualObject.localRotation = Quaternion.identity;
         actualObject.localPosition = Vector3.zero;
         
-        NormalizeVisualScale(_itemObject, 1f);
+        NormalizeVisualScale(_itemObject, _normalizeSize);
     }
 
     private void ReturnItemToPool(ItemProfile itemProfile)
