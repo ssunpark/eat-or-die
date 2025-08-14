@@ -2,7 +2,7 @@
 using UnityEngine.AI;
 using Fusion.Addons.FSM;
 
-public class DragonState_Alert : DragonStateBase
+public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
 {
     private DragonStateParameterSet.AlertParams _alertParams;
     private DragonStateParameterSet.BaseParams _baseParams;
@@ -90,8 +90,14 @@ public class DragonState_Alert : DragonStateBase
     {
         Context.Animator.SetBool("IsMove", true);
 
-        float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
-        Context.Phase.EvaluatePhase(HpRatio);
+        if (Context.Phase.CurrentPhase != EDragonPhase.Phase2)
+        {
+            float HpRatio = Context.Stats.CurrentHP / Context.Stats.MaxHP;
+            if (Context.Phase.EvaluatePhase(HpRatio))
+            {
+                Context.Movement.Lock();
+            }
+        }
     }
 
     protected override void OnExitStateRender()
@@ -119,5 +125,10 @@ public class DragonState_Alert : DragonStateBase
             Context.Movement.SetDestination(hit.position);
             _hasDestination = true;
         }
+    }
+
+    public void OnExitMoment()
+    {
+        Context.Movement.Unlock();
     }
 }

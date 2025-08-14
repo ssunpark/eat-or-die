@@ -18,6 +18,9 @@ public class LavaFloor : NetworkBehaviour
     private EffectVisualController _effect;
     private Collider _col;
     private bool _vfxStarted;
+    
+    public float _damage;
+    public void SetDamage(float damage) => _damage = damage;
 
     public override void Spawned()
     {
@@ -65,7 +68,7 @@ public class LavaFloor : NetworkBehaviour
         {
             hit.OnHitLocal(new AttackInfo
             {
-                MeleeDamage = 10f,
+                MeleeDamage = _damage,
                 TotalDamageMultiplier = 1f
             });
         }

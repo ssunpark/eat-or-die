@@ -7,7 +7,7 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
     private StateMachine<DragonSubStateBase> _phase1SubStateMachine;
     private StateMachine<DragonSubStateBase> _phase2SubStateMachine;
     private StateMachine<DragonSubStateBase> _currentSubStateMachine;
-    
+
     private DragonStateParameterSet.AttackParams _attackParams;
 
     public DragonState_MeleeAttack(DragonContext context)
@@ -19,12 +19,13 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
     protected override void OnEnterState()
     {
         TryActiveRandomAttackSubState();
+        EvaluatePhase();
     }
 
-    protected override void OnEnterStateRender()
-    {
-        _currentSubStateMachine = Context.Phase.CurrentPhase == EDragonPhase.Phase1 ? _phase1SubStateMachine : _phase2SubStateMachine;
-    }
+    // protected override void OnEnterStateRender()
+    // {
+    //     EvaluatePhase();
+    // }
 
     private void TryActiveRandomAttackSubState()
     {
@@ -51,11 +52,29 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
             new DragonMeleeAttack(Context, this, "Attack_RightScratch", Context.Parameter.LeftScratch
                 , () => Context.Combat.WindStormEffect())
         );
-        
-        _currentSubStateMachine = Context.Phase.CurrentPhase == EDragonPhase.Phase1 ? _phase1SubStateMachine : _phase2SubStateMachine;
+
+        EvaluatePhase();
 
         stateMachines.Add(_phase1SubStateMachine);
         stateMachines.Add(_phase2SubStateMachine);
+    }
+
+    public void EvaluatePhase()
+    {
+        if (Context.Phase.CurrentPhase == EDragonPhase.Phase1)
+        {
+            _phase2SubStateMachine.Reset();
+            _phase2SubStateMachine.IsPaused = true;
+            _phase1SubStateMachine.IsPaused = false;
+            _currentSubStateMachine = _phase1SubStateMachine;
+        }
+        else
+        {
+            _phase1SubStateMachine.Reset();
+            _phase1SubStateMachine.IsPaused = true;
+            _phase2SubStateMachine.IsPaused = false;
+            _currentSubStateMachine = _phase2SubStateMachine;
+        }
     }
 
     public void OnSubStateComplete()

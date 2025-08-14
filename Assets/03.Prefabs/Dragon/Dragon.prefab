@@ -96,59 +96,6 @@ MonoBehaviour:
   limitCount: 8
   minRadius: 1
   fullAwareness: 1
---- !u!1 &623719036403319938
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3730612697536150061}
-  - component: {fileID: 2345534583680098241}
-  m_Layer: 0
-  m_Name: BoxCollider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3730612697536150061
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623719036403319938}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2405983379442941629}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2345534583680098241
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623719036403319938}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 4, y: 8, z: 6}
-  m_Center: {x: 0, y: 4, z: 0}
 --- !u!1 &744849153092732418
 GameObject:
   m_ObjectHideFlags: 0
@@ -36428,9 +36375,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3428590379511631593}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3730612697536150061}
     - targetCorrespondingSourceObject: {fileID: 1703912541600113512, guid: 97bf5849c1f38994d870d6481197e83f, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6732435267177037644}
@@ -36494,9 +36438,10 @@ MonoBehaviour:
   _phaseEffect: {fileID: 5026193841536070581}
   _sightDetector: {fileID: 3515642794523664083}
   _attackDetector: {fileID: 193430250931287965}
+  _IsFightMode: 0
   _AnimVelocity: {x: 0, y: 0}
   _AnimWaitIndex: 0
-  _hp: 0
+  _CurrentHeath: 0
 --- !u!114 &3625587632435982483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36613,11 +36558,11 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6, y: 8, z: 12}
+  m_Size: {x: 4.5, y: 8, z: 9}
   m_Center: {x: 0, y: 4, z: 0}
 --- !u!4 &3552494798179252798 stripped
 Transform:
