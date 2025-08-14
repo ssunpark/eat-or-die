@@ -14,10 +14,10 @@ public class PopupManager : BehaviourSingleton<PopupManager>
             CloseLast();
         }
 
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            InventoryManager.Instance.OpenInventory();
-        }
+        //if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    InventoryManager.Instance.OpenInventory();
+        //}
 
         if (!HasOpenedPopup && InputReader.Instance != null)
         {
