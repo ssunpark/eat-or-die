@@ -42,7 +42,7 @@ public class ItemObject : NetworkBehaviour, IPickable
     [SerializeField]
     private float _absorbThreshold = 0.1f;
     [SerializeField]
-    private float _pickableTime = 1f;
+    private float _pickableTime = 4f;
 
     private Transform _target;
     private Collider _collider;
