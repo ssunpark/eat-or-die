@@ -61,7 +61,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
             if (maxHealth <= 0)
             {
                 Debug.LogWarning("Max health is zero or negative, setting slider value to 0.");
-                _hpSlider.value = 1; // MaxHealth가 0 이하인 경우 슬라이더 값을 0으로 설정
+                _hpSlider.value = 0; // MaxHealth가 0 이하인 경우 슬라이더 값을 0으로 설정
             }
             else
             {

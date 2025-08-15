@@ -8,6 +8,20 @@ public class StatManager
 
     public event Action<EStatType, StatModifier> OnModifierAdded;
     public event Action<EStatType, StatModifier> OnModifierRemoved;
+    public event Action<EStatType> OnBaseChanged;
+
+    public StatManager(IStatDataRepository statRepo, ECharacterType characterType)
+    {
+        foreach (var data in statRepo.GetCharacterStatData(characterType))
+        {
+            var stat = new Stat(data.StatType, data.BaseAmount);
+            _stats[data.StatType] = stat;
+
+            stat.ModifierAdded += (type, mod) => OnModifierAdded?.Invoke(type, mod);
+            stat.ModifierRemoved += (type, mod) => OnModifierRemoved?.Invoke(type, mod);
+            stat.BaseChanged += (type) => OnBaseChanged?.Invoke(type); // (2)에서 씁니다
+        }
+    }
 
     public StatManager(IStatDataRepository statRepo)
     {
@@ -18,8 +32,6 @@ public class StatManager
         }
         else
         {
-            Debug.LogWarning("[StatManager] CustomizationDataHolder가 없네요.. 캐릭터 생성 후 이 경고를 본다면 남경민에게 말해주세요");
-            Debug.LogWarning("[StatManager] 기본 캐릭터 타입을 Warrior로 설정합니다.");
             characterType = ECharacterType.Warrior; // 기본값 설정
         }
         foreach (var data in statRepo.GetCharacterStatData(characterType))
@@ -31,6 +43,8 @@ public class StatManager
             _stats[data.StatType].ModifierRemoved += (type, mod) => OnModifierRemoved?.Invoke(type, mod);
         }
     }
+
+
 
     public float GetStat(EStatType type)
     {

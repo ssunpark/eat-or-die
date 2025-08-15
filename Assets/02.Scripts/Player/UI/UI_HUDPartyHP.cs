@@ -77,6 +77,8 @@ public class UI_HUDPartyHP: MonoBehaviour
         {
             player.Resource.OnHungerChanged += emptySlot.SetSliderValue;
             _resourceMap[info.Ref] = player.Resource;
+
+            emptySlot.SetSliderValue(player.Resource.CurrentHunger, player.Resource.MaxHunger);
         }
     }
 

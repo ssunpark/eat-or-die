@@ -13,49 +13,83 @@ public enum ECustomizationPart
     Top, Watch
 }
 
+public struct CustomizationSnapshot : INetworkStruct
+{
+    public ECharacterType ClassType;
+    public NetworkString<_16> Nickname;
+}
+
 public class PlayerCustomizeHandler : NetworkBehaviour
 {
-    [SerializeField] private ECharacterType _classType;
+    [Networked, OnChangedRender(nameof(OnClassTypeChanged))] private ECharacterType _classType { get; set; }
     public ECharacterType ClassType => _classType;
+
+    [Networked]
+    public CustomizationSnapshot NetCustomize { get; set; }
+
     [Networked, OnChangedRender(nameof(ApplyNickname))] public string Nickname { get; set; }
     [Networked, OnChangedRender(nameof(ApplyCustomization))] private CustomizationData _customData { get; set; }
 
     [SerializeField] private TextMeshProUGUI _nicknameText;
 
+    private CharacterDataInstaller _installer;
+    private bool _installed;
+
     private Dictionary<ECustomizationPart, int> _customizeSelections = new();
     public override void Spawned()
     {
-
+        _installer = GetComponent<CharacterDataInstaller>();
         if (Object.HasInputAuthority)
         {
-            if(CustomizationDataHolder.Instance == null)
-            {
-                Debug.LogWarning("[PlayerCustomizeHandler] CustomizationDataHolder가 없어용");
-                Debug.LogWarning("캐릭터 커스터마이징이 안되니 참고하세용");
-                //커스터마이징 데이터가 없으면 그냥 기본값으로 설정
-                var classType = ECharacterType.Warrior; // 기본 클래스
-                var nickname = "Player"+UnityEngine.Random.Range(100,999); // 기본 닉네임
-                var customData = new CustomizationData(); // 빈 커스터마이징 데이터
-                Rpc_SetCharacterInfo(classType, nickname, customData);
-                return;
-            }
             var holder = CustomizationDataHolder.Instance;
 
-            if (string.IsNullOrEmpty(holder.Nickname))
+            // 닉네임 비어있으면 즉석 생성
+            var nickname = string.IsNullOrEmpty(holder?.Nickname)
+                ? $"Test{UnityEngine.Random.Range(0, 999)}"
+                : holder.Nickname;
+
+            var snapshot = new CustomizationSnapshot
             {
-                holder.Nickname = "Player"+ UnityEngine.Random.Range(100, 999);
-            }
-            Rpc_SetCharacterInfo(holder.ClassType, holder.Nickname, holder.CustomizationData);
-            SendNicknameToHost();
+                ClassType = holder != null ? holder.ClassType : ECharacterType.Warrior,
+                Nickname = nickname
+            };
+            var data = holder != null ? holder.CustomizationData : default;
+            RPC_RequestApplyCustomization(snapshot, data);
         }
-        else
-        {
-            //후입장 플레이어를 위해 한 번 강제 적용
-            ApplyCustomization();
-            ApplyNickname();
-        }
+        TryInstall();
     }
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_RequestApplyCustomization(CustomizationSnapshot snapshot, CustomizationData data, RpcInfo info = default)
+    {
+
+        _classType = snapshot.ClassType;
+        Nickname = snapshot.Nickname.ToString();
+        NetCustomize = snapshot;
+        _customData = data;
+
+        PlayerInfoManager.Instance.UpdateNickname(Object.InputAuthority, Nickname);
+    }
+
+    private void OnClassTypeChanged()
+    {
+        TryInstall();
+        ApplyCustomization();
+    }
+
+    private void TryInstall()
+    {
+        if (_installed || _installer == null) return;
+
+        _installer.Install(_classType);
+        _installed = true;
+    }
+
+    private void ApplyNickname()
+    {
+        if (_nicknameText != null)
+            _nicknameText.text = Nickname;
+    }
     private void Awake()
     {
         if (_customizeSelections.Count == 0)
@@ -68,25 +102,6 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         _partsRoot = transform.Find("Characters/Parts");
     }
 
-    private void ApplyNickname()
-    {
-        if(string.IsNullOrEmpty(Nickname))
-        {
-            Nickname = "Player";
-        }
-        if (_nicknameText != null)
-        {
-            _nicknameText.text = Nickname;
-        }
-    }
-    public void ApplyBtn()
-    {
-        if (Object.HasInputAuthority)
-        {
-            CustomizationData data = CustomizationDataMapper.FromDictionary(_customizeSelections);
-            Rpc_SetCharacterInfo(_classType, Nickname, data);
-        }
-    }
     private void ApplyCustomization()
     {
         var root = _partsRoot != null ? _partsRoot : transform.Find("Characters/Parts");
@@ -98,7 +113,18 @@ public class PlayerCustomizeHandler : NetworkBehaviour
             ActivatePart(root, category, index);
         }
 
-        SetArmor();
+        SetArmor(); 
+        ApplyNickname();
+    }
+    private bool _didFirstRenderInit;
+
+    public override void Render()
+    {
+        if (_didFirstRenderInit) return;
+
+        ApplyCustomization();
+
+        _didFirstRenderInit = true;
     }
 
     private void ActivatePart(Transform root, string category, short index)
@@ -109,48 +135,6 @@ public class PlayerCustomizeHandler : NetworkBehaviour
 
         foreach (Transform child in categoryTransform)
             child.gameObject.SetActive(child.name == name);
-    }
-
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    public void Rpc_SetCharacterInfo(ECharacterType classType, string nickname, CustomizationData data)
-    {
-        _classType = classType;
-        Nickname = nickname;
-        _customData = data;
-        ApplyCustomization();
-    }
-
-    public void SendNicknameToHost()
-    {
-        if (Object.HasStateAuthority)
-        {
-            var holder = CustomizationDataHolder.Instance;
-            string nickname = string.IsNullOrEmpty(holder.Nickname) ? "Player" + UnityEngine.Random.Range(100, 999) : holder.Nickname;
-            CustomizationData data = holder.CustomizationData;
-            Nickname = nickname;
-            _customData = data;
-
-            PlayerInfoManager.Instance.UpdateNickname(Object.InputAuthority, nickname);
-            return;
-        }
-        if (Object.HasInputAuthority)
-        {
-            var holder = CustomizationDataHolder.Instance;
-            string nickname = string.IsNullOrEmpty(holder.Nickname) ? "Player" + UnityEngine.Random.Range(100, 999) : holder.Nickname;
-            CustomizationData data = holder.CustomizationData;
-
-            Rpc_SendNicknameAndCustomization(nickname, data);
-        }
-    }
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    private void Rpc_SendNicknameAndCustomization(string nickname, CustomizationData data)
-    {
-        Nickname = nickname;
-        _customData = data;
-
-        PlayerInfoManager.Instance.UpdateNickname(Object.InputAuthority, nickname);
     }
 
     private Transform _partsRoot;
@@ -185,7 +169,7 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         }
         return null;
     }
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_EquipOrUnequipSomething(EArmorType type, bool equip)
     {
         switch (type)

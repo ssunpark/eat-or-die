@@ -19,6 +19,7 @@ public class PlayerCookingState : APlayerStateBase
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
+        _isCookCompleted = false;
     }
 
     protected override void OnFixedUpdateInput()

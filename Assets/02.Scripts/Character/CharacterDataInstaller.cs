@@ -11,52 +11,32 @@ public class CharacterDataInstaller : MonoBehaviour
     [SerializeField] private bool syncStats = false;
     [SerializeField] private bool syncTraits = false;
     [SerializeField] private bool syncResources = false;
+    private bool _installed;
 
-    private void Awake()
+    public void Install(ECharacterType characterType)
     {
-        IStatDataRepository statRepo = useMockStatData
-            ? new MockStatDataRepository()
-            : new StatDataRepository();
+        if (_installed) return;
 
-        ITraitDataRepository traitRepo = useMockTraitData
-            ? new MockTraitDataRepository()
-            : new TraitDataRepository();
+        IStatDataRepository statRepo = useMockStatData ? new MockStatDataRepository() : new StatDataRepository();
+        ITraitDataRepository traitRepo = useMockTraitData ? new MockTraitDataRepository() : new TraitDataRepository();
 
         var character = GetComponent<CharacterBase>();
-        character.InitializeCharacter(statRepo, traitRepo);
 
-        // Trait 효과 Stat에 반영
-        character.Trait.ReapplyAllTraitEffects(traitRepo.GetCharacterTraitData());
-
+        character.InitializeCharacter(statRepo, traitRepo, characterType);
         if (character is Player player)
         {
             var traitData = traitRepo.GetCharacterTraitData();
             player.InitializeTraitSystem(traitData, new TraitExpHandler(traitData, player.Trait));
         }
+        character.Trait.ReapplyAllTraitEffects(traitRepo.GetCharacterTraitData());
 
         if (syncStats)
-        {
-            var statSync = GetComponent<CharacterStatNetworkSync>();
-            if (statSync != null)
-                statSync.Initialize(character.Stat);
-        }
-
+            GetComponent<CharacterStatNetworkSync>()?.Initialize(character.Stat);
         if (syncTraits)
-        {
-            var traitSync = GetComponent<CharacterTraitNetworkSync>();
-            if (traitSync != null)
-                traitSync.Initialize(character.Trait);
-        }
-
+            GetComponent<CharacterTraitNetworkSync>()?.Initialize(character.Trait);
         if (syncResources)
-        {
-            var resourceSync = GetComponent<CharacterResourceNetworkSync>();
-            if (resourceSync != null)
-                resourceSync.Initialize(character.Resource);
-        }
+            GetComponent<CharacterResourceNetworkSync>()?.Initialize(character.Resource);
 
-        TryGetComponent(out PlayerStatDebugger debugger);
-        if (debugger != null)
-            debugger.Bind(character.Stat);
+        _installed = true;
     }
 }
