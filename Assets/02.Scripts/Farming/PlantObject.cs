@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlantObject : NetworkBehaviour, IInteractable
 {
     private const int ROTTEN_CROP_ID = 200012;
+    private const string PARTICLE_KEY = "Farming_Alarm";
     // 작물의 성장과 결과물을 관리
     // 외형은 자식 오브젝트 생성해서 관리
     [Networked]
@@ -25,6 +26,7 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     private FarmingGround _farmingGround;
     private SeedGround _seedGround;
+    private ParticleSystem _particleSystem;
 
     public bool IsImmediate => false;
 
@@ -116,6 +118,7 @@ public class PlantObject : NetworkBehaviour, IInteractable
     private void OnGrowthLevelChanged()
     {
         ApplyVisual();
+        _particleSystem?.Stop();
         FarmingManager.Instance.TryGetSeedData(PlantID, out _seedData);
         if(GrowthLevel<_seedData.MaxGrowthLevel - 1)
         {
@@ -123,6 +126,11 @@ public class PlantObject : NetworkBehaviour, IInteractable
         }
         else
         {
+            if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
+            {
+                _particleSystem ??= ParticleManager.Instance.PlayByKeyLocalAsChild(PARTICLE_KEY, _plantObject.transform, Vector3.zero, Quaternion.identity);
+                _particleSystem?.Play();
+            }
             gameObject.layer = Mathf.RoundToInt(Mathf.Log(InteractableLayer.value, 2));
             _outlineController.OutlineObject = _plantObject.GetComponent<Outlinable>();
         }
