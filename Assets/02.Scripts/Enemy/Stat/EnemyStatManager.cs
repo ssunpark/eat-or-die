@@ -24,6 +24,7 @@ public class EnemyStatManager
             { EStatType.EnemyTriggerAngle, new Stat(EStatType.EnemyTriggerAngle, enemyData.TriggerAngle)},
             { EStatType.EnemyAttackRange, new Stat(EStatType.EnemyAttackRange, enemyData.AttackRange) },
             { EStatType.EnemyAttackAngle, new Stat(EStatType.EnemyAttackAngle, enemyData.AttackAngle) },
+            { EStatType.EnemyHitCount, new Stat(EStatType.EnemyHitCount, enemyData.HitCount) },
             { EStatType.EnemyMeleeDefense, new Stat(EStatType.EnemyMeleeDefense, enemyData.MeleeDefense) },
             { EStatType.EnemyMagicDefense, new Stat(EStatType.EnemyMagicDefense, enemyData.MagicDefense) },
         };

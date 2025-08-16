@@ -41,6 +41,7 @@
     EnemyTriggerAngle,
     EnemyAttackRange,
     EnemyAttackAngle,
+    EnemyHitCount,
     EnemyMeleeDefense,
     EnemyMagicDefense,
 }

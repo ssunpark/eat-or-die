@@ -44,6 +44,9 @@ public class EnemyRawData
     [Name("AttackAngle")]
     public float AttackAngle { get; set; }
     
+    [Name("HitCount")]
+    public int HitCount { get; set; }
+    
     [Name("MeleeDefense")]
     public float MeleeDefense { get; set; }
     
