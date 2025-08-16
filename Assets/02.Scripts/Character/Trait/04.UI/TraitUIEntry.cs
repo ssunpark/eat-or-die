@@ -110,7 +110,7 @@ public class TraitUIEntry : MonoBehaviour
 
     private void RefreshExpOnly()
     {
-        var trait = _traitManager.GetTrait(TraitType);
+        var trait = _traitManager?.GetTrait(TraitType);
         if (trait == null) return;
         ApplyExpToSlider(trait);
     }

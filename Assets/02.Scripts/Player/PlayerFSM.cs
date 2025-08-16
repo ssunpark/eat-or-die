@@ -90,6 +90,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public const float INTERACTABLE_DISTANCE = 3f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
     private const float _useItemMaxDistance = 2.0f;
+    [SerializeField] private GameObject _reviveSelectUIPrefab;
+    public GameObject HeadCanvas;
+    private Transform _uiParent;
     [Networked]
     public EUseItemMode UseItemMode { get; set; } = EUseItemMode.Self;
 
@@ -102,6 +105,13 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         list.Add(_playerFSM);
     }
 
+    public void ShowSelectPanel()
+    {
+        Instantiate(_reviveSelectUIPrefab, _uiParent)
+            .GetComponent<UI_RiviveSelect>()
+            .Initialize(this,PlayerNetworkObject);
+    }
+
     public override void Spawned()
     {
         SimpleKCC = GetComponent<SimpleKCC>();
@@ -112,6 +122,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         PlayerNetworkObject = GetComponent<Player>();
         if (Object.HasInputAuthority)
         {
+            _uiParent = GameObject.FindGameObjectWithTag("UIParent")?.transform;
             GetComponentInChildren<OutlineController>().enabled = false;
             GetComponentInChildren<Outlinable>().enabled = false;
         }
@@ -151,6 +162,10 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     public override void FixedUpdateNetwork()
     {
+        if(HasStateAuthority)
+        {
+            PlayerNetworkObject.Resource.RestoreHunger(PlayerNetworkObject.Stat.GetStat(EStatType.HungerRecoveryOverTime) * Runner.DeltaTime);
+        }
         if (HasInputAuthority)
         {
             if (CanInteract)
@@ -313,7 +328,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             var player = hit.collider.GetComponentInParent<Player>();
             if (player == null) return false;
 
-            var netObj = player.NetworkObject;
+            if (player.IsDead) return false;
+
+            var netObj = player.Object;
             if (netObj == null) return false;
 
             if (EnableDebugLog)
@@ -414,4 +431,17 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         return net != null;
     }
+
+    //[Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    //private void RPC_RequestApplyModifier(EStatType target, EModifierKey key)
+    //{
+    //    if (!HasStateAuthority) return;
+
+    //    var def = ModifierDatabase.Instance.GetDefinition(key);
+    //    if (def == null) return;
+
+    //    var mod = new StatModifier(def.Type, def.Value, key, def.IsBuff, def.Duration);
+    //    PlayerNetworkObject.Stat.ApplyModifier(target, mod);
+
+    //}
 }
