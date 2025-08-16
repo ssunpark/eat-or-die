@@ -8,4 +8,5 @@
     Shop,
     Craft,
     Storage,
+    World,
 }

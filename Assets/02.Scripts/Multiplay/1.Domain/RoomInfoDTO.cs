@@ -1,15 +1,22 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Firebase.Firestore;
 
 // 수현
-[Serializable]
+[FirestoreData]
 public class RoomInfoDTO
 {
-    public string RoomName;
-    public List<int> KnownIngredientsList = new List<int>();
-    public List<int> KnownRecipesList = new List<int>();
+    [FirestoreDocumentId] public string RoomInfoID { get; set; }
 
+    [FirestoreProperty] public string RoomName { get; set; }
+    [FirestoreProperty] public List<int> KnownIngredientsList { get; set; }
+    [FirestoreProperty] public List<int> KnownRecipesList { get; set; }
+
+    // Firestore 직렬화를 위해 parameterless 생성자 필수
+    public RoomInfoDTO()
+    {
+    }
+    
     public RoomInfoDTO (RoomInfo roomInfo)
     {
         RoomName = roomInfo.RoomName;

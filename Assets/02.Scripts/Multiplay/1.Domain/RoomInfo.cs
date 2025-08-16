@@ -19,8 +19,9 @@ public class RoomInfo
     [SerializeField] private HashSet<int> _knownIngredients;
     [SerializeField] private HashSet<int> _knownRecipes;
 
-    public RoomInfo()
+    public RoomInfo(string roomName)
     {
+        RoomName = roomName;
         _knownIngredients = new HashSet<int>();
         _knownRecipes = new HashSet<int>();
     }
