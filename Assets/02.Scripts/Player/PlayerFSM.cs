@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using EPOOutline;
 using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
@@ -109,6 +110,11 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         PlayerNetworkObject = GetComponent<Player>();
+        if (Object.HasInputAuthority)
+        {
+            GetComponentInChildren<OutlineController>().enabled = false;
+            GetComponentInChildren<Outlinable>().enabled = false;
+        }
     }
 
     private void InitializeFSM()
@@ -205,8 +211,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             }
 
             // 커서에 유효한 다른 플레이어가 없으면 자기 자신
-            if (ItemUseTarget != PlayerNetworkObject.Object)
-                ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+            ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
 
             RPC_SetItemUseTargetAndMode(PlayerNetworkObject.Object, EUseItemMode.Self);
             return true;

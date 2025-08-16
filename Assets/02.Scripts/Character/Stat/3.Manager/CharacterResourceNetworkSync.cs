@@ -33,6 +33,12 @@ public class CharacterResourceNetworkSync : NetworkBehaviour
 
         _resource.OnHungerChanged += _onHungryChangedHandler;
         _resource.OnManaChanged += _onManaChangedHandler;
+
+        if (HasStateAuthority)
+        {
+            NetCurrentHungry = _resource.CurrentHunger;
+            NetCurrentMana = _resource.CurrentMana;
+        }
     }
 
     private void OnDisable()
