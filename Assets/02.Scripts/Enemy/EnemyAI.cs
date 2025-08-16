@@ -40,6 +40,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	public override void Spawned()
 	{
 		_raycastComponent = GetComponent<RangeDetector>();
+		_raycastComponent.Radius = Context.StatManager.GetStat(EStatType.EnemyDetectionRange);
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		
 		Context.Agent.updatePosition = false;
@@ -140,13 +141,11 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	{
 		Collider closestTarget = _raycastComponent.NearestMember;
 		
-		Context.Target = closestTarget.gameObject;
-		
-		float distance = Vector3.Distance(transform.position, Context.Target.transform.position);
+		float distance = Vector3.Distance(transform.position, closestTarget.transform.position);
 		
 		if (distance <= _raycastComponent.Radius)
 		{
-			Debug.Log("Try Activate Move Behaviour:" + distance + "Radius:" + _raycastComponent.Radius);
+			Context.Target = closestTarget.GetComponent<Player>();
 			_behaviourMachine.TryActivateState<MoveBehaviour>();
 			return true;
 		}
@@ -168,6 +167,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			_currentHunger -= totalDamage;
 		
 			_hit = true;
+			
+			Context.Target = attack.Attacker.GetComponent<Player>();
 		}
 	}
 

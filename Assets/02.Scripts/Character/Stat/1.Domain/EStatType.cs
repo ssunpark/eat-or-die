@@ -36,8 +36,12 @@
     EnemyMoveSpeed,
     EnemyDamage,
     EnemyAttackSpeed,
+    EnemyDetectionRange,
+    EnemyTriggerRange,
+    EnemyTriggerAngle,
     EnemyAttackRange,
     EnemyAttackAngle,
+    EnemyHitCount,
     EnemyMeleeDefense,
     EnemyMagicDefense,
 }

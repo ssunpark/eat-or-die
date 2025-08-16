@@ -23,9 +23,10 @@ public class MoveBehaviour : AEnemyStateBehaviour
     
     protected override void OnFixedUpdate()
     {
-        if (Machine.Context.Target == null)
+        if (Machine.Context.Target == null || Machine.Context.Target.PlayerFSM.IsDead)
         {
             Debug.Log("No Target Found");
+            Machine.Context.Target = null;
             Machine.TryActivateState<IdleBehaviour>();
         }
     }
