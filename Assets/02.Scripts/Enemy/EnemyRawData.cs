@@ -29,6 +29,15 @@ public class EnemyRawData
     [Name("AttackSpeed")]
     public float AttackSpeed { get; set; }
     
+    [Name("DetectionRange")]
+    public float DetectionRange { get; set; }
+    
+    [Name("TriggerRange")]
+    public float TriggerRange { get; set; }
+    
+    [Name("TriggerAngle")]
+    public float TriggerAngle { get; set; }
+    
     [Name("AttackRange")]
     public float AttackRange { get; set; }
     
