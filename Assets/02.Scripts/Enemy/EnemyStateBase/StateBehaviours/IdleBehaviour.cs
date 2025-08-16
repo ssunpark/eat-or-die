@@ -21,6 +21,11 @@ public class IdleBehaviour : AEnemyStateBehaviour
 		{
 			_isInTransition = true;
 		}
+		else if (Machine.Context.Target != null && Machine.Context.Target.PlayerFSM.IsDead == false)
+		{
+			_isInTransition = true;
+			Machine.TryActivateState<MoveBehaviour>();
+		}
 	}
 	
 	protected override void OnExitState()

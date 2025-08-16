@@ -14,7 +14,7 @@ public class Player : CharacterBase, IAttackable
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
 
-
+    [SerializeField] private UI_HeadPlayerHP _headHpBar;
     float _damageRecoveryTime = 0.5f;
 
     public PlayerFSM PlayerFSM;
@@ -49,7 +49,7 @@ public class Player : CharacterBase, IAttackable
     }
 
     public NetworkObject NetworkObject => Object;
-
+    public bool IsDead => Resource.CurrentHunger <= 0;
     public override void Spawned()
     {
         base.Spawned();
@@ -127,6 +127,14 @@ public class Player : CharacterBase, IAttackable
         }
         Stat.UpdateStats(Runner.DeltaTime);
 
+        if (_isTeleporting)
+        {
+            if (SimpleKCC.enabled)
+            {
+                SimpleKCC.SetPosition(_teleportPosition);
+                _isTeleporting = false;
+            }
+        }
         if (HasInputAuthority)
         {
             if (GetInput<NetworkInputData>(out var input))
@@ -253,8 +261,7 @@ public class Player : CharacterBase, IAttackable
         {
             if (PlayerFSM.StateMachine.ActiveState is not PlayerDeadState)
             {
-                if (PlayerFSM.EnableDebugLog)
-                    _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
+                _nextState = PlayerFSM.StateMachine.GetState<PlayerDeadState>();
                 return;
             }
         }
@@ -321,6 +328,8 @@ public class Player : CharacterBase, IAttackable
             if (hudHP != null)
                 hudHP.Initialize(Resource, Stat);
         }
+
+        _headHpBar.InitializeHeadHpBar(Resource, Stat);
     }
 
     public void OnHitLocal(AttackInfo attack)
@@ -356,21 +365,33 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
+    private Vector3 _teleportPosition;
+    private bool _isTeleporting = false;
+    public void Teleport(Vector3 pos)
+    {
+        _isTeleporting = true;
+        _teleportPosition = pos;
+    }
+
     public void Revive()
     {
+        SimpleKCC.enabled = true;
+        Teleport(new Vector3(0, 0.5f, 0));
+        PlayerFSM.IsDead = false;
         GetComponent<ItemMagnet>().enabled = true;
         Resource.ResetAll();
         _animator.Play("Idle");
+        
         _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
 
-        if (_isReset)
-        {
-            _isReset = false;
-            Trait.ResetTraits();
-            Stat.ClearAllModifiers();
-        }
     }
 
+    public void InstantRevive()
+    {
+        Trait.ResetTraits();
+        Stat.ClearAllModifiers();
+        Revive();
+    }
 
-
+    
 }

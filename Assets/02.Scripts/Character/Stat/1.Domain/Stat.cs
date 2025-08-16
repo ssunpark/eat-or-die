@@ -6,6 +6,7 @@ public class Stat
 {
     public event Action<EStatType, StatModifier> ModifierAdded;
     public event Action<EStatType, StatModifier> ModifierRemoved;
+    public event Action<EStatType> BaseChanged;
     public float BaseStat { get; private set; }
     public float CurrentValue { get; private set; }
     private EStatType _statType;
@@ -17,11 +18,13 @@ public class Stat
     {
         BaseStat = value;
         CurrentValue = TotalStat;
+        BaseChanged?.Invoke(_statType);
     }
     public Stat(EStatType statType, float baseStat)
     {
         _statType = statType;
         BaseStat = baseStat;
+        CurrentValue = TotalStat;
     }
 
     public void AddModifier(StatModifier modifier)

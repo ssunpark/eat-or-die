@@ -54,7 +54,6 @@ public class BerserkAttack : ABerserkSubStateBase
         }
         else
         {
-            KCC.SetLookRotation(Quaternion.LookRotation(_direction));
             KCC.Move(Vector3.zero);
         }
     }

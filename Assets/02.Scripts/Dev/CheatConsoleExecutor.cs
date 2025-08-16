@@ -127,18 +127,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
 
         Vector3 pos = new Vector3(x, y, z);
 
-        // SimpleKCC 사용 시 우선 적용(없으면 transform fallback)
-        var kcc = player.SimpleKCC; // 플레이어에 보유됨 
-        if (kcc != null)
-        {
-            // 보통 SimpleKCC는 SetPosition/SetPositionAndRotation/TryTeleport 류 API를 제공
-            // 프로젝트에 맞는 메서드명을 사용하세요.
-            kcc.SetPosition(pos);
-        }
-        else
-        {
-            player.transform.position = pos;
-        }
+        player.Teleport(pos);
         return $"Teleported to ({x}, {y}, {z})";
     }
 

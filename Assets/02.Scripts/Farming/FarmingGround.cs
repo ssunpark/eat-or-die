@@ -23,9 +23,6 @@ public class FarmingGround : NetworkBehaviour
     [SerializeField]
     private Material _waterMaterial;
 
-    [SerializeField]
-    private List<GameObject> _plantPositions = new();
-
     [Header("Outline")]
     [SerializeField]
     private OutlineController _outlineController;
