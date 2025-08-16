@@ -311,7 +311,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf695a3b642efb7419827a39e1e6f3b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _classType: 0
   _Nickname: Player
   _nicknameText: {fileID: 6576278217062109773}
   _EquipedHelmet:
@@ -461,6 +460,8 @@ MonoBehaviour:
     m_Bits: 3072
   SimpleKCC: {fileID: 7794456745956900610}
   HungryEffect: {fileID: 1174567618921852709, guid: 91f99ffaba8ccb944a779ae1c8c057a5, type: 3}
+  _reviveSelectUIPrefab: {fileID: 631618101387588531, guid: 45dc69db4fadae0469d0b027931bd0e1, type: 3}
+  HeadCanvas: {fileID: 9109681528535386801}
   _UseItemMode: 0
   _HitTargets: []
 --- !u!114 &1508319554009502233
@@ -644,6 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78dd9b7557000974fbd4b435b8917855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _headHpBar: {fileID: 1321835112907591524}
   PlayerFSM: {fileID: 9075220696021084764}
 --- !u!136 &9038074923266824852
 CapsuleCollider:
@@ -22169,7 +22171,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1774ec8872007434286bfb1c8d6057f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _player: {fileID: -1359219720603866000}
   _hungerSlider: {fileID: 2345532240061356365}
 --- !u!224 &5253312385610630722 stripped
 RectTransform:

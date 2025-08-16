@@ -2,6 +2,7 @@
 using Fusion.Addons.FSM;
 public class PlayerDeadState : APlayerStateBase
 {
+    private float _selectTime = 60f;
     public PlayerDeadState(PlayerFSM fsm) : base(fsm) {
         AnimState = "Die";
         StateId = (int)EPlayerState.Dead;
@@ -12,6 +13,7 @@ public class PlayerDeadState : APlayerStateBase
         base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
+        _fsm.IsDead = true;
     }
 
     protected override void OnEnterStateRender()
@@ -19,6 +21,7 @@ public class PlayerDeadState : APlayerStateBase
         base.OnEnterStateRender();
         if (_fsm.HasInputAuthority)
         {
+            _fsm.ShowSelectPanel();
             _fsm.GetComponent<ItemMagnet>().enabled = false;
             DropAllItems();
         }
@@ -30,8 +33,7 @@ public class PlayerDeadState : APlayerStateBase
 
     protected override void OnFixedUpdateState()
     {
-        KCC.Move(Vector3.zero);
-        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
+        if (Machine.StateTime >= _selectTime)
         {
             Machine.ForceActivateState<PlayerCorpseState>();
             return;

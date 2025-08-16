@@ -27,6 +27,9 @@ public class UI_HUDPlayerHP : MonoBehaviour
             // 이벤트 구독
             _resourceManager.OnHungerChanged += _resourceManager_OnHungerChanged;
             _resourceManager_OnHungerChanged(statManager.GetStat(EStatType.MaxHunger), statManager.GetStat(EStatType.MaxHunger));
+
+            _resourceManager.OnManaChanged += _resourceManager_OnManaChanged;
+            _resourceManager_OnManaChanged(statManager.GetStat(EStatType.MaxMana), statManager.GetStat(EStatType.MaxMana));
         }
         else
         {
@@ -61,7 +64,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
             if (maxHealth <= 0)
             {
                 Debug.LogWarning("Max health is zero or negative, setting slider value to 0.");
-                _hpSlider.value = 1; // MaxHealth가 0 이하인 경우 슬라이더 값을 0으로 설정
+                _hpSlider.value = 0; // MaxHealth가 0 이하인 경우 슬라이더 값을 0으로 설정
             }
             else
             {
@@ -81,6 +84,7 @@ public class UI_HUDPlayerHP : MonoBehaviour
         if (_resourceManager != null)
         {
             _resourceManager.OnHungerChanged -= _resourceManager_OnHungerChanged;
+            _resourceManager.OnManaChanged -= _resourceManager_OnManaChanged;
         }
     }
 }
