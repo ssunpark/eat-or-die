@@ -41,8 +41,8 @@ public class ItemObject : NetworkBehaviour, IPickable
     private float _absorbSpeed = 10f;
     [SerializeField]
     private float _absorbThreshold = 0.1f;
-    [SerializeField]
-    private float _pickableTime = 4f;
+    [Networked]
+    public float PickableTime { get; set; } = 4f;
 
     private Transform _target;
     private Collider _collider;
@@ -69,7 +69,7 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void Update()
     {
         _time += Time.deltaTime;
-        if (_time >= _pickableTime)
+        if (_time >= PickableTime)
         {
             _isPickable = true;
         }
