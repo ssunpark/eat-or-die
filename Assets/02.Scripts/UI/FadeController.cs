@@ -51,10 +51,10 @@ public class FadeController : MonoBehaviour
     // 지정된 시간 이후에 페이드 아웃
     public void FadeOutAfterDelay()
     {
-        if (_fadeCoroutine != null)
-        {
-            StopCoroutine(_fadeCoroutine);
-        }
+        // if (_fadeCoroutine != null)
+        // {
+        //     StopCoroutine(_fadeCoroutine);
+        // }
         _fadeCoroutine = StartCoroutine(HideAfterDelay(hideDuration));
     }
 

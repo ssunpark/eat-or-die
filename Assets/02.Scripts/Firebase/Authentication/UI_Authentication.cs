@@ -1,6 +1,5 @@
-﻿using Ricimi;
+﻿using TMPro;
 using UnityEngine;
-using TMPro;
 
 public class UI_Authentication : MonoBehaviour
 {
@@ -25,7 +24,7 @@ public class UI_Authentication : MonoBehaviour
     private void Start()
     {
         AuthenticationManager.Instance.OnAuthenticated += HandleAuthenticationResult;
-        ShowRegisterPanel();
+        AuthenticationManager.Instance.OnLogin += () => _loginPanel.Close();
     }
     
     public void ShowLoginPanel()
