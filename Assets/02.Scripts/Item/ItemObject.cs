@@ -89,6 +89,7 @@ public class ItemObject : NetworkBehaviour, IPickable
             {
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
+                    _target = null;
                     var itemProfile = ItemManager.Instance.GetItem(ItemID);
                     ReturnItemToPool(itemProfile);
                     var item = new ItemInstance(itemProfile, Quantity, Durability, ExtraInfo);
