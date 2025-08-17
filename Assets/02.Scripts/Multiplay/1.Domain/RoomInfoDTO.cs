@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Firebase.Firestore;
 
-// 수현
 [FirestoreData]
 public class RoomInfoDTO
 {
@@ -12,13 +12,17 @@ public class RoomInfoDTO
     [FirestoreProperty] public List<int> KnownIngredientsList { get; set; }
     [FirestoreProperty] public List<int> KnownRecipesList { get; set; }
 
-    // Firestore 직렬화를 위해 parameterless 생성자 필수
+    
     public RoomInfoDTO()
     {
     }
     
     public RoomInfoDTO (RoomInfo roomInfo)
     {
+        if (roomInfo.ID != null)
+        {
+            RoomInfoID = roomInfo.ID;
+        }
         RoomName = roomInfo.RoomName;
         KnownIngredientsList = roomInfo.KnownIngredients.ToList();
         KnownRecipesList = roomInfo.KnownRecipes.ToList();
@@ -28,4 +32,13 @@ public class RoomInfoDTO
     {
         return new RoomInfo(this);
     }
+}
+
+// 이 클래스는 오직 JsonUtility를 통한 네트워크 직렬화에만 사용됩니다.
+[Serializable]
+public class RoomInfoNetworkDTO
+{
+    public string RoomName;
+    public List<int> KnownIngredientsList;
+    public List<int> KnownRecipesList;
 }

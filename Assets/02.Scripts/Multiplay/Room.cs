@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 {
+    public NetworkRunner RunnerPrefab;
     private NetworkRunner _runner;
     public NetworkRunner Runner => _runner;
     
@@ -17,44 +18,36 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     private PlayerInfoManager _playerInfoManager;
     private FusionInputProvider _inputProvider;
+
+    public void HostStart()
+    {
+        StartGame(GameMode.Host);
+    }
+    
     public async void StartGame(GameMode mode)
     {
-        _runner = gameObject.AddComponent<NetworkRunner>();
+        _runner = Instantiate(RunnerPrefab);
         _runner.ProvideInput = true;
         _runner.AddCallbacks(this);
-        await ParticleManager.Instance.InitFromCsvAsync();
-        SceneRef scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+
+        var scene = SceneRef.FromIndex(3);
         NetworkSceneInfo sceneInfo = new();
         if (scene.IsValid) {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
-        _inputProvider = FindAnyObjectByType<FusionInputProvider>();
-        if (_inputProvider != null)
-        {
-            _inputProvider.SetRunner(_runner);
-        }
-        else
-        {
-            Debug.LogError("FusionInputProvider not found in the scene.");
-        }
-        _playerInfoManager = FindAnyObjectByType<PlayerInfoManager>();
-        if (_playerInfoManager != null)
-        {
-            _playerInfoManager.SetRunner(_runner);
-        }
-        else
-        {
-            Debug.LogError("PlayerInfoManager not found in the scene.");
-        }
+
+
+        // Guid를 사용해 매번 고유한 세션 이름을 생성합니다.
+        var sessionName = Guid.NewGuid().ToString();
 
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "SScenesss",
+            SessionName = sessionName, // 고유한 이름으로 변경
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
-
+        
         OnGameStarted?.Invoke(_runner);
     }
 
@@ -71,13 +64,11 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
             Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
 
             // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
-            var dto = RoomInfoManager.Instance.CurrentRoomInfo.ToDTO();
-            var json = JsonUtility.ToJson(dto);
+            var roomInfo = RoomInfoManager.Instance.CurrentRoomInfo.ToNetworkDTO();
+            var json = JsonUtility.ToJson(roomInfo);
 
             // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
             RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
-
-
 
             // =========================================================
             // dev용
@@ -115,9 +106,33 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
-    public void OnSceneLoadDone(NetworkRunner runner)
+
+    public async void OnSceneLoadDone(NetworkRunner runner)
     {
         OnGameStarted?.Invoke(runner);
+
+        _inputProvider = FindAnyObjectByType<FusionInputProvider>();
+        if (_inputProvider != null)
+        {
+            _inputProvider.SetRunner(_runner);
+        }
+        else
+        {
+            Debug.LogError("FusionInputProvider not found in the scene.");
+        }
+
+        _playerInfoManager = FindAnyObjectByType<PlayerInfoManager>();
+        if (_playerInfoManager != null)
+        {
+            _playerInfoManager.SetRunner(_runner);
+        }
+        else
+        {
+            Debug.LogError("PlayerInfoManager not found in the scene.");
+        }
+
+        await ParticleManager.Instance.InitFromCsvAsync();
+        
     }
     public void OnSceneLoadStart(NetworkRunner runner) { }
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }
