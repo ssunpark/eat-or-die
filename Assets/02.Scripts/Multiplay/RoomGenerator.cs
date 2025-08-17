@@ -6,6 +6,7 @@ public class RoomGenerator : MonoBehaviour
     [SerializeField] private GameObject _roomPrefab;
     private Room _currentRoom;
 
+    
     public void OnClickStartHost()
     {
         GenerateRoom();
