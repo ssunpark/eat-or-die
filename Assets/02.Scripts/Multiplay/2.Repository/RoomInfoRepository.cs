@@ -39,6 +39,33 @@ public class RoomInfoRepository
         return roomInfoDtos;
     }
 
+    public async UniTask<RoomInfoDTO> GetRoomInfoById(string userId, string roomId)
+    {
+        try
+        {
+            var docRef = _db.Collection("Users")
+                .Document(userId)
+                .Collection("Rooms")
+                .Document(roomId);
+
+            var snapshot = await docRef.GetSnapshotAsync();
+
+            if (snapshot.Exists)
+            {
+                return snapshot.ConvertTo<RoomInfoDTO>();
+            }
+
+            Debug.LogWarning($"RoomInfo {roomId} not found for user {userId}");
+            return null;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"RoomInfo 가져오기 실패: {e.Message}");
+            throw;
+        }
+    }
+    
+
     // 방 추가
     public async UniTask AddRoomInfo(RoomInfoDTO roomInfoDTO, string userId)
     {
@@ -61,6 +88,23 @@ public class RoomInfoRepository
     // 방 업데이트
     public async UniTask UpdateRoomInfo(RoomInfoDTO roomInfoDto, string userId)
     {
+        // ★★★ 이 디버그 코드를 추가해서 실제 값을 확인하세요! ★★★
+        Debug.Log($"[UpdateRoomInfo] 업데이트 시도: UserID='{userId}', RoomInfoID='{roomInfoDto?.RoomInfoID}'");
+
+        // roomInfoDto 자체가 null인지도 확인
+        if (roomInfoDto == null)
+        {
+            Debug.LogError("[UpdateRoomInfo] roomInfoDto 객체 자체가 null입니다!");
+            return;
+        }
+
+        // ID들이 비어있는지 명시적으로 확인
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(roomInfoDto.RoomInfoID))
+        {
+            Debug.LogError("[UpdateRoomInfo] UserID 또는 RoomInfoID가 null이거나 비어있습니다. 업데이트를 중단합니다.");
+            return;
+        }
+        
         try
         {
             var docRef = _db.Collection("Users")
