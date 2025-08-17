@@ -23,7 +23,12 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     {
         StartGame(GameMode.Host);
     }
-    
+
+    public void ClientStart()
+    {
+        StartGame(GameMode.Client);
+    }
+
     public async void StartGame(GameMode mode)
     {
         _runner = Instantiate(RunnerPrefab);
@@ -38,8 +43,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
 
         // Guid를 사용해 매번 고유한 세션 이름을 생성합니다.
-        var sessionName = Guid.NewGuid().ToString();
-
+        var sessionName = "123123";
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,

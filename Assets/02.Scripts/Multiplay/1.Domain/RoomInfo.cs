@@ -29,6 +29,7 @@ public class RoomInfo
 
     public RoomInfo(RoomInfoNetworkDTO roomInfoNetworkDTO)
     {
+        ID = roomInfoNetworkDTO.ID;
         RoomName = roomInfoNetworkDTO.RoomName;
         _knownIngredients = roomInfoNetworkDTO.KnownIngredientsList.ToHashSet();
         _knownRecipes = roomInfoNetworkDTO.KnownRecipesList.ToHashSet();
@@ -58,6 +59,7 @@ public class RoomInfo
     {
         return new RoomInfoNetworkDTO
         {
+            ID = ID,
             RoomName = RoomName,
             KnownIngredientsList = _knownIngredients.ToList(),
             KnownRecipesList = _knownRecipes.ToList()

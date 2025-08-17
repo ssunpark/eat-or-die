@@ -19,7 +19,7 @@ public class RoomInfoDTO
     
     public RoomInfoDTO (RoomInfo roomInfo)
     {
-        if (roomInfo.ID != null)
+        if (!string.IsNullOrEmpty(roomInfo.ID))
         {
             RoomInfoID = roomInfo.ID;
         }
@@ -38,6 +38,7 @@ public class RoomInfoDTO
 [Serializable]
 public class RoomInfoNetworkDTO
 {
+    public string ID;
     public string RoomName;
     public List<int> KnownIngredientsList;
     public List<int> KnownRecipesList;

@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 {
-    public RoomInfo CurrentRoomInfo { get; private set; }
+    [Networked] public RoomInfo CurrentRoomInfo { get; private set; }
     public RoomInfoDTO CurrentRoomInfoDTO { get; private set; }
     private RoomInfoRepository _roomInfoRepository;
 
@@ -31,6 +31,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     {
         CurrentRoomInfoDTO = roomInfoDTO;
         CurrentRoomInfo = roomInfoDTO.ToDomain();
+        Debug.Log(CurrentRoomInfo.ID);
     }
     private async void InitializeRoomInfos()
     {
@@ -48,24 +49,8 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
     public async UniTask Save()
     {
-        if (CurrentRoomInfoDTO == null)
-        {
-            Debug.LogError("저장할 RoomInfo가 없습니다.");
-            return;
-        }
-
-        // ★★★ 핵심 분기 로직 ★★★
-        // CurrentRoomInfo의 ID가 비어있으면 '생성', 아니면 '수정'
-        if (string.IsNullOrEmpty(CurrentRoomInfoDTO.RoomInfoID))
-        {
-            Debug.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        }
-        else
-        {
-            // ID가 있으므로 기존 문서 수정
-            Debug.Log($"기존 RoomInfo를 수정합니다. ID: {CurrentRoomInfoDTO.RoomInfoID}");
-            await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfoDTO, _userID);
-        }
+        Debug.Log($"기존 RoomInfo를 수정합니다. ID: {CurrentRoomInfo.ID}");
+        await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfo.ToDTO(), _userID);
     }
 
     public async UniTask CreateRoom(RoomInfoDTO roomInfoDTO)
