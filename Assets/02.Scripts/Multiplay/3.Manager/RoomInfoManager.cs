@@ -18,6 +18,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
     public async void Awake()
     {
+        DontDestroyOnLoad(this);
         await FirebaseManager.Instance.WaitForInitialization();
 
         // _roomInfoRepository = new RoomInfoRepository(FirebaseManager.Instance.DB);
@@ -78,8 +79,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     public void RPC_SyncRoomInfoToNewPlayer(PlayerRef player, string roomInfoJson)
     {
         Debug.Log("클라이언트가 호스트로부터 RoomInfo를 수신했습니다.");
-        var dto = JsonUtility.FromJson<RoomInfoDTO>(roomInfoJson);
-        CurrentRoomInfo = dto.ToDomain();
+        CurrentRoomInfo = JsonUtility.FromJson<RoomInfo>(roomInfoJson);
         Debug.Log($"[RoomInfoManager] 동기화 완료. 방 이름: {CurrentRoomInfo.RoomName}");
     }
 }
