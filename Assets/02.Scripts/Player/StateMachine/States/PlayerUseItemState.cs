@@ -112,7 +112,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
             else
             {
                 var rot = Quaternion.identity;
-                ParticleManager.Instance.RPC_RequestPlayParticle(key, worldPos, rot);
+                ParticleNetworkProxy.Instance.RPC_RequestPlayParticle(key, worldPos, rot);
             }
         }
     }

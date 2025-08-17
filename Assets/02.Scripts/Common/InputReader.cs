@@ -22,6 +22,7 @@ public class InputReader : BehaviourSingleton<InputReader>
     {
         _inputActions = new PlayerInputActions();
         _externalInputBlocked = false;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnEnable()

@@ -23,8 +23,16 @@ public class FirebaseManager : BehaviourSingleton<FirebaseManager>
     
     private async void Awake()
     {
-        await InitAsync();
         DontDestroyOnLoad(gameObject);
+
+        try
+        {
+            await InitAsync();
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
     }
 
     private async UniTask InitAsync()

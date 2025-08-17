@@ -125,6 +125,23 @@ public class Player : CharacterBase, IAttackable
         {
             PlayerFSM = GetComponent<PlayerFSM>();
         }
+        if(PlayerFSM == null || PlayerFSM.StateMachine == null)
+        {
+            return;
+        }
+        if (Resource == null || Stat == null)
+        {
+            return;
+        }
+        if (SimpleKCC == null)
+        {
+            SimpleKCC = GetComponent<SimpleKCC>();
+            if (SimpleKCC == null)
+            {
+                Debug.LogError("[Player] SimpleKCC is not initialized.");
+                return;
+            }
+        }
         Stat.UpdateStats(Runner.DeltaTime);
 
         if (_isTeleporting)
@@ -200,15 +217,14 @@ public class Player : CharacterBase, IAttackable
         if (amount > 0)
         {
             Resource.RestoreHunger(amount);
-            ParticleManager.Instance.RpcPlayParticle("Use_Success_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
+            ParticleManager.Instance.PlayByKey("Use_Success_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
             // 힐
         }
         else if (amount < 0)
         {
             Resource.ConsumeHunger(-amount);
-
-            ParticleManager.Instance.RpcPlayParticle("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
-            // 데미지
+            ParticleManager.Instance.PlayByKey("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
+             // 데미지
         }
         else
         {
@@ -293,6 +309,7 @@ public class Player : CharacterBase, IAttackable
 
     public override void Render()
     {
+        if (Resource == null) return;
         if (Resource.CurrentHunger <= 0)
         {
             //damageToggleObject.SetActive(false);
@@ -393,5 +410,15 @@ public class Player : CharacterBase, IAttackable
         Revive();
     }
 
-    
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_RequestInstantRevive(RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        if (!IsDead) return;
+        InstantRevive(); 
+       
+    }
+
 }

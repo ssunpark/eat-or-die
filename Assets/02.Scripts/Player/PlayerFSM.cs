@@ -162,8 +162,17 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
     public override void FixedUpdateNetwork()
     {
-        if(HasStateAuthority)
+        if (PlayerNetworkObject == null || PlayerNetworkObject.Resource == null)
         {
+            return;
+        }
+        if (HasStateAuthority)
+        {
+            if (IsDead)
+            {
+                return;
+            }
+            
             PlayerNetworkObject.Resource.RestoreHunger(PlayerNetworkObject.Stat.GetStat(EStatType.HungerRecoveryOverTime) * Runner.DeltaTime);
         }
         if (HasInputAuthority)
@@ -432,16 +441,52 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         return net != null;
     }
 
-    //[Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    //private void RPC_RequestApplyModifier(EStatType target, EModifierKey key)
-    //{
-    //    if (!HasStateAuthority) return;
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestApplyStatModifier(EStatType statType, EStatModifierType modType, float value, float duration, string source, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+        if (Object.InputAuthority != info.Source) return;
 
-    //    var def = ModifierDatabase.Instance.GetDefinition(key);
-    //    if (def == null) return;
+        var mod = new StatModifier(modType, value, source, duration > 0f, duration);
+        PlayerNetworkObject.Stat.ApplyModifier(statType, mod);
 
-    //    var mod = new StatModifier(def.Type, def.Value, key, def.IsBuff, def.Duration);
-    //    PlayerNetworkObject.Stat.ApplyModifier(target, mod);
+    }
 
-    //}
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RequestUseFood(int foodId, NetworkObject target, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        var targetPlayer = target?.GetComponent<Player>();
+        if (targetPlayer == null) return;
+
+        var list = FoodDB.Instance.Get(foodId);
+        if (list == null || list.Count == 0) return;
+
+        foreach (var e in list)
+        {
+            var mod = new StatModifier(e.Op, e.Value, foodId, e.Duration > 0f, e.Duration);
+            targetPlayer.Stat.ApplyModifier(e.Stat, mod);
+        }
+    }
+
+    [Rpc(Fusion.RpcSources.InputAuthority, Fusion.RpcTargets.StateAuthority,
+     HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_RequestUseFoodOnTarget(int foodId, NetworkObject target, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        var targetPlayer = target ? target.GetComponent<Player>() : null;
+        if (targetPlayer == null) return;
+
+        var list = FoodDB.Instance.Get(foodId);
+        if (list == null || list.Count == 0) return;
+
+        foreach (var e in list)
+        {
+            var mod = new StatModifier(e.Op, e.Value, foodId, e.Duration > 0f, e.Duration);
+            targetPlayer.Stat.ApplyModifier(e.Stat, mod); // ✅ 대상에게 적용
+        }
+    }
+
 }

@@ -29,6 +29,7 @@ public class UI_SeedItemList : MonoBehaviour
 
     private void OnDisable()
     {
+        if (SeedShopPanelManager.Instance == null) return;
         if (_isSubscribed)
         {
             SeedShopPanelManager.Instance.OnSeedListUpdated -= Init;

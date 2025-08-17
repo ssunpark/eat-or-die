@@ -24,6 +24,7 @@ public class PlayerInfoManager : NetworkBehaviourSingleton<PlayerInfoManager>, I
     [Networked, Capacity(8)]
     public NetworkArray<PlayerInfo> Players => default;
 
+
     public void RegisterPlayer(PlayerRef playerRef, string nickname, NetworkId networkId)
     {
         if (Runner.IsServer == false)
@@ -130,11 +131,8 @@ public class PlayerInfoManager : NetworkBehaviourSingleton<PlayerInfoManager>, I
 
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (runner.IsServer)
-        {
-            Debug.Log("Player joined");
-            SpawnPlayer(runner, player);
-        }
+        Debug.Log("Player joined");
+        SpawnPlayer(runner, player);
     }
 
     void INetworkRunnerCallbacks.OnPlayerLeft(NetworkRunner runner, PlayerRef player)

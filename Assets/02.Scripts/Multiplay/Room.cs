@@ -17,12 +17,12 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     private PlayerInfoManager _playerInfoManager;
     private FusionInputProvider _inputProvider;
+    [SerializeField] private NetworkPrefabRef _particleProxyPrefab;
     public async void StartGame(GameMode mode)
     {
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
         _runner.AddCallbacks(this);
-        await ParticleManager.Instance.InitFromCsvAsync();
         SceneRef scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
         NetworkSceneInfo sceneInfo = new();
         if (scene.IsValid) {
@@ -55,6 +55,14 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
 
+        if (_runner.IsServer)
+        {
+            if (ParticleNetworkProxy.Instance == null)
+            {
+                _runner.Spawn(_particleProxyPrefab, Vector3.zero, Quaternion.identity, inputAuthority: null);
+            }
+        }
+
         OnGameStarted?.Invoke(_runner);
     }
 
@@ -66,16 +74,16 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         // 이 콜백은 모든 클라이언트에서 호출되지만, RPC 호출은 호스트(서버)만 해야 함
-        if (Runner.IsServer)
-        {
-            Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
+        //if (Runner.IsServer)
+        //{
+        //    Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
 
-            // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
-            var dto = RoomInfoManager.Instance.CurrentRoomInfo.ToDTO();
-            var json = JsonUtility.ToJson(dto);
+        //    // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
+        //    var dto = RoomInfoManager.Instance.CurrentRoomInfo.ToDTO();
+        //    var json = JsonUtility.ToJson(dto);
 
-            // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
-            RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
+        //    // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
+        //    RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
 
 
 
@@ -86,7 +94,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
             // =========================================================
 
 
-        }
+        //}
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
