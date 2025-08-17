@@ -1,5 +1,4 @@
 ﻿using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,7 +38,10 @@ public class UI_ItemPurchase : MonoBehaviour
 
     private void OnDisable()
     {
-        CurrencyManager.Instance.OnCurrencyChanged -= OnGoldAmountChanged;
+        if (CurrencyManager.Instance != null)
+        {
+            CurrencyManager.Instance.OnCurrencyChanged -= OnGoldAmountChanged;
+        }
     }
 
     public void Init(ItemProfile itemProfile, NpcItem npcItem, int maxCount)

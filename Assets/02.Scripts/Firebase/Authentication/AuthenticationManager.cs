@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Firebase.Auth;
 using UnityEngine;
 
@@ -9,9 +8,9 @@ public class AuthenticationManager : BehaviourSingleton<AuthenticationManager>
 
     private FirebaseUser _user;
     public FirebaseUser User => _user;
-    
     public Action<string> OnAuthenticated;
 
+    public event Action OnLogin;
     private void Awake()
     {
         _authenticator = new FirebaseAuthenticator();
@@ -60,6 +59,7 @@ public class AuthenticationManager : BehaviourSingleton<AuthenticationManager>
         {
             _user = result.User;
             Debug.Log("로그인 성공");
+            OnLogin?.Invoke();
             // Scene 전환
         }
     }
