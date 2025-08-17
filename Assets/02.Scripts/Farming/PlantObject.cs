@@ -51,6 +51,8 @@ public class PlantObject : NetworkBehaviour, IInteractable
         _plantObject = FarmingManager.Instance.GetPlant(new PlantPoolKey(PlantID, GrowthLevel));
         _plantObject.transform.SetParent(transform);
         _plantObject.transform.localPosition = Vector3.zero;
+        float randomRotate = Random.Range(0f, 360f);
+        _plantObject.transform.Rotate(0f, randomRotate, 0f, Space.Self);
     }
 
     public override void FixedUpdateNetwork()
