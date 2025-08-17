@@ -50,7 +50,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = "SScenesss",
+            SessionName = "SScenesss_SH",
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
@@ -71,8 +71,8 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
             Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
 
             // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
-            var dto = RoomInfoManager.Instance.CurrentRoomInfo.ToDTO();
-            var json = JsonUtility.ToJson(dto);
+            var roomInfo = RoomInfoManager.Instance.CurrentRoomInfo;
+            var json = JsonUtility.ToJson(roomInfo);
 
             // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
             RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
