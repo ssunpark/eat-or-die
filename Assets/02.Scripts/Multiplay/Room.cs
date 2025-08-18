@@ -7,7 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 {
-    public NetworkRunner RunnerPrefab;
     private NetworkRunner _runner;
     public NetworkRunner Runner => _runner;
     
@@ -31,7 +30,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     public async void StartGame(GameMode mode)
     {
-        _runner = Instantiate(RunnerPrefab);
+        _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
         _runner.AddCallbacks(this);
 

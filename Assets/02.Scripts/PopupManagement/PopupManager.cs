@@ -7,6 +7,11 @@ public class PopupManager : BehaviourSingleton<PopupManager>
     private readonly List<AUI_PopupBase> openedPopups = new();
     public bool HasOpenedPopup => openedPopups.Count > 0;
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
+    
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))

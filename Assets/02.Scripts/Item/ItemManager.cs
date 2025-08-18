@@ -29,13 +29,14 @@ public class ItemManager : NetworkBehaviour
     {
         if (Instance == null)
         {
-            Instance = this; 
+            Instance = this;
+            Init();
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
-        Init();
     }
 
     private void Init()
