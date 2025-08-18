@@ -43,6 +43,11 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
     public int RequestConsumeItem(int itemID, int amount)
     {
 	    int consumed = GetItemCount(itemID);
+
+	    if (amount < consumed)
+	    {
+		    consumed = amount;
+	    }
         
 	    TryConsumeItem(itemID, consumed);
         
