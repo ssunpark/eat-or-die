@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 {
+    //public NetworkRunner RunnerPrefab;
     private NetworkRunner _runner;
     public NetworkRunner Runner => _runner;
     
@@ -18,42 +19,10 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     private PlayerInfoManager _playerInfoManager;
     private FusionInputProvider _inputProvider;
 
-    public void HostClientStart()
-    {
-        StartGame(RoomInfoManager.Instance.GameMode);
-    }
-
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
     }
-
-    public async void StartGame(GameMode mode)
-    {
-        _runner = gameObject.AddComponent<NetworkRunner>();
-        _runner.ProvideInput = true;
-        _runner.AddCallbacks(this);
-
-        var scene = SceneRef.FromIndex(3);
-        NetworkSceneInfo sceneInfo = new();
-        if (scene.IsValid) {
-            sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
-        }
-
-
-        // Guid를 사용해 매번 고유한 세션 이름을 생성합니다.
-        var sessionName = RoomInfoManager.Instance.InviteCode;
-        await _runner.StartGame(new StartGameArgs()
-        {
-            GameMode = mode,
-            SessionName = sessionName, // 고유한 이름으로 변경
-            Scene = scene,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
-        });
-        
-        OnGameStarted?.Invoke(_runner);
-    }
-
 
     // =========================================================
     // dev용
@@ -61,8 +30,13 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     // =========================================================
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        if(_runner == null)
+        {
+            _runner = runner;
+        }
+
         // 이 콜백은 모든 클라이언트에서 호출되지만, RPC 호출은 호스트(서버)만 해야 함
-        if (Runner.IsServer)
+        if (runner.IsServer)
         {
             Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
 
@@ -90,7 +64,9 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     public void OnInput(NetworkRunner runner, NetworkInput input) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-    public void OnConnectedToServer(NetworkRunner runner) { }
+    public void OnConnectedToServer(NetworkRunner runner) {
+    
+    }
 
     public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
     {
@@ -112,12 +88,14 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
     public async void OnSceneLoadDone(NetworkRunner runner)
     {
+        if (SceneManager.GetActiveScene().buildIndex != 3)
+            return;
         OnGameStarted?.Invoke(runner);
 
         _inputProvider = FindAnyObjectByType<FusionInputProvider>();
         if (_inputProvider != null)
         {
-            _inputProvider.SetRunner(_runner);
+            _inputProvider.SetRunner(runner);
         }
         else
         {
@@ -127,19 +105,22 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         _playerInfoManager = FindAnyObjectByType<PlayerInfoManager>();
         if (_playerInfoManager != null)
         {
-            _playerInfoManager.SetRunner(_runner);
+            _playerInfoManager.SetRunner(runner);
         }
         else
         {
             Debug.LogError("PlayerInfoManager not found in the scene.");
         }
-
-        await ParticleManager.Instance.InitFromCsvAsync();
         
     }
     public void OnSceneLoadStart(NetworkRunner runner) { }
     public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data){ }
-    public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress){ } 
+    public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress){ }
+
+    internal void SetRunner(NetworkRunner runner)
+    {
+        _runner = runner;
+    }
 }
