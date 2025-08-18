@@ -82,16 +82,14 @@ public class LoadingSceneOrchestrator : MonoBehaviour
 
         if (_runner == null)
         {
-            _runner = Instantiate(_runnerPrefab);
-            _runner.name = "NetworkRunner(Global)";
-            DontDestroyOnLoad(_runner.gameObject);
-
-            _runner.ProvideInput = true;
-
             // Room 등 ICallbacks 구현체 연결(있으면)
             var room = Instantiate(_roomPrefab).GetComponent<Room>();
             if (room != null)
             {
+                _runner = room.gameObject.AddComponent<NetworkRunner>();
+
+                DontDestroyOnLoad(_runner.gameObject);
+                _runner.ProvideInput = true;
                 _runner.AddCallbacks(room);
                 room.SetRunner(_runner);
             }
