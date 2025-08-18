@@ -59,12 +59,12 @@ public class LoadingSceneOrchestrator : MonoBehaviour
         SetStatus("리소스 준비 중...");
         SetProgressImmediate(0f);
 
-        if (ParticleManager.Instance != null)
-        {
-            await ParticleManager.Instance.InitFromCsvAsync().AttachExternalCancellation(token);
-            // 40% 근처
-            SetProgressWeighted(0.4f);
-        }
+        //if (ParticleManager.Instance != null)
+        //{
+        //    await ParticleManager.Instance.InitFromCsvAsync().AttachExternalCancellation(token);
+        //    // 40% 근처
+        //    SetProgressWeighted(0.4f);
+        //}
 
         // TODO: Addressables/사운드/셰이더 Warmup 등 단계별로 나누면 아래처럼 누적
         // await SomethingAsync(); SetProgressWeighted(0.6f);
