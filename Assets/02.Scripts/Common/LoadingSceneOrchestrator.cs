@@ -10,7 +10,6 @@ using UnityEngine.UI;
 public class LoadingSceneOrchestrator : MonoBehaviour
 {
     [Header("Runner")]
-    [SerializeField] private NetworkRunner _runnerPrefab;
     [SerializeField] private GameObject _roomPrefab;
 
     [Header("Scenes")]
