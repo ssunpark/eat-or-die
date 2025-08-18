@@ -32,7 +32,7 @@ public class UI_Teleport : AUI_PopupBase
             toggle.isOn = false;
         }
         _selectToggle[index].isOn = true;
-        TeleportManager.Instance.SelectedStage = index;
+        TeleportManager.Instance.DestinationStage = index;
     }
 
     public void OnClickConfirm()
