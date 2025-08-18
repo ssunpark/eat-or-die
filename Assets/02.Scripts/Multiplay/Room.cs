@@ -24,6 +24,10 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         StartGame(RoomInfoManager.Instance.GameMode);
     }
 
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
 
     public async void StartGame(GameMode mode)
     {
