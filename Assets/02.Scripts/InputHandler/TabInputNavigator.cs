@@ -22,6 +22,10 @@ public class TabInputNavigator : MonoBehaviour
 
     private void OnDisable()
     {
+        if (_inputActions == null)
+        {
+            return;
+        }
         _inputActions.UI.Tab.performed -= OnTabPerformed;
     }
 
