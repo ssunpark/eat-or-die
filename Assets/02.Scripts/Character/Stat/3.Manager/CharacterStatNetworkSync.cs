@@ -11,6 +11,23 @@ public class CharacterStatNetworkSync : NetworkBehaviour
         _statManager = manager;
         if (HasStateAuthority)
             SyncAllStats();
+        _statManager.OnModifierAdded += OnChanged;
+        _statManager.OnModifierRemoved += OnChanged;
+        _statManager.OnBaseChanged += OnBaseChanged;
+    }
+
+    private void OnChanged(EStatType type, StatModifier _)
+    {
+        if (HasStateAuthority) SyncOne(type);
+    }
+    private void OnBaseChanged(EStatType type)
+    {
+        if (HasStateAuthority) SyncOne(type);
+    }
+    private void SyncOne(EStatType type)
+    {
+        int i = GetIndex(type);
+        if (i >= 0) NetStats.Set(i, _statManager.GetStat(type));
     }
 
     public void SyncAllStats()

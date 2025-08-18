@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Fusion;
+using UnityEngine;
 
 public class EatEffect_StatModifier : IUseEffect, ISkillModifiable
 {
@@ -10,18 +11,28 @@ public class EatEffect_StatModifier : IUseEffect, ISkillModifiable
     private readonly EStatModifierType _modifierType;
     public float MultiplyValue { get; set; }
 
-    public EatEffect_StatModifier(EStatType statType, float value, float duration, EStatModifierType modifierType)
+    private int _foodID;
+
+    public EatEffect_StatModifier(int foodID)
     {
-        _value = value;
-        _duration = duration;
-        _statType = statType;
-        _modifierType = modifierType;
+        _foodID = foodID;
     }
     
     public void Use(GameObject target)
     {
-        Debug.Log($"{_statType}이 {_value * MultiplyValue}만큼 {_modifierType}연산으로 {_duration}초간 증가합니다.");
-        target.GetComponent<Player>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value * MultiplyValue, Food,true, _duration));
+        var fsm = target.GetComponent<PlayerFSM>();
+        if (fsm == null) return;
+
+        float finalValue = _value * MultiplyValue;
+
+        fsm.RPC_RequestUseFood(_foodID,fsm.Object);
+
         MultiplyValue = 1f;
+    }
+
+    public void UseOnTarget(PlayerFSM myFsm, NetworkObject target, int foodId)
+    {
+        if (myFsm == null || !myFsm.HasInputAuthority) return;
+        myFsm.RPC_RequestUseFoodOnTarget(foodId, target);
     }
 }
