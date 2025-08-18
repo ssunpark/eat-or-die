@@ -1,15 +1,27 @@
+using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
-public class StageManager : MonoBehaviour
+public class StageManager : NetworkBehaviour
 {
+    public List<PlayerRef> PlayerList;
     public int StageIndex;
     
-    public void Enter()
+    public override void Spawned()
+    {
+        if (!HasStateAuthority) return;
+        
+        PlayerList = new List<PlayerRef>();
+    }
+    
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_StageEnter()
     {
         Debug.Log($"Stage {StageIndex} Enter");
     }
 
-    public void Exit()
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_StageExit()
     {
         Debug.Log($"Stage {StageIndex} Exit");
     }

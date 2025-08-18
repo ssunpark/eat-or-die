@@ -32,8 +32,8 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
         // FixedUpdateNetwork 타이밍에 순간이동 하도록 처리해야함
         Debug.Log($"텔레포트: from {DepartureStage}, to {DestinationStage}");
 
-        _stageList[DepartureStage].Exit();
-        _stageList[DestinationStage].Enter();
+        _stageList[DepartureStage].RPC_StageExit();
+        _stageList[DestinationStage].RPC_StageEnter();
         // 플레이어 이동 로직 실행
     }
 }
