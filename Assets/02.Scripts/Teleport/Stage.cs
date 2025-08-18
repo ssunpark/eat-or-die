@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 
-public class StageManager : NetworkBehaviour
+public class Stage : NetworkBehaviour
 {
     public List<PlayerRef> PlayerList;
     public int StageIndex;

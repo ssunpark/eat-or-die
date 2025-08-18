@@ -9,7 +9,7 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
     public int DepartureStage;
     public int DestinationStage;
 
-    [SerializeField] private List<StageManager> _stageList;
+    [SerializeField] private List<Stage> _stageList;
 
     public void PortalInteract(int stageIndex)
     {
