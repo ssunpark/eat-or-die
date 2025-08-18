@@ -7618,17 +7618,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &1236893024 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7654784995476626807, guid: 23c95e5744776854d9e18e9e2adb0509, type: 3}
-  m_PrefabInstance: {fileID: 22402224}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04f808ff48c349229f271aff7ffd542a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1279760294
 GameObject:
   m_ObjectHideFlags: 0
@@ -9846,9 +9835,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1236893024}
-        m_TargetAssemblyTypeName: RoomInfoManager, Assembly-CSharp
-        m_MethodName: SetClientGameMode
+      - m_Target: {fileID: 2039224571}
+        m_TargetAssemblyTypeName: UI_GameJoin, Assembly-CSharp
+        m_MethodName: OnClickJoinGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -13369,6 +13358,7 @@ GameObject:
   - component: {fileID: 2039224568}
   - component: {fileID: 2039224569}
   - component: {fileID: 2039224570}
+  - component: {fileID: 2039224571}
   m_Layer: 5
   m_Name: Popup-GameJoin
   m_TagString: Untagged
@@ -13485,6 +13475,20 @@ MonoBehaviour:
   DestroyTime: 0.1
   BackgroundFade: 1
   BlockBackgroundInput: 1
+--- !u!114 &2039224571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2039224563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 843ca855270449f4e840b23af98afb12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inviteCodeInputField: {fileID: 654455108}
+  _characterSelectPopup: {fileID: 480886250}
 --- !u!1 &2042125513
 GameObject:
   m_ObjectHideFlags: 0
