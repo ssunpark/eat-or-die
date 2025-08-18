@@ -19,11 +19,16 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     private PlayerInfoManager _playerInfoManager;
     private FusionInputProvider _inputProvider;
 
-    public void HostStart()
+    public void HostClientStart()
     {
-        StartGame(GameMode.Host);
+        StartGame(RoomInfoManager.Instance.GameMode);
     }
-    
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     public async void StartGame(GameMode mode)
     {
         _runner = Instantiate(RunnerPrefab);
@@ -38,8 +43,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
 
 
         // Guid를 사용해 매번 고유한 세션 이름을 생성합니다.
-        var sessionName = Guid.NewGuid().ToString();
-
+        var sessionName = RoomInfoManager.Instance.InviteCode;
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = mode,

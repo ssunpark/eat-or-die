@@ -11,6 +11,8 @@ public class RoomInfo
     [Header("방 명세")]
     public string RoomName;
 
+    public string InviteCode { get; set; }
+
     // 외부에서는 읽기만 가능한 IReadOnlyCollection<T>으로 노출
     [Header("요리 시스템")]
     public IReadOnlyCollection<int> KnownIngredients => _knownIngredients;
@@ -29,6 +31,7 @@ public class RoomInfo
 
     public RoomInfo(RoomInfoNetworkDTO roomInfoNetworkDTO)
     {
+        ID = roomInfoNetworkDTO.ID;
         RoomName = roomInfoNetworkDTO.RoomName;
         _knownIngredients = roomInfoNetworkDTO.KnownIngredientsList.ToHashSet();
         _knownRecipes = roomInfoNetworkDTO.KnownRecipesList.ToHashSet();
@@ -58,6 +61,7 @@ public class RoomInfo
     {
         return new RoomInfoNetworkDTO
         {
+            ID = ID,
             RoomName = RoomName,
             KnownIngredientsList = _knownIngredients.ToList(),
             KnownRecipesList = _knownRecipes.ToList()
