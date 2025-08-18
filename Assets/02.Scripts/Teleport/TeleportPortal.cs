@@ -4,18 +4,13 @@ using Fusion;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class TeleportPortal : MonoBehaviour, IInteractable
+public class TeleportPortal : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate { get; } = true;
     
     public int StageIndex;
     
     public void Interact()
-    {
-        TeleportManager.Instance.PortalInteract(StageIndex);
-    }
-
-    public void OnTriggerEnter(Collider other)
     {
         TeleportManager.Instance.PortalInteract(StageIndex);
     }
