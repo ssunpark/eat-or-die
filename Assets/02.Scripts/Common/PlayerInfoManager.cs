@@ -34,6 +34,7 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     {
         base.Spawned();
         _networkReady = true;
+        InputReader.Instance?.InitPlayer();
     }
     private CancellationToken _destroyToken;
 
