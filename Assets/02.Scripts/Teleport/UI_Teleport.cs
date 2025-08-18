@@ -10,33 +10,29 @@ public class UI_Teleport : AUI_PopupBase
 
     private void Start()
     {
-        TeleportManager.Instance.OnInteractPortal += ToggleTeleport;
+        TeleportManager.Instance.OnInteractPortal += OpenTeleportUI;
+        TeleportManager.Instance.OnExitPortal += CloseTeleportUI;
+        base.Close();
     }
 
-    public void ToggleTeleport()
+    public void OpenTeleportUI()
+    { 
+        base.Open();
+    }
+
+    public void CloseTeleportUI()
     {
-        if (gameObject.activeInHierarchy)
-        {
-            base.Close();
-        }
-        else
-        {
-            base.Open();
-        }
+        base.Close();
     }
     
     public void OnClickToggle(int index)
     {
-        foreach (Toggle toggle in _selectToggle)
-        {
-            toggle.isOn = false;
-        }
-        _selectToggle[index].isOn = true;
         TeleportManager.Instance.DestinationStage = index;
     }
 
     public void OnClickConfirm()
     {
         TeleportManager.Instance.Teleport();
+        base.Close();
     }
 }

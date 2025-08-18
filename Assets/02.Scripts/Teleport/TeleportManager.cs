@@ -5,11 +5,12 @@ using UnityEngine;
 public class TeleportManager : BehaviourSingleton<TeleportManager>
 {
     public event Action OnInteractPortal;
+    public event Action OnExitPortal;
 
-    public int DepartureStage;
-    public int DestinationStage;
+    public int DepartureStage = -1;
+    public int DestinationStage = -1;
 
-    [SerializeField] private List<GameObject> _teleportPoints;
+    [SerializeField] private List<GameObject> _destinationList;
 
     public void PortalInteract(int stageIndex)
     {
@@ -19,19 +20,27 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
     
     public void ClosePortal()
     {
-        OnInteractPortal?.Invoke();
+        OnExitPortal?.Invoke();
     }
 
     public void Teleport()
     {
-        if (DestinationStage == 0)
+        if (DestinationStage == -1)
         {
             Debug.Log("목적지가 선택되지 않았습니다.");
             return;
         }
-        // FixedUpdateNetwork 타이밍에 순간이동 하도록 처리해야함
-        Debug.Log($"텔레포트: from {DepartureStage}, to {DestinationStage}");
 
-        // 플레이어 이동 로직 실행
+        if (DepartureStage == DestinationStage)
+        {
+            // 현재 위치와 같음을 알림
+            return;
+        }
+        
+        Debug.Log($"텔레포트: from {DepartureStage}, to {DestinationStage}");
+        StageManager.Instance.Transfer(DepartureStage, DestinationStage);
+        Room.Instance.LocalPlayer.GetComponent<Player>().Teleport(_destinationList[DestinationStage].transform.position);
+        DepartureStage = -1;
+        DestinationStage = -1;
     }
 }

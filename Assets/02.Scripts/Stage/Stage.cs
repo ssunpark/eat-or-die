@@ -14,14 +14,14 @@ public class Stage : NetworkBehaviour
         PlayerList = new List<PlayerRef>();
     }
     
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_StageEnter()
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_StageEnter(PlayerRef player)
     {
         Debug.Log($"Stage {StageIndex} Enter");
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
-    public void RPC_StageExit()
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_StageExit(PlayerRef player)
     {
         Debug.Log($"Stage {StageIndex} Exit");
     }
