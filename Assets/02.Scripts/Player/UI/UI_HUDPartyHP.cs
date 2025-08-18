@@ -13,16 +13,26 @@ public class UI_HUDPartyHP: MonoBehaviour
 
     private Dictionary<PlayerRef, UI_PartySlot> _slotMap = new();
     private Dictionary<PlayerRef, ResourceManager> _resourceMap = new();
-
-    private void Start()
+    private bool _isInitialized;
+    public void Init()
     {
+        if (_isInitialized) return;
+        if (PlayerInfoManager.Instance == null)
+        {
+            return;
+        }
         PlayerInfoManager.Instance.OnPlayerUnregistered += HandlePlayerUnregistered;
+        _isInitialized = true;
     }
 
     private void Update()
     {
         _checkTimer += Time.deltaTime;
         if (_checkTimer < CheckInterval || PlayerInfoManager.Instance.Object == null || !PlayerInfoManager.Instance.Object.IsValid) return;
+        if (!_isInitialized)
+        {
+            Init();
+        }
         _checkTimer = 0f;
         CheckAndUpdatePlayers();
     }

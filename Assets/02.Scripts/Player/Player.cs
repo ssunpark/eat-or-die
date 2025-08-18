@@ -5,6 +5,7 @@ using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using RaycastPro.Detectors;
+using Unity.Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(RangeDetector))]
@@ -14,6 +15,8 @@ public class Player : CharacterBase, IAttackable
     public List<CharacterTraitData> TraitDataList { get; private set; }
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
+    
+    private CinemachineImpulseSource _impulseSource;
 
     [SerializeField] private UI_HeadPlayerHP _headHpBar;
     float _damageRecoveryTime = 0.5f;
@@ -64,6 +67,7 @@ public class Player : CharacterBase, IAttackable
         PlayerFSM = GetComponent<PlayerFSM>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         SimpleKCC = GetComponent<SimpleKCC>();
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
         Skill = new SkillManager(this);
     }
     private bool _spawnInitDone;
@@ -423,6 +427,7 @@ public class Player : CharacterBase, IAttackable
         }
 
         //Todo: 맞는 이펙트? 재생
+        _impulseSource.GenerateImpulse();
     }
 
     public void OnHitStateAuthority(AttackInfo attack)
