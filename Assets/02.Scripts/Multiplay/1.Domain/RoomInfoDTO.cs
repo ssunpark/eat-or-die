@@ -7,6 +7,7 @@ using Firebase.Firestore;
 public class RoomInfoDTO
 {
     [FirestoreDocumentId] public string RoomInfoID { get; set; }
+    [FirestoreProperty] public string InviteCode { get; set; }
 
     [FirestoreProperty] public string RoomName { get; set; }
     [FirestoreProperty] public List<int> KnownIngredientsList { get; set; }

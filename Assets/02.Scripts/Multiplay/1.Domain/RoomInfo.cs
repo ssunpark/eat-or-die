@@ -11,6 +11,8 @@ public class RoomInfo
     [Header("방 명세")]
     public string RoomName;
 
+    public string InviteCode { get; set; }
+
     // 외부에서는 읽기만 가능한 IReadOnlyCollection<T>으로 노출
     [Header("요리 시스템")]
     public IReadOnlyCollection<int> KnownIngredients => _knownIngredients;

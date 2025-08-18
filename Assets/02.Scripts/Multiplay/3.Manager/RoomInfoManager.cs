@@ -10,13 +10,18 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     [Networked] public RoomInfo CurrentRoomInfo { get; private set; }
     public RoomInfoDTO CurrentRoomInfoDTO { get; private set; }
     private RoomInfoRepository _roomInfoRepository;
-
     private string _userID => AuthenticationManager.Instance.User.UserId;
 
     public List<RoomInfoDTO> RoomInfoList { get; private set; }
-
     public event Action OnDataChanged;
+    public string InviteCode;
+    public GameMode GameMode; // 임시 코드
 
+    public void SetClientGameMode() // 임시코드
+    {
+        GameMode = GameMode.Client;
+    }
+    
     public async void Awake()
     {
         DontDestroyOnLoad(this);
@@ -68,6 +73,50 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         }
     }
 
+    public async UniTask DeleteRoom(RoomInfoDTO roomInfoDTO)
+    {
+        Debug.Log(_roomInfoRepository);
+        try
+        {
+            await _roomInfoRepository.DeleteRoomInfo(_userID, roomInfoDTO.RoomInfoID);
+            Debug.Log("방이 삭제됩니다.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("방 삭제 실패");
+        }
+    }
+
+    public async UniTask<string> GenerateInviteCode()
+    {
+        // 1. 현재 방 정보와 유저 정보가 유효한지 확인
+        if (CurrentRoomInfo == null || string.IsNullOrEmpty(CurrentRoomInfo.ID))
+        {
+            Debug.LogError("초대 코드를 생성할 현재 방 정보가 없습니다.");
+            return null; // 실패 시 null 반환
+        }
+
+        // _userID는 AuthenticationManager에서 가져온다고 가정
+        if (string.IsNullOrEmpty(_userID))
+        {
+            Debug.LogError("로그인한 사용자 정보가 없습니다.");
+            return null;
+        }
+
+        // 2. Repository의 메서드를 호출하여 코드 생성 요청
+        try
+        {
+            var generatedCode = await _roomInfoRepository.CreateInviteCode(_userID, CurrentRoomInfo.ID);
+            InviteCode = generatedCode;
+            return InviteCode;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"초대 코드 생성 중 에러 발생: {e.Message}");
+            return null;
+        }
+    }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SyncRoomInfoToNewPlayer(PlayerRef player, string roomInfoJson)
     {
@@ -94,6 +143,4 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
         Debug.Log($"[RoomInfoManager] 동기화 완료. 방 이름: {CurrentRoomInfo.RoomName}");
     }
-
-
 }
