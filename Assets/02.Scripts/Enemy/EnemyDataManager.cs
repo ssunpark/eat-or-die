@@ -13,6 +13,7 @@ public class EnemyDataManager : BehaviourSingleton<EnemyDataManager>
     {
         Debug.Log("EnemyDataManager Awake");
         Init();
+        DontDestroyOnLoad(gameObject);
     }
     
     private void Init()

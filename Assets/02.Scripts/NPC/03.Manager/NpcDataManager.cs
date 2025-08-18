@@ -18,6 +18,7 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
     private void Awake()
     {
         InitNpcData();
+        DontDestroyOnLoad(gameObject);
     }
 
     private void InitNpcData()

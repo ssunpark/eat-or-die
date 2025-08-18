@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 public struct PlayerInfo : INetworkStruct
 {
     public PlayerRef Ref;
@@ -341,6 +342,8 @@ void INetworkRunnerCallbacks.OnHostMigration(NetworkRunner runner, HostMigration
 
 void INetworkRunnerCallbacks.OnSceneLoadDone(NetworkRunner runner)
     {
+        if (SceneManager.GetActiveScene().buildIndex != 3)
+            return;
         _sceneReady = true; 
         TryProcessPendingJoins(runner);
     }

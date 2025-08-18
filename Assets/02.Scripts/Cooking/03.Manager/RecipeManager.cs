@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class RecipeManager : BehaviourSingleton<RecipeManager>
 {
     private const string RECIPE_CSV_PATH = "/FoodCSV/Recipe.csv";
     
     public List<Recipe> RecipeList { get; private set; }
 
-    private void Start()
+    private void Awake()
     {
         InitFoodData();
+        DontDestroyOnLoad(gameObject);
     }
 
     private void InitFoodData()
