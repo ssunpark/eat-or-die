@@ -1,5 +1,114 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2125553526826020670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5421335051146578670}
+  - component: {fileID: 8084515868854879392}
+  - component: {fileID: 732269026173106713}
+  - component: {fileID: 6658928628206832163}
+  m_Layer: 0
+  m_Name: Food_RottenCrop_Prefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5421335051146578670
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125553526826020670}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7110406, y: -0.048522964, z: -0.5004829, w: 0.49151152}
+  m_LocalPosition: {x: 0.087, y: -0.072, z: -0.039}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 6370528856672355431}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &8084515868854879392
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125553526826020670}
+  m_Mesh: {fileID: 4585070909795063861, guid: 054e4ff0afcfcba46b30cdaf4ce01139, type: 3}
+--- !u!23 &732269026173106713
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125553526826020670}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 6fe6c1ee4acaeea4a830fd552e1b659e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6658928628206832163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125553526826020670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windupKey: 
+  _swingKey: Swing_Default
+  _hitKey: Hit_Default
+  _useStartKey: 
+  _useLoopKey: 
+  _useEndKey: 
+  _useSuccessKey: 
+  _useFailKey: 
+  _useSpawn: {fileID: 0}
+  _mustbeChild: 0
 --- !u!1 &5226359054370206503
 GameObject:
   m_ObjectHideFlags: 0
@@ -29,106 +138,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3079228504783146791}
+  - {fileID: 5421335051146578670}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &3256427435325270220
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 6370528856672355431}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_RootOrder
-      value: 102
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_Name
-      value: Food_RottenCrop_Prefab
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6725239671659326726}
-  m_SourcePrefab: {fileID: 100100000, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
---- !u!1 &2445541107487675805 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-  m_PrefabInstance: {fileID: 3256427435325270220}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6725239671659326726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2445541107487675805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _windupKey: 
-  _swingKey: Swing_Default
-  _hitKey: Hit_Default
-  _useStartKey: 
-  _useLoopKey: 
-  _useEndKey: 
-  _useSuccessKey: 
-  _useFailKey: 
-  _useSpawn: {fileID: 0}
-  _mustbeChild: 0
---- !u!4 &3079228504783146791 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5128ffb04dff06346b118c4fe56fda90, type: 3}
-  m_PrefabInstance: {fileID: 3256427435325270220}
-  m_PrefabAsset: {fileID: 0}
