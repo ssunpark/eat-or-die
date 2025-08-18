@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -93,6 +93,11 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public int RequestConsumeItem(int itemID, int amount)
     {
         int consumed = GetItemCount(itemID);
+
+        if (amount < consumed)
+        {
+            consumed = amount;
+        }
         
         TryConsumeItem(itemID, consumed);
         
