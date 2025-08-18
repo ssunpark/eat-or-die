@@ -1,5 +1,6 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
@@ -50,51 +51,127 @@ public class Player : CharacterBase, IAttackable
 
     public NetworkObject NetworkObject => Object;
     public bool IsDead => Resource.CurrentHunger <= 0;
+
     public override void Spawned()
     {
         base.Spawned();
-        if (Object.HasInputAuthority)
-        {
-            Room.Instance.SetLocalPlayer(gameObject);
-            var camera = Camera.main.GetComponent<FollowCamera>();
-            if (camera != null)
-            {
-                Transform followTarget = transform;
-                camera.SetTarget(followTarget);
-            }
-        }
-        //_hasPlayerTrackerRef = PlayerTracker.GetPlayerTrackerRef(Runner, out _playerTrackerRef);
-        Resource.OnHungerChanged += EvaluateCurrentHunger;
-        if (HasInputAuthority)
-        {
-            if (ExpHandler != null && TraitDataList != null)
-            {
-                LoadTraitsFromStorage();
 
-                InitializePlayerHUD();
-            }
-            else
-            {
-                StartCoroutine(WaitAndLoadTraits());
-            }
-        }
+        // 기존 즉시 접근 로직 제거하고 비동기 초기화로 이관
+        InitAfterSpawnAsync().Forget();
 
+        // 나머지 캐시/레퍼런스는 그대로
         _animator = GetComponent<Animator>();
         PlayerFSM = GetComponent<PlayerFSM>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         SimpleKCC = GetComponent<SimpleKCC>();
         Skill = new SkillManager(this);
     }
-    private IEnumerator WaitAndLoadTraits()
+    private bool _spawnInitDone;
+    private async UniTaskVoid InitAfterSpawnAsync()
     {
-        while (ExpHandler == null || TraitDataList == null)
+        if (_spawnInitDone) return; // 중복 방지
+
+        var token = this.GetCancellationTokenOnDestroy();
+        await UniTask.Yield();
+        // 1) Resource, Stat 준비까지 대기 (최대 5초)
+        await UniTask.WhenAll(
+            UniTask.WaitUntil(() => Resource != null && Stat != null, cancellationToken: token)
+                  .Timeout(TimeSpan.FromSeconds(5)).SuppressCancellationThrow()
+        );
+
+        if (Resource != null)
         {
-            yield return null;
+            // 중복 구독 방지 후 구독
+            Resource.OnHungerChanged -= EvaluateCurrentHunger;
+            Resource.OnHungerChanged += EvaluateCurrentHunger;
+        }
+        else
+        {
+            Debug.LogWarning("[Player] Resource not ready after timeout; skipping hunger hook.");
         }
 
-        LoadTraitsFromStorage();
-        InitializePlayerHUD();
+        // 2) 로컬 플레이어만 카메라 바인딩 시도
+        if (Object.HasInputAuthority)
+        {
+            // Room 참조는 있는 경우에만
+            if (Room.Instance != null)
+                Room.Instance.SetLocalPlayer(gameObject);
+
+            // Camera.main & FollowCamera 준비까지 대기 (최대 3초)
+            await UniTask.WaitUntil(() =>
+            {
+                var cam = Camera.main;
+                return cam != null && cam.GetComponent<FollowCamera>() != null;
+            }, cancellationToken: token).Timeout(TimeSpan.FromSeconds(3)).SuppressCancellationThrow();
+
+            TryBindFollowCamera(); // 가드 포함
+        }
+
+        // 3) Trait/HUD 초기화
+        if (HasInputAuthority)
+        {
+            if (ExpHandler != null && TraitDataList != null)
+            {
+                LoadTraitsFromStorage();
+                InitializePlayerHUD_Safe();
+            }
+            else
+            {
+                // 기존 코루틴 대신 UniTask 대기(최대 5초)
+                await UniTask.WaitUntil(
+                    () => ExpHandler != null && TraitDataList != null,
+                    cancellationToken: token
+                ).Timeout(TimeSpan.FromSeconds(5)).SuppressCancellationThrow();
+
+                if (ExpHandler != null && TraitDataList != null)
+                {
+                    LoadTraitsFromStorage();
+                    InitializePlayerHUD_Safe();
+                }
+                else
+                {
+                    Debug.LogWarning("[Player] Trait system not ready after timeout; HUD init deferred.");
+                }
+            }
+        }
+
+        _spawnInitDone = true;
     }
+
+    private void TryBindFollowCamera()
+    {
+        var mainCam = Camera.main;
+        if (mainCam == null)
+        {
+            Debug.LogWarning("[Player] MainCamera not found.");
+            return;
+        }
+
+        var follow = mainCam.GetComponent<FollowCamera>();
+        if (follow == null)
+        {
+            Debug.LogWarning("[Player] FollowCamera not found on MainCamera.");
+            return;
+        }
+
+        follow.SetTarget(transform);
+    }
+
+    private void InitializePlayerHUD_Safe()
+    {
+        var hudObject = GameObject.FindGameObjectWithTag("PlayerHUD");
+        if (hudObject != null)
+        {
+            var hudHP = hudObject.GetComponentInChildren<UI_HUDPlayerHP>(true);
+            if (hudHP != null && Resource != null && Stat != null)
+                hudHP.Initialize(Resource, Stat);
+        }
+
+        if (_headHpBar != null && Resource != null && Stat != null)
+            _headHpBar.InitializeHeadHpBar(Resource, Stat);
+    }
+    
+    
     public void LoadTraitsFromStorage()
     {
         foreach (var data in Trait.GetTraitSnapshot())
@@ -124,6 +201,23 @@ public class Player : CharacterBase, IAttackable
         if (PlayerFSM == null)
         {
             PlayerFSM = GetComponent<PlayerFSM>();
+        }
+        if(PlayerFSM == null || PlayerFSM.StateMachine == null)
+        {
+            return;
+        }
+        if (Resource == null || Stat == null)
+        {
+            return;
+        }
+        if (SimpleKCC == null)
+        {
+            SimpleKCC = GetComponent<SimpleKCC>();
+            if (SimpleKCC == null)
+            {
+                Debug.LogError("[Player] SimpleKCC is not initialized.");
+                return;
+            }
         }
         Stat.UpdateStats(Runner.DeltaTime);
 
@@ -200,15 +294,14 @@ public class Player : CharacterBase, IAttackable
         if (amount > 0)
         {
             Resource.RestoreHunger(amount);
-            ParticleManager.Instance.RpcPlayParticle("Use_Success_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
+            ParticleManager.Instance.PlayByKey("Use_Success_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
             // 힐
         }
         else if (amount < 0)
         {
             Resource.ConsumeHunger(-amount);
-
-            ParticleManager.Instance.RpcPlayParticle("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity);
-            // 데미지
+            ParticleManager.Instance.PlayByKey("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
+             // 데미지
         }
         else
         {
@@ -293,6 +386,7 @@ public class Player : CharacterBase, IAttackable
 
     public override void Render()
     {
+        if (Resource == null) return;
         if (Resource.CurrentHunger <= 0)
         {
             //damageToggleObject.SetActive(false);
@@ -318,20 +412,6 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
-
-    private void InitializePlayerHUD()
-    {
-        GameObject hudObject = GameObject.FindGameObjectWithTag("PlayerHUD");
-        if (hudObject != null)
-        {
-            var hudHP = hudObject.GetComponentInChildren<UI_HUDPlayerHP>(true);
-            if (hudHP != null)
-                hudHP.Initialize(Resource, Stat);
-        }
-
-        _headHpBar.InitializeHeadHpBar(Resource, Stat);
-    }
-
     public void OnHitLocal(AttackInfo attack)
     {
         if (PlayerFSM.IsDead) return;
@@ -351,7 +431,7 @@ public class Player : CharacterBase, IAttackable
         {
             //Todo: 이펙트 처리
             DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
-            if (Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
+            if (UnityEngine.Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
             {
                 Debug.Log("[Player] Evaded damage from " + attack.Attacker);
                 return;
@@ -393,5 +473,15 @@ public class Player : CharacterBase, IAttackable
         Revive();
     }
 
-    
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_RequestInstantRevive(RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        if (!IsDead) return;
+        InstantRevive(); 
+       
+    }
+
 }

@@ -96,13 +96,13 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
         var sb = new StringBuilder();
 
         sb.Append($"<b>{itemProfile.ItemDefinition.Name}</b>");
-        CookTooltipManager.Instance.Show(sb.ToString());
+        TooltipManager.Instance.Show(sb.ToString());
     }
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
         Debug.Log("OnPointerExit");
-        CookTooltipManager.Instance.Hide();
+        TooltipManager.Instance.Hide();
     }
 }

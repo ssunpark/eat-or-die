@@ -16,7 +16,7 @@ public struct PlantPoolKey
     }
 }
 
-public class FarmingManager : NetworkBehaviour
+public class FarmingManager : MonoBehaviour
 {
     private const string PLANT_CSV_PATH = "/PlantCSV/Plant.csv";
     // 작물 데이터 관리
@@ -36,15 +36,16 @@ public class FarmingManager : NetworkBehaviour
 
     private Dictionary<PlantPoolKey, Pool<Transform>> _plantPoolDictionary;
 
-    public override void Spawned()
+    private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Runner.Despawn(Object); // 중복 방지
+            Destroy(gameObject);
         }
     }
 

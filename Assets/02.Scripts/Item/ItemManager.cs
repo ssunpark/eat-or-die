@@ -21,6 +21,7 @@ public class ItemManager : NetworkBehaviour
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
     private Dictionary<int, ItemProfile> _itemDictionary;
+    public IReadOnlyDictionary<int, ItemProfile> ItemDictionary => _itemDictionary;
     
     // 아이템 팩토리
     private ItemFactory _itemFactory;
@@ -29,13 +30,14 @@ public class ItemManager : NetworkBehaviour
     {
         if (Instance == null)
         {
-            Instance = this; 
+            Instance = this;
+            Init();
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
-        Init();
     }
 
     private void Init()
@@ -106,43 +108,5 @@ public class ItemManager : NetworkBehaviour
             .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient)
             .Select(itemInfo => itemInfo.ItemDefinition)
             .ToList();
-    }
-
-    /// <summary>
-    /// 아이템 생성(드랍)
-    /// </summary>
-    /// <param name="id">아이템 ID</param>
-    /// <param name="quantity">수량</param>
-    /// <param name="position">생성 위치</param>
-    /// <param name="rotation">생성 시 각도</param>
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_CreateItemObject(int id, int quantity, float durability, Vector3 position, Quaternion rotation, string extraInfo = "", float pickableTime = 4f)
-    {
-        if (!Runner.IsServer)
-        {
-            return;
-        }
-        
-        if (!_itemDictionary.TryGetValue(id, out ItemProfile item))
-        {
-            Debug.LogWarning($"없는 아이템입니다. ID: {id}");
-            return;
-        }
-        
-        // 네트워크 아이템 오브젝트 생성
-        Runner.Spawn(_itemObjectPrefab,
-            position: position,
-            rotation: rotation,
-            inputAuthority: null,
-            onBeforeSpawned: (runner, obj) =>
-            {
-                var item = obj.GetComponent<ItemObject>();
-                item.ItemID = id;
-                item.Quantity = quantity;
-                item.SpawnPosition = position;
-                item.Durability = durability;
-                item.ExtraInfo = extraInfo;
-                item.PickableTime = pickableTime;
-            });
     }
 }

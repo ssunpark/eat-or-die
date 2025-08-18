@@ -42,7 +42,7 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
         
         if (remain != null)
         {
-            ItemManager.Instance.RPC_CreateItemObject(
+            ItemProxySpawner.Instance.RPC_CreateItemObject(
                 remain.ID,
                 remain.Quantity,
                 remain.Durability,

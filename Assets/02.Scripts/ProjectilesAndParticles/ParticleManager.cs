@@ -1,22 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using Redcode.Pools;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using static ProjectileManager;
-using System.Threading.Tasks;
 
-public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
+public class ParticleManager: BehaviourSingleton<ParticleManager>
 {
     private const string PARTICLE_CSV_PATH = "/ParticlesCSV/Particles.csv"; // StreamingAssets 기준
     private Dictionary<ParticleSystem, Pool<ParticleSystem>> _sharedPools = new();
     private Dictionary<string, ParticleSystem> _particlePrefabs = new();
     public IReadOnlyDictionary<ParticleSystem, Pool<ParticleSystem>> ExplodeEffectPool => _sharedPools;
 
-    public async Task InitFromCsvAsync(string relativeCsvPath = PARTICLE_CSV_PATH)
+    private async void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+        await InitFromCsvAsync();
+    }
+    public UniTask InitFromCsvAsync(string relativeCsvPath = PARTICLE_CSV_PATH)
+    {
+        var token = this.GetCancellationTokenOnDestroy();
+        return InitFromCsvAsync(relativeCsvPath, token);
+    }
+    public async UniTask InitFromCsvAsync(string relativeCsvPath, CancellationToken token)
     {
         var fullPath = $"{Application.streamingAssetsPath}{relativeCsvPath}";
+
         List<ParticleRawData> rows;
         try
         {
@@ -33,7 +45,6 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
             if (string.IsNullOrWhiteSpace(row.ParticleKey) || string.IsNullOrWhiteSpace(row.AddressablePath))
                 continue;
 
-            // 이미 등록되어 있으면 스킵
             if (_particlePrefabs.ContainsKey(row.ParticleKey))
                 continue;
 
@@ -41,13 +52,13 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
             try
             {
                 var handle = Addressables.LoadAssetAsync<GameObject>(row.AddressablePath);
-                prefab = await handle.Task;
+                prefab = await handle.ToUniTask(cancellationToken: token);
+
                 if (prefab == null)
                 {
                     Debug.LogError($"[ParticleManager] Addressables 로드 실패: {row.AddressablePath}");
                     continue;
                 }
-                // Addressables.Release(handle); // 풀의 프리팹 참조가 필요하므로 해제하지 않음
             }
             catch (Exception e)
             {
@@ -114,22 +125,6 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
         _sharedPools[key] = newPool;
         return (newPool, parent.transform);
     }
-
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RpcPlayParticle(string particleKey, Vector3 position, Quaternion rotation)
-    {
-        // 개같은 RPC
-        ParticleSystem particlePrefab = GetParticlePrefab(particleKey);
-        
-        if (particlePrefab != null)
-        {
-            PlayParticle(particlePrefab, position, rotation);
-        }
-        else
-        {
-            Debug.LogError($"Particle prefab with key '{particleKey}' not found.");
-        }
-    }
     private ParticleSystem GetParticlePrefab(string particleKey)
     {
         if (string.IsNullOrEmpty(particleKey))
@@ -168,7 +163,19 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
         instance.Play();
 
     }
-
+    public void PlayByKey(string particleKey, Vector3 position, Quaternion rotation, bool networked)
+    {
+        // 네트워크 가능하면 Proxy로 RPC, 아니면 로컬 재생
+        if (networked && ParticleNetworkProxy.Instance != null && ParticleNetworkProxy.Instance.Object != null && ParticleNetworkProxy.Instance.Object.IsValid)
+        {
+            // 클라/호스트 상관없이 요청 → 서버가 Rpc_PlayParticle 브로드캐스트
+            ParticleNetworkProxy.Instance.RPC_RequestPlayParticle(particleKey, position, rotation);
+        }
+        else
+        {
+            PlayByKeyLocal(particleKey, position, rotation);
+        }
+    }
     public void PlayByKeyLocal(string particleKey, Vector3 position, Quaternion rotation)
     {
         var prefab = GetParticlePrefab(particleKey);
@@ -176,17 +183,10 @@ public class ParticleManager: NetworkBehaviourSingleton<ParticleManager>
         {
             PlayParticle(prefab, position, rotation);
         }
-#if UNITY_EDITOR
         else
         {
             Debug.LogWarning($"[ParticleManager] Particle key not found: {particleKey}");
         }
-#endif
     }
 
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public void RPC_RequestPlayParticle(string key, Vector3 worldPos, Quaternion rot)
-    {
-        RpcPlayParticle(key, worldPos, rot);
-    }
 }

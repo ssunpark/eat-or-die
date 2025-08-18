@@ -7,16 +7,22 @@ using UnityEngine;
 
 public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 {
-    public RoomInfo CurrentRoomInfo { get; private set; }
+    [Networked] public RoomInfo CurrentRoomInfo { get; private set; }
     public RoomInfoDTO CurrentRoomInfoDTO { get; private set; }
     private RoomInfoRepository _roomInfoRepository;
-
     private string _userID => AuthenticationManager.Instance.User.UserId;
 
     public List<RoomInfoDTO> RoomInfoList { get; private set; }
-
     public event Action OnDataChanged;
-
+    public string InviteCode;
+    public GameMode GameMode; // 임시 코드
+    
+    public void SetClientGameMode(string inviteCode) // 임시코드
+    {
+        InviteCode = inviteCode;
+        GameMode = GameMode.Client;
+    }
+    
     public async void Awake()
     {
         DontDestroyOnLoad(this);
@@ -31,6 +37,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     {
         CurrentRoomInfoDTO = roomInfoDTO;
         CurrentRoomInfo = roomInfoDTO.ToDomain();
+        Debug.Log(CurrentRoomInfo.ID);
     }
     private async void InitializeRoomInfos()
     {
@@ -48,24 +55,8 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
     public async UniTask Save()
     {
-        if (CurrentRoomInfoDTO == null)
-        {
-            Debug.LogError("저장할 RoomInfo가 없습니다.");
-            return;
-        }
-
-        // ★★★ 핵심 분기 로직 ★★★
-        // CurrentRoomInfo의 ID가 비어있으면 '생성', 아니면 '수정'
-        if (string.IsNullOrEmpty(CurrentRoomInfoDTO.RoomInfoID))
-        {
-            Debug.Log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        }
-        else
-        {
-            // ID가 있으므로 기존 문서 수정
-            Debug.Log($"기존 RoomInfo를 수정합니다. ID: {CurrentRoomInfoDTO.RoomInfoID}");
-            await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfoDTO, _userID);
-        }
+        Debug.Log($"기존 RoomInfo를 수정합니다. ID: {CurrentRoomInfo.ID}");
+        await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfo.ToDTO(), _userID);
     }
 
     public async UniTask CreateRoom(RoomInfoDTO roomInfoDTO)
@@ -80,6 +71,50 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         catch (Exception e)
         {
             Debug.LogError($"[RoomInfoManager] 방 정보 저장 실패: {e.Message}");
+        }
+    }
+
+    public async UniTask DeleteRoom(RoomInfoDTO roomInfoDTO)
+    {
+        Debug.Log(_roomInfoRepository);
+        try
+        {
+            await _roomInfoRepository.DeleteRoomInfo(_userID, roomInfoDTO.RoomInfoID);
+            Debug.Log("방이 삭제됩니다.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("방 삭제 실패");
+        }
+    }
+
+    public async UniTask<string> GenerateInviteCode()
+    {
+        // 1. 현재 방 정보와 유저 정보가 유효한지 확인
+        if (CurrentRoomInfo == null || string.IsNullOrEmpty(CurrentRoomInfo.ID))
+        {
+            Debug.LogError("초대 코드를 생성할 현재 방 정보가 없습니다.");
+            return null; // 실패 시 null 반환
+        }
+
+        // _userID는 AuthenticationManager에서 가져온다고 가정
+        if (string.IsNullOrEmpty(_userID))
+        {
+            Debug.LogError("로그인한 사용자 정보가 없습니다.");
+            return null;
+        }
+
+        // 2. Repository의 메서드를 호출하여 코드 생성 요청
+        try
+        {
+            var generatedCode = await _roomInfoRepository.CreateInviteCode(_userID, CurrentRoomInfo.ID);
+            InviteCode = generatedCode;
+            return InviteCode;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"초대 코드 생성 중 에러 발생: {e.Message}");
+            return null;
         }
     }
 
@@ -109,6 +144,4 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
         Debug.Log($"[RoomInfoManager] 동기화 완료. 방 이름: {CurrentRoomInfo.RoomName}");
     }
-
-
 }

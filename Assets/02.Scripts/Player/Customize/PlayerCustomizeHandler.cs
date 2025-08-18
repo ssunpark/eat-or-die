@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Fusion;
 using TMPro;
 using UnityEngine;
-
+using Cysharp.Threading.Tasks;
+using System.Threading;
 public enum ECustomizationPart
 {
     Axe, Bag, Bottom, Bracelet, Earring,
@@ -39,11 +40,24 @@ public class PlayerCustomizeHandler : NetworkBehaviour
     public override void Spawned()
     {
         _installer = GetComponent<CharacterDataInstaller>();
+
+        InitAndSendCustomizationAsync().Forget();
+
+
+        TryInstall();
+    }
+
+    private async UniTaskVoid InitAndSendCustomizationAsync()
+    {
+        // 파괴/씬전환 시 자동 취소
+        var token = this.GetCancellationTokenOnDestroy();
+        await UniTask.WaitUntil(
+                () => PlayerInfoManager.Instance != null && PlayerInfoManager.Instance.Object != null,
+                cancellationToken: token
+            );
         if (Object.HasInputAuthority)
         {
             var holder = CustomizationDataHolder.Instance;
-
-            // 닉네임 비어있으면 즉석 생성
             var nickname = string.IsNullOrEmpty(holder?.Nickname)
                 ? $"Test{UnityEngine.Random.Range(0, 999)}"
                 : holder.Nickname;
@@ -54,9 +68,10 @@ public class PlayerCustomizeHandler : NetworkBehaviour
                 Nickname = nickname
             };
             var data = holder != null ? holder.CustomizationData : default;
+
+            // 이제 RPC 송신
             RPC_RequestApplyCustomization(snapshot, data);
         }
-        TryInstall();
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
