@@ -16,13 +16,11 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     public event Action OnDataChanged;
     public string InviteCode;
     public GameMode GameMode; // 임시 코드
-    [SerializeField] private UI_CharacterSelect _characterSelectPopup;
     
-    public void SetClientGameMode() // 임시코드
+    public void SetClientGameMode(string inviteCode) // 임시코드
     {
+        InviteCode = inviteCode;
         GameMode = GameMode.Client;
-        _characterSelectPopup.Open();
-        _characterSelectPopup.Refresh();
     }
     
     public async void Awake()

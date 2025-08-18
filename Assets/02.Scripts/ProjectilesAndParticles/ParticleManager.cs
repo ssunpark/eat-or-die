@@ -15,9 +15,10 @@ public class ParticleManager: BehaviourSingleton<ParticleManager>
     private Dictionary<string, ParticleSystem> _particlePrefabs = new();
     public IReadOnlyDictionary<ParticleSystem, Pool<ParticleSystem>> ExplodeEffectPool => _sharedPools;
 
-    private void Awake()
+    private async void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        await InitFromCsvAsync();
     }
     public UniTask InitFromCsvAsync(string relativeCsvPath = PARTICLE_CSV_PATH)
     {

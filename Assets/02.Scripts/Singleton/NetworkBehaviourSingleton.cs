@@ -12,7 +12,7 @@ public abstract class NetworkBehaviourSingleton<T> : NetworkBehaviour
         {
             if (_instance == null)
             {
-                _instance = FindFirstObjectByType<T>();
+                _instance = FindFirstObjectByType<T>(FindObjectsInactive.Include);
 
                 if (_instance == null)
                 {
