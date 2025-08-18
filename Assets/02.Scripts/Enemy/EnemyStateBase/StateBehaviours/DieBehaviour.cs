@@ -43,7 +43,7 @@ public class DieBehaviour : AEnemyStateBehaviour
         
         if (Random.value < drop1Rate)
         {
-            ItemManager.Instance.RPC_CreateItemObject(
+            ItemProxySpawner.Instance.RPC_CreateItemObject(
                 drop1ID,
                 Random.Range(1, drop1Quantity),
                 ItemManager.Instance.GetItem(drop1ID).ItemDefinition.MaxDurability,
@@ -53,7 +53,7 @@ public class DieBehaviour : AEnemyStateBehaviour
         
         if (Random.value < drop2Rate)
         {
-            ItemManager.Instance.RPC_CreateItemObject(
+            ItemProxySpawner.Instance.RPC_CreateItemObject(
                 drop2ID,
                 Random.Range(1, drop2Quantity),
                 ItemManager.Instance.GetItem(drop2ID).ItemDefinition.MaxDurability,

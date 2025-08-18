@@ -51,12 +51,12 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
             .Where(itemInfo => itemInfo != null)
             .ToArray();
 
-        Debug.Log($"[SeedShop] 시드 아이템 개수: {_seedItems.Length}");
+        //Debug.Log($"[SeedShop] 시드 아이템 개수: {_seedItems.Length}");
 
-        for (int i = 0; i < _seedItems.Length; i++)
-        {
-            Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemDefinition.ID} - {_seedItems[i].ItemDefinition.Name}");
-        }
+        //for (int i = 0; i < _seedItems.Length; i++)
+        //{
+        //    Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemDefinition.ID} - {_seedItems[i].ItemDefinition.Name}");
+        //}
 
         OnSeedListUpdated?.Invoke();
     }

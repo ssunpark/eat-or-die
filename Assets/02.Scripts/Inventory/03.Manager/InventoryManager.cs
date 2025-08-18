@@ -101,6 +101,11 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public int RequestConsumeItem(int itemID, int amount)
     {
         int consumed = GetItemCount(itemID);
+
+        if (amount < consumed)
+        {
+            consumed = amount;
+        }
         
         TryConsumeItem(itemID, consumed);
         
@@ -137,7 +142,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
             if (!slot.IsEmpty)
             {
                 ItemInstance item = slot.GetItem();
-                ItemManager.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity);
+                ItemProxySpawner.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity);
                 slot.RemoveItem();
             }
         }

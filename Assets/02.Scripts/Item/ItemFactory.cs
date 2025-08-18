@@ -60,7 +60,7 @@ public class ItemFactory
                 var buffDuration = duration ?? 0;
                 if (_foodEffectModifierDictionary.TryGetValue(statType, out var modifier))
                 {
-                    var effect = new EatEffect_StatModifier(statType, statValue, buffDuration, modifier);
+                    var effect = new EatEffect_StatModifier(rawData.ID);
                     effectList.Add(effect);
                 }
                 

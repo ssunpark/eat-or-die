@@ -30,7 +30,7 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
         KCC.Move(Vector3.zero); // 이동 멈춤
         Debug.Log("PlayerBerserkState: Entering Berserk state.");
         _subFSM.Reset(); // 내부 상태머신 초기화
-        ParticleManager.Instance.RpcPlayParticle(_fsm.HungryEffect.name, _fsm.transform.position, _fsm.transform.rotation);
+        ParticleManager.Instance.PlayByKey(_fsm.HungryEffect.name, _fsm.transform.position, _fsm.transform.rotation, true);
     }
     protected override void OnEnterStateRender()
     {

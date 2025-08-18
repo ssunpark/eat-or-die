@@ -11,6 +11,7 @@ public class CraftRecipeManager : BehaviourSingleton<CraftRecipeManager>
     private void Awake()
     {
         InitCraftRecipeData();
+        DontDestroyOnLoad(gameObject);
     }
 
     private void InitCraftRecipeData()

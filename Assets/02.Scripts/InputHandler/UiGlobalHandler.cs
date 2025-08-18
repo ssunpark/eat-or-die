@@ -28,6 +28,7 @@ public class UiGlobalHandler : MonoBehaviour
     private InputActionMap _mapGlobal;
 
     private int _modalCount; // UI 맵 켜둘지 결정 (Traits 같은 모달 팝업 수)
+    private bool _initialized = false;
 
     private void Start()
     {
@@ -64,14 +65,19 @@ public class UiGlobalHandler : MonoBehaviour
 
         // 시작 시 UI 맵은 꺼두고, 플레이어 맵만 활성
         EnsureMaps(modalOpen: false);
+        _initialized = true;
     }
 
     private void OnDisable()
     {
+        if(_toggleTraits!=null)
         _toggleTraits.performed -= OnToggleTraits;
-        _toggleParty.performed -= OnToggleParty;
-        _toggleInventory.performed -= OnToggleInventory;
-        _mapGlobal.Disable();
+        if(_toggleParty!=null)
+            _toggleParty.performed -= OnToggleParty;
+        if(_toggleInventory!=null)
+            _toggleInventory.performed -= OnToggleInventory;
+        if (_mapGlobal != null)
+            _mapGlobal.Disable();
     }
 
     // ===== Traits =====
@@ -133,6 +139,7 @@ public class UiGlobalHandler : MonoBehaviour
     private void OnToggleParty(InputAction.CallbackContext _)
     {
         if (_partyPopup == null) return;
+        
 
         bool open = !_partyPopup.gameObject.activeSelf;
         if (open)
@@ -169,6 +176,7 @@ public class UiGlobalHandler : MonoBehaviour
 
     private void EnsureMaps(bool modalOpen)
     {
+        if (!_initialized) return;
         if (modalOpen)
         {
             _mapPlayer.Disable();
@@ -191,6 +199,7 @@ public class UiGlobalHandler : MonoBehaviour
 
     private void OnModalClosed(AUI_PopupBase popupBase)
     {
+        if (!_initialized) return;
         if (popupBase == _traitsPopup)
         {
             UnbindPlayer();
@@ -201,7 +210,8 @@ public class UiGlobalHandler : MonoBehaviour
 
     private void LateUpdate()
     {
-        if(_modalCount > 0 && AllModalPopupIsInactive)
+        if (!_initialized) return;
+        if (_modalCount > 0 && AllModalPopupIsInactive)
         {
             _modalCount = 0; // 모든 모달 팝업이 닫혔으면 카운트 초기화
             EnsureMaps(false); // 플레이어 맵 활성화
