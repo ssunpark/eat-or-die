@@ -25,7 +25,7 @@ public class UI_RiviveSelect : MonoBehaviour
 
     private void OnInstantRivive()
     {
-        _player.InstantRevive();
+        _player.RPC_RequestInstantRevive();
         Destroy(gameObject);
     }
 

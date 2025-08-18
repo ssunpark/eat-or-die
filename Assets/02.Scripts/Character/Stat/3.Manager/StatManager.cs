@@ -19,7 +19,7 @@ public class StatManager
 
             stat.ModifierAdded += (type, mod) => OnModifierAdded?.Invoke(type, mod);
             stat.ModifierRemoved += (type, mod) => OnModifierRemoved?.Invoke(type, mod);
-            stat.BaseChanged += (type) => OnBaseChanged?.Invoke(type); // (2)에서 씁니다
+            stat.BaseChanged += (type) => OnBaseChanged?.Invoke(type); 
         }
     }
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CookTooltipManager : BehaviourSingleton<CookTooltipManager>
+public class TooltipManager : BehaviourSingleton<TooltipManager>
 {
     public CanvasGroup canvasGroup;
     public UI_TooltipPanel tooltipPanel;

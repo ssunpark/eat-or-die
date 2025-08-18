@@ -22,3 +22,27 @@ public class StatModifier
         Duration = duration;
     }
 }
+
+public enum EModifierKey
+{
+    None = 0,
+
+    Food_HungerRecoveryOverTime = 210001,
+    Food_HungerConsumeReduction = 210002,
+    Food_MaxHunger = 210003,
+    Food_ManaRecoveryOverTime = 210004,
+    Food_MaxMana = 210005,
+    Food_MoveSpeed = 210006,
+    Food_TotalDamage = 210007,
+    Food_MeleeDamage = 210008,
+    Food_MagicDamage = 210009,
+    Food_AttackSpeed = 210010,
+    Food_Defense = 210011,
+    Food_MeleeDefense = 210012,
+    Food_MagicDefense = 210013,
+    Food_BossDamage = 210014,
+    Food_BossDefense = 210015,
+    Food_CritChance = 210016,
+    Food_CritDamageRatio = 210017,
+}
+

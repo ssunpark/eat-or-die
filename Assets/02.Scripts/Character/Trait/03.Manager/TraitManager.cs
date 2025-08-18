@@ -8,6 +8,7 @@ public class TraitManager
     public event Action<ETraitType, int> OnTraitLeveledUp;    // (타입, 레벨 증가량)
     public event Action<ETraitType, int> OnTraitExpGained;    // (타입, 획득량)
     public event Action<ETraitType> OnSkillPointChanged; // (타입, 수치)
+    public event Action<ETraitType, int> OnTraitLevelSet;
 
     private Dictionary<ETraitType, int> _skillPoints = new(); // 5레벨 단위 포인트
     private Dictionary<ETraitType, Trait> _traitDict;
@@ -121,6 +122,8 @@ public class TraitManager
             _statManager.RemoveModifiersFrom(type);
             ApplyTraitEffect(traitData, level);
         }
+
+        OnTraitLevelSet?.Invoke(type, trait.Level);
     }
 
     public void ReapplyAllTraitEffects(IEnumerable<CharacterTraitData> allTraitData)
@@ -137,6 +140,7 @@ public class TraitManager
             if (_traitDict.TryGetValue(data.TraitType, out var trait))
             {
                 ApplyTraitEffect(data, trait.Level);
+                OnTraitLevelSet?.Invoke(data.TraitType, trait.Level);
             }
         }
     }
@@ -147,6 +151,7 @@ public class TraitManager
         {
             kvp.Value.SetLevel(0);
             _statManager.RemoveModifiersFrom(kvp.Key);
+            OnTraitLevelSet?.Invoke(kvp.Key, 0);
         }
 
         _skillPoints.Clear();

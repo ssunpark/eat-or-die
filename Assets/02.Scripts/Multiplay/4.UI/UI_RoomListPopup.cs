@@ -1,3 +1,4 @@
+using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -70,6 +71,7 @@ public class UI_RoomListPopup : AUI_PopupBase
 
     private void OpenCharacterSelectPopup()
     {
+        RoomInfoManager.Instance.GameMode = GameMode.Host;
         _characterSelectPopup.Open();
         _characterSelectPopup.Refresh();
     }

@@ -66,7 +66,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
             try
             {
                 var durability = _durability == 0 ? itemManager.GetItem(_itemId).ItemDefinition.MaxDurability :  _durability;
-                itemManager.RPC_CreateItemObject(_itemId, _quantity, durability, _spawnPosition, rotation);
+                ItemProxySpawner.Instance.RPC_CreateItemObject(_itemId, _quantity, durability, _spawnPosition, rotation);
                 Debug.Log($"[EditorWindow] ID {_itemId} 아이템 생성 성공");
 
                 var item = itemManager.GetItem(_itemId);
