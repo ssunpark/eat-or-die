@@ -162,16 +162,22 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void NormalizeVisualScale(GameObject obj, float targetSize)
     {
         var renderers = obj.GetComponentsInChildren<Renderer>();
+        if (renderers == null || renderers.Length == 0) return;
+
         Bounds combinedBounds = new Bounds(obj.transform.position, Vector3.zero);
+        foreach (var r in renderers)
+            combinedBounds.Encapsulate(r.bounds);
 
-        foreach (var renderer in renderers)
-        {
-            combinedBounds.Encapsulate(renderer.bounds);
-        }
+        Vector3 s = combinedBounds.size;
 
-        float largestDimension = Mathf.Max(combinedBounds.size.x, combinedBounds.size.y, combinedBounds.size.z);
-        float scaleFactor = targetSize / largestDimension;
+        // 기하평균(부피 기준 대표 길이): (x * y * z)^(1/3)
+        const float EPS = 1e-6f;
+        float volume = Mathf.Max(EPS, s.x * s.y * s.z);
+        float geoMean = Mathf.Pow(volume, 1f / 3f);
 
+        if (geoMean <= EPS) return;
+
+        float scaleFactor = targetSize / geoMean;
         obj.transform.localScale *= scaleFactor;
     }
 }
