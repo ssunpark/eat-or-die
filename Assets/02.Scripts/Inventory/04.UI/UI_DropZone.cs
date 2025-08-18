@@ -22,7 +22,7 @@ public class UI_DropZone : MonoBehaviour, IPointerDownHandler
 			if (!HandEntity.Instance.IsHandEmpty)
 			{
 				ItemInstance itemInstanceInHand = HandEntity.Instance.ItemInstance;
-				ItemManager.Instance.RPC_CreateItemObject(
+                ItemProxySpawner.Instance.RPC_CreateItemObject(
 					itemInstanceInHand.ID,
 					itemInstanceInHand.Quantity, 
                     itemInstanceInHand.Durability,
