@@ -6,6 +6,11 @@ public class RoomGenerator : MonoBehaviour
     
     private Room _currentRoom;
 
+    public void Awake()
+    {
+        GenerateRoom();
+        _currentRoom.HostClientStart();
+    }
     
     public void OnClickStartHost()
     {

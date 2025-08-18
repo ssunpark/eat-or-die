@@ -90,13 +90,13 @@ public class UI_RecipeButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
         extraDescription = RichTextUtil.RecolorAll(extraDescription, "#E44962");
         sb.Append($"{extraDescription}");
 
-        CookTooltipManager.Instance.Show(sb.ToString());
+        TooltipManager.Instance.Show(sb.ToString());
     }
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
         Debug.Log("OnPointerExit");
-        CookTooltipManager.Instance.Hide();
+        TooltipManager.Instance.Hide();
     }
 }
