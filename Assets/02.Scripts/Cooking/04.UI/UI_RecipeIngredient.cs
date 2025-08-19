@@ -15,25 +15,12 @@ public class UI_RecipeIngredient : MonoBehaviour
         200012, // 썩은 작물
         200013, // 강철
         200028 // 드래곤 고기
-        // 여기에 더 추가...
     };
 
     private void Start()
     {
         RoomRecipeStateManager.Instance.OnIngredientUnlocked += HandleIngredientUnlocked;
     }
-
-// private void OnEnable()
-//     {
-//     }
-//
-//     private void OnDisable()
-//     {
-//         if (RoomRecipeStateManager.Instance != null)
-//         {
-//             RoomRecipeStateManager.Instance.OnIngredientUnlocked -= HandleIngredientUnlocked;
-//         }
-//     }
     
     public void Init()
     {
@@ -49,8 +36,7 @@ public class UI_RecipeIngredient : MonoBehaviour
             {
                 continue;
             }
-
-            // 제외 목록에 포함된 ID라면 버튼을 만들지 않고 건너뜀
+            
             if (_excludedIngredientIDs.Contains(ingredientId.ID))
             {
                 continue;

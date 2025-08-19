@@ -48,8 +48,6 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnter
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter");
-        
         if (_data == null || !RecipePanelUIManager.Instance.IsKnownRecipe(_data.ID))
         {
             return;

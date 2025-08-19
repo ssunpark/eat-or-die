@@ -14,7 +14,6 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
     public List<RoomInfoDTO> RoomInfoList { get; private set; }
     public event Action OnDataChanged;
-    public event Action OnCurrentRoomInfoUpdated;
     public string InviteCode;
     public GameMode GameMode; // 임시 코드
 
@@ -22,8 +21,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     {
         DontDestroyOnLoad(this);
         await FirebaseManager.Instance.WaitForInitialization();
-
-        // _roomInfoRepository = new RoomInfoRepository(FirebaseManager.Instance.DB);
+        
         _roomInfoRepository = new RoomInfoRepository(FirebaseFirestore.DefaultInstance);
         AuthenticationManager.Instance.OnLogin += InitializeRoomInfos;
     }
@@ -39,7 +37,6 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     {
         CurrentRoomInfo = roomInfo;
         Debug.Log($"[RoomInfoManager] CurrentRoomInfo가 설정되었습니다. ID: {CurrentRoomInfo.ID}");
-        OnCurrentRoomInfoUpdated?.Invoke();
     }
 
     public void SetRoomInfoDTO(RoomInfoDTO roomInfoDTO)
@@ -100,21 +97,18 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
     public async UniTask<string> GenerateInviteCode()
     {
-        // 1. 현재 방 정보와 유저 정보가 유효한지 확인
         if (CurrentRoomInfo == null || string.IsNullOrEmpty(CurrentRoomInfo.ID))
         {
             Debug.LogError("초대 코드를 생성할 현재 방 정보가 없습니다.");
-            return null; // 실패 시 null 반환
+            return null;
         }
-
-        // _userID는 AuthenticationManager에서 가져온다고 가정
+        
         if (string.IsNullOrEmpty(_userID))
         {
             Debug.LogError("로그인한 사용자 정보가 없습니다.");
             return null;
         }
-
-        // 2. Repository의 메서드를 호출하여 코드 생성 요청
+        
         try
         {
             var generatedCode = await _roomInfoRepository.CreateInviteCode(_userID, CurrentRoomInfo.ID);
@@ -127,31 +121,4 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
             return null;
         }
     }
-
-    // [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    // public void RPC_SyncRoomInfoToNewPlayer(PlayerRef player, string roomInfoJson)
-    // {
-    //     if (string.IsNullOrEmpty(roomInfoJson))
-    //     {
-    //         Debug.LogError("수신된 roomInfoJson이 비어있습니다!");
-    //         return;
-    //     }
-    //
-    //     Debug.Log($"클라이언트가 호스트로부터 RoomInfo JSON 수신: {roomInfoJson}");
-    //
-    //     // 1. 먼저 Json을 네트워크 DTO(RoomInfoNetworkDTO)로 변환합니다.
-    //     var networkDTO = JsonUtility.FromJson<RoomInfoNetworkDTO>(roomInfoJson);
-    //
-    //     if (networkDTO == null)
-    //     {
-    //         Debug.LogError("Json을 RoomInfoNetworkDTO로 변환하는데 실패했습니다.");
-    //         return;
-    //     }
-    //
-    //     // 2. 변환된 DTO를 사용하여 최종 RoomInfo 객체를 생성합니다.
-    //     // (이전에 RoomInfo 클래스에 만들어 둔 생성자를 활용합니다)
-    //     CurrentRoomInfo = new RoomInfo(networkDTO);
-    //
-    //     Debug.Log($"[RoomInfoManager] 동기화 완료. 방 이름: {CurrentRoomInfo.RoomName}");
-    // }
 }

@@ -18,7 +18,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public event Action<ItemInstance> OnCompletedPopupStarted;
     public event Action OnItemAdded;
     
-    public bool IsSpawned => Object != null && Object.IsValid; // Update에서 관여를 하는데 Networked변수는 Spawn이후에 접근이 가능함 IsSpawned
+    public bool IsSpawned => Object != null && Object.IsValid;
     private bool _isCooking;
 
     public void SetCurrentCookingPot(CookingPotInteractable cookingPot)
@@ -79,14 +79,11 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     
     public void OnCookingCompleted(bool p)
     {
-        // 실제로는 PlayerState의 OnEndState 메서드 내부에서 이 함수가 호출됨
         if (!_isCooking)
         {
             Debug.Log("요리가 진행 중이 아닙니다.");
             return;
         }
-        
-        // RPC_IsCookingCheck();
         _currentCookingPot.Rpc_EndCooking();
         _isCooking = false;
         
@@ -99,18 +96,13 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             ReturnRecipesToInventory();
             OnAlertMessage?.Invoke("요리가 취소되었습니다.");
         }
-        
-        // _amICooking = false;
     }
     
-    // RPC가 _isCooking을 false로 만들어주는데 1프레임정도의 딜레이가 생겨서 1프레임도안 TryCook이 2번실행
     public int TryCook()
     {
         int id1 = IngredientInventory.SlotList[0].ItemInstance.ID;
         int id2 = IngredientInventory.SlotList[1].ItemInstance.ID;
         
-       
-        // 이 로직을 RecipeManager로 빼서 거기서 레시피 습득 여부까지 판단하도록
         foreach (var recipe in RecipeManager.Instance.RecipeList)
         {
             if ((recipe.Ingredient1ID == id1 && recipe.Ingredient2ID == id2) ||
@@ -124,7 +116,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         {
             { 200013, 200121 }, // 강철 -> 단단한 요리
             { 200028, 200122 } // 드래곤 고기 -> 드래곤 스테이크
-            // 추가 가능
         };
 
         HashSet<int> inputSet = new HashSet<int> { id1, id2 };
@@ -150,7 +141,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         ConsumeInputIngredients(quantityToCook);
         GiveItemToInventory(resultItemId, quantityToCook);
         ReturnRecipesToInventory();
-        // OnCookOutputUpdated?.Invoke();
     }
     
     public void ReturnRecipesToInventory()
@@ -184,11 +174,8 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             Debug.Log($"[CookingManager] 결과 아이템 데이터가 없습니다. ID: {itemId}");
             return;
         }
-
-        // InventoryManager.Instance.AddItemToInventory(new ItemInstance(resultItem, quantity));
+        
         UnifiedInventoryManager.Instance.AddItem(new ItemInstance(resultItem, quantity));
-        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-        // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
         RPC_BroadcastCookingResult(itemId);
         OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem, 1));
         OnItemAdded?.Invoke();
@@ -198,7 +185,6 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     private void TransferItemToInventory(ItemInstance itemInstance)
     {
         UnifiedInventoryManager.Instance.AddItem(itemInstance);
-        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
     }
 
     public void TryStartCook()
@@ -216,18 +202,13 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public void Rpc_StartCooking([RpcTarget] PlayerRef player)
     {
         _isCooking = true;
-        // FusionInputProvider.PlayerControllers[player].RequestState(EPlayerState.Cooking);
         OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
-        // Room.Instance.LocalPlayer.GetComponent<Player>().RequestState(EPlayerState.Cooking);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void Rpc_CookingPotAlreadyUse([RpcTarget] PlayerRef player)
     {
         OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
-        
-        // 만약 재료를 다시 인벤토리로 보내고 싶으면 
-        // ReturnRecipesToInventory();
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]

@@ -68,8 +68,6 @@ public class UI_RecipeButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        // Debug.Log("OnPointerEnter");
-        
         if (_data == null || !RecipePanelUIManager.Instance.IsKnownRecipe(_data.ID))
         {
             return;
@@ -96,7 +94,6 @@ public class UI_RecipeButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        // Debug.Log("OnPointerExit");
         TooltipManager.Instance.Hide();
     }
 }

@@ -4,10 +4,7 @@ using UnityEngine;
 public class RoomInfoNetworkManager : NetworkBehaviourSingleton<RoomInfoNetworkManager>
 {
     [Networked] [Capacity(64)] public string UserID { get; private set; }
-    // private void Awake()
-    // {
-    //     DontDestroyOnLoad(gameObject);
-    // }
+    
     public override void Spawned()
     {
         if (!HasStateAuthority)
