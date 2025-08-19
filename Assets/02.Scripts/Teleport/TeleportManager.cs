@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 
 public class TeleportManager : BehaviourSingleton<TeleportManager>
@@ -40,6 +41,7 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
         Debug.Log($"텔레포트: from {DepartureStage}, to {DestinationStage}");
         StageManager.Instance.Transfer(DepartureStage, DestinationStage);
         Room.Instance.LocalPlayer.GetComponent<Player>().Teleport(_destinationList[DestinationStage].transform.position);
+        MasterAudio.ChangePlaylistByName($"{DestinationStage}FloorBGM");
         DepartureStage = -1;
         DestinationStage = -1;
     }
