@@ -45,7 +45,7 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
             var json = JsonUtility.ToJson(roomInfo);
 
             // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
-            RoomInfoManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
+            RoomInfoNetworkManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
 
             // =========================================================
             // dev용
