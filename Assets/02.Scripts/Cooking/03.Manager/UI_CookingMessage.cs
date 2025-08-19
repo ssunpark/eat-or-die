@@ -14,7 +14,6 @@ public class UI_CookingMessage : MonoBehaviour
 
     private void OnEnable()
     {
-        // 요리 관련 경고 메시지 구독
         CookingManager.Instance.OnAlertMessage += ShowAlert;
         Hide();
     }

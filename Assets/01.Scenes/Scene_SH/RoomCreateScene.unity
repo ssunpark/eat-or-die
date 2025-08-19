@@ -1192,6 +1192,7 @@ GameObject:
   - component: {fileID: 156961446}
   - component: {fileID: 156961445}
   - component: {fileID: 156961444}
+  - component: {fileID: 156961447}
   m_Layer: 5
   m_Name: Popup-CreateWorld
   m_TagString: Untagged
@@ -1337,6 +1338,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomNameTextField: {fileID: 2053442993}
+--- !u!114 &156961447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156961439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 895b678443348bf46b13f8410a44e552, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &188809912
 GameObject:
   m_ObjectHideFlags: 0
@@ -1936,7 +1949,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -1945,18 +1958,18 @@ PrefabInstance:
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 156961447}
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PerformTransition
+      value: Close
       objectReference: {fileID: 0}
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Ricimi.SceneTransition, Assembly-CSharp
+      value: AUI_PopupBase, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 55818840058691696, guid: 3cfb88ec7a4f94124982bd608d98ad26, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -2432,30 +2445,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8226961234815570475, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8226961234815570475, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8226961234815570475, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8226961234815570475, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8226961234815570475, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8289554848800798348, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
-      propertyPath: m_Name
-      value: Popup-Settings
-      objectReference: {fileID: 0}
     - target: {fileID: 7992867955114450748, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2555,6 +2544,10 @@ PrefabInstance:
     - target: {fileID: 8226961234815570475, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8289554848800798348, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
+      propertyPath: m_Name
+      value: Popup-Settings
       objectReference: {fileID: 0}
     - target: {fileID: 8289554848800798348, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
       propertyPath: m_IsActive
