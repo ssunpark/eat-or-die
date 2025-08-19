@@ -8,9 +8,14 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
 
     private void Start()
     {
-        QuickSlotManager.Instance.OnUseItem += OnPossessionUpdated;
-        SharedStorageManager.Instance.OnStorageUpdated += OnPossessionUpdated; // 창고 내용물이 바뀔 때
-        HandEntity.Instance.OnItemDropped += OnPossessionUpdated; // 아이템을 필드에 드랍할 때
+        QuickSlotManager.Instance.OnUseItem += InvokeOnPossessionUpdated; // 퀵슬롯 아이템 사용 시
+        SharedStorageManager.Instance.OnStorageUpdated += InvokeOnPossessionUpdated; // 창고 내용물이 바뀔 때
+        HandEntity.Instance.OnItemDropped += InvokeOnPossessionUpdated; // 아이템을 필드에 드랍할 때
+    }
+
+    public void InvokeOnPossessionUpdated()
+    {
+        OnPossessionUpdated?.Invoke();
     }
 
     public void DropAllItems(Vector3 position)
