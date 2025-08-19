@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 {
-    public RoomInfo CurrentRoomInfo; //{ get; private set; }
+    public RoomInfo CurrentRoomInfo { get; private set; }
     public RoomInfoDTO CurrentRoomInfoDTO { get; private set; }
     private RoomInfoRepository _roomInfoRepository;
     private string _userID => AuthenticationManager.Instance.User.UserId;
