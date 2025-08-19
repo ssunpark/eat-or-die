@@ -57,6 +57,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         {
             PlayUseVfx(EUsePhase.Success, _target.transform.position + (Vector3.up * 0.5f));
         }
+        PlayUseSfx(EUsePhase.Success);
         _fsm.ItemHolder.UseItem(_target.gameObject);
     }
 
