@@ -24,7 +24,7 @@ public class UI_SeedItemDetail : MonoBehaviour
         NameText.text = itemProfile.ItemDefinition.Name;
         DescriptionText.text = itemProfile.ItemDefinition.Description;
 
-        PriceText.text = $"구매가격: {npcItem.Price} 골드";
+        PriceText.text = $"구매가격: {npcItem.Price} 골드      <sprite name=Coin>";
         StockText.text = npcItem.IsInfinite ? "재고수량: 무한" : $"재고수량: {npcItem.StockQuantity}";
         
         
