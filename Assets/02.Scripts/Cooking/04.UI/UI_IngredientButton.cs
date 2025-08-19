@@ -80,7 +80,7 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter");
+        // Debug.Log("OnPointerEnter");
 
         if (_data == null || !RecipePanelUIManager.Instance.IsKnownIngredient(IngredientID))
         {
@@ -102,7 +102,7 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("OnPointerExit");
+        // Debug.Log("OnPointerExit");
         TooltipManager.Instance.Hide();
     }
 }

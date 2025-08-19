@@ -10,6 +10,11 @@ public class UI_CookingPanel : AUI_PopupBase
     public UI_RecipeList UIRecipeList;
     private bool _isInitialized;
 
+    private void Start()
+    {
+        CookingPanel.SetActive(false);
+    }
+
     public override void Open()
     {
         base.Open();

@@ -17,19 +17,23 @@ public class UI_RecipeIngredient : MonoBehaviour
         200028 // 드래곤 고기
         // 여기에 더 추가...
     };
-    
-    private void OnEnable()
+
+    private void Start()
     {
         RoomRecipeStateManager.Instance.OnIngredientUnlocked += HandleIngredientUnlocked;
     }
 
-    private void OnDisable()
-    {
-        if (RoomRecipeStateManager.Instance != null)
-        {
-            RoomRecipeStateManager.Instance.OnIngredientUnlocked -= HandleIngredientUnlocked;
-        }
-    }
+// private void OnEnable()
+//     {
+//     }
+//
+//     private void OnDisable()
+//     {
+//         if (RoomRecipeStateManager.Instance != null)
+//         {
+//             RoomRecipeStateManager.Instance.OnIngredientUnlocked -= HandleIngredientUnlocked;
+//         }
+//     }
     
     public void Init()
     {
