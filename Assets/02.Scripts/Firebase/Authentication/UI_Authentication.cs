@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class UI_Authentication : MonoBehaviour
 {
-    [SerializeField] private AnimatePopup _loginPanel;
-    [SerializeField] private AnimatePopup _registerPanel;
+    [SerializeField] private DefaultPopup _loginPanel;
+    [SerializeField] private DefaultPopup _registerPanel;
     
     [SerializeField] private TMP_InputField _loginEmailInputField;
     [SerializeField] private TMP_InputField _loginPasswordInputField;
