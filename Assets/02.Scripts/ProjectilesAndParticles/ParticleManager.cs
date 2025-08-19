@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Fusion;
+using DamageNumbersPro;
 using Redcode.Pools;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.UIElements;
+using static ParticleNetworkProxy;
 using static ProjectileManager;
 
 public class ParticleManager: BehaviourSingleton<ParticleManager>
@@ -14,7 +17,9 @@ public class ParticleManager: BehaviourSingleton<ParticleManager>
     private Dictionary<ParticleSystem, Pool<ParticleSystem>> _sharedPools = new();
     private Dictionary<string, ParticleSystem> _particlePrefabs = new();
     public IReadOnlyDictionary<ParticleSystem, Pool<ParticleSystem>> ExplodeEffectPool => _sharedPools;
+    [SerializeField] private List<DamageEntry> _damageEntries;
 
+    private Dictionary<EDamageFloaterType, DamageNumber> _damagePrefabs = new();
     private async void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -23,6 +28,13 @@ public class ParticleManager: BehaviourSingleton<ParticleManager>
     public UniTask InitFromCsvAsync(string relativeCsvPath = PARTICLE_CSV_PATH)
     {
         var token = this.GetCancellationTokenOnDestroy();
+        foreach (var entry in _damageEntries)
+        {
+            if (entry != null && entry.DamagePrefab != null)
+            {
+                _damagePrefabs[entry.Key] = entry.DamagePrefab;
+            }
+        }
         return InitFromCsvAsync(relativeCsvPath, token);
     }
     public async UniTask InitFromCsvAsync(string relativeCsvPath, CancellationToken token)
@@ -176,6 +188,7 @@ public class ParticleManager: BehaviourSingleton<ParticleManager>
             PlayByKeyLocal(particleKey, position, rotation);
         }
     }
+
     public void PlayByKeyLocal(string particleKey, Vector3 position, Quaternion rotation)
     {
         var prefab = GetParticlePrefab(particleKey);
@@ -186,6 +199,31 @@ public class ParticleManager: BehaviourSingleton<ParticleManager>
         else
         {
             Debug.LogWarning($"[ParticleManager] Particle key not found: {particleKey}");
+        }
+    }
+
+    public void DamageSpawn(float number, Vector3 pos, EDamageFloaterType type, bool networked)
+    {
+        if (networked && ParticleNetworkProxy.Instance != null && ParticleNetworkProxy.Instance.Object != null && ParticleNetworkProxy.Instance.Object.IsValid)
+        {
+            // 클라/호스트 상관없이 요청 → 서버가 Rpc_PlayParticle 브로드캐스트
+            ParticleNetworkProxy.Instance.RPC_RequestSpawnDamage(number, pos, type);
+        }
+        else
+        {
+            SpawnDamageOnLocal(number, pos, type);
+        }
+    }
+
+    private void SpawnDamageOnLocal(float number, Vector3 pos, EDamageFloaterType type)
+    {
+        if (_damagePrefabs.TryGetValue(type, out var prefab))
+        {
+            prefab.Spawn(pos, number);
+        }
+        else
+        {
+            Debug.LogWarning($"[Particle] Damage prefab not found for type: {type}");
         }
     }
 

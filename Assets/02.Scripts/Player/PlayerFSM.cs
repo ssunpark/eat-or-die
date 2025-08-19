@@ -85,6 +85,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     private NetworkInputData _currentInput;
     private NetworkInputData _previousInput;
     public ParticleSystem HungryEffect;
+    private float _floaterTime = 1f;
     public NetworkInputData CurrentInput => _currentInput;
     public NetworkInputData PreviousInput => _previousInput;
 
@@ -171,7 +172,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
         ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
     }
-
+    float _timer = 0f;
     public override void FixedUpdateNetwork()
     {
         if (PlayerNetworkObject == null || PlayerNetworkObject.Resource == null)
@@ -185,7 +186,27 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 return;
             }
             
-            PlayerNetworkObject.Resource.RestoreHunger(PlayerNetworkObject.Stat.GetStat(EStatType.HungerRecoveryOverTime) * Runner.DeltaTime);
+            float HungerRecoveryOverTime = PlayerNetworkObject.Stat.GetStat(EStatType.HungerRecoveryOverTime);
+
+            if(HungerRecoveryOverTime != 0f)
+            {
+                _timer += Runner.DeltaTime;
+                if (_timer >= _floaterTime)
+                {
+                    _timer = 0f;
+                    if (PlayerNetworkObject.Resource.GetHungerPercent() == 1f) return;
+                    PlayerNetworkObject.Resource.RestoreHunger(HungerRecoveryOverTime);
+                    if (HungerRecoveryOverTime > 0f)
+                    {
+                        ParticleManager.Instance.DamageSpawn(HungerRecoveryOverTime, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Heal, true);
+                    }
+                    else
+                    {
+                        ParticleManager.Instance.DamageSpawn(HungerRecoveryOverTime, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Damage, true);
+                    }
+                }
+            }
+
         }
         if (HasInputAuthority)
         {
@@ -325,6 +346,16 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     {
         _playerFSM.ForceActivateState((int)state);
     }
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    public void RPC_GrantExpOrderWithAmount([RpcTarget] PlayerRef player, string actionName, int amount)
+    {
+        PlayerNetworkObject.ExpHandler.GrantExp(actionName, amount);
+        if (actionName == "KillMonster")
+        {
+            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Experience, false);
+        }
+    }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
     public void RPC_GrantExpOrder([RpcTarget] PlayerRef player, string actionName)
     {
