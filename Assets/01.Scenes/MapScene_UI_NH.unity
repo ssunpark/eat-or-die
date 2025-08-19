@@ -15235,7 +15235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4515667360525277008, guid: 23e3648df65e7424f82900d9fdd0ead1, type: 3}
       propertyPath: m_Name
-      value: SeedShopNpc1.2
+      value: SeedShopNpc1.2_0F
       objectReference: {fileID: 0}
     - target: {fileID: 5396139653853511178, guid: 23e3648df65e7424f82900d9fdd0ead1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -21847,7 +21847,7 @@ GameObject:
   m_Component:
   - component: {fileID: 125402263}
   m_Layer: 0
-  m_Name: Tool
+  m_Name: WorkStation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21865,7 +21865,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2000959802}
   m_Father: {fileID: 759189401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &125546387
@@ -52163,7 +52164,7 @@ GameObject:
   m_Component:
   - component: {fileID: 292141609}
   m_Layer: 0
-  m_Name: Tool
+  m_Name: WorkStation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -52185,6 +52186,7 @@ Transform:
   - {fileID: 815729470}
   - {fileID: 518034868}
   - {fileID: 92440594}
+  - {fileID: 1756574605}
   m_Father: {fileID: 1645309276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &292457524
@@ -89085,7 +89087,7 @@ PrefabInstance:
       objectReference: {fileID: 151372847}
     - target: {fileID: 6831532749479638845, guid: 26e4bfa3214737544ae1093495d10287, type: 3}
       propertyPath: m_Name
-      value: Craft System1.2
+      value: Craft System1.2_0F
       objectReference: {fileID: 0}
     - target: {fileID: 9034562439286734911, guid: 26e4bfa3214737544ae1093495d10287, type: 3}
       propertyPath: m_LocalScale.x
@@ -124515,7 +124517,7 @@ GameObject:
   m_Component:
   - component: {fileID: 664583302}
   m_Layer: 0
-  m_Name: 1F Dungeon(Gas/Jungle/Hive)
+  m_Name: 1F Dungeon(Gas/Jungle)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -143554,7 +143556,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 2097268157}
     m_Modifications:
     - target: {fileID: 4177350999134400196, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: SortKey
@@ -143562,7 +143564,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5058816492788763839, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_Name
-      value: Portal (1)
+      value: Portal_1F
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.x
@@ -143570,7 +143572,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -249.95679
+      value: 0.04321289
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.z
@@ -143621,6 +143623,11 @@ GameObject:
 --- !u!1 &775732031 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4126042984951287833, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
+  m_PrefabInstance: {fileID: 775732029}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &775732032 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
   m_PrefabInstance: {fileID: 775732029}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &776064914
@@ -150957,7 +150964,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5004887119945514408, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: m_Name
-      value: CookingWorkbench
+      value: CookingWorkbench_0F
       objectReference: {fileID: 0}
     - target: {fileID: 6786693292838318373, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: CookingPanelUI
@@ -177618,7 +177625,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2828224379091590728, guid: d3f8ce585153b024eb8098bb0ed7593e, type: 3}
       propertyPath: m_Name
-      value: NetworkStorage
+      value: NetworkStorage_1F
       objectReference: {fileID: 0}
     - target: {fileID: 4839066267551371882, guid: d3f8ce585153b024eb8098bb0ed7593e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -189278,7 +189285,7 @@ PrefabInstance:
       objectReference: {fileID: 151372847}
     - target: {fileID: 6831532749479638845, guid: 26e4bfa3214737544ae1093495d10287, type: 3}
       propertyPath: m_Name
-      value: Craft System1.2 (1)
+      value: Craft System1.2_2F
       objectReference: {fileID: 0}
     - target: {fileID: 9034562439286734911, guid: 26e4bfa3214737544ae1093495d10287, type: 3}
       propertyPath: m_LocalPosition.x
@@ -228192,7 +228199,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2828224379091590728, guid: d3f8ce585153b024eb8098bb0ed7593e, type: 3}
       propertyPath: m_Name
-      value: NetworkStorage (1)
+      value: NetworkStorage_2F
       objectReference: {fileID: 0}
     - target: {fileID: 4839066267551371882, guid: d3f8ce585153b024eb8098bb0ed7593e, type: 3}
       propertyPath: m_LocalScale.x
@@ -300886,7 +300893,7 @@ PrefabInstance:
       objectReference: {fileID: 151372847}
     - target: {fileID: 6831532749479638845, guid: 26e4bfa3214737544ae1093495d10287, type: 3}
       propertyPath: m_Name
-      value: Craft System1.2 (1)
+      value: Craft System1.2_1F
       objectReference: {fileID: 0}
     - target: {fileID: 9034562439286734911, guid: 26e4bfa3214737544ae1093495d10287, type: 3}
       propertyPath: m_LocalPosition.x
@@ -328020,7 +328027,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 292141609}
     m_Modifications:
     - target: {fileID: 4177350999134400196, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: SortKey
@@ -328028,7 +328035,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5058816492788763839, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_Name
-      value: Portal
+      value: Portal_0F
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.x
@@ -328083,6 +328090,11 @@ GameObject:
 --- !u!1 &1756574604 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4126042984951287833, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
+  m_PrefabInstance: {fileID: 1756574602}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1756574605 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
   m_PrefabInstance: {fileID: 1756574602}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1756755122
@@ -341567,7 +341579,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5004887119945514408, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: m_Name
-      value: CookingWorkbench (2)
+      value: CookingWorkbench_2F
       objectReference: {fileID: 0}
     - target: {fileID: 6786693292838318373, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: CookingPanelUI
@@ -348811,7 +348823,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1853316385}
   m_Layer: 0
-  m_Name: Tool
+  m_Name: WorkStation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -348833,6 +348845,7 @@ Transform:
   - {fileID: 1812766218}
   - {fileID: 1235419638}
   - {fileID: 993025831}
+  - {fileID: 1950450454}
   m_Father: {fileID: 1759530129}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1853629852
@@ -364184,7 +364197,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1853316385}
     m_Modifications:
     - target: {fileID: 4177350999134400196, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: SortKey
@@ -364192,7 +364205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5058816492788763839, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_Name
-      value: Portal (2)
+      value: Portal_2F
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.x
@@ -364200,7 +364213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -499.9568
+      value: 0.04321289
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.z
@@ -364251,6 +364264,11 @@ GameObject:
 --- !u!1 &1950450453 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4126042984951287833, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
+  m_PrefabInstance: {fileID: 1950450451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1950450454 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
   m_PrefabInstance: {fileID: 1950450451}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1951159504
@@ -377711,7 +377729,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 125402263}
     m_Modifications:
     - target: {fileID: 4177350999134400196, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: SortKey
@@ -377719,7 +377737,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5058816492788763839, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_Name
-      value: Portal (3)
+      value: Portal_4F
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.x
@@ -377727,7 +377745,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1499.96
+      value: 0.040039062
       objectReference: {fileID: 0}
     - target: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
       propertyPath: m_LocalPosition.z
@@ -377778,6 +377796,11 @@ GameObject:
 --- !u!1 &2000959801 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4126042984951287833, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
+  m_PrefabInstance: {fileID: 2000959799}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2000959802 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5584277036471391749, guid: e71193bf8e7fc1b4892794a26c3c2762, type: 3}
   m_PrefabInstance: {fileID: 2000959799}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2000982939 stripped
@@ -393716,7 +393739,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2097268157}
   m_Layer: 0
-  m_Name: Tool
+  m_Name: WorkStation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -393735,6 +393758,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 775732032}
   - {fileID: 2138481247}
   - {fileID: 934336366}
   - {fileID: 1589126697}
@@ -405451,7 +405475,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5004887119945514408, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: m_Name
-      value: CookingWorkbench (1)
+      value: CookingWorkbench_1F
       objectReference: {fileID: 0}
     - target: {fileID: 6786693292838318373, guid: edc6b0fc34d5a2341979589aba6ca30a, type: 3}
       propertyPath: CookingPanelUI
@@ -406988,7 +407012,3 @@ SceneRoots:
   - {fileID: 1259603037}
   - {fileID: 1179219951}
   - {fileID: 1047015978}
-  - {fileID: 1756574602}
-  - {fileID: 775732029}
-  - {fileID: 1950450451}
-  - {fileID: 2000959799}
