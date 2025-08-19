@@ -128,6 +128,7 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
 
     private void HandleIngredientDiscovered(ItemInstance acquiredItem)
     {
+        Debug.Log("아이템 주움!!!!!!!!!!!: " + acquiredItem.ID);
         if (acquiredItem == null)
         {
             return;
@@ -158,6 +159,7 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
     [Rpc(RpcSources.All, RpcTargets.All)]
     private void RPC_RequestIngredientUnlock(int ingredientID)
     {
+        Debug.Log("RPC_RequestIngredientUnlock 호출: " + ingredientID);
         // 이 RPC는 서버(State Authority)에서만 실행됩니다.
         // 서버는 전달받은 ID로 실제 해금 로직을 실행합니다.
         TryUnlockIngredient(ingredientID);
