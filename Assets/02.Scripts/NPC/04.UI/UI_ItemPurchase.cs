@@ -100,7 +100,7 @@ public class UI_ItemPurchase : MonoBehaviour
     private void UpdateDisplay()
     {
         QuantityText.text = $"{_selectedCount} / {_maxCount}";
-        TotalPriceText.text = $"필요한 골드: {TotalPrice}";
+        TotalPriceText.text = $"필요한 골드: {TotalPrice}      <sprite name=Coin>";
     }
 
     // === 버튼 및 UI 이벤트 ===
@@ -123,30 +123,18 @@ public class UI_ItemPurchase : MonoBehaviour
 
     public void OnClickBuyButton()
     {
+        int totalPrice = TotalPrice;
+        int selectedCount = _selectedCount;
         Debug.Log($"{_itemProfile.ItemDefinition.Name} {_selectedCount}개 구매 시도");
 
-        if (!CurrencyManager.Instance.TrySpend(ECurrencyType.Gold, TotalPrice))
+        if (!CurrencyManager.Instance.TrySpend(ECurrencyType.Gold, totalPrice))
         {
             Debug.Log("골드가 부족합니다.");
-            // TODO: UI 알림 처리
             return;
         }
 
         Debug.Log($"{_itemProfile.ItemDefinition.Name} {_selectedCount}개 구매 완료");
-        
-        // for (int i = 0; i < _selectedCount; i++)
-        // {
-        //     Debug.Log("아이템 구매 횟수 시도");
-        //     // 중앙 인벤토리 시스템을 통해 처리
-        //     ItemInstance newItemInstance = new ItemInstance(_itemProfile, 1);
-        //     InventoryManager.Instance.PickItemFromGround(newItemInstance);
-        // }
-        
-        ItemInstance newItemInstance = new ItemInstance(_itemProfile, _selectedCount);
+        var newItemInstance = new ItemInstance(_itemProfile, selectedCount);
         UnifiedInventoryManager.Instance.AddItem(newItemInstance);
-
-        // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
-
-        // TODO: 구매 성공 알림, UI 닫기 등 추가
     }
 }
