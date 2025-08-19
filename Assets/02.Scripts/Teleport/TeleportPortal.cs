@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
@@ -7,7 +7,8 @@ using UnityEngine;
 public class TeleportPortal : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate { get; } = true;
-    
+    public float InteractionDistanceOffset { get => 3f; }
+
     public int StageIndex;
     
     public void Interact()

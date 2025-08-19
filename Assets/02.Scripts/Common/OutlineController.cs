@@ -20,6 +20,7 @@ public class OutlineController : MonoBehaviour
 
     public void SetOutlineActive(bool active)
     {
+        if (enabled == false) return;
         if (_outlineObject == null)
         {
             Debug.LogWarning($"{name} 아웃라인 넣어주세요");

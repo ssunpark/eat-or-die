@@ -4,6 +4,7 @@ using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 
 #if UNITY_EDITOR
@@ -93,6 +94,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     [SerializeField] private GameObject _reviveSelectUIPrefab;
     public GameObject HeadCanvas;
     private Transform _uiParent;
+
+    [SerializeField] UI_UseOrInteract _useUI;
+    [SerializeField] UI_UseOrInteract _interactUI;
     [Networked]
     public EUseItemMode UseItemMode { get; set; } = EUseItemMode.Self;
 
@@ -160,6 +164,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         );
     }
 
+    public void ResetOutlinesAndTags()
+    {
+        _interactUI.TargetObject = null;
+        _useUI.TargetObject = null;
+        InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+        ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+    }
+
     public override void FixedUpdateNetwork()
     {
         if (PlayerNetworkObject == null || PlayerNetworkObject.Resource == null)
@@ -182,6 +194,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 if (!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
                 {
                     InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+                    _interactUI.TargetObject = null;
                     RPC_SetInteractTarget(null);
                 }
             }
@@ -191,6 +204,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
                 {
                     ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+                    _useUI.TargetObject = ItemUseTarget?.gameObject;
                     RPC_SetItemUseTargetAndMode(null, EUseItemMode.Self);
                 }
             }
@@ -231,6 +245,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
                 RPC_SetItemUseTargetAndMode(playerUnderCursor, EUseItemMode.Give);
                 playerUnderCursor.GetComponent<OutlineController>()?.SetOutlineActive(true);
+                _useUI.TargetObject = ItemUseTarget?.gameObject;
                 return true;
             }
 
@@ -250,9 +265,10 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
             RPC_SetItemUseTargetAndMode(net, EUseItemMode.Targeted);
             net.GetComponent<OutlineController>()?.SetOutlineActive(true);
+            _useUI.TargetObject = ItemUseTarget?.gameObject;
             return true;
         }
-
+        _useUI.TargetObject = null;
         return false;
     }
 
@@ -275,6 +291,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (InteractTarget != net)
             InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
+        _interactUI.TargetObject = comp.gameObject;
 
         comp.GetComponent<OutlineController>()?.SetOutlineActive(true);
         RPC_SetInteractTarget(net);
@@ -334,7 +352,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 Debug.Log($"[PlayerFSM] Hit object: {go.name} at distance {hit.distance}");
             }
-            var player = hit.collider.GetComponentInParent<Player>();
+            var player = hit.collider.GetComponentInParent<PlayerFSM>();
             if (player == null) return false;
 
             if (player.IsDead) return false;
@@ -357,15 +375,18 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 {
                     Debug.Log($"[PlayerFSM] Player is within use item distance: {dist}");
                 }
-                if (netObj == PlayerNetworkObject.Object)
+                if (netObj == Object)
                 {
                     if (EnableDebugLog)
                     {
-                        Debug.Log($"[PlayerFSM] target is me");
-                        return false;
+                        Debug.Log($"[PlayerFSM] target is me");    
                     }
+                    _useUI.TargetObject = netObj.gameObject;
+                    _useUI.ActionName = "먹기";
+                    return false;
                 }
                 targetPlayer = netObj;
+                _useUI.TargetObject = netObj.gameObject;
                 return true;
             }
         }
@@ -428,7 +449,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         }
         
         var comp = (Component)interactable;
-        if (Vector3.Distance(transform.position, comp.transform.position) > maxDistance)
+        float distanceoffset = interactable.InteractionDistanceOffset;
+        if (Vector3.Distance(transform.position, comp.transform.position) > maxDistance + distanceoffset)
         {
             if (EnableDebugLog)
                 Debug.Log($"[PlayerFSM] Interactable {comp.name} is too far away ({Vector3.Distance(transform.position, comp.transform.position)} > {maxDistance}).");
