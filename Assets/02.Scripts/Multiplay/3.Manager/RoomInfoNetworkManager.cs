@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class RoomInfoNetworkManager : NetworkBehaviourSingleton<RoomInfoNetworkManager>
 {
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SyncRoomInfoToNewPlayer([RpcTarget] PlayerRef player, string roomInfoJson)
     {
