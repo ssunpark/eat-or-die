@@ -66,7 +66,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     public async UniTask Save()
     {
         Debug.Log($"기존 RoomInfo를 수정합니다. ID: {CurrentRoomInfo.ID}");
-        await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfo.ToDTO(), _userID);
+        await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfo.ToDTO(), RoomInfoNetworkManager.Instance.UserID);
     }
 
     public async UniTask CreateRoom(RoomInfoDTO roomInfoDTO)

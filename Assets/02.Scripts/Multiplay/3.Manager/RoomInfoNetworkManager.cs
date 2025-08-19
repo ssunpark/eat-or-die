@@ -3,10 +3,21 @@ using UnityEngine;
 
 public class RoomInfoNetworkManager : NetworkBehaviourSingleton<RoomInfoNetworkManager>
 {
+    [Networked] [Capacity(64)] public string UserID { get; private set; }
     // private void Awake()
     // {
     //     DontDestroyOnLoad(gameObject);
     // }
+    public override void Spawned()
+    {
+        if (!HasStateAuthority)
+        {
+            return;
+        }
+
+        UserID = AuthenticationManager.Instance.User.UserId;
+        Debug.Log(UserID);
+    }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SyncRoomInfoToNewPlayer([RpcTarget] PlayerRef player, string roomInfoJson)
