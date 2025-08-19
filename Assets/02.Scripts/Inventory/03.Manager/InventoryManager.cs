@@ -8,18 +8,18 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public int InventorySize;
     
     public event Action<int> OnSlotUpdated;
-    public event Action OnOpenInventory;
+    public event Action<bool> OnToggleInventory;
     public event Action OnInventoryUpdated;
 
     private void Awake()
     {
         _inventory = new Inventory(InventorySize);
     }
-    
-    //public void OpenInventory()
-    //{
-    //    OnOpenInventory?.Invoke();
-    //}
+
+    public void ToggleInventory(bool toggle)
+    {
+        OnToggleInventory?.Invoke(toggle);
+    }
     // UIGlobalManager가 관리하게 바꿨습니다. 만약 인벤토리를 열때 무언가 초기화가 필요하다면...
     // 몰라
 

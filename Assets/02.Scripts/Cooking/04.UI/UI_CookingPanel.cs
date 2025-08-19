@@ -17,6 +17,7 @@ public class UI_CookingPanel : AUI_PopupBase
 
     public override void Open()
     {
+        InventoryManager.Instance.ToggleInventory(true);
         base.Open();
         if (!_isInitialized)
         {
@@ -30,7 +31,7 @@ public class UI_CookingPanel : AUI_PopupBase
         UIRecipeIngredient.Init();
         UIRecipeList.Init();
     }
-    
+
     public void OnClickCookingButton()
     {
         NetworkRunner Runner = FindAnyObjectByType<NetworkRunner>();
@@ -39,9 +40,14 @@ public class UI_CookingPanel : AUI_PopupBase
             Debug.Log("NetworkRunner를 찾을 수 없습니다!");
             return;
         }
-        
+
         CookingManager.Instance.TryStartCook();
         PopupManager.Instance.CloseAll();
     }
 
+    public override void Close()
+    {
+        base.Close();
+        InventoryManager.Instance.ToggleInventory(false);
+    }
 }
