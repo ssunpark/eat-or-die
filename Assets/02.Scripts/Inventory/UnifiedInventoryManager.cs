@@ -28,7 +28,9 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
 
     public void AddItem(ItemInstance itemInstance)
     {
+        Debug.Log($"OnItemAcquired == null : {OnItemAcquired == null}");
         OnItemAcquired?.Invoke(itemInstance);
+        Debug.Log($"OnItemAcquired == null : {OnItemAcquired == null}");
         
         ItemInstance remain = QuickSlotManager.Instance.AddItemToQuickSlot(itemInstance);
 

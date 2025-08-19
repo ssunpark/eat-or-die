@@ -45,10 +45,10 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
         {
             RoomInfoManager.Instance.OnCurrentRoomInfoUpdated -= Initialize;
         }
-        if (UnifiedInventoryManager.Instance != null)
-        {
-            UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
-        }
+        // if (UnifiedInventoryManager.Instance != null)
+        // {
+        //     UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
+        // }
         // ...
     }
 
