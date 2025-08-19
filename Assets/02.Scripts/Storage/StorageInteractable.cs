@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DarkTonic.MasterAudio;
+using Fusion;
 using UnityEngine;
 
 public class StorageInteractable : NetworkBehaviour, IInteractable
@@ -13,5 +14,6 @@ public class StorageInteractable : NetworkBehaviour, IInteractable
     {
         Debug.Log("창고를 열어라");
         SharedStorageManager.Instance.RegisterStorage(_sharedStorage);
+        MasterAudio.FireCustomEvent("ChestOpen", transform);
     }
 }
