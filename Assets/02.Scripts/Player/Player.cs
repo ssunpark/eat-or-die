@@ -11,11 +11,25 @@ using UnityEngine;
 [RequireComponent(typeof(RangeDetector))]
 public class Player : CharacterBase, IAttackable
 {
+    [Serializable]
+    public class InitialItemData
+    {
+        public int itemId;
+        public int quantity;
+        public float durability;
+    }
+
+    [SerializeField] private List<InitialItemData> InitialItems;
+
     public TraitExpHandler ExpHandler { get; private set; }
     public List<CharacterTraitData> TraitDataList { get; private set; }
     [Networked] public NetworkButtons ButtonsPrevious { get; set; }
     [Networked] public TickTimer DamagedTimer { get; set; }
-    
+
+
+    [SerializeField] private GameObject _renderObject;
+    [SerializeField] private GameObject _playerHeadUI;
+
     private CinemachineImpulseSource _impulseSource;
 
     [SerializeField] private UI_HeadPlayerHP _headHpBar;
@@ -33,7 +47,7 @@ public class Player : CharacterBase, IAttackable
     bool _isReset;
     public SimpleKCC SimpleKCC { get; private set; }
     public SkillManager Skill { get; private set; }
-    
+
     public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
     {
         TraitDataList = dataList;
@@ -69,6 +83,11 @@ public class Player : CharacterBase, IAttackable
         SimpleKCC = GetComponent<SimpleKCC>();
         _impulseSource = GetComponent<CinemachineImpulseSource>();
         Skill = new SkillManager(this);
+
+        if (HasInputAuthority)
+        {
+            GetInitialItem();
+        }
     }
     private bool _spawnInitDone;
     private async UniTaskVoid InitAfterSpawnAsync()
@@ -139,9 +158,29 @@ public class Player : CharacterBase, IAttackable
             }
         }
 
+
         _spawnInitDone = true;
     }
 
+    private void GetInitialItem()
+    {
+        foreach(var itemData in InitialItems)
+        {
+            var item = ItemManager.Instance.GetItem(itemData.itemId);
+            var inst = new ItemInstance(item, itemData.quantity, itemData.durability);
+            UnifiedInventoryManager.Instance.AddItem(inst);
+        }
+    }
+
+    public void HideCharacter(bool hide, bool includeUI = true)
+    {
+        if (_renderObject != null)
+            _renderObject.SetActive(!hide);
+        if (includeUI)
+        {
+            _playerHeadUI.SetActive(!hide);
+        }
+    }
     private void TryBindFollowCamera()
     {
         var mainCam = Camera.main;
@@ -174,8 +213,8 @@ public class Player : CharacterBase, IAttackable
         if (_headHpBar != null && Resource != null && Stat != null)
             _headHpBar.InitializeHeadHpBar(Resource, Stat);
     }
-    
-    
+
+
     public void LoadTraitsFromStorage()
     {
         foreach (var data in Trait.GetTraitSnapshot())
@@ -187,7 +226,7 @@ public class Player : CharacterBase, IAttackable
             var trait = Trait.GetTrait(type); // 내부 딕셔너리에서 가져오기
             trait?.SetLevel(level);
             trait?.AddExp(exp);
-            
+
             Trait.LoadAllSkillPoints(type);
         }
 
@@ -206,7 +245,7 @@ public class Player : CharacterBase, IAttackable
         {
             PlayerFSM = GetComponent<PlayerFSM>();
         }
-        if(PlayerFSM == null || PlayerFSM.StateMachine == null)
+        if (PlayerFSM == null || PlayerFSM.StateMachine == null)
         {
             return;
         }
@@ -307,7 +346,7 @@ public class Player : CharacterBase, IAttackable
             Resource.ConsumeHunger(-amount);
             ParticleManager.Instance.DamageSpawn(-amount, transform.position + (Vector3.up * 0.5f), EDamageFloaterType.Damage, true);
             ParticleManager.Instance.PlayByKey("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
-             // 데미지
+            // 데미지
         }
         else
         {
@@ -390,6 +429,8 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
+
+
     public override void Render()
     {
         if (Resource == null) return;
@@ -436,7 +477,7 @@ public class Player : CharacterBase, IAttackable
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
         {
-            
+
             DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
             if (UnityEngine.Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
             {
@@ -454,10 +495,10 @@ public class Player : CharacterBase, IAttackable
 
     private Vector3 _teleportPosition;
     private bool _isTeleporting = false;
-    
+
     public void Teleport(Vector3 pos)
     {
-        if(!HasStateAuthority)
+        if (!HasStateAuthority)
             RPC_Teleport(pos);
         _isTeleporting = true;
         _teleportPosition = pos;
@@ -490,7 +531,7 @@ public class Player : CharacterBase, IAttackable
         GetComponent<ItemMagnet>().enabled = true;
         Resource.ResetAll();
         _animator.Play("Idle");
-        
+
         _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
 
     }
@@ -509,8 +550,8 @@ public class Player : CharacterBase, IAttackable
         if (!HasStateAuthority) return;
 
         if (!IsDead) return;
-        InstantRevive(); 
-       
+        InstantRevive();
+
     }
 
 }
