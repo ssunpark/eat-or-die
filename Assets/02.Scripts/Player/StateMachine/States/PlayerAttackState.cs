@@ -25,7 +25,7 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         float baseClipLength = _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState];
-        _animationTime = Mathf.Max(baseClipLength / _attackSpeed, 0.06f);
+        _animationTime = Mathf.Max(baseClipLength / _stat.GetStat(EStatType.AttackSpeed), 0.06f);
     }
     private Vector3 _direction;
 
@@ -33,7 +33,7 @@ public unsafe class PlayerAttackState : APlayerStateBase, IAnimationActionNotify
     {
         base.OnEnterStateRender();
 
-        Anim.SetFloat("AttackSpeed", _attackSpeed);
+        Anim.SetFloat("AttackSpeed", _stat.GetStat(EStatType.AttackSpeed));
         _isRenderInitialized = true;
 
         if(Machine.Runner.LocalRenderTime - _fsm.LastAttackTime < _attackStackTimeThreshold)
