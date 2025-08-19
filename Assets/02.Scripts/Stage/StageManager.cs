@@ -14,6 +14,7 @@ public class StageManager : BehaviourSingleton<StageManager>
     
     public void EnterStage(int stageIndex)
     {
+        _stages[stageIndex]?.AlertEnterStage();
         _stages[stageIndex]?.RPC_StageEnter(Room.Instance.Runner.LocalPlayer);
     }
     
