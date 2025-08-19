@@ -35,7 +35,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 	[SerializeField] private DieBehaviour _dieBehaviour;
 
 
-	private EnemyBehaviourMachine _behaviourMachine;
+    private EnemyBehaviourMachine _behaviourMachine;
 
 	public override void Spawned()
 	{
@@ -163,8 +163,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 			float magicDefense = EnemyStatManager.GetStat(EStatType.EnemyMagicDefense);
 			
 			float totalDamage = meleeAmount * (100 / (100 + meleeDefense)) + magicAmount * (100 / (100 + magicDefense));
-
-			_currentHunger -= totalDamage;
+			ParticleManager.Instance.DamageSpawn(totalDamage, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Damage, true);
+            _currentHunger -= totalDamage;
 		
 			_hit = true;
 			

@@ -31,6 +31,8 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     public bool IsImmediate => false;
 
+    public float InteractionDistanceOffset => 0.2f;
+
     public override void Spawned()
     {
         _farmingGround = GetComponentInParent<FarmingGround>();

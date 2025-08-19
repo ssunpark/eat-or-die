@@ -1,7 +1,5 @@
-using ExitGames.Client.Photon.StructWrapping;
-using Fusion;
+﻿using Fusion;
 using UnityEngine;
-using Fusion.Addons.FSM;
 
 public class DieBehaviour : AEnemyStateBehaviour
 {
@@ -10,6 +8,13 @@ public class DieBehaviour : AEnemyStateBehaviour
     protected override void OnEnterState()
     {
         Machine.Context.Owner.AnimationState = EAnimationState.Die;
+
+        // 경험치 주기
+        Machine.Context.Target.PlayerFSM.RPC_GrantExpOrderWithAmount(
+            Machine.Context.Target.Object.InputAuthority,
+            "KillMonster",
+            (int)Machine.Context.StatManager.GetStat(EStatType.EnemyHunger)
+            );
     }
 
     protected override void OnFixedUpdate()
