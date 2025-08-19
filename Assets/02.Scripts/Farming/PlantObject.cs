@@ -94,13 +94,13 @@ public class PlantObject : NetworkBehaviour, IInteractable
             // 작물 수확
             ItemProxySpawner.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
                 Quaternion.identity);
-            MasterAudio.FireCustomEvent("PlantPop", transform);
+            MasterAudio.PlaySound3DAtTransform("PlantPop", transform);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
             // 썩은 작물
             ItemProxySpawner.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, 1, transform.position, Quaternion.identity);
-            MasterAudio.FireCustomEvent("RottenPlantPop", transform);
+            MasterAudio.PlaySound3DAtTransform("RottenPlantPop", transform);
         }
         
         // 풀 반환

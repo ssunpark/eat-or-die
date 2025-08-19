@@ -131,10 +131,10 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         
         if (go != null && go.TryGetComponent<IUseSfxProvider>(out var sfx))
         {
-            var customEvent = sfx.GetSoundKey(phase);
-            if (string.IsNullOrEmpty(customEvent)) return;
+            var sound = sfx.GetSoundKey(phase);
+            if (string.IsNullOrEmpty(sound)) return;
             
-            MasterAudio.FireCustomEvent(customEvent, _fsm.transform);
+            MasterAudio.PlaySound3DAtTransform(sound, _fsm.transform);
         }
     }
 }

@@ -22,7 +22,7 @@ public class ItemEatEffectPipeline : IItemUsePipeline
         if (!player)
             return false;
 
-        MasterAudio.FireCustomEvent("Eat", player.transform);
+        MasterAudio.PlaySound3DAtTransform("Eat", player.transform);
         
         var context = player.Skill.Context;
 

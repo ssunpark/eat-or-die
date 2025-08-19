@@ -16,7 +16,7 @@ public class PlayerDeadState : APlayerStateBase
         _fsm.CanUseItem = false;
         _fsm.IsDead = true;
         
-        MasterAudio.FireCustomEvent("Dead", _fsm.transform);
+        MasterAudio.PlaySound3DAtTransform("Dead", _fsm.transform);
     }
 
     protected override void OnEnterStateRender()
