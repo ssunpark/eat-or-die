@@ -19,7 +19,7 @@ public class Player : CharacterBase, IAttackable
     private CinemachineImpulseSource _impulseSource;
 
     [SerializeField] private UI_HeadPlayerHP _headHpBar;
-    float _damageRecoveryTime = 0.5f;
+    float _damageRecoveryTime = 1.2f;
 
     public PlayerFSM PlayerFSM;
     private bool _hasPlayerTrackerRef;
@@ -298,12 +298,14 @@ public class Player : CharacterBase, IAttackable
         if (amount > 0)
         {
             Resource.RestoreHunger(amount);
+            ParticleManager.Instance.DamageSpawn(amount, transform.position + (Vector3.up * 0.5f), EDamageFloaterType.Heal, true);
             ParticleManager.Instance.PlayByKey("Use_Success_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
             // 힐
         }
         else if (amount < 0)
         {
             Resource.ConsumeHunger(-amount);
+            ParticleManager.Instance.DamageSpawn(-amount, transform.position + (Vector3.up * 0.5f), EDamageFloaterType.Damage, true);
             ParticleManager.Instance.PlayByKey("Use_Fail_Eat", transform.position + (Vector3.up * 0.5f), Quaternion.identity, true);
              // 데미지
         }
@@ -434,7 +436,7 @@ public class Player : CharacterBase, IAttackable
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
         {
-            //Todo: 이펙트 처리
+            
             DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
             if (UnityEngine.Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
             {
@@ -444,7 +446,7 @@ public class Player : CharacterBase, IAttackable
             float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
             float defense = Stat.GetStat(EStatType.Defense);
             float finalDmg = amount * (100 / (100 + defense));
-
+            ParticleManager.Instance.DamageSpawn(finalDmg, transform.position + (Vector3.up * 0.5f), EDamageFloaterType.Damage, true);
             Resource.ConsumeHunger(finalDmg);
             _takedDamage = true;
         }
