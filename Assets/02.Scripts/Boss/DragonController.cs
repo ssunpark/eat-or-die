@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Addons.FSM;
@@ -184,8 +184,9 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         if (HasStateAuthority)
         {
             Target = attack.Attacker.gameObject;
-            float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
+            float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier * attack.BossDamageMultiplier;
             _context.Stats.TakeDamage(amount);
+            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up, EDamageFloaterType.Damage, true);
         }
     }
 
