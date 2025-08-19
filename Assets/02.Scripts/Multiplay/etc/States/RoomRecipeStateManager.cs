@@ -1,29 +1,67 @@
 using System;
 using System.Linq;
 using Fusion;
+using UnityEngine;
 
 public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateManager>
 {
     public event Action<Recipe> OnRecipeUnlocked;
     public event Action<int> OnIngredientUnlocked;
+    private bool _isInitialized;
 
-    private void OnEnable()
+    // OnEnable 대신 Start 사용, 데이터 동기화를 기다리기 위함
+    private void Start()
     {
+        // 데이터가 준비되었다는 신호를 기다림
+        RoomInfoManager.Instance.OnCurrentRoomInfoUpdated += Initialize;
+    }
+
+    // RoomInfoManager의 데이터 동기화가 완료되면 호출될 초기화 메서드
+    private void Initialize()
+    {
+        // 이미 초기화되었다면 중복 실행 방지
+        if (_isInitialized)
+        {
+            return;
+        }
+
+        Debug.Log("RoomInfo 동기화 완료! RoomRecipeStateManager 로직을 활성화합니다.");
+
+        // 이제 CurrentRoomInfo가 안전하므로, 게임 로직 관련 이벤트를 구독
         UnifiedInventoryManager.Instance.OnItemAcquired += HandleIngredientDiscovered;
         CookingManager.Instance.CookingFinished += HandleCookingFinished;
 
+        _isInitialized = true;
+
+        // 초기화가 끝났으므로 더 이상 필요 없는 이벤트 구독 해제
+        RoomInfoManager.Instance.OnCurrentRoomInfoUpdated -= Initialize;
     }
+
+    // private void OnEnable()
+    // {
+    //     UnifiedInventoryManager.Instance.OnItemAcquired += HandleIngredientDiscovered;
+    //     CookingManager.Instance.CookingFinished += HandleCookingFinished;
+    // }
     
     private void OnDisable()
     {
+        // if (UnifiedInventoryManager.Instance != null)
+        // {
+        //     UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
+        // }
+        //
+        // if (CookingManager.Instance != null)
+        // {
+        //     CookingManager.Instance.CookingFinished -= HandleCookingFinished;
+        // }
+        // 안전하게 모든 이벤트 구독 해제
+        if (RoomInfoManager.Instance != null)
+        {
+            RoomInfoManager.Instance.OnCurrentRoomInfoUpdated -= Initialize;
+        }
         if (UnifiedInventoryManager.Instance != null)
         {
             UnifiedInventoryManager.Instance.OnItemAcquired -= HandleIngredientDiscovered;
-        }
-
-        if (CookingManager.Instance != null)
-        {
-            CookingManager.Instance.CookingFinished -= HandleCookingFinished;
         }
     }
 

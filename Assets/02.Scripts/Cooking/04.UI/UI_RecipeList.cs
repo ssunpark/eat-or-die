@@ -8,28 +8,14 @@ public class UI_RecipeList : MonoBehaviour
 
     private List<Recipe> _recipeCsvDataList = new List<Recipe>();
     private List<UI_RecipeButton> _recipeButtonList = new List<UI_RecipeButton>();
-    
-    private void OnEnable()
+
+    private void Start()
     {
         RoomRecipeStateManager.Instance.OnRecipeUnlocked += HandleRecipeUnlocked;
         UnifiedInventoryManager.Instance.OnPossessionUpdated += RefreshRecipeButtons;
-        // InventoryManager.Instance.OnInventoryUpdated += RefreshRecipeButtons;
-        // CookingManager.OnItemAdded += RefreshRecipeButtons;
+        RefreshRecipeButtons();
     }
     
-    private void OnDisable()
-    {
-        if (UnifiedInventoryManager.Instance != null)
-        {
-            UnifiedInventoryManager.Instance.OnPossessionUpdated -= RefreshRecipeButtons;
-        }
-        // RoomRecipeStateManager.OnRecipeUnlocked -= HandleRecipeUnlocked;
-        // if (CookingManager.Instance != null)
-        {
-            // CookingManager.OnItemAdded -= RefreshRecipeButtons;
-        }
-    }
-
     // 최초 1회만 호출해서 버튼 생성
     public void Init()
     {

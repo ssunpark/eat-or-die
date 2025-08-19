@@ -45,16 +45,20 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
         int ingredient1ID = recipe.Ingredient1ID;
         int? ingredient2ID = recipe.Ingredient2ID;
 
+        // 재료 1개짜리 레시피
         if (!ingredient2ID.HasValue)
         {
             return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID);
         }
 
-        // 재료가 2개인 레시피의 경우
+        // 재료 2개인데 같은 재료
         if (ingredient1ID == ingredient2ID.Value)
         {
+            Debug.Log("재료 2개인데 같은 재료임");
             return UnifiedInventoryManager.Instance.GetItemCount(ingredient1ID) >= 2;
         }
+
+        // 재료 2개인데 서로 다른 경우
         else
         {
             return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID) &&
