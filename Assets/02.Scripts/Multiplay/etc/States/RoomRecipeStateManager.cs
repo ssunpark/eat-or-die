@@ -62,7 +62,7 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
         // if (IsUnlocked(recipeID)) return false;
 
         bool success = RoomInfoManager.Instance.CurrentRoomInfo.AddRecipe(recipeID);
-        if (success)
+        if (success && HasStateAuthority)
         {
             RoomInfoManager.Instance.Save();
         }
