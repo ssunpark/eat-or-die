@@ -15,7 +15,7 @@ public class Stage : NetworkBehaviour
         PlayerList = new List<PlayerRef>();
     }
 
-    public void AlertEnterStage()
+    public void AlertStageName()
     {
         Debug.Log($"{StageName} entered");
     }
