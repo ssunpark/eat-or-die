@@ -54,7 +54,6 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
         // 재료 2개인데 같은 재료
         if (ingredient1ID == ingredient2ID.Value)
         {
-            Debug.Log("재료 2개인데 같은 재료임");
             return UnifiedInventoryManager.Instance.GetItemCount(ingredient1ID) >= 2;
         }
 
