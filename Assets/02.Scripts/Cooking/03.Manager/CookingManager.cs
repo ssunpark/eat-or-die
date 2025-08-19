@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using Fusion;
 using UnityEngine;
 
@@ -190,6 +191,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         // InventoryManager.Instance.OnInventoryUpdated?.Invoke();
         // CookingFinished?.Invoke(new ItemInstance(resultItem, 1));
         RPC_BroadcastCookingResult(itemId);
+        MasterAudio.FireCustomEvent("CookingSuccess", _currentCookingPot.transform);
         OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem, 1));
         OnItemAdded?.Invoke();
         
