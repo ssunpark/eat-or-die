@@ -28,6 +28,8 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
 
     public void AddItem(ItemInstance itemInstance)
     {
+        OnItemAcquired?.Invoke(itemInstance);
+        
         ItemInstance remain = QuickSlotManager.Instance.AddItemToQuickSlot(itemInstance);
 
         if (remain != null)
@@ -55,7 +57,6 @@ public class UnifiedInventoryManager : BehaviourSingleton<UnifiedInventoryManage
                 Quaternion.identity);
         }
         
-        OnItemAcquired?.Invoke(itemInstance);
         OnPossessionUpdated?.Invoke();
     }
 
