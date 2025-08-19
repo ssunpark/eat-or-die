@@ -32,6 +32,11 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         if (_fsm.HasStateAuthority || _fsm.HasInputAuthority)
         {
             _target = _fsm.ItemUseTarget;
+            
+        }
+        if (_fsm.HasInputAuthority)
+        {
+            _fsm.ResetOutlinesAndTags();
         }
         string desired = _fsm.UseItemMode == EUseItemMode.Give ? "UseItem_Give" : "UseItem";
         AnimState = desired;

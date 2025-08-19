@@ -4,6 +4,9 @@ using UnityEngine;
 public class CookingPotInteractable : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate => true;
+
+    public float InteractionDistanceOffset => 0f;
+
     public UI_CookingPanel CookingPanelUI;
 
     private bool _isCooking; //jh

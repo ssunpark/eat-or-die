@@ -1,4 +1,4 @@
-using Fusion;
+﻿using Fusion;
 using UnityEngine;
 
 public class StorageInteractable : NetworkBehaviour, IInteractable
@@ -6,6 +6,8 @@ public class StorageInteractable : NetworkBehaviour, IInteractable
     [SerializeField] private SharedStorage _sharedStorage;
 
     public bool IsImmediate => true;
+
+    public float InteractionDistanceOffset => 1f;
 
     public void Interact()
     {

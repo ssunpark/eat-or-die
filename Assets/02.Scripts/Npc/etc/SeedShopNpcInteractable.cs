@@ -4,6 +4,9 @@ using UnityEngine;
 public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
 {
     public bool IsImmediate => true;
+
+    public float InteractionDistanceOffset => 0.5f;
+
     public UI_SeedShopPanel UI_SeedShopPanel;
     public void Interact()
     {
