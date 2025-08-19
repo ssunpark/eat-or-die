@@ -524,6 +524,106 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1501275254210502569
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4837971214627832009}
+  - component: {fileID: 6473791997029280577}
+  m_Layer: 2
+  m_Name: RottenPlantPop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4837971214627832009
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501275254210502569}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8939878227475121985}
+  m_Father: {fileID: 8291489237709604465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6473791997029280577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1501275254210502569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db10a6d491569a8419b6f5e1bffc5243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  busIndex: -1
+  spatialBlendType: 1
+  spatialBlend: 1
+  groupPlayType: 0
+  isTemporary: 0
+  isSelected: 0
+  isExpanded: 1
+  groupMasterVolume: 1
+  retriggerPercentage: 100
+  curVariationMode: 0
+  alwaysHighestPriority: 0
+  ignoreListenerPause: 0
+  importance: 5
+  isUninterruptible: 0
+  chainLoopDelayMin: 0
+  chainLoopDelayMax: 0
+  chainLoopMode: 0
+  chainLoopNumLoops: 0
+  useDialogFadeOut: 0
+  dialogFadeOutTime: 0.5
+  curVariationSequence: 0
+  useNoRepeatRefill: 1
+  useInactivePeriodPoolRefill: 0
+  inactivePeriodSeconds: 5
+  groupVariations:
+  - {fileID: 89154114419175192}
+  bulkVariationMode: 0
+  comments: 
+  logSound: 0
+  copySettingsExpanded: 0
+  expandLinkedGroups: 0
+  childSoundGroups: []
+  endLinkedGroups: []
+  linkedStartGroupSelectionType: 0
+  linkedStopGroupSelectionType: 0
+  limitMode: 0
+  limitPerXFrames: 1
+  minimumTimeBetween: 0.1
+  useClipAgePriority: 0
+  limitPolyphony: 0
+  voiceLimitCount: 1
+  targetDespawnedBehavior: 0
+  despawnFadeTime: 1
+  isUsingOcclusion: 0
+  willOcclusionOverrideRaycastOffset: 0
+  occlusionRayCastOffset: 0
+  willOcclusionOverrideFrequencies: 0
+  occlusionMaxCutoffFreq: 0
+  occlusionMinCutoffFreq: 22000
+  isSoloed: 0
+  isMuted: 0
+  soundPlayedEventActive: 0
+  soundPlayedCustomEvent: 
+  willCleanUpDelegatesAfterStop: 1
+  frames: 178
 --- !u!1 &2490020502954268714
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,6 +762,9 @@ Transform:
   - {fileID: 6691018692019010499}
   - {fileID: 7574870599316158080}
   - {fileID: 2491404975970867111}
+  - {fileID: 4837971214627832009}
+  - {fileID: 1547343367368956201}
+  - {fileID: 5863879529970417293}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4404799174740690539
@@ -1353,7 +1456,7 @@ MonoBehaviour:
   willWarm: 1
   mixerSettingsExpanded: 0
   mixerUpdateMode: 1
-  newEventName: RottenPlantPop
+  newEventName: PotPlace
   showCustomEvents: 1
   newCustomEventCategoryName: New Category
   addToCustomEventCategoryName: New Category
@@ -1426,6 +1529,28 @@ MonoBehaviour:
     categoryName: '[Uncategorized]'
   - EventName: RottenPlantPop
     ProspectiveName: RottenPlantPop
+    IsEditing: 0
+    eventExpanded: 1
+    eventReceiveMode: 0
+    distanceThreshold: 1
+    eventRcvFilterMode: 0
+    filterModeQty: 1
+    isTemporary: 0
+    frameLastFired: -1
+    categoryName: '[Uncategorized]'
+  - EventName: ChestOpen
+    ProspectiveName: ChestOpen
+    IsEditing: 0
+    eventExpanded: 1
+    eventReceiveMode: 0
+    distanceThreshold: 1
+    eventRcvFilterMode: 0
+    filterModeQty: 1
+    isTemporary: 0
+    frameLastFired: -1
+    categoryName: '[Uncategorized]'
+  - EventName: PotPlace
+    ProspectiveName: PotPlace
     IsEditing: 0
     eventExpanded: 1
     eventReceiveMode: 0
@@ -1569,7 +1694,7 @@ MonoBehaviour:
   unityUIMode: 1
   logMissingEvents: 1
   startSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1594,7 +1719,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   visibleSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1619,7 +1744,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   invisibleSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1644,7 +1769,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   collisionSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1669,7 +1794,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   collisionExitSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1694,7 +1819,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   triggerSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1719,7 +1844,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   triggerExitSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1769,7 +1894,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   mouseEnterSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1794,7 +1919,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   mouseExitSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1819,7 +1944,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   mouseClickSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1844,7 +1969,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   mouseUpSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1869,7 +1994,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   mouseDragSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1894,7 +2019,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   spawnedSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1919,7 +2044,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   despawnedSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1944,7 +2069,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   enableSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1969,7 +2094,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   disableSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -1994,7 +2119,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   destroySound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2019,7 +2144,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   collision2dSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2044,7 +2169,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   collisionExit2dSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2069,7 +2194,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   triggerEnter2dSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2119,7 +2244,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   triggerExit2dSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2144,7 +2269,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   particleCollisionSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2169,7 +2294,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   nguiOnClickSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2194,7 +2319,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   nguiMouseDownSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2219,7 +2344,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   nguiMouseUpSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2244,7 +2369,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   nguiMouseEnterSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2269,7 +2394,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   nguiMouseExitSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2294,7 +2419,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   codeTriggeredEvent1Sound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2344,7 +2469,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unitySliderChangedSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2369,7 +2494,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityButtonClickedSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2394,7 +2519,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityPointerDownSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2419,7 +2544,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityDragSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2444,7 +2569,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityPointerUpSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2469,7 +2594,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityPointerEnterSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2494,7 +2619,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityPointerExitSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2519,7 +2644,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityDropSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2544,7 +2669,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityScrollSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2569,7 +2694,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityUpdateSelectedSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2594,7 +2719,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unitySelectSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2619,7 +2744,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityDeselectSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2644,7 +2769,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityMoveSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2669,7 +2794,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityInitializePotentialDragSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2694,7 +2819,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityBeginDragSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2719,7 +2844,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityEndDragSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2744,7 +2869,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unitySubmitSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2769,7 +2894,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityCancelSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2794,7 +2919,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   unityToggleSound:
-    isExpanded: 1
+    isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2819,7 +2944,7 @@ MonoBehaviour:
     doesTriggerStayRepeat: 1
     sliderValue: 0
   userDefinedSounds:
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2892,7 +3017,7 @@ MonoBehaviour:
     triggerStayForTime: 0
     doesTriggerStayRepeat: 1
     sliderValue: 0
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -2965,7 +3090,7 @@ MonoBehaviour:
     triggerStayForTime: 0
     doesTriggerStayRepeat: 1
     sliderValue: 0
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -3038,7 +3163,7 @@ MonoBehaviour:
     triggerStayForTime: 0
     doesTriggerStayRepeat: 1
     sliderValue: 0
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -3111,7 +3236,7 @@ MonoBehaviour:
     triggerStayForTime: 0
     doesTriggerStayRepeat: 1
     sliderValue: 0
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -3184,7 +3309,7 @@ MonoBehaviour:
     triggerStayForTime: 0
     doesTriggerStayRepeat: 1
     sliderValue: 0
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -3257,7 +3382,7 @@ MonoBehaviour:
     triggerStayForTime: 0
     doesTriggerStayRepeat: 1
     sliderValue: 0
-  - isExpanded: 1
+  - isExpanded: 0
     useLayerFilter: 0
     useTagFilter: 0
     matchingLayers: 00000000
@@ -3271,9 +3396,155 @@ MonoBehaviour:
     mechanimStateName: 
     mechEventPlayedForState: 0
     SoundEvents:
+    - actionName: RottenPlantPop
+      isExpanded: 1
+      soundType: RottenPlantPop
+      allPlaylistControllersForGroupCmd: 0
+      allSoundTypesForGroupCmd: 0
+      allSoundTypesForBusCmd: 0
+      volume: 1
+      useFixedPitch: 0
+      pitch: 1
+      glidePitchType: 0
+      targetGlidePitch: 1
+      pitchGlideTime: 1
+      delaySound: 0
+      currentSoundFunctionType: 0
+      currentPlaylistCommand: 0
+      currentSoundGroupCommand: 0
+      currentBusCommand: 0
+      currentCustomEventCommand: 0
+      currentGlobalCommand: 0
+      currentMixerCommand: 0
+      snapshotToTransitionTo: {fileID: 0}
+      snapshotTransitionTime: 1
+      snapshotsToBlend:
+      - snapshot: {fileID: 0}
+        weight: 1
+      currentPersistentSettingsCommand: 0
+      currentParameterCmdCommand: 0
+      currentParameterCommand: 0
+      busName: 
+      playlistName: 
+      playlistControllerName: 
+      startPlaylist: 1
+      fadeVolume: 0
+      fadeTime: 1
+      minAge: 1
+      stopAfterFade: 0
+      restoreVolumeAfterFade: 0
+      fireCustomEventAfterFade: 0
+      targetVolMode: 0
+      clipName: '[None]'
+      variationType: 1
+      variationName: 
+      colliderMaxDistance: 0
+      showSphereGizmo: 0
+      theCustomEventName: 
+      logDupeEventFiring: 1
+      parameterCommandName: '[None]'
+      parameterName: '[None]'
+      parameterNewValue: 0
+    mouseDragStopMode: 0
+    mouseDragFadeOutTime: 1
+    retriggerLimitMode: 0
+    limitPerXFrm: 0
+    limitPerXSec: 0
+    triggeredLastFrame: -100
+    triggeredLastTime: -100
+    triggerStayForTime: 0
+    doesTriggerStayRepeat: 1
+    sliderValue: 0
+  - isExpanded: 0
+    useLayerFilter: 0
+    useTagFilter: 0
+    matchingLayers: 00000000
+    matchingTags:
+    - Default
+    customSoundActive: 1
+    isCustomEvent: 1
+    customEventName: ChestOpen
+    mechanimEventActive: 0
+    isMechanimStateCheckEvent: 0
+    mechanimStateName: 
+    mechEventPlayedForState: 0
+    SoundEvents:
     - actionName: Your action name
       isExpanded: 1
-      soundType: '[None]'
+      soundType: ChestOpen
+      allPlaylistControllersForGroupCmd: 0
+      allSoundTypesForGroupCmd: 0
+      allSoundTypesForBusCmd: 0
+      volume: 1
+      useFixedPitch: 0
+      pitch: 1
+      glidePitchType: 0
+      targetGlidePitch: 1
+      pitchGlideTime: 1
+      delaySound: 0
+      currentSoundFunctionType: 0
+      currentPlaylistCommand: 0
+      currentSoundGroupCommand: 0
+      currentBusCommand: 0
+      currentCustomEventCommand: 0
+      currentGlobalCommand: 0
+      currentMixerCommand: 0
+      snapshotToTransitionTo: {fileID: 0}
+      snapshotTransitionTime: 1
+      snapshotsToBlend:
+      - snapshot: {fileID: 0}
+        weight: 1
+      currentPersistentSettingsCommand: 0
+      currentParameterCmdCommand: 0
+      currentParameterCommand: 0
+      busName: 
+      playlistName: 
+      playlistControllerName: 
+      startPlaylist: 1
+      fadeVolume: 0
+      fadeTime: 1
+      minAge: 1
+      stopAfterFade: 0
+      restoreVolumeAfterFade: 0
+      fireCustomEventAfterFade: 0
+      targetVolMode: 0
+      clipName: '[None]'
+      variationType: 1
+      variationName: 
+      colliderMaxDistance: 0
+      showSphereGizmo: 0
+      theCustomEventName: 
+      logDupeEventFiring: 1
+      parameterCommandName: '[None]'
+      parameterName: '[None]'
+      parameterNewValue: 0
+    mouseDragStopMode: 0
+    mouseDragFadeOutTime: 1
+    retriggerLimitMode: 0
+    limitPerXFrm: 0
+    limitPerXSec: 0
+    triggeredLastFrame: -100
+    triggeredLastTime: -100
+    triggerStayForTime: 0
+    doesTriggerStayRepeat: 1
+    sliderValue: 0
+  - isExpanded: 1
+    useLayerFilter: 0
+    useTagFilter: 0
+    matchingLayers: 00000000
+    matchingTags:
+    - Default
+    customSoundActive: 1
+    isCustomEvent: 1
+    customEventName: PotPlace
+    mechanimEventActive: 0
+    isMechanimStateCheckEvent: 0
+    mechanimStateName: 
+    mechEventPlayedForState: 0
+    SoundEvents:
+    - actionName: Your action name
+      isExpanded: 1
+      soundType: PotPlace
       allPlaylistControllersForGroupCmd: 0
       allSoundTypesForGroupCmd: 0
       allSoundTypesForBusCmd: 0
@@ -4329,6 +4600,318 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &5489557390125992431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1547343367368956201}
+  - component: {fileID: 1701195128357577497}
+  m_Layer: 2
+  m_Name: PotPlace
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1547343367368956201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5489557390125992431}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2752911743192402257}
+  m_Father: {fileID: 8291489237709604465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1701195128357577497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5489557390125992431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db10a6d491569a8419b6f5e1bffc5243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  busIndex: -1
+  spatialBlendType: 1
+  spatialBlend: 1
+  groupPlayType: 0
+  isTemporary: 0
+  isSelected: 0
+  isExpanded: 1
+  groupMasterVolume: 1
+  retriggerPercentage: 100
+  curVariationMode: 0
+  alwaysHighestPriority: 0
+  ignoreListenerPause: 0
+  importance: 5
+  isUninterruptible: 0
+  chainLoopDelayMin: 0
+  chainLoopDelayMax: 0
+  chainLoopMode: 0
+  chainLoopNumLoops: 0
+  useDialogFadeOut: 0
+  dialogFadeOutTime: 0.5
+  curVariationSequence: 0
+  useNoRepeatRefill: 1
+  useInactivePeriodPoolRefill: 0
+  inactivePeriodSeconds: 5
+  groupVariations:
+  - {fileID: 5710162484887727281}
+  bulkVariationMode: 0
+  comments: 
+  logSound: 0
+  copySettingsExpanded: 0
+  expandLinkedGroups: 0
+  childSoundGroups: []
+  endLinkedGroups: []
+  linkedStartGroupSelectionType: 0
+  linkedStopGroupSelectionType: 0
+  limitMode: 0
+  limitPerXFrames: 1
+  minimumTimeBetween: 0.1
+  useClipAgePriority: 0
+  limitPolyphony: 0
+  voiceLimitCount: 1
+  targetDespawnedBehavior: 0
+  despawnFadeTime: 1
+  isUsingOcclusion: 0
+  willOcclusionOverrideRaycastOffset: 0
+  occlusionRayCastOffset: 0
+  willOcclusionOverrideFrequencies: 0
+  occlusionMaxCutoffFreq: 0
+  occlusionMinCutoffFreq: 22000
+  isSoloed: 0
+  isMuted: 0
+  soundPlayedEventActive: 0
+  soundPlayedCustomEvent: 
+  willCleanUpDelegatesAfterStop: 1
+  frames: 1092
+--- !u!1 &5774922510187271400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8939878227475121985}
+  - component: {fileID: 1629627541843732082}
+  - component: {fileID: 89154114419175192}
+  - component: {fileID: 2455329258287762613}
+  m_Layer: 2
+  m_Name: RottenPlantPop1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8939878227475121985
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774922510187271400}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4837971214627832009}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1629627541843732082
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774922510187271400}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 42780595bd14a36408d1f5e693a75a15, type: 3}
+  m_Resource: {fileID: 8300000, guid: 42780595bd14a36408d1f5e693a75a15, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 10
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: -10.0039835
+      outSlope: -10.0039835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.5
+      inSlope: -2.5009959
+      outSlope: -2.5009959
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.25
+      inSlope: -0.62524897
+      outSlope: -0.62524897
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.10003992
+      outSlope: -0.10003992
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &89154114419175192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774922510187271400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 931518f9ca6c3844891dee74db8ed494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  probabilityToPlay: 100
+  importance: 5
+  isUninterruptible: 0
+  useLocalization: 0
+  reReRandomizeOnLoop: 0
+  useRandomPitch: 0
+  randomPitchMode: 0
+  randomPitchMin: 0
+  randomPitchMax: 0
+  useRandomVolume: 0
+  randomVolumeMode: 0
+  randomVolumeMin: 0
+  randomVolumeMax: 0
+  clipAlias: 
+  audLocation: 0
+  resourceFileName: 
+  original_pitch: 0
+  original_volume: 0
+  isExpanded: 1
+  isChecked: 1
+  useFades: 0
+  fadeInTime: 0
+  fadeOutTime: 0
+  useCustomLooping: 0
+  minCustomLoops: 1
+  maxCustomLoops: 5
+  useRandomStartTime: 0
+  randomStartMinPercent: 0
+  randomStartMaxPercent: 0
+  randomEndPercent: 100
+  useIntroSilence: 0
+  introSilenceMin: 0
+  introSilenceMax: 0
+  fadeMaxVolume: 0
+  curFadeMode: 0
+  curPitchMode: 0
+  curDetectEndMode: 0
+  frames: 0
+--- !u!114 &2455329258287762613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5774922510187271400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6390439901179797761
 GameObject:
   m_ObjectHideFlags: 0
@@ -4641,6 +5224,430 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &7241496440207104753
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8385677682355425067}
+  - component: {fileID: 5940057031634456968}
+  - component: {fileID: 1134217615477589026}
+  - component: {fileID: 6655428233013895397}
+  m_Layer: 2
+  m_Name: SQUEAK Creaking 011
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8385677682355425067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7241496440207104753}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5863879529970417293}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &5940057031634456968
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7241496440207104753}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: cc775ebae281f5e4ba62b9570e872323, type: 3}
+  m_Resource: {fileID: 8300000, guid: cc775ebae281f5e4ba62b9570e872323, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 10
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: -10.0039835
+      outSlope: -10.0039835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.5
+      inSlope: -2.5009959
+      outSlope: -2.5009959
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.25
+      inSlope: -0.62524897
+      outSlope: -0.62524897
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.10003992
+      outSlope: -0.10003992
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1134217615477589026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7241496440207104753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 931518f9ca6c3844891dee74db8ed494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  probabilityToPlay: 100
+  importance: 5
+  isUninterruptible: 0
+  useLocalization: 0
+  reReRandomizeOnLoop: 0
+  useRandomPitch: 0
+  randomPitchMode: 0
+  randomPitchMin: 0
+  randomPitchMax: 0
+  useRandomVolume: 0
+  randomVolumeMode: 0
+  randomVolumeMin: 0
+  randomVolumeMax: 0
+  clipAlias: 
+  audLocation: 0
+  resourceFileName: 
+  original_pitch: 0
+  original_volume: 0
+  isExpanded: 1
+  isChecked: 1
+  useFades: 0
+  fadeInTime: 0
+  fadeOutTime: 0
+  useCustomLooping: 0
+  minCustomLoops: 1
+  maxCustomLoops: 5
+  useRandomStartTime: 0
+  randomStartMinPercent: 0
+  randomStartMaxPercent: 0
+  randomEndPercent: 100
+  useIntroSilence: 0
+  introSilenceMin: 0
+  introSilenceMax: 0
+  fadeMaxVolume: 0
+  curFadeMode: 0
+  curPitchMode: 0
+  curDetectEndMode: 0
+  frames: 0
+--- !u!114 &6655428233013895397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7241496440207104753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &7557652507933633741
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2752911743192402257}
+  - component: {fileID: 7998650238082202666}
+  - component: {fileID: 5710162484887727281}
+  - component: {fileID: 5856396331170035073}
+  m_Layer: 2
+  m_Name: IMPACT Metal Hit Short 011
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2752911743192402257
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7557652507933633741}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1547343367368956201}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &7998650238082202666
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7557652507933633741}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 35ce90d686b06a24eb41f44b44d63544, type: 3}
+  m_Resource: {fileID: 8300000, guid: 35ce90d686b06a24eb41f44b44d63544, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 10
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: -10.0039835
+      outSlope: -10.0039835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.5
+      inSlope: -2.5009959
+      outSlope: -2.5009959
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.25
+      inSlope: -0.62524897
+      outSlope: -0.62524897
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.10003992
+      outSlope: -0.10003992
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &5710162484887727281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7557652507933633741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 931518f9ca6c3844891dee74db8ed494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  probabilityToPlay: 100
+  importance: 5
+  isUninterruptible: 0
+  useLocalization: 0
+  reReRandomizeOnLoop: 0
+  useRandomPitch: 0
+  randomPitchMode: 0
+  randomPitchMin: 0
+  randomPitchMax: 0
+  useRandomVolume: 0
+  randomVolumeMode: 0
+  randomVolumeMin: 0
+  randomVolumeMax: 0
+  clipAlias: 
+  audLocation: 0
+  resourceFileName: 
+  original_pitch: 0
+  original_volume: 0
+  isExpanded: 1
+  isChecked: 1
+  useFades: 0
+  fadeInTime: 0
+  fadeOutTime: 0
+  useCustomLooping: 0
+  minCustomLoops: 1
+  maxCustomLoops: 5
+  useRandomStartTime: 0
+  randomStartMinPercent: 0
+  randomStartMaxPercent: 0
+  randomEndPercent: 100
+  useIntroSilence: 0
+  introSilenceMin: 0
+  introSilenceMax: 0
+  fadeMaxVolume: 0
+  curFadeMode: 0
+  curPitchMode: 0
+  curDetectEndMode: 0
+  frames: 0
+--- !u!114 &5856396331170035073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7557652507933633741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8865247142749349326
 GameObject:
   m_ObjectHideFlags: 0
@@ -4741,6 +5748,106 @@ MonoBehaviour:
   soundPlayedCustomEvent: 
   willCleanUpDelegatesAfterStop: 1
   frames: 2173
+--- !u!1 &8960884855815296338
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5863879529970417293}
+  - component: {fileID: 7081015852617743801}
+  m_Layer: 2
+  m_Name: ChestOpen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5863879529970417293
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8960884855815296338}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8385677682355425067}
+  m_Father: {fileID: 8291489237709604465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7081015852617743801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8960884855815296338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db10a6d491569a8419b6f5e1bffc5243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  busIndex: -1
+  spatialBlendType: 1
+  spatialBlend: 1
+  groupPlayType: 0
+  isTemporary: 0
+  isSelected: 0
+  isExpanded: 1
+  groupMasterVolume: 1
+  retriggerPercentage: 100
+  curVariationMode: 0
+  alwaysHighestPriority: 0
+  ignoreListenerPause: 0
+  importance: 5
+  isUninterruptible: 0
+  chainLoopDelayMin: 0
+  chainLoopDelayMax: 0
+  chainLoopMode: 0
+  chainLoopNumLoops: 0
+  useDialogFadeOut: 0
+  dialogFadeOutTime: 0.5
+  curVariationSequence: 0
+  useNoRepeatRefill: 1
+  useInactivePeriodPoolRefill: 0
+  inactivePeriodSeconds: 5
+  groupVariations:
+  - {fileID: 1134217615477589026}
+  bulkVariationMode: 0
+  comments: 
+  logSound: 0
+  copySettingsExpanded: 0
+  expandLinkedGroups: 0
+  childSoundGroups: []
+  endLinkedGroups: []
+  linkedStartGroupSelectionType: 0
+  linkedStopGroupSelectionType: 0
+  limitMode: 0
+  limitPerXFrames: 1
+  minimumTimeBetween: 0.1
+  useClipAgePriority: 0
+  limitPolyphony: 0
+  voiceLimitCount: 1
+  targetDespawnedBehavior: 0
+  despawnFadeTime: 1
+  isUsingOcclusion: 0
+  willOcclusionOverrideRaycastOffset: 0
+  occlusionRayCastOffset: 0
+  willOcclusionOverrideFrequencies: 0
+  occlusionMaxCutoffFreq: 0
+  occlusionMinCutoffFreq: 22000
+  isSoloed: 0
+  isMuted: 0
+  soundPlayedEventActive: 0
+  soundPlayedCustomEvent: 
+  willCleanUpDelegatesAfterStop: 1
+  frames: 366
 --- !u!1 &8970627579539408881
 GameObject:
   m_ObjectHideFlags: 0
