@@ -352,7 +352,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         PlayerNetworkObject.ExpHandler.GrantExp(actionName, amount);
         if (actionName == "KillMonster")
         {
-            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Experience, true);
+            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Experience, false);
         }
     }
 
