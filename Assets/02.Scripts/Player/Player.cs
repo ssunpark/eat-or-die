@@ -452,8 +452,30 @@ public class Player : CharacterBase, IAttackable
 
     private Vector3 _teleportPosition;
     private bool _isTeleporting = false;
+    
     public void Teleport(Vector3 pos)
     {
+        if(!HasStateAuthority)
+            RPC_Teleport(pos);
+        _isTeleporting = true;
+        _teleportPosition = pos;
+
+    }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_Teleport(Vector3 pos, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+        if (SimpleKCC == null)
+        {
+            SimpleKCC = GetComponent<SimpleKCC>();
+            if (SimpleKCC == null)
+            {
+                Debug.LogError("[Player] SimpleKCC is not initialized.");
+                return;
+            }
+        }
         _isTeleporting = true;
         _teleportPosition = pos;
     }
