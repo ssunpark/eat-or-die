@@ -14,7 +14,6 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 
     public List<RoomInfoDTO> RoomInfoList { get; private set; }
     public event Action OnDataChanged;
-    public event Action OnCurrentRoomInfoUpdated;
     public string InviteCode;
     public GameMode GameMode; // 임시 코드
 
@@ -39,9 +38,6 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     {
         CurrentRoomInfo = roomInfo;
         Debug.Log($"[RoomInfoManager] CurrentRoomInfo가 설정되었습니다. ID: {CurrentRoomInfo.ID}");
-
-        // ★ 데이터 설정이 끝났음을 모든 구독자에게 알림
-        OnCurrentRoomInfoUpdated?.Invoke();
     }
 
     public void SetRoomInfoDTO(RoomInfoDTO roomInfoDTO)
