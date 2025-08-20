@@ -123,7 +123,6 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
             await UniTask.Yield();
         }
         _portalCanvasGroup.gameObject.SetActive(false);
-        PlayerInfoManager.Instance.LocalPlayer.GetInitialItem();
     }
 
     public void Teleport()
