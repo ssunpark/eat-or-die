@@ -7,13 +7,21 @@ public class RoomInfoNetworkManager : NetworkBehaviourSingleton<RoomInfoNetworkM
     
     public override void Spawned()
     {
-        if (!HasStateAuthority)
+        if (HasStateAuthority)
         {
-            return;
+            UserID = AuthenticationManager.Instance.User.UserId;
         }
 
-        UserID = AuthenticationManager.Instance.User.UserId;
-        Debug.Log(UserID);
+        RPC_RequestRoomInfoFromHost();
+    }
+    
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RequestRoomInfoFromHost(RpcInfo info = default)
+    {
+        var roomInfo = RoomInfoManager.Instance.CurrentRoomInfo.ToNetworkDTO();
+        var json = JsonUtility.ToJson(roomInfo);
+        
+        RPC_SyncRoomInfoToNewPlayer(info.Source, json);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
