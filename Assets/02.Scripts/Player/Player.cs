@@ -498,6 +498,7 @@ public class Player : CharacterBase, IAttackable
 
     private Vector3 _teleportPosition;
     private bool _isTeleporting = false;
+    public event Action OnRevive;
 
     public void Teleport(Vector3 pos)
     {
@@ -531,12 +532,22 @@ public class Player : CharacterBase, IAttackable
         SimpleKCC.enabled = true;
         Teleport(new Vector3(0, 0.5f, 0));
         PlayerFSM.IsDead = false;
-        GetComponent<ItemMagnet>().enabled = true;
         Resource.ResetAll();
         _animator.Play("Idle");
-
+        ReviveAsync().Forget();
         _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
+    }
 
+    public async UniTask ReviveAsync()
+    {
+        await UniTask.Delay(1000);
+        GetComponent<ItemMagnet>().enabled = true;
+    }
+
+    public void InvokeRevive()
+    {
+        OnRevive?.Invoke();
+        
     }
 
     public void InstantRevive()

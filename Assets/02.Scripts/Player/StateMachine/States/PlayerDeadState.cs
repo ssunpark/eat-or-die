@@ -25,7 +25,6 @@ public class PlayerDeadState : APlayerStateBase
         if (_fsm.HasInputAuthority)
         {
             _fsm.ShowSelectPanel();
-            _fsm.GetComponent<ItemMagnet>().enabled = false;
             DropAllItems();
         }
     }
@@ -47,7 +46,8 @@ public class PlayerDeadState : APlayerStateBase
     private void DropAllItems()
     {
         _fsm.ItemHolder.SetHoldItem(null);
-     
+
+        _fsm.GetComponent<ItemMagnet>().enabled = false;
         UnifiedInventoryManager.Instance.DropAllItems(_fsm.transform.position);
     }
 
