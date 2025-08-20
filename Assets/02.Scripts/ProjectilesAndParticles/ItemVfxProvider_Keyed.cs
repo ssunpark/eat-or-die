@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ItemVfxProvider_Keyed : MonoBehaviour, IAttackVfxProvider, IUseVfxProvider
+public class ItemVfxProvider_Keyed : MonoBehaviour, IAttackVfxProvider, IUseVfxProvider, IUseSfxProvider
 {
     [Header("Attack Particle Keys")]
     [SerializeField] private string _windupKey;
@@ -13,6 +13,13 @@ public class ItemVfxProvider_Keyed : MonoBehaviour, IAttackVfxProvider, IUseVfxP
     [SerializeField] private string _useEndKey;
     [SerializeField] private string _useSuccessKey;
     [SerializeField] private string _useFailKey;
+    
+    [Header("Use Sound Keys")]
+    [SerializeField] private string _useStartSoundEvent;
+    [SerializeField] private string _useLoopSoundEvent;
+    [SerializeField] private string _useEndSoundEvent;
+    [SerializeField] private string _useSuccessSoundEvent;
+    [SerializeField] private string _useFailSoundEvent;
 
     [Header("Use Spawn & Attach")]
     [SerializeField] private Transform _useSpawn;
@@ -37,4 +44,14 @@ public class ItemVfxProvider_Keyed : MonoBehaviour, IAttackVfxProvider, IUseVfxP
 
     public bool MustBeChild => _mustbeChild;
     public Transform GetUseSpawnPoint() => _useSpawn != null ? _useSpawn : transform;
+    
+    public string GetSoundKey(EUsePhase phase) => phase switch
+    {
+        EUsePhase.Start => _useStartSoundEvent,
+        EUsePhase.Loop => _useLoopSoundEvent,
+        EUsePhase.End => _useEndSoundEvent,
+        EUsePhase.Success => _useSuccessSoundEvent,
+        EUsePhase.Fail => _useFailSoundEvent,
+        _ => null
+    };
 }

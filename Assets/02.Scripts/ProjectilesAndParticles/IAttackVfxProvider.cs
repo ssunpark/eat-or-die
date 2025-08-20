@@ -14,3 +14,8 @@ public interface IUseVfxProvider
     bool MustBeChild { get; }
     Transform GetUseSpawnPoint();
 }
+
+public interface IUseSfxProvider
+{
+    string GetSoundKey(EUsePhase phase);
+}
