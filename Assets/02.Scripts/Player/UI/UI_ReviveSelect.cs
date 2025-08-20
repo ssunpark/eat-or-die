@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_RiviveSelect : MonoBehaviour
+public class UI_ReviveSelect : MonoBehaviour
 {
     private float _timer;
     private const float _maxTime = 60f;
@@ -18,21 +18,27 @@ public class UI_RiviveSelect : MonoBehaviour
         _timer = _maxTime;
         _player = player;
         _playerFSM = playerFSM;
-        _instantRiviveBtn.onClick.AddListener(OnInstantRivive);
-        _waitRiviveBtn.onClick.AddListener(OnWaitRivive);
+        _instantRiviveBtn.onClick.AddListener(OnInstantRevive);
+        _waitRiviveBtn.onClick.AddListener(OnWaitRevive);
         _timerText.text = _timer.ToString("F0");
+
+        _player.OnRevive += HandleRevived;
     }
 
-    private void OnInstantRivive()
+    private void HandleRevived()
+    {
+        _player.OnRevive -= HandleRevived;
+        Destroy(gameObject);
+    }
+
+    private void OnInstantRevive()
     {
         _player.RPC_RequestInstantRevive();
-        Destroy(gameObject);
     }
 
-    private void OnWaitRivive()
+    private void OnWaitRevive()
     {
         _player.RequestState(EPlayerState.Corpse);
-        Destroy(gameObject);
     }
 
     private void Update()
@@ -42,7 +48,7 @@ public class UI_RiviveSelect : MonoBehaviour
         if (_timer <= 0f)
         {
             _timer = 0f;
-            OnWaitRivive();
+            OnWaitRevive();
         }
         _timerText.text = _timer.ToString("F0");
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimationEntryActionNotify, IAnimationExitActionNotify, IAnimationActionNotify
 {
+    private const int RandomCount = 5;
     private StateMachine<DragonSubStateBase> _subStateMachine;
     private DragonStateParameterSet.MagicParams _magicParams;
 
@@ -20,31 +21,39 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActivateRandomMagicSkill()
     {
-        float randProbability = Random.value;
-        int rand = Random.Range(0, 2); // 확장 가능
-        if (Context.Sight.Distance < Context.Parameter.Magic.NearMagicRange
-            && randProbability < Context.Parameter.Magic.NearMagicProbability)
+        _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
+        return;
+        int count = 0;
+        while (count < RandomCount)
         {
+            float randProbability = Random.value;
+            int rand = Random.Range(0, 2); // 확장 가능
+            if (Context.Sight.Distance < Context.Parameter.Magic.NearMagicRange
+                && randProbability < Context.Parameter.Magic.NearMagicProbability)
+            {
+                switch (rand)
+                {
+                    case 0:
+                        _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
+                        break;
+                    case 1:
+                        _subStateMachine.TryActivateState<DragonMagicAttack_Blood>(true);
+                        break;
+                }
+                return;
+            }
+        
             switch (rand)
             {
                 case 0:
-                    _subStateMachine.TryActivateState<DragonMagicAttack_Roar>(true);
+                    _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
                     break;
                 case 1:
-                    _subStateMachine.TryActivateState<DragonMagicAttack_Blood>(true);
+                    _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
                     break;
             }
-            return;
-        }
-        
-        switch (rand)
-        {
-            case 0:
-                _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
-                break;
-            case 1:
-                _subStateMachine.TryActivateState<DragonMagicAttack_Lava>(true);
-                break;
+
+            count++;
         }
     }
 

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
+using RaycastPro.Detectors;
 using UnityEngine;
 
 public class DragonBreathEffect : MonoBehaviour
 {
-    [Header("히트박스 설정")]
+    [Header("공격 설정")]
     public float ExpandSpeed = 30f;
     public float MaxLength = 20f;
 
@@ -13,8 +15,10 @@ public class DragonBreathEffect : MonoBehaviour
     [SerializeField]
     private ParticleSystem _subParticle;
 
-    private BoxCollider _collider;
-    private float _currentLength = 0f;
+    [SerializeField, Header("플레이어 감지")]
+    private SightDetector _detector;
+    
+    private float _currentRadius = 0f;
     private float _timer = 0f;
     private float _despawnTime = 0f;
     private float _damage;
@@ -22,18 +26,12 @@ public class DragonBreathEffect : MonoBehaviour
 
     private bool _isState;
 
-    private void Awake()
-    {
-        _collider = GetComponent<BoxCollider>();
-        _collider.isTrigger = true;
-    }
-
     public void Init(float particleDuration, bool isState, float damage, Action onDespawnCallback = null)
     {
         _isState = isState;
         _onEndCallback = onDespawnCallback;
         _timer = 0f;
-        _currentLength = 0f;
+        _currentRadius = 0f;
         _despawnTime = particleDuration;
         _damage = damage;
         
@@ -53,14 +51,12 @@ public class DragonBreathEffect : MonoBehaviour
         // 콜라이더 초기화
         if (!_isState)
         {
-            _collider.enabled = false;
+            _detector.enabled = false;
             return;
         }
-        _collider.enabled = true;
-        var size = _collider.size;
-        size.z = 0f;
-        _collider.size = size;
-        _collider.center = new Vector3(0f, 0f, 0f);
+        _detector.enabled = true;
+        _detector.radius = 0f;
+        _detector.collectLOS = true;
     }
 
     private void Update()
@@ -72,32 +68,38 @@ public class DragonBreathEffect : MonoBehaviour
         _timer += Time.deltaTime;
 
         // 히트박스 점점 커지게
-        if (_currentLength < MaxLength)
+        if (_currentRadius < MaxLength)
         {
-            _currentLength += ExpandSpeed * Time.deltaTime;
-            _currentLength = Mathf.Min(_currentLength, MaxLength);
+            _currentRadius += ExpandSpeed * Time.deltaTime;
+            _currentRadius = Mathf.Min(_currentRadius, MaxLength);
 
-            _collider.size = new Vector3(_collider.size.x, _collider.size.y, _currentLength);
-            _collider.center = new Vector3(0f, 0f, _currentLength / 2f);
+            _detector.radius = _currentRadius;
         }
 
         if (_timer > _despawnTime)
         {
-            _collider.enabled = false;
+            _detector.enabled = false;
+        }
+
+        if (!_detector.enabled)
+        {
+            return;
+        }
+        
+        foreach (var collider in _detector.DetectedColliders)
+        {
+            Attack(collider.gameObject);
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void Attack(GameObject player)
     {
         if (!_isState)
         {
             return;
         }
-        if (!other.CompareTag("Player"))
-            return;
 
-        var hit = other.GetComponent<IAttackable>();
-        if (hit != null)
+        if (player.TryGetComponent(out IAttackable hit))
         {
             var attackinfo = new AttackInfo
             {
