@@ -495,6 +495,7 @@ public class Player : CharacterBase, IAttackable
 
     private Vector3 _teleportPosition;
     private bool _isTeleporting = false;
+    public event Action OnRevive;
 
     public void Teleport(Vector3 pos)
     {
@@ -533,7 +534,12 @@ public class Player : CharacterBase, IAttackable
         _animator.Play("Idle");
 
         _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
+    }
 
+    public void InvokeRevive()
+    {
+        OnRevive?.Invoke();
+        
     }
 
     public void InstantRevive()
