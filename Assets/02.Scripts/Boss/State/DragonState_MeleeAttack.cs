@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimationActionNotify, IAnimationExitActionNotify
 {
+    private const int RandomCount = 5;
     private StateMachine<DragonSubStateBase> _phase1SubStateMachine;
     private StateMachine<DragonSubStateBase> _phase2SubStateMachine;
     private StateMachine<DragonSubStateBase> _currentSubStateMachine;
@@ -22,15 +23,21 @@ public class DragonState_MeleeAttack : DragonStateBase, IParentState, IAnimation
         EvaluatePhase();
     }
 
-    // protected override void OnEnterStateRender()
-    // {
-    //     EvaluatePhase();
-    // }
-
     private void TryActiveRandomAttackSubState()
     {
         // 0번은 Prepare라고 약속
-        int random = Random.Range(1, _currentSubStateMachine.States.Length);
+        int count = 0;  // 반복 횟수 제한
+        int random = 1;
+        while (count < RandomCount)
+        {
+            random = Random.Range(1, _currentSubStateMachine.States.Length);
+            // 반복 패턴 방지
+            if (random != _currentSubStateMachine.PreviousStateId)
+            {
+                break;
+            }
+            count++;
+        }
         var nextState = _currentSubStateMachine.States[random];
         _currentSubStateMachine.TryActivateState(nextState, true);
     }

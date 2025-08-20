@@ -38,15 +38,15 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
         // 이 콜백은 모든 클라이언트에서 호출되지만, RPC 호출은 호스트(서버)만 해야 함
         if (runner.IsServer)
         {
-            Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
-
-            // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
-            var roomInfo = RoomInfoManager.Instance.CurrentRoomInfo.ToNetworkDTO();
-            var json = JsonUtility.ToJson(roomInfo);
-
-            // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
-            RoomInfoNetworkManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
-
+            // Debug.Log($"새로운 플레이어 {player} 입장. RoomInfo 동기화를 시작합니다.");
+            //
+            // // 1. 현재 방 정보를 DTO로 변환 후 JSON 문자열로 직렬화
+            // var roomInfo = RoomInfoManager.Instance.CurrentRoomInfo.ToNetworkDTO();
+            // var json = JsonUtility.ToJson(roomInfo);
+            //
+            // // 2. 새로 들어온 'player'를 타겟으로 하여 RPC를 호출함
+            // RoomInfoNetworkManager.Instance.RPC_SyncRoomInfoToNewPlayer(player, json);
+            
             // =========================================================
             // dev용
             var proxy = runner.Spawn(_cheatProxyPrefab, Vector3.zero, Quaternion.identity, player);
