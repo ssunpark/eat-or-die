@@ -25,7 +25,7 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
         return RoomInfoManager.Instance.CurrentRoomInfo.KnownRecipes.Contains(recipeID);
     }
 
-    public async UniTask TryUnlockIngredient(int ingredientID)
+    public async void TryUnlockIngredient(int ingredientID)
     {
         if (IsUnlockedIngredients(ingredientID))
         {
@@ -35,7 +35,14 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
         var success = RoomInfoManager.Instance.CurrentRoomInfo.AddIngredient(ingredientID);
         if (success && HasStateAuthority)
         {
-            await RoomInfoManager.Instance.Save();
+            try
+            {
+                await RoomInfoManager.Instance.Save();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
             RPC_NotifyIngredientUnlocked(ingredientID);
         }
 
