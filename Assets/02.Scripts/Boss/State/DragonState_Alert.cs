@@ -16,13 +16,13 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
         _baseParams = Context.Parameter.Base;
     }
 
-    protected override bool CanEnterState()
-    {
-        return Context.Sight.Target != null;
-    }
-
     protected override void OnEnterState()
     {
+        if (Context.Sight.Target == null)
+        {
+            Machine.TryActivateState<DragonState_Idle>(true);
+        }
+        
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         _hasDestination = false;

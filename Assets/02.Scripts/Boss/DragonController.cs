@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Fusion;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
@@ -71,6 +72,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public Animator Animator { get; private set; }
     public GameObject Target { get; private set; }
+    private Player _targetPlayer;
+    private HashSet<GameObject> _targets = new HashSet<GameObject>();
     public DragonParameterLoader ParamLoader { get; private set; }
     public DragonObjectPool Pool { get; private set; }
 
@@ -110,13 +113,20 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             _context.Movement.NavMeshAgent.enabled = false;
             return;
         }
-        
+
         _context.OnSpawned();
     }
 
     private void Update()
     {
         Islocked = _context.Movement.IsLocked;
+
+        if (_targetPlayer?.IsDead ?? false)
+        {
+            // 다른 타겟으로 변환
+            _targets.Remove(Target);
+            SetTarget(_targets.FirstOrDefault());
+        }
     }
 
     public override void Render()
@@ -172,6 +182,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public void SetTarget(GameObject target)
     {
         Target = target;
+        _targetPlayer = Target.GetComponent<Player>();
     }
 
     private void OnAnimWaitIndexChanged()
@@ -183,10 +194,12 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         if (HasStateAuthority)
         {
-            Target = attack.Attacker.gameObject;
-            float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier * attack.BossDamageMultiplier;
+            SetTarget(attack.Attacker.gameObject);
+            float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier *
+                           attack.BossDamageMultiplier;
             _context.Stats.TakeDamage(amount);
-            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up, EDamageFloaterType.Damage, true);
+            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up, EDamageFloaterType.Damage,
+                true);
         }
     }
 
