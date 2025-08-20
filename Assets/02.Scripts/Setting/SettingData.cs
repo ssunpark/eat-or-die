@@ -4,8 +4,8 @@ using DarkTonic.MasterAudio;
 [CreateAssetMenu(menuName = "Game/SettingData")]
 public class SettingData : ScriptableObject
 {
-    private const string KEY_SFX = "SETTINGS__SFX_VOLUME";
-    private const string KEY_MUSIC = "SETTINGS__MUSIC_VOLUME";
+    private const string KEY_SFX = "SETTINGS_SFX_VOLUME";
+    private const string KEY_MUSIC = "SETTINGS_MUSIC_VOLUME";
 
     [Range(0f, 1f)]
     public float sfxVolume = 1f; // 0~1
@@ -30,8 +30,7 @@ public class SettingData : ScriptableObject
         MasterAudio.MasterVolumeLevel = Mathf.Clamp01(sfxVolume);
         MasterAudio.PlaylistMasterVolume = Mathf.Clamp01(musicVolume);
     }
-
-    // Slider 0~100 ↔ Linear 0~1
-    public static float SliderToLinear(float value01to100) => Mathf.Clamp01(value01to100 / 100f);
+    
+    public static float SliderToLinear(float value) => Mathf.Clamp01(value / 100f);
     public static float LinearToSlider(float linear0to1) => Mathf.Clamp01(linear0to1) * 100f;
 }
