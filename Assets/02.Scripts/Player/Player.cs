@@ -9,7 +9,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(RangeDetector))]
-public class Player : CharacterBase, IAttackable, IAfterSpawned
+public class Player : CharacterBase, IAttackable
 {
     [Serializable]
     public class InitialItemData
@@ -85,15 +85,6 @@ public class Player : CharacterBase, IAttackable, IAfterSpawned
         Skill = new SkillManager(this);
     }
 
-
-    public void AfterSpawned()
-    {
-        if (HasInputAuthority)
-        {
-            GetInitialItem();
-        }
-    }
-    
     private bool _spawnInitDone;
     private async UniTaskVoid InitAfterSpawnAsync()
     {
@@ -167,7 +158,7 @@ public class Player : CharacterBase, IAttackable, IAfterSpawned
         _spawnInitDone = true;
     }
 
-    private void GetInitialItem()
+    public void GetInitialItem()
     {
         foreach(var itemData in InitialItems)
         {
