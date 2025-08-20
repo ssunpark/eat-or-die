@@ -9,7 +9,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 
 [RequireComponent(typeof(RangeDetector))]
-public class Player : CharacterBase, IAttackable
+public class Player : CharacterBase, IAttackable, IAfterSpawned
 {
     [Serializable]
     public class InitialItemData
@@ -83,12 +83,17 @@ public class Player : CharacterBase, IAttackable
         SimpleKCC = GetComponent<SimpleKCC>();
         _impulseSource = GetComponent<CinemachineImpulseSource>();
         Skill = new SkillManager(this);
+    }
 
+
+    public void AfterSpawned()
+    {
         if (HasInputAuthority)
         {
             GetInitialItem();
         }
     }
+    
     private bool _spawnInitDone;
     private async UniTaskVoid InitAfterSpawnAsync()
     {
@@ -553,5 +558,4 @@ public class Player : CharacterBase, IAttackable
         InstantRevive();
 
     }
-
 }
