@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 
 public class TeleportManager : BehaviourSingleton<TeleportManager>
@@ -55,6 +56,9 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
                 return;
             }
         }
+        
+        // 텔레포트 사운드
+        MasterAudio.PlaySound3DAtTransform("Teleport", _localPlayer.transform);
 
         // 3초 대기
         await UniTask.Delay(TimeSpan.FromSeconds(3));
