@@ -10,8 +10,14 @@ public class UI_CookingPanel : AUI_PopupBase
     public UI_RecipeList UIRecipeList;
     private bool _isInitialized;
 
+    private void Start()
+    {
+        CookingPanel.SetActive(false);
+    }
+
     public override void Open()
     {
+        InventoryManager.Instance.ToggleInventory(true);
         base.Open();
         if (!_isInitialized)
         {
@@ -25,7 +31,7 @@ public class UI_CookingPanel : AUI_PopupBase
         UIRecipeIngredient.Init();
         UIRecipeList.Init();
     }
-    
+
     public void OnClickCookingButton()
     {
         NetworkRunner Runner = FindAnyObjectByType<NetworkRunner>();
@@ -34,15 +40,14 @@ public class UI_CookingPanel : AUI_PopupBase
             Debug.Log("NetworkRunner를 찾을 수 없습니다!");
             return;
         }
-        // 플레이어 Cooking FSM 호출!
-       
-        // CookingManager.Instance.TryStartCookRPC();
+
         CookingManager.Instance.TryStartCook();
         PopupManager.Instance.CloseAll();
-        
-        // 요리 결과물 테스트를 위해 추가된 임시 코드입니다.
-        //CookingPanelManager.Instance.OnCookingCompleted(true);
-        // CookingPanelManager.Instance.ProcessCookingResult(); // 수현 테스트 코드
     }
 
+    public override void Close()
+    {
+        base.Close();
+        InventoryManager.Instance.ToggleInventory(false);
+    }
 }

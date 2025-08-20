@@ -1,4 +1,5 @@
-﻿using EPOOutline;
+﻿using DarkTonic.MasterAudio;
+using EPOOutline;
 using Fusion;
 using Redcode.Pools;
 using UnityEngine;
@@ -30,6 +31,8 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     public bool IsImmediate => false;
 
+    public float InteractionDistanceOffset => 0.2f;
+
     public override void Spawned()
     {
         _farmingGround = GetComponentInParent<FarmingGround>();
@@ -51,6 +54,8 @@ public class PlantObject : NetworkBehaviour, IInteractable
         _plantObject = FarmingManager.Instance.GetPlant(new PlantPoolKey(PlantID, GrowthLevel));
         _plantObject.transform.SetParent(transform);
         _plantObject.transform.localPosition = Vector3.zero;
+        float randomRotate = Random.Range(0f, 360f);
+        _plantObject.transform.Rotate(0f, randomRotate, 0f, Space.Self);
     }
 
     public override void FixedUpdateNetwork()
@@ -87,13 +92,15 @@ public class PlantObject : NetworkBehaviour, IInteractable
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
             // 작물 수확
-            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
+            ItemProxySpawner.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
                 Quaternion.identity);
+            MasterAudio.PlaySound3DAtTransform("PlantPop", transform);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
             // 썩은 작물
-            ItemManager.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, 1, transform.position, Quaternion.identity);
+            ItemProxySpawner.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, 1, transform.position, Quaternion.identity);
+            MasterAudio.PlaySound3DAtTransform("RottenPlantPop", transform);
         }
         
         // 풀 반환

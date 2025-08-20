@@ -26,48 +26,67 @@ public class PlayerItemHolder: NetworkBehaviour
     [SerializeField] private List<AnimatorOverrideEntry> _overrideList;
 
     private Dictionary<string,AnimatorOverrideController> _animatorOverrideMap = new();
-    [Networked]
+    [Networked, OnChangedRender(nameof(OnHoldItemIDChanged))]
     public int HoldItemID { get; set; }
     public override void Spawned()
     {
-        if (HoldItemID > 0)
-        {
-            _HoldItemLogic(HoldItemID);
-        }
+        if (HoldItemID > 0) _HoldItemLogic(HoldItemID);
+        else _UnholdItemLogic();
     }
+
+    private void OnHoldItemIDChanged()
+    {
+        if (HoldItemID > 0) _HoldItemLogic(HoldItemID);
+        else _UnholdItemLogic();
+    }
+
+    
     private void _HoldItemLogic(int itemId)
     {
         if (_player == null)
-        {
             _player = GetComponent<Player>();
-        }
 
+        // 이전 장착 해제 (이전값은 _currentHeldId로)
         if (_heldItemObject != null)
         {
-            var heldItem = ItemManager.Instance.GetItem(HoldItemID);
-            heldItem?.UnHoldItem(gameObject, _heldItemObject);
+            var prev = _currentHeldId > 0 ? ItemManager.Instance.GetItem(_currentHeldId) : null;
+            prev?.UnHoldItem(gameObject, _heldItemObject);
             _heldItemObject = null;
         }
 
-        ItemProfile changedHoldItem = ItemManager.Instance.GetItem(itemId);
-        if (changedHoldItem == null)
+        var changed = ItemManager.Instance.GetItem(itemId);
+        if (changed == null)
         {
             Debug.LogError($"[PlayerItemHolder] 아이템 정보가 없습니다. ID: {itemId}");
             return;
         }
 
-        AttackType = changedHoldItem.ItemDefinition.AttackType;
-        ProjectileKey = changedHoldItem.ItemDefinition.ProjectileKey;
+        AttackType = changed.ItemDefinition.AttackType;
+        ProjectileKey = changed.ItemDefinition.ProjectileKey;
 
-        changedHoldItem.HoldItem(gameObject);
-        _heldItemObject = changedHoldItem.GetHoldItemObject();
-        _heldItemObject.transform.SetParent(_handTransform);
-
-        _heldItemObject.transform.localPosition = new Vector3(0f, 0f, 0f);
-        _heldItemObject.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+        changed.HoldItem(gameObject);
+        _heldItemObject = changed.GetHoldItemObject();
+        _heldItemObject.transform.SetParent(_handTransform, false);
+        _heldItemObject.transform.localPosition = Vector3.zero;
+        _heldItemObject.transform.localRotation = Quaternion.identity;
         _heldItemObject.transform.localScale = Vector3.one;
 
+        _currentHeldId = itemId;
+    }
+    private int _currentHeldId = -1;
+    private void _UnholdItemLogic()
+    {
+        if (_heldItemObject != null)
+        {
+            var prev = _currentHeldId > 0 ? ItemManager.Instance.GetItem(_currentHeldId) : null;
+            prev?.UnHoldItem(gameObject, _heldItemObject);
+            _heldItemObject = null;
+        }
+        HeldItemInstance = null;
+        _currentHeldId = -1;
 
+        AttackType = EAttackType.MeleeWeapon;
+        ProjectileKey = "DefaultProjectile";
     }
     private void Awake()
     {
@@ -129,31 +148,20 @@ public class PlayerItemHolder: NetworkBehaviour
         return false;
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     private void RPC_RequestUnholdItem()
     {
-        if (_player == null)
-        {
-            _player = GetComponent<Player>();
-        }
-        var heldItem = ItemManager.Instance.GetItem(HoldItemID);
-        heldItem?.UnHoldItem(gameObject, _heldItemObject);
-        _heldItemObject = null;
-        HeldItemInstance = null;
-        if(Runner.IsServer)
-            HoldItemID = -1;
-
-        AttackType = EAttackType.MeleeWeapon;
-        ProjectileKey = "DefaultProjectile";
+        if (!HasStateAuthority) return;
+        HoldItemID = -1;
     }
 
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     private void RPC_RequestHoldItem(int itemId)
     {
-        _HoldItemLogic(itemId);
-        if(Runner.IsServer)
-            HoldItemID = itemId;
+        if (!HasStateAuthority) return;
+        HoldItemID = itemId;
     }
+
     Coroutine _setHoldItemCoroutine;
     public void ApplyAnimatorOverride(string key)
     {

@@ -20,11 +20,18 @@ public class InputReader : BehaviourSingleton<InputReader>
 
     private void Awake()
     {
+        if(Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         _inputActions = new PlayerInputActions();
         _externalInputBlocked = false;
+        _inputActions.UI.Enable();
+        DontDestroyOnLoad(gameObject);
     }
 
-    private void OnEnable()
+    public void InitPlayer()
     {
         _inputActions.Player.Enable();
 
@@ -80,14 +87,19 @@ public class InputReader : BehaviourSingleton<InputReader>
     }
 
 
-    private void OnDisable()
+    private void OnDestroy()
     {
+        if(_inputActions == null)
+            return;
+
         _inputActions.Player.Move.performed -= HandleMovePerformed;
         _inputActions.Player.Move.canceled -= HandleMoveCanceled;
         _inputActions.Player.Attack.performed -= OnAttackPerformed;
         _inputActions.Player.Interact.performed -= OnInteractPerformed;
         _inputActions.Player.UseItem.performed -= OnUseItemPerformed;
 
+        _inputActions.UI.Disable();
+        _inputActions.Global.Disable();
         _inputActions.Player.Disable();
     }
 

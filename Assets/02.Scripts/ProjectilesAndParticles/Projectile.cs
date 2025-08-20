@@ -151,7 +151,7 @@ public class Projectile : NetworkBehaviour
 
             _collider.enabled = false;
             _isHit_networked = true;
-            ParticleManager.Instance.RpcPlayParticle(ExplodeEffect.name, transform.position, Quaternion.identity);
+            ParticleManager.Instance.PlayByKey(ExplodeEffect.name, transform.position, Quaternion.identity, true);
         }
     }
 

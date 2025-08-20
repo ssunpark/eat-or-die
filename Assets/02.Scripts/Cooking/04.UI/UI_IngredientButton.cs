@@ -27,7 +27,6 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
         
         if (itemDefinition == null)
         {
-            Debug.Log("[UI_IngredientButton] 전달된 아이템 정보가 null입니다.");
             IconImage.gameObject.SetActive(false);
             return;
         }
@@ -68,11 +67,6 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
         RecipePanelUIManager.Instance.UpdateRecipes();
     }
 
-    // public void OnClickAllCategoryButton()
-    // {
-    //     RecipePanelUIManager.Instance.UpdateAllRecipes();
-    // }
-
     public ItemDefinition GetIngredient()
     {
         return _data;
@@ -80,8 +74,6 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter");
-
         if (_data == null || !RecipePanelUIManager.Instance.IsKnownIngredient(IngredientID))
         {
             return;
@@ -96,13 +88,12 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
         var sb = new StringBuilder();
 
         sb.Append($"<b>{itemProfile.ItemDefinition.Name}</b>");
-        CookTooltipManager.Instance.Show(sb.ToString());
+        TooltipManager.Instance.Show(sb.ToString());
     }
 
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("OnPointerExit");
-        CookTooltipManager.Instance.Hide();
+        TooltipManager.Instance.Hide();
     }
 }

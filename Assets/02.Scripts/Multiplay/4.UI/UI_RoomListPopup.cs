@@ -1,10 +1,10 @@
+using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_RoomListPopup : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.World;
-    public FadeController NeedLoginNotification;
     private bool _isLogin => AuthenticationManager.Instance.User != null;
 
     [Header("방 생성")] [SerializeField] private GameObject _container;
@@ -20,13 +20,7 @@ public class UI_RoomListPopup : AUI_PopupBase
     {
         if (!_isLogin)
         {
-            if (NeedLoginNotification == null)
-            {
-                Debug.LogError("NeedLoginNotification is null");
-            }
-
-            NeedLoginNotification.FadeIn();
-            NeedLoginNotification.FadeOutAfterDelay();
+            UI_Notification.Notify("로그인이 필요합니다.");
         }
         else
         {
@@ -70,6 +64,7 @@ public class UI_RoomListPopup : AUI_PopupBase
 
     private void OpenCharacterSelectPopup()
     {
+        RoomInfoManager.Instance.GameMode = GameMode.Host;
         _characterSelectPopup.Open();
         _characterSelectPopup.Refresh();
     }

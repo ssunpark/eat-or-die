@@ -48,8 +48,6 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnter
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Debug.Log("OnPointerEnter");
-        
         if (_data == null || !RecipePanelUIManager.Instance.IsKnownRecipe(_data.ID))
         {
             return;
@@ -70,11 +68,11 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnter
         extraDescription = RichTextUtil.RecolorAll(extraDescription, "#E44962");
         sb.Append($"{extraDescription}");
 
-        CookTooltipManager.Instance.Show(sb.ToString());
+        TooltipManager.Instance.Show(sb.ToString());
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        CookTooltipManager.Instance.Hide();
+        TooltipManager.Instance.Hide();
     }
 }

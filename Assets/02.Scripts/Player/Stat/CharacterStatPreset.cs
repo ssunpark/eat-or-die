@@ -24,13 +24,13 @@ public static class CharacterStatPreset
     { EStatType.AttackRange, 3f },
     { EStatType.CritChance, 0.01f },
     { EStatType.CritDamageRatio, 1.5f },
-    { EStatType.BossDamage, 0f },
+    { EStatType.BossDamage, 1f },
 
     // 방어 관련
     { EStatType.Defense, 0f },
     { EStatType.MeleeDefense, 0f },
     { EStatType.MagicDefense, 0f },
-    { EStatType.BossDefense, 0f },
+    { EStatType.BossDefense, 1f },
 
     // 포만도 관련
     { EStatType.MaxHunger, 120f },
@@ -62,7 +62,7 @@ public static class CharacterStatPreset
     { EStatType.AttackRange, 2.5f },
     { EStatType.CritChance, 0.05f },
     { EStatType.CritDamageRatio, 1.7f },
-    { EStatType.BossDamage, 0.1f },
+    { EStatType.BossDamage, 1.1f },
 
     // 방어 관련
     { EStatType.Defense, 10f },
@@ -101,7 +101,7 @@ public static class CharacterStatPreset
     { EStatType.AttackRange, 5f },
     { EStatType.CritChance, 0.08f },
     { EStatType.CritDamageRatio, 2.0f },
-    { EStatType.BossDamage, 0.15f },
+    { EStatType.BossDamage, 1.15f },
 
     // 방어 관련
     { EStatType.Defense, -5f },
@@ -139,7 +139,7 @@ public static class CharacterStatPreset
     { EStatType.AttackRange, 2.5f },
     { EStatType.CritChance, 0.02f },
     { EStatType.CritDamageRatio, 1.6f },
-    { EStatType.BossDamage, 0.05f },
+    { EStatType.BossDamage, 1.05f },
 
     // 방어 관련
     { EStatType.Defense, 3f },

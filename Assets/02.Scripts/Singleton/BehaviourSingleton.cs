@@ -11,7 +11,7 @@ public class BehaviourSingleton<T> : MonoBehaviour where T : MonoBehaviour
 		{
 			if (i == null)
 			{
-				i = FindFirstObjectByType(typeof(T)) as T;
+				i = FindFirstObjectByType<T>(FindObjectsInactive.Include);
 			}
 			return i;
 		}
