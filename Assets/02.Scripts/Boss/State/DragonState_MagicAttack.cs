@@ -21,8 +21,6 @@ public class DragonState_MagicAttack : DragonStateBase, IParentState, IAnimation
 
     private void TryActivateRandomMagicSkill()
     {
-        _subStateMachine.TryActivateState<DragonMagicAttack_Breath>(true);
-        return;
         int count = 0;
         while (count < RandomCount)
         {
