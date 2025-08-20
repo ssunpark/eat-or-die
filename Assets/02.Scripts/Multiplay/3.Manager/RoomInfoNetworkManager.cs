@@ -49,6 +49,5 @@ public class RoomInfoNetworkManager : NetworkBehaviourSingleton<RoomInfoNetworkM
         var newRoomInfo = new RoomInfo(networkDTO);
         RoomInfoManager.Instance.SetCurrentRoomInfo(newRoomInfo);
         Debug.Log($"[RoomInfoManager] 동기화 완료. 방 이름: {newRoomInfo.RoomName}");
-        PlayerInfoManager.Instance.LocalPlayer.GetInitialItem();
     }
 }

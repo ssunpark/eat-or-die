@@ -152,6 +152,7 @@ public class Player : CharacterBase, IAttackable
                     Debug.LogWarning("[Player] Trait system not ready after timeout; HUD init deferred.");
                 }
             }
+            GetInitialItem();
         }
 
 
