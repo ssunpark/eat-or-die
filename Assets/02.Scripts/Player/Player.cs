@@ -197,6 +197,8 @@ public class Player : CharacterBase, IAttackable
             return;
         }
 
+
+        if(!HasStateAuthority) // 시네마틱 영상 촬영용
         follow.SetTarget(transform);
     }
 
