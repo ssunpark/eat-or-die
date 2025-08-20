@@ -101,7 +101,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         ParamLoader = new DragonParameterLoader();
         Pool = new DragonObjectPool(this);
         _context = new DragonContext(this);
-        _stateMachine = new DragonStateMachine(_context);
     }
 
     public override void Spawned()
@@ -111,7 +110,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             _context.Movement.NavMeshAgent.enabled = false;
             return;
         }
-
+        
         _context.OnSpawned();
     }
 
@@ -142,6 +141,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)
     {
+        _stateMachine = new DragonStateMachine(_context);
         _stateMachine?.CollectStateMachines(stateMachines);
     }
 
