@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 
 public class ItemEatEffectPipeline : IItemUsePipeline
@@ -21,6 +22,8 @@ public class ItemEatEffectPipeline : IItemUsePipeline
         if (!player)
             return false;
 
+        MasterAudio.PlaySound3DAtTransform("Eat", player.transform);
+        
         var context = player.Skill.Context;
 
         var eatPayload = new OnEatPayload(

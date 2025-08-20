@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DarkTonic.MasterAudio;
+using UnityEngine;
 using Fusion.Addons.FSM;
 public class PlayerDeadState : APlayerStateBase
 {
@@ -14,6 +15,8 @@ public class PlayerDeadState : APlayerStateBase
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _fsm.IsDead = true;
+        
+        MasterAudio.PlaySound3DAtTransform("Dead", _fsm.transform);
     }
 
     protected override void OnEnterStateRender()

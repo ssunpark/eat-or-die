@@ -1,4 +1,5 @@
-﻿using Fusion; // Add Fusion for NetworkInputData
+﻿using DarkTonic.MasterAudio;
+using Fusion; // Add Fusion for NetworkInputData
 using Fusion.Addons.FSM; // Add Fusion FSM for PlayerStateMachine
 using UnityEngine;
 public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
@@ -29,6 +30,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         PlayUseVfx(EUsePhase.Start, _fsm.transform.position + Vector3.up);
+        PlayUseSfx(EUsePhase.Start);
         if (_fsm.HasStateAuthority || _fsm.HasInputAuthority)
         {
             _target = _fsm.ItemUseTarget;
@@ -60,6 +62,7 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
         {
             PlayUseVfx(EUsePhase.Success, _target.transform.position + (Vector3.up * 0.5f));
         }
+        PlayUseSfx(EUsePhase.Success);
         _fsm.ItemHolder.UseItem(_target.gameObject);
     }
 
@@ -119,6 +122,19 @@ public class PlayerUseItemState : APlayerStateBase, IAnimationActionNotify
                 var rot = Quaternion.identity;
                 ParticleNetworkProxy.Instance.RPC_RequestPlayParticle(key, worldPos, rot);
             }
+        }
+    }
+
+    private void PlayUseSfx(EUsePhase phase)
+    {
+        var go = _fsm.ItemHolder?.HeldItemObject;
+        
+        if (go != null && go.TryGetComponent<IUseSfxProvider>(out var sfx))
+        {
+            var sound = sfx.GetSoundKey(phase);
+            if (string.IsNullOrEmpty(sound)) return;
+            
+            MasterAudio.PlaySound3DAtTransform(sound, _fsm.transform);
         }
     }
 }
