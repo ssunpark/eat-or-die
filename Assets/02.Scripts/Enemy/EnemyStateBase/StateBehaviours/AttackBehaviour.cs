@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion.Addons.FSM;
 
-public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
+public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePlayer
 {
 	private EnemyStateMachine _attackStateMachine;
 	
@@ -77,5 +77,16 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 			}
 		}
 		Debug.Log("Attack Moment Triggered");
+	}
+
+	public void PlayParticle()
+	{
+		int id = Machine.Context.Owner.EnemyID;
+
+		string particleKey = EnemyDataManager.Instance.EnemyRawDataDictionary[id].AttackParticleKey;
+		
+		if (string.IsNullOrEmpty(particleKey)) return;
+		
+		ParticleManager.Instance.PlayByKey(particleKey, transform.position, transform.rotation, false);
 	}
 }
