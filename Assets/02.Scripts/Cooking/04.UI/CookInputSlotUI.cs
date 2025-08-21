@@ -1,4 +1,5 @@
 using System.Text;
+using DarkTonic.MasterAudio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,6 +21,7 @@ public class CookInputSlotUI : MonoBehaviour, IPointerDownHandler, IPointerEnter
     
     public void OnPointerDown(PointerEventData eventData)
     {
+        MasterAudio.PlaySound("ButtonClick");
         if (eventData.button == PointerEventData.InputButton.Left)
         { 
             CookingManager.Instance.OnClickMouseLeft(SlotIndex);

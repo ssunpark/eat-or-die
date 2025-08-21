@@ -1,4 +1,5 @@
 ﻿using System;
+using DarkTonic.MasterAudio;
 using DG.Tweening;
 using Fusion;
 using RaycastPro.Detectors;
@@ -16,7 +17,7 @@ public class DragonCombat
     public void OnSpawned()
     {
         SetFightMode(_controller.IsFightMode);
-        
+
         if (!_controller.HasStateAuthority)
         {
             _controller.AttackDetector.enabled = false;
@@ -86,7 +87,7 @@ public class DragonCombat
         var param = _controller.ParamLoader.RightScratch_Special;
         projectile.Fire(direction, param.Speed, param.LifeTime, param.Damage,
             () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
-        
+
         projectile.GetComponent<EffectVisualController>().Appear(param.LifeTime, 2f, 2f);
     }
 
@@ -95,13 +96,15 @@ public class DragonCombat
     #region Magic
 
     public TickTimer BreathTimer { get => _controller.BreathTimer; set => _controller.BreathTimer = value; }
+
     // 브레스
     public void PlayBreath(float duration, float damage)
     {
         var vfx = _controller.Pool.BreathParticlePool.Get();
         vfx.transform.position = _controller.BreathPoint.position;
         vfx.transform.rotation = Quaternion.LookRotation(_controller.transform.forward);
-        vfx.Init(duration, _controller.HasStateAuthority, damage, () => _controller.Pool.BreathParticlePool.Take(vfx));
+        vfx.Init(duration, _controller.HasStateAuthority, damage, _controller.transform,
+            () => _controller.Pool.BreathParticlePool.Take(vfx));
     }
 
     // Lava
@@ -118,6 +121,8 @@ public class DragonCombat
         if (Physics.Raycast(targetPos + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 100f,
                 LayerMask.GetMask("Ground")))
             targetPos = hit.point;
+        
+        MasterAudio.PlaySound3DAtTransform("Dragon_LavaPop", _controller.transform);
 
         // 권위에서만 네트워크 스폰
         if (_controller.HasStateAuthority)
@@ -183,16 +188,21 @@ public class DragonCombat
 
     public void PerformBloodExplode(float duration, float targetSize, float remainDuration, float damage)
     {
-        var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position, Quaternion.identity,
-            onBeforeSpawned: (runner, obj) =>
+        // 권위에서만 네트워크 스폰
+        if (_controller.HasStateAuthority)
         {
-            var blood = obj.GetComponent<BloodExplosion>();
-            blood.StartPosition = _controller.transform.position;
-            blood.Duration = duration;
-            blood.TargetScale = targetSize;
-            blood.RemainDuration = remainDuration;
-            blood.SetDamage(damage);
-        });
+            var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position,
+                Quaternion.identity,
+                onBeforeSpawned: (runner, obj) =>
+                {
+                    var blood = obj.GetComponent<BloodExplosion>();
+                    blood.StartPosition = _controller.transform.position;
+                    blood.Duration = duration;
+                    blood.TargetScale = targetSize;
+                    blood.RemainDuration = remainDuration;
+                    blood.SetDamage(damage);
+                });
+        }
     }
 
     #endregion

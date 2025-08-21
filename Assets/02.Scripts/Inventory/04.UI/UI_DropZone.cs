@@ -1,3 +1,4 @@
+using DarkTonic.MasterAudio;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR;
@@ -17,6 +18,7 @@ public class UI_DropZone : MonoBehaviour, IPointerDownHandler
 	
 	public void OnPointerDown(PointerEventData eventData)
 	{
+		MasterAudio.PlaySound("ButtonClick");
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
 			if (!HandEntity.Instance.IsHandEmpty)

@@ -1,18 +1,20 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class UI_SeedShopPanel : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.Shop;
 
-    public override void Open()
+    public event Action OnClose;
+
+    public override void Close()
     {
-        base.Open();
-        InitUI();
+        base.Close();
+        OnClose?.Invoke();
     }
 
-    private void InitUI()
+    private void Start()
     {
-        // 아이템 디테일 ui 초기화
-        // 소지한 골드량 초기화
+        gameObject.SetActive(false);
     }
 }

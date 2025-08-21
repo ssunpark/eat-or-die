@@ -44,7 +44,7 @@ public class UI_PopupAnimator : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayAnimation();
+        PlayStartAnimation();
     }
 
     private void Update()
@@ -56,9 +56,14 @@ public class UI_PopupAnimator : MonoBehaviour
             gameObject.SetActive(false);
             gameObject.SetActive(true);
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PlayCloseAnimation();
+        }
     }
 
-    public void PlayAnimation()
+    public void PlayStartAnimation()
     {
         // 초기화
         transform.localScale = Vector3.one;
@@ -106,6 +111,50 @@ public class UI_PopupAnimator : MonoBehaviour
                 var seq = DOTween.Sequence();
                 seq.Append(transform.DOScale(Vector3.one, duration).SetEase(ease));
                 seq.Join(canvasGroup.DOFade(1, duration * 0.8f));
+                break;
+        }
+    }
+
+    public void PlayCloseAnimation()
+    {
+        // DOTween 시퀀스/트윈이 실행 중일 수 있으므로 모두 죽이고 시작
+        transform.DOKill();
+        canvasGroup.DOKill();
+
+        switch (effectType)
+        {
+            case PopupEffectType.Scale:
+                transform.DOScale(Vector3.zero, duration)
+                    .SetEase(ease)
+                    .OnComplete(() => gameObject.SetActive(false)); // 애니메이션 끝나면 비활성화
+                break;
+
+            case PopupEffectType.Fade:
+                canvasGroup.DOFade(0, duration)
+                    .SetEase(Ease.Linear)
+                    .OnComplete(() => gameObject.SetActive(false));
+                break;
+
+            case PopupEffectType.Slide:
+                var endPos = Vector2.zero;
+                switch (slideDirection)
+                {
+                    case SlideDirection.FromBottom: endPos = new Vector2(0, -Screen.height); break;
+                    case SlideDirection.FromTop: endPos = new Vector2(0, Screen.height); break;
+                    case SlideDirection.FromLeft: endPos = new Vector2(-Screen.width, 0); break;
+                    case SlideDirection.FromRight: endPos = new Vector2(Screen.width, 0); break;
+                }
+
+                rectTransform.DOAnchorPos(endPos, duration)
+                    .SetEase(Ease.InCubic) // 들어올 때 Out이면 나갈 땐 In을 쓰는게 자연스러움
+                    .OnComplete(() => gameObject.SetActive(false));
+                break;
+
+            case PopupEffectType.ScaleAndFade:
+                var seq = DOTween.Sequence();
+                seq.Append(transform.DOScale(Vector3.zero, duration).SetEase(ease));
+                seq.Join(canvasGroup.DOFade(0, duration * 0.8f));
+                seq.OnComplete(() => gameObject.SetActive(false));
                 break;
         }
     }

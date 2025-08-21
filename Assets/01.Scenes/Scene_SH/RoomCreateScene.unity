@@ -371,7 +371,6 @@ GameObject:
   - component: {fileID: 51915094}
   - component: {fileID: 51915093}
   - component: {fileID: 51915095}
-  - component: {fileID: 51915096}
   m_Layer: 5
   m_Name: Popup-WorldSelect
   m_TagString: Untagged
@@ -492,23 +491,6 @@ MonoBehaviour:
   _container: {fileID: 7511527447882342256}
   _roomPrefab: {fileID: 8255603354077478927, guid: 62a12276756f10a49910efd43671c1f4, type: 3}
   _characterSelectPopup: {fileID: 480886250}
---- !u!114 &51915096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 51915089}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 558bd7176d50d8a40b6214c4ade903be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  effectType: 0
-  testOpen: 0
-  duration: 0.3
-  ease: 27
-  slideDirection: 0
 --- !u!1 &77211863 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1876689921044774218, guid: 28b59bfc68f45f74e95cbc67060ca1c0, type: 3}
@@ -6761,6 +6743,10 @@ PrefabInstance:
     - target: {fileID: 2265524522903830846, guid: b4493782e8a492942b355dc39b2def27, type: 3}
       propertyPath: m_Name
       value: MasterAudio_Base
+      objectReference: {fileID: 0}
+    - target: {fileID: 5252922801188560423, guid: b4493782e8a492942b355dc39b2def27, type: 3}
+      propertyPath: persistBetweenScenes
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7753432570080787817, guid: b4493782e8a492942b355dc39b2def27, type: 3}
       propertyPath: m_LocalPosition.x
