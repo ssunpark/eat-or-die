@@ -67,7 +67,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         }
         catch (Exception e)
         {
-            Debug.LogError($"[RoomInfoManager] 방 정보 초기화 실패: {e.Message}");
+            Debug.Log($"[RoomInfoManager] 방 정보 초기화 실패: {e.Message}");
         }
     }
 
@@ -88,7 +88,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         }
         catch (Exception e)
         {
-            Debug.LogError($"[RoomInfoManager] 방 정보 저장 실패: {e.Message}");
+            Debug.Log($"[RoomInfoManager] 방 정보 저장 실패: {e.Message}");
         }
     }
 
@@ -110,7 +110,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         }
         catch (Exception e)
         {
-            Debug.LogError("방 삭제 실패");
+            Debug.Log("방 삭제 실패");
         }
     }
 
@@ -118,13 +118,13 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
     {
         if (CurrentRoomInfo == null || string.IsNullOrEmpty(CurrentRoomInfo.ID))
         {
-            Debug.LogError("초대 코드를 생성할 현재 방 정보가 없습니다.");
+            Debug.Log("초대 코드를 생성할 현재 방 정보가 없습니다.");
             return null;
         }
         
         if (string.IsNullOrEmpty(_userID))
         {
-            Debug.LogError("로그인한 사용자 정보가 없습니다.");
+            Debug.Log("로그인한 사용자 정보가 없습니다.");
             return null;
         }
         
@@ -136,7 +136,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         }
         catch (Exception e)
         {
-            Debug.LogError($"초대 코드 생성 중 에러 발생: {e.Message}");
+            Debug.Log($"초대 코드 생성 중 에러 발생: {e.Message}");
             return null;
         }
     }
