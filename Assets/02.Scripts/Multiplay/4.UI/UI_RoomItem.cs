@@ -5,6 +5,8 @@ using UnityEngine;
 public class UI_RoomItem : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _roomNameTextUI;
+
+    // [SerializeField] private TextMeshProUGUI _currentMemberCountTextUI;
     private RoomInfoDTO _roomInfoDTO;
     public static event Action OnDeleteButtonClicked;
 
@@ -17,6 +19,7 @@ public class UI_RoomItem : MonoBehaviour
     {
         _roomInfoDTO = roomInfoDTD;
         _roomNameTextUI.text = roomInfoDTD.RoomName;
+        // _currentMemberCountTextUI.text = roomInfoDTD.MemberCount.ToString();
     }
 
     public void OnClickRoom()

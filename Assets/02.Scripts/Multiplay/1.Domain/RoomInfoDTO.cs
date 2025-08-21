@@ -7,9 +7,9 @@ using Firebase.Firestore;
 public class RoomInfoDTO
 {
     [FirestoreDocumentId] public string RoomInfoID { get; set; }
-    [FirestoreProperty] public string InviteCode { get; set; }
-
     [FirestoreProperty] public string RoomName { get; set; }
+    [FirestoreProperty] public int MemberCount { get; set; }
+    [FirestoreProperty] public List<string> MemberList { get; set; }
     [FirestoreProperty] public List<int> KnownIngredientsList { get; set; }
     [FirestoreProperty] public List<int> KnownRecipesList { get; set; }
 
@@ -25,6 +25,8 @@ public class RoomInfoDTO
             RoomInfoID = roomInfo.ID;
         }
         RoomName = roomInfo.RoomName;
+        // MemberCount = roomInfo.MemberCount;
+        // MemberList = new List<string>(roomInfo.MemberList);
         KnownIngredientsList = roomInfo.KnownIngredients.ToList();
         KnownRecipesList = roomInfo.KnownRecipes.ToList();
     }
@@ -35,12 +37,13 @@ public class RoomInfoDTO
     }
 }
 
-// 이 클래스는 오직 JsonUtility를 통한 네트워크 직렬화에만 사용됩니다.
 [Serializable]
 public class RoomInfoNetworkDTO
 {
     public string ID;
     public string RoomName;
+    public int MemberCount;
+    public List<string> MemberList;
     public List<int> KnownIngredientsList;
     public List<int> KnownRecipesList;
 }
