@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DarkTonic.MasterAudio;
+using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class PlayerMoveState : APlayerStateBase
     protected override void OnEnterState()
     {
         base.OnEnterState();
-        
+        MasterAudio.PlaySound3DFollowTransform("Running", _fsm.transform);
     }
 
     protected override void OnEnterStateRender()
@@ -100,5 +101,6 @@ public class PlayerMoveState : APlayerStateBase
 
     protected override void OnExitState()
     {
+        MasterAudio.StopAllSoundsOfTransform(_fsm.transform);
     }
 }
