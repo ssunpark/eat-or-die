@@ -67,6 +67,11 @@ public class DragonState_Chase : DragonStateBase
 
         if (_sidestepComplete)
         {
+            if (!Context.Sight.HasTarget)
+            {
+                Machine.ForceActivateState<DragonState_Idle>(true);
+            }
+            
             Context.Movement.SetDestination(Context.Sight.Target.transform.position);
         }
 
@@ -92,6 +97,11 @@ public class DragonState_Chase : DragonStateBase
 
     private void SetSidestepDestination()
     {
+        if (!Context.Sight.HasTarget)
+        {
+            Machine.ForceActivateState<DragonState_Idle>(true);
+        }
+        
         Vector3 center = Context.Sight.Target.transform.position;
         Vector3 dir = (Context.Sight.Target.transform.position - center).normalized;
 

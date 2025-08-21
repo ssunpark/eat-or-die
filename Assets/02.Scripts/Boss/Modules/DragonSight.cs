@@ -4,13 +4,24 @@ using UnityEngine;
 public class DragonSight
 {
     private readonly DragonController _controller;
-    
+
     public GameObject Target => _controller.Target;
     public bool HasTarget => _controller.Target != null;
-    
+
     public SightDetector SightDetector { get; private set; }
-    
-    public float Distance => Vector3.Distance(_controller.transform.position, _controller.Target.transform.position);
+
+    public float Distance
+    {
+        get
+        {
+            if (!HasTarget)
+            {
+                _controller.SetIdleForced();
+                return float.MaxValue;
+            }
+            return Vector3.Distance(_controller.transform.position, _controller.Target.transform.position);
+        }
+    }
 
     public DragonSight(DragonController controller)
     {

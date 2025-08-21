@@ -20,6 +20,11 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
 
     protected override void OnEnterState()
     {
+        _alerted = false;
+        _roared = false;
+        
+        Context.Movement.Unlock();
+        
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         Context.Combat.SetFightMode(false);
