@@ -1,3 +1,4 @@
+using DarkTonic.MasterAudio;
 using Fusion;
 using UnityEngine;
 
@@ -43,6 +44,7 @@ public class LavaFloor : NetworkBehaviour
         {
             float hold = Mathf.Max(0f, Duration - _appearSeconds - _fadeSeconds);
             _effect.Appear(hold, _appearSeconds, _fadeSeconds);
+            MasterAudio.PlaySound3DAtTransform("LavaExplosion", transform);
             _vfxStarted = true;
         }
     }

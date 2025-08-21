@@ -37,7 +37,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -1731622800009353602}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 5420319679285214191}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -66,6 +67,7 @@ AnimatorState:
   - {fileID: 5007939176394350565}
   m_StateMachineBehaviours:
   - {fileID: -7799822687649977739}
+  - {fileID: 3833572706265216895}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -92,6 +94,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f25ec02141ae2d499ff8efa75469ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-8049773598731392193
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: Dragon_Swipe
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!114 &-7799822687649977739
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -146,6 +185,7 @@ AnimatorState:
   - {fileID: 5924560317103597465}
   m_StateMachineBehaviours:
   - {fileID: 1454347508438516795}
+  - {fileID: 8946683174657479316}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -263,6 +303,43 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-5479568635319530393
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: Dragon_Swipe
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!1102 &-5204523825796949632
 AnimatorState:
   serializedVersion: 6
@@ -277,6 +354,7 @@ AnimatorState:
   - {fileID: 3709131363731730724}
   m_StateMachineBehaviours:
   - {fileID: -8224238522787717989}
+  - {fileID: 681024007698469851}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -355,6 +433,7 @@ AnimatorState:
   - {fileID: -1498325479075516222}
   m_StateMachineBehaviours:
   - {fileID: 2577055511949059532}
+  - {fileID: 3783425237615411013}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -803,6 +882,7 @@ AnimatorState:
   - {fileID: 2788813303553191669}
   m_StateMachineBehaviours:
   - {fileID: 3077925370292003999}
+  - {fileID: -8049773598731392193}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -831,6 +911,7 @@ AnimatorState:
   - {fileID: 21842247551913160}
   m_StateMachineBehaviours:
   - {fileID: -3227255751948314451}
+  - {fileID: 575672117206902199}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1069,6 +1150,80 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &575672117206902199
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 0
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: 
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 1
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0.1
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
+--- !u!114 &681024007698469851
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: Dragon_Swipe
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!1102 &750044293560129237
 AnimatorState:
   serializedVersion: 6
@@ -1520,6 +1675,80 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &3783425237615411013
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: Dragon_Swipe
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
+--- !u!114 &3833572706265216895
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: Dragon_Bite
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!1102 &4277268750492074313
 AnimatorState:
   serializedVersion: 6
@@ -1612,6 +1841,7 @@ AnimatorState:
   - {fileID: 6263630085223155755}
   m_StateMachineBehaviours:
   - {fileID: -2296804676915216510}
+  - {fileID: -5479568635319530393}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1715,6 +1945,43 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &5420319679285214191
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 1
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 0
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: '[None]'
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 1
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0.5
+  whenToStopSound: 0
+  TimedSoundGroup: Breath
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!114 &5535752698098539978
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2075,6 +2342,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f25ec02141ae2d499ff8efa75469ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8946683174657479316
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: BloodCasting
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!1102 &9215923198231212043
 AnimatorState:
   serializedVersion: 6
