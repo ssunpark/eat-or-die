@@ -13,16 +13,10 @@ public class UI_SeedItemList : MonoBehaviour
 
     private void OnEnable()
     {
-        if (!_isInitialized) //&& SeedShopPanelManager.Instance.SeedItems.Length > 0
+        if (!_isInitialized)
         {
             Init();
         }
-        
-        // else if (!_isSubscribed)
-        // {
-        //     SeedShopPanelManager.Instance.OnSeedListUpdated += Init;
-        //     _isSubscribed = true;
-        // }
 
         RefreshButtons();
     }

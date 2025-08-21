@@ -2767,6 +2767,8 @@ GameObject:
   - component: {fileID: 1376858134738138896}
   - component: {fileID: 8010926932022258303}
   - component: {fileID: 1672734001841491895}
+  - component: {fileID: 806338055668435076}
+  - component: {fileID: 5181561543011870128}
   m_Layer: 5
   m_Name: SeedShopPanel
   m_TagString: Untagged
@@ -2846,6 +2848,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdff0d4e76d044fbba9001cea8756d3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &806338055668435076
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4912778229189863345}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ee7a3479233ad4835a9fdccccf03e0d8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5181561543011870128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4912778229189863345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdb8bf384e28c864cbfd51f727dbda60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BackgroundColor: {r: 0.039215688, g: 0.039215688, b: 0.039215688, a: 0.6}
+  DestroyTime: 0.1
+  BackgroundFade: 0
+  BlockBackgroundInput: 1
 --- !u!1 &4927388305764260719
 GameObject:
   m_ObjectHideFlags: 0
@@ -3314,7 +3354,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 869249758740536990}
-  - component: {fileID: 3768198421363381050}
   - component: {fileID: 5872864291515963509}
   - component: {fileID: 8891475771039041231}
   - component: {fileID: 1784615882516084973}
@@ -3345,19 +3384,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &3768198421363381050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5477871745598830563}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c743794d683f8a419404fb388c46814, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SeedShopPanelUI: {fileID: 4912778229189863345}
 --- !u!223 &5872864291515963509
 Canvas:
   m_ObjectHideFlags: 0

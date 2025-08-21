@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 {
@@ -8,21 +9,17 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
     private ItemProfile[] _seedItems;
     public ItemProfile[] SeedItems => _seedItems;
     public event Action OnSeedListUpdated;
-    
-    [SerializeField] private int npcId = 1200002; // 모종 상인 NPC ID
+
+    [SerializeField] private int npcId = 1200002;
     public UI_SeedItemDetail SeedItemDetailUI;
     public UI_NpcDialogue NpcDialogueUI;
-    
-    private void Start()
+
+    private void Awake()
     {
-        // NpcItemList가 이미 로드되어 있으면 바로 실행
-        if (NpcDataManager.Instance != null && NpcDataManager.Instance.NpcItemList != null)
-        {
-            HandleNpcItemListLoaded();
-        }
+        SeedShopNpcInteractable.PanelOpened += HandleNpcItemListLoaded;
     }
 
-    private void HandleNpcItemListLoaded()
+    public void HandleNpcItemListLoaded()
     {
         LoadSeedItemsFromNpc(npcId);
         
@@ -51,13 +48,6 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
             .Where(itemInfo => itemInfo != null)
             .ToArray();
 
-        //Debug.Log($"[SeedShop] 시드 아이템 개수: {_seedItems.Length}");
-
-        //for (int i = 0; i < _seedItems.Length; i++)
-        //{
-        //    Debug.Log($"[SeedShop] SeedItem: {_seedItems[i].ItemDefinition.ID} - {_seedItems[i].ItemDefinition.Name}");
-        //}
-
         OnSeedListUpdated?.Invoke();
     }
     
@@ -76,8 +66,6 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         UpdateNpcDialogue(npcId);
     }
 
-
-
     public void UpdateNpcDialogue(int npcID)
     {
         var dialogueList = NpcDataManager.Instance.NpcDialogueList
@@ -90,7 +78,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
             return;
         }
 
-        int randomIndex = UnityEngine.Random.Range(0, dialogueList.Count);
+        int randomIndex = Random.Range(0, dialogueList.Count);
         string randomDialogue = dialogueList[randomIndex].DialogueContents;
 
         NpcDialogueUI.Setup(randomDialogue);

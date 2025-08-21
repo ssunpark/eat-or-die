@@ -11,8 +11,6 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
     public List<Npc> NpcList { get; private set; }
     public List<NpcItem> NpcItemList { get; private set; }
     public List<NpcDialogue> NpcDialogueList { get; private set; }
-    public event Action OnDataLoaded;
-    public event Action OnNpcItemListLoaded;
 
 
     private void Awake()
@@ -28,7 +26,5 @@ public class NpcDataManager : BehaviourSingleton<NpcDataManager>
         NpcDialogueList = CSVLoader<NpcDialogue>.LoadCSV(Application.streamingAssetsPath + NPCDIALOGUE_CSV_PATH);
 
         Debug.Log($"로드 완료 - NpcList: {NpcList.Count}, NpcItemList: {NpcItemList.Count}, NpcDialogueList: {NpcDialogueList.Count}");
-        OnNpcItemListLoaded?.Invoke();
-        OnDataLoaded?.Invoke();
     }
 }
