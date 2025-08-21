@@ -149,12 +149,18 @@ public class TraitManager
     {
         foreach (var kvp in _traitDict)
         {
+            var type = kvp.Key;
             kvp.Value.SetLevel(0);
-            _statManager.RemoveModifiersFrom(kvp.Key);
-            OnTraitLevelSet?.Invoke(kvp.Key, 0);
+            _statManager.RemoveModifiersFrom(type);
+            OnTraitLevelSet?.Invoke(type, 0);
+
+            TraitLevelStorage.SetLevel(type, 0);
+            TraitLevelStorage.SetExperience(type, 0f);
+            TraitLevelStorage.SetSkillPoint(type, 0);
         }
 
         _skillPoints.Clear();
+        
     }
 
     public Trait GetTrait(ETraitType type)

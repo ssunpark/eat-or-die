@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using DarkTonic.MasterAudio;
 using DG.Tweening;
 using Fusion;
 using System.Threading;
@@ -71,6 +72,10 @@ public class LoadingSceneOrchestrator : MonoBehaviour
         // await SomethingElseAsync(); SetProgressWeighted(0.75f);
 
         // 프리로드 마무리
+        var masterAudio = FindAnyObjectByType<MasterAudio>().gameObject;
+        Destroy(masterAudio);
+        var playlist = FindAnyObjectByType<PlaylistController>().gameObject;
+        Destroy(playlist);
         SetProgressWeighted(0.8f);
         SetStatus("프리로드 완료");
         await UniTask.Yield(token);
