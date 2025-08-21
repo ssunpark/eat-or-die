@@ -2,6 +2,7 @@
 using Fusion;
 using Unity.Mathematics;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 // 게임 내 보여지는 아이템 오브젝트
 public class ItemObject : NetworkBehaviour, IPickable
@@ -54,20 +55,24 @@ public class ItemObject : NetworkBehaviour, IPickable
     private Quaternion _itemRotationSnapShot;
     private Vector3 _itemPositionSnapShot;
     private ParticleSystem _itemParticle;
+    private ItemDropAnimator _itemDropAnimator;
 
     private void Awake()
     {
         _collider = GetComponent<Collider>();
+        _itemDropAnimator = GetComponent<ItemDropAnimator>();
     }
 
     public override void Spawned()
     {
         transform.position = SpawnPosition + (Vector3.up * 0.5f);
+        var yPos = transform.position.y;
+        var randomPos = Random.insideUnitCircle;
+        Vector3 randomDropPosition = transform.position + new Vector3(randomPos.x, yPos, randomPos.y);
+        _itemDropAnimator.DropItem(randomDropPosition, StartFloatingAndRotating);
         _itemObject = ItemManager.Instance.GetItem(ItemID).GetHoldItemObject();
         _itemParticle = ParticleManager.Instance.PlayByKeyLocalAsChild(PARTICLE_KEY, transform, Vector3.zero, quaternion.identity);
         ApplyVisual();
-        
-        StartFloatingAndRotating();
     }
 
     private void Update()
