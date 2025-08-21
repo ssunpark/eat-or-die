@@ -542,7 +542,6 @@ public class Player : CharacterBase, IAttackable
     public void Revive()
     {
         SimpleKCC.enabled = true;
-        Resource.ResetAll();
 
         RPC_ClientRevive();
     }
@@ -564,6 +563,7 @@ public class Player : CharacterBase, IAttackable
     {
         OnRevive?.Invoke();
         await _teleportManager.ReviveTeleport();
+
         RPC_ReviveState();
 
         GetComponent<ItemMagnet>().enabled = true;
@@ -574,6 +574,8 @@ public class Player : CharacterBase, IAttackable
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
     private void RPC_ReviveState()
     {
+
+        Resource.ResetAll();
         GetComponent<ItemMagnet>().enabled = true;
         PlayerFSM.IsDead = false;
 
