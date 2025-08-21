@@ -28,7 +28,7 @@ public class PlayerIdleState : APlayerStateBase
     }
     protected override void OnFixedUpdateInput()
     {
-        _skill?.Publish(ESkillEventType.OnIdle, _skill.Context);
+        _skill?.Publish(ESkillEventType.OnIdle);
 
         if (_fsm.CurrentInput.IsUnityNull())
         {

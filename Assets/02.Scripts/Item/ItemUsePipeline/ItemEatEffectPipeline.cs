@@ -30,7 +30,7 @@ public class ItemEatEffectPipeline : IItemUsePipeline
             eater: player.NetworkObject,
             baseRestore: _hungerEffect.Value, // 아이템 기본 회복은 각 효과가 ExtraRestore로 적는다
             hungerRatio: context.MaxHunger > 0 ? context.CurrentHunger / context.MaxHunger : 0f,
-            isIngredient: _isIngredient
+            isHarvest: _isIngredient
         );
 
         // 스킬 적용 (한 번만)

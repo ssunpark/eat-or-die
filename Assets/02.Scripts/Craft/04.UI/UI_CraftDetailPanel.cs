@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -121,5 +121,6 @@ public class UI_CraftDetailPanel : MonoBehaviour
         UnifiedInventoryManager.Instance.AddItem(craftedItemInstance);
 
         Debug.Log($"{_itemProfile.ItemDefinition.Name} 제작 성공!");
+        MasterAudio.PlaySound("CraftCompleted");
     }
 }

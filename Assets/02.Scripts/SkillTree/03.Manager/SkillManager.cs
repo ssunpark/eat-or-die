@@ -14,23 +14,23 @@ public class SkillManager
     private readonly Dictionary<int, Skill> _skills = new();
     // 현재 활성 핸들러(있을 때만 값 존재)
     private readonly Dictionary<int, ISkillHandler> _handlers = new();
-    
+
     public SkillContext Context { get; private set; }
 
     public event Action OnDataChanged;
-    
+
     private bool _isRestoring;
 
     public SkillManager(Player player)
     {
         // PlayerPrefs.DeleteAll();
-        
+
         _traitManager = player.Trait;
         _hub = new SkillEventHub();
         _factory = new SkillHandlerFactory();
         _repository = new SkillRepository();
         Context = new SkillContext(player);
-        
+
         foreach (var skill in _repository.LoadSkillRawDataList())
         {
             _skills[skill.Meta.Id] = skill;
@@ -49,26 +49,31 @@ public class SkillManager
             {
                 case 1:
                 case 2:
-                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 0));
+                    skill.AddParent(_skills.Values.FirstOrDefault(s =>
+                        s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 0));
                     break;
 
                 case 3:
-                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 1));
+                    skill.AddParent(_skills.Values.FirstOrDefault(s =>
+                        s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 1));
                     break;
 
                 case 4:
-                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 1));
-                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 2));
+                    skill.AddParent(_skills.Values.FirstOrDefault(s =>
+                        s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 1));
+                    skill.AddParent(_skills.Values.FirstOrDefault(s =>
+                        s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 2));
                     break;
 
                 case 5:
-                    skill.AddParent(_skills.Values.FirstOrDefault(s => s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 3));
+                    skill.AddParent(_skills.Values.FirstOrDefault(s =>
+                        s.Meta.ETraitType == skill.Meta.ETraitType && s.Meta.Position == 2));
                     break;
             }
         }
     }
-    
-    public List<Skill> GetSkills(ETraitType traitType) 
+
+    public List<Skill> GetSkills(ETraitType traitType)
         => _skills
             .Where(x => x.Value.Meta.ETraitType == traitType)
             .Select(x => x.Value)
@@ -94,18 +99,19 @@ public class SkillManager
             UI_Notification.Notify("개발중입니다..아마두..?");
             return;
         }
+
         _handlers[id] = handler;
-        
+
         skill.SetLevel(level); // 데이터 갱신
 
         if (level > 0)
             _hub.Subscribe(handler);
 
-        Publish(ESkillEventType.OnSkillUpgrade, Context);
-        
+        Publish(ESkillEventType.OnSkillUpgrade);
+
         OnDataChanged?.Invoke();
     }
-    
+
     private void Upgrade(int id)
     {
         if (!_skills.TryGetValue(id, out var skill))
@@ -120,15 +126,16 @@ public class SkillManager
 
         // 새 핸들러 생성 + 구독
         int nextLevel = _skills[id].Level + 1;
-        
+
         var handler = _factory.CreateSkillNode(skill.Meta, nextLevel);
         if (handler == null)
         {
             UI_Notification.Notify("개발중입니다..아마두..?");
             return;
         }
+
         _handlers[id] = handler;
-        
+
         // 내부 데이터 수정
         _skills[id].SetLevel(nextLevel);
         if (!_traitManager.TryUseSkillPoint(_skills[id].Meta.ETraitType))
@@ -139,10 +146,10 @@ public class SkillManager
         if (skill.Level > 0)
             _hub.Subscribe(handler);
 
-        Publish(ESkillEventType.OnSkillUpgrade, Context);
-        
+        Publish(ESkillEventType.OnSkillUpgrade);
+
         NotifyChangedAndAutoSave();
-        
+
         SaveToDisk();
     }
 
@@ -158,13 +165,13 @@ public class SkillManager
         {
             return false;
         }
-        
+
         if (_traitManager.GetSkillPoints(_skills[id].Meta.ETraitType) < 1)
         {
             UI_Notification.Notify("스킬 포인트가 부족합니다.");
             return false;
         }
-        
+
         Upgrade(id);
         return true;
     }
@@ -186,36 +193,56 @@ public class SkillManager
 
         NotifyChangedAndAutoSave();
     }
+    
+    public void ResetAllSkills()
+    {
+        // 모든 스킬 비활성화
+        foreach (var id in _skills.Keys.ToList())
+        {
+            Inactive(id);
+        }
+
+        // 전체 데이터 저장
+        SaveToDisk();
+
+        // UI 등에 알림
+        OnDataChanged?.Invoke();
+    }
 
     public void Publish<TPayload>(ESkillEventType type, SkillContext ctx, TPayload payload)
         where TPayload : ISkillPayload
         => _hub.Publish(type, ctx, payload);
 
-    public void Publish(ESkillEventType type, SkillContext ctx)
-        => _hub.Publish(type, ctx, null);
-    
+    public void Publish(ESkillEventType type)
+        => _hub.Publish(type, Context, null);
+
+    public void Publish<TPayload>(ESkillEventType type, TPayload payload)
+        where TPayload : ISkillPayload
+        => _hub.Publish(type, Context, payload);
+
     private void NotifyChangedAndAutoSave()
     {
-        if (_isRestoring) return; // 로드 중이면 아무 것도 안 함
+        if (_isRestoring)
+            return; // 로드 중이면 아무 것도 안 함
         OnDataChanged?.Invoke();
         SaveToDisk();
     }
-    
+
     public void SaveToDisk()
     {
         _repository.SaveSkillDataList(_skills.Values);
     }
-    
+
     public void LoadFromDisk()
     {
         var list = _repository.LoadSkillDataList();
 
         _isRestoring = true;
-        
+
         // 모두 비활성화
         foreach (var id in _skills.Keys.ToList())
             Inactive(id);
-        
+
         // 저장 항목 복구
         foreach (var e in list)
         {
@@ -241,6 +268,7 @@ public class SkillManager
     public string GetName(int id) => _skills.TryGetValue(id, out var s) ? s.Meta.Name : String.Empty;
     public string GetLevelName(int id) => $"LV.{GetLevel(id)} {GetName(id)}";
     private string GetDescription(int id) => _skills.TryGetValue(id, out var s) ? s.Meta.Description : "";
+
     public string GetRichTextDescription(int id, int level, Color color)
     {
         var text = RichTextUtil.ColorizePlaceholders(GetDescription(id), color);
