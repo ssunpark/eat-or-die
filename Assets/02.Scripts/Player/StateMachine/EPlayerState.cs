@@ -2,6 +2,7 @@
 {
     Idle,
     Move,
+    Run,
     Attack,
     Interact,
     UseItem,
