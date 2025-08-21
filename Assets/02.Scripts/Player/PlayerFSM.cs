@@ -29,6 +29,7 @@ public class FSMStateInstances
     public PlayerBerserkState Berserk;
     public PlayerRecoverState Recover;
     public PlayerCorpseState Corpse;
+    public PlayerCookSuccessState CookSuccess;
 }
 [RequireComponent(typeof(StateMachineController))]
 public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
@@ -152,7 +153,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Cooking = new PlayerCookingState(this),
             Berserk = new PlayerBerserkState(this),
             Recover = new PlayerRecoverState(this),
-            Corpse = new PlayerCorpseState(this)
+            Corpse = new PlayerCorpseState(this),
+            CookSuccess = new PlayerCookSuccessState(this)
         };
 
         _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
@@ -166,7 +168,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             FSMStateInstances.Dead,
             FSMStateInstances.Berserk,
             FSMStateInstances.Recover,
-            FSMStateInstances.Corpse
+            FSMStateInstances.Corpse,
+            FSMStateInstances.CookSuccess
         );
     }
 
