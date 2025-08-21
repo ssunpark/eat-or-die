@@ -180,6 +180,7 @@ public class UiGlobalHandler : MonoBehaviour
         if (modalOpen)
         {
             _mapPlayer.Disable();
+
         }
         else
         {
@@ -189,7 +190,7 @@ public class UiGlobalHandler : MonoBehaviour
 
     private void OnModalOpened(AUI_PopupBase popupBase)
     {
-        if(popupBase == _traitsPopup)
+        if (popupBase == _traitsPopup)
         {
             BindPlayer();
         }
@@ -222,9 +223,14 @@ public class UiGlobalHandler : MonoBehaviour
     {
         get
         {
-            // Traits 팝업과 Stats 팝업이 모두 비활성화 상태인지 확인
-            return (_traitsPopup == null || !_traitsPopup.gameObject.activeSelf) &&
-                   (_statsPopup == null || !_statsPopup.gameObject.activeSelf);
+            if (_traitsPopup != null && _traitsPopup.gameObject.activeSelf) return false;
+            if (_statsPopup != null && _statsPopup.gameObject.activeSelf) return false;
+            if (_partyPopup != null && _partyPopup.gameObject.activeSelf) return false;
+            foreach (var popup in _inputBlockPopups)
+            {
+                if (popup.gameObject.activeSelf) return false;
+            }
+            return true;
         }
     }
 }

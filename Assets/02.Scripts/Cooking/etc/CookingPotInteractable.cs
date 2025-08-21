@@ -14,7 +14,6 @@ public class CookingPotInteractable : NetworkBehaviour, IInteractable
     public void Interact()
     {
         CookingPanelUI.Open();
-        InputReader.Instance.ReleaseControl();
         CookingManager.Instance.SetCurrentCookingPot(this); // 로컬의 쿠킹 매니저에 현재 CookingPot을 등록합니다.
     }
 
