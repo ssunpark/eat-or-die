@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class UI_StoragePanel : AUI_PopupBase
@@ -20,24 +21,10 @@ public class UI_StoragePanel : AUI_PopupBase
         }
 
         SharedStorageManager.Instance.OnStorageUpdated += UpdateInventoryUI;
-        SharedStorageManager.Instance.OnOpenStorage += ToggleStorage;
-        Close();
+        SharedStorageManager.Instance.OnOpenStorage += Open;
+        gameObject.SetActive(false);
     }
     
-    public void ToggleStorage()
-    {
-        bool isActive = gameObject.activeSelf;
-
-        if (isActive)
-        {
-            Close();
-        }
-        else
-        {
-            Open();
-        }
-    }
-
     private void UpdateInventoryUI()
     {
         foreach (UI_StorageSlot uiSlot in _uiSlotList)
