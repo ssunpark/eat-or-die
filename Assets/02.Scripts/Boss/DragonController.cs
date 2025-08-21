@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using Fusion.Addons.FSM;
+using INab.Common;
 using RaycastPro.Detectors;
 using UnityEngine;
 
@@ -58,6 +58,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     private GameObject _phaseEffect;
     public GameObject PhaseEffect => _phaseEffect;
 
+    [SerializeField]
+    private InteractiveEffect _dissolve;
+    public InteractiveEffect Dissolve => _dissolve;
+
     [Header("감지기")]
     [SerializeField]
     private SightDetector _sightDetector;
@@ -95,8 +99,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [Networked]
     public float CurrentHeath { get; set; }
 
-    [Header("테스트")]
-    public bool Islocked;
+    private bool _hit;
+    private bool _isDead;
+    public bool IsDead { get => _isDead; set => _isDead = value; }
+    private float _deadTimer;
 
     private void Awake()
     {
@@ -117,15 +123,28 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         _context.OnSpawned();
     }
 
-    private void Update()
+    public override void FixedUpdateNetwork()
     {
-        Islocked = _context.Movement.IsLocked;
-
         if (_targetPlayer?.IsDead ?? false)
         {
             // 다른 타겟으로 변환
             _targets.Remove(Target);
             SetTarget(_targets.FirstOrDefault());
+        }
+
+        if (_hit && _context.Stats.CurrentHP <= 0 && !_isDead)
+        {
+            _stateMachine.Machine.ForceActivateState<DragonState_Death>(true);
+            _hit = false;
+        }
+
+        if (!_isDead)
+            return;
+
+        _deadTimer += Time.deltaTime;
+        if (_deadTimer >= _dissolve.duration)
+        {
+            Runner.Despawn(Object);
         }
     }
 
@@ -147,6 +166,15 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         {
             Animator.SetTrigger("Roar");
         }
+    }
+    
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    public void RPC_Death()
+    {
+        int index = Animator.GetLayerIndex("Fight Layer");
+        Animator.SetLayerWeight(index, 0);
+        Animator.SetTrigger("Death");
     }
 
     public void CollectStateMachines(List<IStateMachine> stateMachines)
@@ -200,6 +228,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             _context.Stats.TakeDamage(amount);
             ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up, EDamageFloaterType.Damage,
                 true);
+
+            _hit = true;
         }
     }
 
