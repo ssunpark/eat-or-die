@@ -1,4 +1,4 @@
-using System;
+using DarkTonic.MasterAudio;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,5 +20,6 @@ public class UI_SeedItemButton : MonoBehaviour
     public void OnClick()
     {
         SeedShopPanelManager.Instance.UpdateSeedDetail(_itemProfile.ItemDefinition.ID);
+        MasterAudio.PlaySound("ButtonClick");
     }
 }

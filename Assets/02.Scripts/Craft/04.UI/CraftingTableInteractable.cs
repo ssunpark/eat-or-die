@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DarkTonic.MasterAudio;
+using Fusion;
 using UnityEngine;
 
 public class CraftingTableInteractable : NetworkBehaviour, IInteractable
@@ -14,5 +15,6 @@ public class CraftingTableInteractable : NetworkBehaviour, IInteractable
         Debug.Log("E키 상호작용");
         craftPanel.Open();
         InputReader.Instance.ReleaseControl();
+        MasterAudio.PlaySound3DAtTransform("CraftCompleted", transform);
     }
 }

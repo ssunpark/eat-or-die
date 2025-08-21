@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DarkTonic.MasterAudio;
+using Fusion;
 using UnityEngine;
 
 //수현
@@ -17,6 +18,7 @@ public class UI_CookingPanel : AUI_PopupBase
 
     public override void Open()
     {
+        MasterAudio.PlaySound("CookingPotInteract");
         InventoryManager.Instance.ToggleInventory(true);
         base.Open();
         if (!_isInitialized)
@@ -49,5 +51,6 @@ public class UI_CookingPanel : AUI_PopupBase
     {
         base.Close();
         InventoryManager.Instance.ToggleInventory(false);
+        MasterAudio.StopAllOfSound("CookingPotInteract");
     }
 }
