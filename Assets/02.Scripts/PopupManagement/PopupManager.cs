@@ -68,15 +68,19 @@ public class PopupManager : BehaviourSingleton<PopupManager>
     {
         IReadOnlyList<AUI_PopupBase> popups = GetAllOpenPopups();
 
-        for (int i = popups.Count - 1; i >= 0; --i)
+        // for (int i = popups.Count - 1; i >= 0; --i)
+        // {
+        //     if (!popups[i].isActiveAndEnabled)
+        //     {
+        //         Unregister(popups[i]);
+        //         continue;
+        //     }
+        //     
+        //     popups[i].Close();
+        // }
+        while (HasOpenedPopup)
         {
-            if (!popups[i].isActiveAndEnabled)
-            {
-                Unregister(popups[i]);
-                continue;
-            }
-            
-            popups[i].Close();
+            CloseLast();
         }
     }
 }
