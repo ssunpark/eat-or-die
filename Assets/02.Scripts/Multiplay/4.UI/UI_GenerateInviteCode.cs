@@ -9,7 +9,12 @@ public class UI_GenerateInviteCode : MonoBehaviour
 
     private void Start()
     {
-        createCodeButton.onClick.AddListener(OnCreateCodeButtonClicked);
+        // createCodeButton.onClick.AddListener(OnCreateCodeButtonClicked);   
+    }
+
+    private void OnEnable()
+    {
+        RoomInfoManager.Instance.OnRoomInfoUpdated += OnCreateCodeButtonClicked;
     }
 
     public async void OnCreateCodeButtonClicked()
@@ -21,6 +26,10 @@ public class UI_GenerateInviteCode : MonoBehaviour
         if (!string.IsNullOrEmpty(code))
         {
             inviteCodeText.text = code;
+        }
+        else
+        {
+            Debug.Log("초대 코드 생성 실패");
         }
         createCodeButton.interactable = true;
         GUIUtility.systemCopyBuffer = inviteCodeText.text;
