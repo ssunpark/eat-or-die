@@ -93,10 +93,6 @@ public class Projectile : NetworkBehaviour
                     RPC_GrantExpOrder(Attacker.InputAuthority, "MagicAttackHit");
                 }
             }
-            else
-            {
-                Debug.LogWarning("HitObject is null when OnHitChanged is called.");
-            }
             if (Runner.IsServer)
             {
                 DestroySelf();

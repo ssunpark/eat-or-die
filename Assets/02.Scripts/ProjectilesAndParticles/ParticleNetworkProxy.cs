@@ -65,6 +65,7 @@ public class ParticleNetworkProxy : NetworkBehaviour
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void RPC_SpawnDamage(float damage, Vector3 position, EDamageFloaterType floaterType)
     {
+        if (Runner.IsServer) return;
         if (_damagePrefabs.TryGetValue(floaterType, out var prefab))
         {
             prefab.Spawn(position, damage);
