@@ -22,7 +22,8 @@ public class RoomInfoRepository
             var query = _db.Collection("Users")
                 .Document(userId)
                 .Collection("Rooms")
-                .OrderByDescending("RoomName");
+                .OrderByDescending("CreatedAt");
+                //.OrderByDescending("RoomName")
 
             var snapshot = await query.GetSnapshotAsync();
             foreach (var doc in snapshot.Documents)
