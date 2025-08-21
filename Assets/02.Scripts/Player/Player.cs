@@ -535,10 +535,8 @@ public class Player : CharacterBase, IAttackable
 
     public void Revive()
     {
-        
         SimpleKCC.enabled = true;
         Resource.ResetAll();
-        OnRevive?.Invoke();
 
         RPC_ClientRevive();
     }
@@ -558,8 +556,10 @@ public class Player : CharacterBase, IAttackable
     private TeleportManager _teleportManager;
     public async UniTask ReviveAsync()
     {
+        OnRevive?.Invoke();
         await _teleportManager.ReviveTeleport();
         RPC_ReviveState();
+
     }
 
 
