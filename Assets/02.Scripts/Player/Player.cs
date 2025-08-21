@@ -44,6 +44,7 @@ public class Player : CharacterBase, IAttackable
     private Dictionary<string, float> _animationClipLengths;
 
     private Animator _animator;
+    public Animator Anim => _animator;
     bool _isReset;
     public SimpleKCC SimpleKCC { get; private set; }
     public SkillManager Skill { get; private set; }
@@ -172,6 +173,11 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="hide">true: 숨기기</param>
+    /// <param name="includeUI">UI도 숨길것인지</param>
     public void HideCharacter(bool hide, bool includeUI = true)
     {
         if (_renderObject != null)
@@ -526,26 +532,30 @@ public class Player : CharacterBase, IAttackable
 
     public void Revive()
     {
+        if (_teleportManager == null)
+        {
+            _teleportManager = FindAnyObjectByType<TeleportManager>();
+        }
         SimpleKCC.enabled = true;
-        Teleport(new Vector3(0, 0.5f, 0));
-        PlayerFSM.IsDead = false;
         Resource.ResetAll();
-        _animator.Play("Idle");
+        OnRevive?.Invoke();
         ReviveAsync().Forget();
+    }
+
+    private TeleportManager _teleportManager;
+    public async UniTask ReviveAsync()
+    {
+        await _teleportManager.ReviveTeleport();
+        GetComponent<ItemMagnet>().enabled = true;
+        PlayerFSM.IsDead = false;
+
         _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
     }
 
-    public async UniTask ReviveAsync()
-    {
-        await UniTask.Delay(1000);
-        GetComponent<ItemMagnet>().enabled = true;
-    }
-
-    public void InvokeRevive()
-    {
-        OnRevive?.Invoke();
-        
-    }
+    //public void InvokeRevive()
+    //{
+    //    OnRevive?.Invoke();
+    //}
 
     public void InstantRevive()
     {
@@ -562,7 +572,16 @@ public class Player : CharacterBase, IAttackable
 
         if (!IsDead) return;
         InstantRevive();
+    }
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_RequestRevive(RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        if (!IsDead) return;
+        Revive();
     }
 
 }

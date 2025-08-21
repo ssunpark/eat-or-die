@@ -13,16 +13,13 @@ public class PlayerCorpseState : APlayerStateBase
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _fsm.IsDead = true;
-        _fsm.PlayerNetworkObject.Revive();
+        _fsm.PlayerNetworkObject.InstantRevive();
     }
 
     protected override void OnEnterStateRender()
     {
         _fsm.HeadCanvas.SetActive(false);
-        if (_fsm.HasInputAuthority)
-        {
-            _fsm.PlayerNetworkObject.InvokeRevive();
-        }
+
     }
 
     protected override void OnExitStateRender()
