@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using EPOOutline;
 using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 
 #if UNITY_EDITOR
@@ -83,12 +85,19 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     private NetworkInputData _currentInput;
     private NetworkInputData _previousInput;
     public ParticleSystem HungryEffect;
+    private float _floaterTime = 1f;
     public NetworkInputData CurrentInput => _currentInput;
     public NetworkInputData PreviousInput => _previousInput;
 
     public const float INTERACTABLE_DISTANCE = 3f;
     public const float MAX_RAYCAST_DISTANCE = 100f;
     private const float _useItemMaxDistance = 2.0f;
+    [SerializeField] private GameObject _reviveSelectUIPrefab;
+    public GameObject HeadCanvas;
+    private Transform _uiParent;
+
+    [SerializeField] UI_UseOrInteract _useUI;
+    [SerializeField] UI_UseOrInteract _interactUI;
     [Networked]
     public EUseItemMode UseItemMode { get; set; } = EUseItemMode.Self;
 
@@ -101,6 +110,13 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         list.Add(_playerFSM);
     }
 
+    public void ShowSelectPanel()
+    {
+        Instantiate(_reviveSelectUIPrefab, _uiParent)
+            .GetComponent<UI_ReviveSelect>()
+            .Initialize(this,PlayerNetworkObject);
+    }
+
     public override void Spawned()
     {
         SimpleKCC = GetComponent<SimpleKCC>();
@@ -109,6 +125,12 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         StatNetworkSync = GetComponent<CharacterStatNetworkSync>();
         ItemHolder = GetComponent<PlayerItemHolder>();
         PlayerNetworkObject = GetComponent<Player>();
+        if (Object.HasInputAuthority)
+        {
+            _uiParent = GameObject.FindGameObjectWithTag("UIParent")?.transform;
+            GetComponentInChildren<OutlineController>().enabled = false;
+            GetComponentInChildren<Outlinable>().enabled = false;
+        }
     }
 
     private void InitializeFSM()
@@ -143,8 +165,49 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         );
     }
 
+    public void ResetOutlinesAndTags()
+    {
+        _interactUI.TargetObject = null;
+        _useUI.TargetObject = null;
+        InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+        ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+    }
+    float _timer = 0f;
     public override void FixedUpdateNetwork()
     {
+        if (PlayerNetworkObject == null || PlayerNetworkObject.Resource == null)
+        {
+            return;
+        }
+        if (HasStateAuthority)
+        {
+            if (IsDead)
+            {
+                return;
+            }
+            
+            float HungerRecoveryOverTime = PlayerNetworkObject.Stat.GetStat(EStatType.HungerRecoveryOverTime);
+
+            if(HungerRecoveryOverTime != 0f)
+            {
+                _timer += Runner.DeltaTime;
+                if (_timer >= _floaterTime)
+                {
+                    _timer = 0f;
+                    if (PlayerNetworkObject.Resource.GetHungerPercent() == 1f) return;
+                    PlayerNetworkObject.Resource.RestoreHunger(HungerRecoveryOverTime);
+                    if (HungerRecoveryOverTime > 0f)
+                    {
+                        ParticleManager.Instance.DamageSpawn(HungerRecoveryOverTime, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Heal, true);
+                    }
+                    else
+                    {
+                        ParticleManager.Instance.DamageSpawn(HungerRecoveryOverTime, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Damage, true);
+                    }
+                }
+            }
+
+        }
         if (HasInputAuthority)
         {
             if (CanInteract)
@@ -152,6 +215,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 if (!TestInteraction(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.Interact)))
                 {
                     InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+                    _interactUI.TargetObject = null;
                     RPC_SetInteractTarget(null);
                 }
             }
@@ -161,6 +225,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 if (!TestUseItem(CurrentInput.buttons.WasPressed(PreviousInput.buttons, EButtons.UseItem)))
                 {
                     ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+                    _useUI.TargetObject = ItemUseTarget?.gameObject;
                     RPC_SetItemUseTargetAndMode(null, EUseItemMode.Self);
                 }
             }
@@ -201,12 +266,13 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
                 RPC_SetItemUseTargetAndMode(playerUnderCursor, EUseItemMode.Give);
                 playerUnderCursor.GetComponent<OutlineController>()?.SetOutlineActive(true);
+                _useUI.TargetObject = ItemUseTarget?.gameObject;
                 return true;
             }
 
             // 커서에 유효한 다른 플레이어가 없으면 자기 자신
-            if (ItemUseTarget != PlayerNetworkObject.Object)
-                ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+            ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
 
             RPC_SetItemUseTargetAndMode(PlayerNetworkObject.Object, EUseItemMode.Self);
             return true;
@@ -220,9 +286,10 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
             RPC_SetItemUseTargetAndMode(net, EUseItemMode.Targeted);
             net.GetComponent<OutlineController>()?.SetOutlineActive(true);
+            _useUI.TargetObject = ItemUseTarget?.gameObject;
             return true;
         }
-
+        _useUI.TargetObject = null;
         return false;
     }
 
@@ -245,6 +312,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (InteractTarget != net)
             InteractTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
+        _interactUI.TargetObject = comp.gameObject;
 
         comp.GetComponent<OutlineController>()?.SetOutlineActive(true);
         RPC_SetInteractTarget(net);
@@ -278,6 +347,16 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         _playerFSM.ForceActivateState((int)state);
     }
     [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
+    public void RPC_GrantExpOrderWithAmount([RpcTarget] PlayerRef player, string actionName, int amount)
+    {
+        PlayerNetworkObject.ExpHandler.GrantExp(actionName, amount);
+        if (actionName == "KillMonster")
+        {
+            ParticleManager.Instance.DamageSpawn(amount, transform.position + Vector3.up * 0.5f, EDamageFloaterType.Experience, false);
+        }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
     public void RPC_GrantExpOrder([RpcTarget] PlayerRef player, string actionName)
     {
         PlayerNetworkObject.ExpHandler.GrantExp(actionName);
@@ -304,10 +383,12 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             {
                 Debug.Log($"[PlayerFSM] Hit object: {go.name} at distance {hit.distance}");
             }
-            var player = hit.collider.GetComponentInParent<Player>();
+            var player = hit.collider.GetComponentInParent<PlayerFSM>();
             if (player == null) return false;
 
-            var netObj = player.NetworkObject;
+            if (player.IsDead) return false;
+
+            var netObj = player.Object;
             if (netObj == null) return false;
 
             if (EnableDebugLog)
@@ -325,15 +406,18 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 {
                     Debug.Log($"[PlayerFSM] Player is within use item distance: {dist}");
                 }
-                if (netObj == PlayerNetworkObject.Object)
+                if (netObj == Object)
                 {
                     if (EnableDebugLog)
                     {
-                        Debug.Log($"[PlayerFSM] target is me");
-                        return false;
+                        Debug.Log($"[PlayerFSM] target is me");    
                     }
+                    _useUI.TargetObject = netObj.gameObject;
+                    _useUI.ActionName = "먹기";
+                    return false;
                 }
                 targetPlayer = netObj;
+                _useUI.TargetObject = netObj.gameObject;
                 return true;
             }
         }
@@ -396,7 +480,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         }
         
         var comp = (Component)interactable;
-        if (Vector3.Distance(transform.position, comp.transform.position) > maxDistance)
+        float distanceoffset = interactable.InteractionDistanceOffset;
+        if (Vector3.Distance(transform.position, comp.transform.position) > maxDistance + distanceoffset)
         {
             if (EnableDebugLog)
                 Debug.Log($"[PlayerFSM] Interactable {comp.name} is too far away ({Vector3.Distance(transform.position, comp.transform.position)} > {maxDistance}).");
@@ -408,4 +493,53 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         return net != null;
     }
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    public void RPC_RequestApplyStatModifier(EStatType statType, EStatModifierType modType, float value, float duration, string source, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+        if (Object.InputAuthority != info.Source) return;
+
+        var mod = new StatModifier(modType, value, source, duration > 0f, duration);
+        PlayerNetworkObject.Stat.ApplyModifier(statType, mod);
+
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_RequestUseFood(int foodId, NetworkObject target, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        var targetPlayer = target?.GetComponent<Player>();
+        if (targetPlayer == null) return;
+
+        var list = FoodDB.Instance.Get(foodId);
+        if (list == null || list.Count == 0) return;
+
+        foreach (var e in list)
+        {
+            var mod = new StatModifier(e.Op, e.Value, foodId, e.Duration > 0f, e.Duration);
+            targetPlayer.Stat.ApplyModifier(e.Stat, mod);
+        }
+    }
+
+    [Rpc(Fusion.RpcSources.InputAuthority, Fusion.RpcTargets.StateAuthority,
+     HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_RequestUseFoodOnTarget(int foodId, NetworkObject target, RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        var targetPlayer = target ? target.GetComponent<Player>() : null;
+        if (targetPlayer == null) return;
+
+        var list = FoodDB.Instance.Get(foodId);
+        if (list == null || list.Count == 0) return;
+
+        foreach (var e in list)
+        {
+            var mod = new StatModifier(e.Op, e.Value, foodId, e.Duration > 0f, e.Duration);
+            targetPlayer.Stat.ApplyModifier(e.Stat, mod); // ✅ 대상에게 적용
+        }
+    }
+
 }

@@ -9,6 +9,14 @@ public class EnemyAnimationRelay : MonoBehaviour
         _machine = machine;
     }
 
+    public void PlayParticleEvent()
+    {
+        if (_machine.ActiveState is IParticlePlayer particlePlayer)
+        {
+            particlePlayer.PlayParticle();
+        }
+    }
+
     public void CallAnimationEvent()
     {
         if (_machine.ActiveState is IEventReceiver eventReceiver)

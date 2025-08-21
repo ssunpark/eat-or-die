@@ -2172,8 +2172,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.8598478, z: 0, w: 0.51055056}
   m_LocalPosition: {x: -13.7, y: -0.0019999743, z: -5.8}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4611892106799370088}
   - {fileID: 2531545092447674761}
@@ -2797,6 +2797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4611892106799370088}
   - component: {fileID: 4879851464716308915}
+  - component: {fileID: 3926123933348184588}
   - component: {fileID: 3642224613650760139}
   - component: {fileID: 2760805542641377075}
   - component: {fileID: 8215867264782046972}
@@ -2816,7 +2817,7 @@ Transform:
   m_GameObject: {fileID: 8318150651529922366}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.2958682, z: -0, w: 0.95522887}
-  m_LocalPosition: {x: 3.95, y: 2.77, z: 3.32}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2.2911646, y: 8.720345, z: 11.888403}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2835,6 +2836,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   craftPanel: {fileID: 0}
+--- !u!114 &3926123933348184588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8318150651529922366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306e133c307913e4e84aca39a9c1ac01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objName: "\uC81C\uC791\uB300"
+  _actName: "\uC774\uC6A9\uD558\uAE30"
+  _playerCustomizeHandler: {fileID: 0}
+  _useOffset: {x: 2, y: 2, z: -1}
+  _interactOffset: {x: 1, y: 2.7, z: -1}
 --- !u!65 &3642224613650760139
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2854,8 +2872,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.5996876, y: 1, z: 1}
-  m_Center: {x: -2.2998445, y: 0, z: -7.072867e-11}
+  m_Size: {x: 4.79, y: 0.54, z: 0.48}
+  m_Center: {x: 0, y: 0.24, z: 0}
 --- !u!114 &2760805542641377075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2868,7 +2886,7 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 3541702515
+  SortKey: 3262583094
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []

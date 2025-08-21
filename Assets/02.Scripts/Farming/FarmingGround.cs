@@ -23,9 +23,6 @@ public class FarmingGround : NetworkBehaviour
     [SerializeField]
     private Material _waterMaterial;
 
-    [SerializeField]
-    private List<GameObject> _plantPositions = new();
-
     [Header("Outline")]
     [SerializeField]
     private OutlineController _outlineController;
@@ -42,6 +39,9 @@ public class FarmingGround : NetworkBehaviour
     private LayerMask InteractableLayerMask = default;
     [SerializeField]
     private LayerMask NoooooLayerMask = default;
+
+    [Header("Name")]
+    [SerializeField] private UI_NameTag _nameTag;
 
 
     private void Awake()
@@ -90,6 +90,21 @@ public class FarmingGround : NetworkBehaviour
             EFarmingGroundState.Hoe => Mathf.RoundToInt(Mathf.Log(InteractableLayerMask.value, 2)),
             EFarmingGroundState.WateringCan => Mathf.RoundToInt(Mathf.Log(NoooooLayerMask.value, 2)),
             _ => Mathf.RoundToInt(Mathf.Log(NoooooLayerMask.value, 2))
+        };
+
+        _nameTag.ObjName = State switch
+        {
+            EFarmingGroundState.None => "땅",
+            EFarmingGroundState.Hoe => "밭(메마름)",
+            EFarmingGroundState.WateringCan => "촉촉한 밭",
+            _ => "밭"
+        };
+        _nameTag.ActName = State switch
+        {
+            EFarmingGroundState.None => "갈기",
+            EFarmingGroundState.Hoe => "물주기",
+            EFarmingGroundState.WateringCan => "씨뿌리기",
+            _ => ""
         };
     }
 

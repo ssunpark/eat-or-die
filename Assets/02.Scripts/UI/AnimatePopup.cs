@@ -74,7 +74,7 @@ public class AnimatePopup : MonoBehaviour
         _background.transform.localScale = new Vector3(1, 1, 1);
         _background.GetComponent<RectTransform>().sizeDelta = canvas.GetComponent<RectTransform>().sizeDelta;
         _background.transform.SetParent(canvas.transform, false);
-        _background.transform.SetSiblingIndex(transform.GetSiblingIndex());
+        _background.transform.SetSiblingIndex(0);
     }
     
     private void RemoveBackground()

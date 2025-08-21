@@ -21,6 +21,6 @@ public class CharacterSelectUI : MonoBehaviour
         CustomizationDataHolder.Instance.Nickname = NicknameInput.text;
         CustomizationDataHolder.Instance.ClassType = (ECharacterType)selectedClassIndex;
 
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("LoadingLoadingTestScene");
     }
 }

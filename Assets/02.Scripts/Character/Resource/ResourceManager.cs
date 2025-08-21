@@ -23,8 +23,15 @@ public class ResourceManager
 
         _stat.RegisterModifierCallback(EStatType.MaxHunger, OnMaxHungerChanged, OnMaxHungerChanged);
         _stat.RegisterModifierCallback(EStatType.MaxMana, OnMaxManaChanged, OnMaxManaChanged);
+        _stat.OnBaseChanged += HandleBaseChanged;
     }
-
+    private void HandleBaseChanged(EStatType type)
+    {
+        if (type == EStatType.MaxHunger)
+            OnMaxHungerChanged(type, default);
+        else if (type == EStatType.MaxMana)
+            OnMaxManaChanged(type, default);
+    }
     private void OnMaxHungerChanged(EStatType type, StatModifier modifier)
     {
         float oldMax = MaxHunger;

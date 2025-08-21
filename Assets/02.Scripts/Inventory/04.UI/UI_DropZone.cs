@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.XR;
 
 public class UI_DropZone : MonoBehaviour, IPointerDownHandler
 {
@@ -21,12 +22,20 @@ public class UI_DropZone : MonoBehaviour, IPointerDownHandler
 			if (!HandEntity.Instance.IsHandEmpty)
 			{
 				ItemInstance itemInstanceInHand = HandEntity.Instance.ItemInstance;
-				ItemManager.Instance.RPC_CreateItemObject(
+                ItemProxySpawner.Instance.RPC_CreateItemObject(
 					itemInstanceInHand.ID,
 					itemInstanceInHand.Quantity, 
                     itemInstanceInHand.Durability,
-					HandEntity.Instance.transform.position, 
-					HandEntity.Instance.transform.rotation);
+					Room.Instance.LocalPlayer.transform.position, 
+					Room.Instance.LocalPlayer.transform.rotation);
+				HandEntity.Instance.DropItem();
+			}
+		}
+		else if (eventData.button == PointerEventData.InputButton.Right)
+		{
+			if (!HandEntity.Instance.IsHandEmpty)
+			{
+				UnifiedInventoryManager.Instance.AddItem(HandEntity.Instance.ItemInstance);
 				HandEntity.Instance.DropItem();
 			}
 		}

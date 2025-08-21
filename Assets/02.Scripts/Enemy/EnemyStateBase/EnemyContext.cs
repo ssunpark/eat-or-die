@@ -5,7 +5,7 @@ using UnityEngine.AI;
 public class EnemyContext
 {
     public EnemyAI Owner;
-    public GameObject Target;
+    public Player Target;
     public EnemyStatManager StatManager;
     public Animator Animator;
     public EnemyAnimationRelay AnimationRelay;

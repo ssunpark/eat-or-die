@@ -2,44 +2,58 @@ using Fusion;
 using UnityEngine;
 
 // 수현
-public abstract class NetworkBehaviourSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
+public abstract class NetworkBehaviourSingleton<T> : NetworkBehaviour
+    where T : NetworkBehaviourSingleton<T> // 셀프 타입 제약
 {
-    private static T i = null;
-
+    private static T _instance;
     public static T Instance
     {
         get
         {
-            if (i == null)
+            if (_instance == null)
             {
-                i = FindFirstObjectByType<T>();
-                if (i == null)
+                _instance = FindFirstObjectByType<T>(FindObjectsInactive.Include);
+
+                if (_instance == null)
                 {
-                    Debug.Log($"[NetworkBehaviourSingleton<{{typeof(T).Name}}>] 인스턴스를 찾을 수 없습니다.");
+                    Debug.Log($"[NetworkBehaviourSingleton<{typeof(T).Name}>] 인스턴스를 찾을 수 없습니다.");
                 }
             }
-            return i;
+
+            return _instance;
         }
     }
+
+    public static bool Exists => _instance != null;
 
     public override void Spawned()
     {
         base.Spawned();
-        if (i == null)
+
+        if (_instance == null)
         {
-            i = this as T;
+            _instance = (T)this;
+            return;
         }
-        else if (i != this)
+
+        if (_instance != this)
         {
-            Debug.Log($"[NetworkBehaviourSingleton<{typeof(T).Name}>] 이미 인스턴스가 존재합니다. 중복 생성됨: {name}");
+            if (HasStateAuthority)
+            {
+                Runner.Despawn(Object);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
     protected virtual void OnDestroy()
     {
-        if (i == this)
+        if (_instance == this)
         {
-            i = null;
+            _instance = null;
         }
     }
 }

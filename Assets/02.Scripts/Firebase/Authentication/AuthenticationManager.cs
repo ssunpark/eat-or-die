@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Firebase.Auth;
 using UnityEngine;
 
@@ -9,9 +8,9 @@ public class AuthenticationManager : BehaviourSingleton<AuthenticationManager>
 
     private FirebaseUser _user;
     public FirebaseUser User => _user;
-    
     public Action<string> OnAuthenticated;
 
+    public event Action OnLogin;
     private void Awake()
     {
         _authenticator = new FirebaseAuthenticator();
@@ -46,13 +45,24 @@ public class AuthenticationManager : BehaviourSingleton<AuthenticationManager>
     
     public async void SignInAsync(string email, string password)
     {
+        AuthResultWrapper result;
+        
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
             OnAuthenticated?.Invoke("이메일과 비밀번호를 모두 입력해주세요.");
             return;
         }
 
-        AuthResultWrapper result = await _authenticator.SignInAsync(email, password);
+        try
+        {
+            result = await _authenticator.SignInAsync(email, password);
+        }
+        catch (Exception e)
+        {
+            OnAuthenticated?.Invoke("로그인 중 오류가 발생했습니다: " + e.Message);
+            Debug.Log(e.Message);
+            return;
+        }
         
         OnAuthenticated?.Invoke(result.Message);
         
@@ -60,6 +70,7 @@ public class AuthenticationManager : BehaviourSingleton<AuthenticationManager>
         {
             _user = result.User;
             Debug.Log("로그인 성공");
+            OnLogin?.Invoke();
             // Scene 전환
         }
     }

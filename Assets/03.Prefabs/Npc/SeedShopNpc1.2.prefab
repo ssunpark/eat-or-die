@@ -27431,6 +27431,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5396139653853511178}
+  - component: {fileID: 8685986444359737509}
   - component: {fileID: 3632360107692796047}
   - component: {fileID: 497861173319256800}
   - component: {fileID: 1754813779971934721}
@@ -27462,6 +27463,23 @@ Transform:
   - {fileID: 5045244860818305685}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 202.046, z: 0}
+--- !u!114 &8685986444359737509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4515667360525277008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306e133c307913e4e84aca39a9c1ac01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _objName: "\uC815\uC6D0\uC0AC \uB9C8\uB9AC\uC548"
+  _actName: "\uB300\uD654\uD558\uAE30"
+  _playerCustomizeHandler: {fileID: 0}
+  _useOffset: {x: 2, y: 2, z: -1}
+  _interactOffset: {x: 1.8, y: 2.2, z: -1}
 --- !u!95 &3632360107692796047
 Animator:
   serializedVersion: 7
@@ -27516,8 +27534,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.6
-  m_Height: 1.5
+  m_Radius: 0.94
+  m_Height: 2.46
   m_Direction: 1
   m_Center: {x: 0, y: 0.77, z: 0}
 --- !u!114 &2488489847705946799

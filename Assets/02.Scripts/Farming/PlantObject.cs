@@ -1,4 +1,5 @@
-﻿using EPOOutline;
+﻿using DarkTonic.MasterAudio;
+using EPOOutline;
 using Fusion;
 using Redcode.Pools;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 public class PlantObject : NetworkBehaviour, IInteractable
 {
     private const int ROTTEN_CROP_ID = 200012;
+    private const string PARTICLE_KEY = "Farming_Alarm";
     // 작물의 성장과 결과물을 관리
     // 외형은 자식 오브젝트 생성해서 관리
     [Networked]
@@ -25,8 +27,11 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     private FarmingGround _farmingGround;
     private SeedGround _seedGround;
+    private ParticleSystem _particleSystem;
 
     public bool IsImmediate => false;
+
+    public float InteractionDistanceOffset => 0.2f;
 
     public override void Spawned()
     {
@@ -49,6 +54,8 @@ public class PlantObject : NetworkBehaviour, IInteractable
         _plantObject = FarmingManager.Instance.GetPlant(new PlantPoolKey(PlantID, GrowthLevel));
         _plantObject.transform.SetParent(transform);
         _plantObject.transform.localPosition = Vector3.zero;
+        float randomRotate = Random.Range(0f, 360f);
+        _plantObject.transform.Rotate(0f, randomRotate, 0f, Space.Self);
     }
 
     public override void FixedUpdateNetwork()
@@ -85,13 +92,15 @@ public class PlantObject : NetworkBehaviour, IInteractable
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
             // 작물 수확
-            ItemManager.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
+            ItemProxySpawner.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
                 Quaternion.identity);
+            MasterAudio.PlaySound3DAtTransform("PlantPop", transform);
         }
         else if (GrowthLevel >= _seedData.MaxGrowthLevel)
         {
             // 썩은 작물
-            ItemManager.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, 1, transform.position, Quaternion.identity);
+            ItemProxySpawner.Instance.RPC_CreateItemObject(ROTTEN_CROP_ID, 1, 1, transform.position, Quaternion.identity);
+            MasterAudio.PlaySound3DAtTransform("RottenPlantPop", transform);
         }
         
         // 풀 반환
@@ -116,6 +125,7 @@ public class PlantObject : NetworkBehaviour, IInteractable
     private void OnGrowthLevelChanged()
     {
         ApplyVisual();
+        _particleSystem?.Stop();
         FarmingManager.Instance.TryGetSeedData(PlantID, out _seedData);
         if(GrowthLevel<_seedData.MaxGrowthLevel - 1)
         {
@@ -123,6 +133,11 @@ public class PlantObject : NetworkBehaviour, IInteractable
         }
         else
         {
+            if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
+            {
+                _particleSystem ??= ParticleManager.Instance.PlayByKeyLocalAsChild(PARTICLE_KEY, _plantObject.transform, Vector3.zero, Quaternion.identity);
+                _particleSystem?.Play();
+            }
             gameObject.layer = Mathf.RoundToInt(Mathf.Log(InteractableLayer.value, 2));
             _outlineController.OutlineObject = _plantObject.GetComponent<Outlinable>();
         }

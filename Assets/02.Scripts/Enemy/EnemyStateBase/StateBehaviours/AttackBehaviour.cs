@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion.Addons.FSM;
 
-public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
+public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePlayer
 {
 	private EnemyStateMachine _attackStateMachine;
 	
@@ -31,8 +31,8 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 		Vector3 toTarget = Machine.Context.Target.transform.position - transform.position;
 		float distance = toTarget.magnitude;
 		
-		return distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange)
-		       && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle);
+		return distance <= Machine.Context.StatManager.GetStat(EStatType.EnemyTriggerRange)
+		       && Vector3.Angle(toTarget, transform.forward) <= Machine.Context.StatManager.GetStat(EStatType.EnemyTriggerAngle);
 	}
 	
 	protected override void OnEnterState()
@@ -59,11 +59,9 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 
 	public void OnActionMoment()
 	{
-		// 오버랩 스피어로 공격 대상이 범위안에 있는지 탐지
 		Collider[] hitColliders = Physics.OverlapSphere(transform.position, Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange), _attackableLayer);
 		foreach (Collider targetCollider in hitColliders)
 		{
-			// 공격대상이 Attack 각도 밖에 있으면 return
 			Vector3 toTarget = targetCollider.transform.position - transform.position;
 			if (Vector3.Angle(toTarget, transform.forward) > Machine.Context.StatManager.GetStat(EStatType.EnemyAttackAngle)) continue;
 				    
@@ -73,11 +71,23 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver
 				{
 					MeleeDamage = Machine.Context.StatManager.GetStat(EStatType.EnemyDamage),
 					Attacker = Machine.Context.Owner.Object,
-					TotalDamageMultiplier = 1,
+					TotalDamageMultiplier = 1f / Machine.Context.StatManager.GetStat(EStatType.EnemyHitCount),
 				};
 				attackable.OnHitLocal(attackInfo);
 			}
 		}
 		Debug.Log("Attack Moment Triggered");
+	}
+
+
+	public void PlayParticle()
+	{
+		int id = Machine.Context.Owner.EnemyID;
+		
+		string particleKey = EnemyDataManager.Instance.EnemyRawDataDictionary[id].AttackParticleKey;
+		
+		if (string.IsNullOrEmpty(particleKey)) return;
+		
+		ParticleManager.Instance.PlayByKey(particleKey, transform.position, transform.rotation, false);
 	}
 }

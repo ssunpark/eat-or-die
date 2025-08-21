@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using DarkTonic.MasterAudio;
+using UnityEngine;
 using Fusion.Addons.FSM;
 public class PlayerDeadState : APlayerStateBase
 {
+    private float _selectTime = 60f;
     public PlayerDeadState(PlayerFSM fsm) : base(fsm) {
         AnimState = "Die";
         StateId = (int)EPlayerState.Dead;
@@ -12,6 +14,9 @@ public class PlayerDeadState : APlayerStateBase
         base.OnEnterState();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
+        _fsm.IsDead = true;
+        
+        MasterAudio.PlaySound3DAtTransform("Dead", _fsm.transform);
     }
 
     protected override void OnEnterStateRender()
@@ -19,7 +24,7 @@ public class PlayerDeadState : APlayerStateBase
         base.OnEnterStateRender();
         if (_fsm.HasInputAuthority)
         {
-            _fsm.GetComponent<ItemMagnet>().enabled = false;
+            _fsm.ShowSelectPanel();
             DropAllItems();
         }
     }
@@ -30,8 +35,7 @@ public class PlayerDeadState : APlayerStateBase
 
     protected override void OnFixedUpdateState()
     {
-        KCC.Move(Vector3.zero);
-        if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths["Die"])
+        if (Machine.StateTime >= _selectTime)
         {
             Machine.ForceActivateState<PlayerCorpseState>();
             return;
@@ -42,7 +46,8 @@ public class PlayerDeadState : APlayerStateBase
     private void DropAllItems()
     {
         _fsm.ItemHolder.SetHoldItem(null);
-     
+
+        _fsm.GetComponent<ItemMagnet>().enabled = false;
         UnifiedInventoryManager.Instance.DropAllItems(_fsm.transform.position);
     }
 

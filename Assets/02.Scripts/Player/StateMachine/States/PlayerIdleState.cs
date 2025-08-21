@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 
 public class PlayerIdleState : APlayerStateBase
 {
@@ -27,9 +28,14 @@ public class PlayerIdleState : APlayerStateBase
     }
     protected override void OnFixedUpdateInput()
     {
-        _skill?.Publish(ESkillEventType.OnIdle);
-        
+        _skill?.Publish(ESkillEventType.OnIdle, _skill.Context);
+
+        if (_fsm.CurrentInput.IsUnityNull())
+        {
+            return;
+        }
         var input = _fsm.CurrentInput.direction;
+        
         if (!Mathf.Approximately(input.sqrMagnitude, 0f))
         {
             RequestActivateState(EPlayerState.Move);

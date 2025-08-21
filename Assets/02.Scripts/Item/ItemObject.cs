@@ -1,10 +1,12 @@
 ﻿using DG.Tweening;
 using Fusion;
+using Unity.Mathematics;
 using UnityEngine;
 
 // 게임 내 보여지는 아이템 오브젝트
 public class ItemObject : NetworkBehaviour, IPickable
 {
+    private const string PARTICLE_KEY = "Item_Effect";
     [Networked]
     public int ItemID { get; set; }
 
@@ -41,8 +43,8 @@ public class ItemObject : NetworkBehaviour, IPickable
     private float _absorbSpeed = 10f;
     [SerializeField]
     private float _absorbThreshold = 0.1f;
-    [SerializeField]
-    private float _pickableTime = 1f;
+    [Networked]
+    public float PickableTime { get; set; } = 4f;
 
     private Transform _target;
     private Collider _collider;
@@ -51,6 +53,7 @@ public class ItemObject : NetworkBehaviour, IPickable
 
     private Quaternion _itemRotationSnapShot;
     private Vector3 _itemPositionSnapShot;
+    private ParticleSystem _itemParticle;
 
     private void Awake()
     {
@@ -61,6 +64,7 @@ public class ItemObject : NetworkBehaviour, IPickable
     {
         transform.position = SpawnPosition + (Vector3.up * 0.5f);
         _itemObject = ItemManager.Instance.GetItem(ItemID).GetHoldItemObject();
+        _itemParticle = ParticleManager.Instance.PlayByKeyLocalAsChild(PARTICLE_KEY, transform, Vector3.zero, quaternion.identity);
         ApplyVisual();
         
         StartFloatingAndRotating();
@@ -69,7 +73,7 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void Update()
     {
         _time += Time.deltaTime;
-        if (_time >= _pickableTime)
+        if (_time >= PickableTime)
         {
             _isPickable = true;
         }
@@ -85,6 +89,7 @@ public class ItemObject : NetworkBehaviour, IPickable
             {
                 if (_target.GetComponent<NetworkObject>().HasInputAuthority)
                 {
+                    _target = null;
                     var itemProfile = ItemManager.Instance.GetItem(ItemID);
                     ReturnItemToPool(itemProfile);
                     var item = new ItemInstance(itemProfile, Quantity, Durability, ExtraInfo);
@@ -100,15 +105,15 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void StartFloatingAndRotating()
     {
         // 기준 위치
-        Vector3 startPos = transform.position;
+        Vector3 startPos = _itemObject.transform.position;
 
         // 위아래 이동 (Y축)
-        transform.DOMoveY(startPos.y + 1f, 1f) // 위로 1 높이 이동
+        _itemObject.transform.DOMoveY(startPos.y + 1f, 1f) // 위로 1 높이 이동
             .SetEase(Ease.InOutSine)
             .SetLoops(-1, LoopType.Yoyo);
 
         // 회전 (Y축 기준)
-        transform.DORotate(new Vector3(0f, 360f, 0f), 3f, RotateMode.FastBeyond360)
+        _itemObject.transform.DORotate(new Vector3(0f, 360f, 0f), 3f, RotateMode.FastBeyond360)
             .SetEase(Ease.Linear)
             .SetLoops(-1, LoopType.Restart);
     }
@@ -125,10 +130,11 @@ public class ItemObject : NetworkBehaviour, IPickable
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_Pick(NetworkId targetNetworkId)
     {
-        transform.DOKill();
+        _itemObject.transform.DOKill();
         _collider.enabled = false;
         _targetID = targetNetworkId;
         _target = Runner.FindObject(targetNetworkId)?.transform;
+        _itemParticle.Stop();
     }
 
     private void ApplyVisual()
@@ -156,16 +162,22 @@ public class ItemObject : NetworkBehaviour, IPickable
     private void NormalizeVisualScale(GameObject obj, float targetSize)
     {
         var renderers = obj.GetComponentsInChildren<Renderer>();
+        if (renderers == null || renderers.Length == 0) return;
+
         Bounds combinedBounds = new Bounds(obj.transform.position, Vector3.zero);
+        foreach (var r in renderers)
+            combinedBounds.Encapsulate(r.bounds);
 
-        foreach (var renderer in renderers)
-        {
-            combinedBounds.Encapsulate(renderer.bounds);
-        }
+        Vector3 s = combinedBounds.size;
 
-        float largestDimension = Mathf.Max(combinedBounds.size.x, combinedBounds.size.y, combinedBounds.size.z);
-        float scaleFactor = targetSize / largestDimension;
+        // 기하평균(부피 기준 대표 길이): (x * y * z)^(1/3)
+        const float EPS = 1e-6f;
+        float volume = Mathf.Max(EPS, s.x * s.y * s.z);
+        float geoMean = Mathf.Pow(volume, 1f / 3f);
 
+        if (geoMean <= EPS) return;
+
+        float scaleFactor = targetSize / geoMean;
         obj.transform.localScale *= scaleFactor;
     }
 }

@@ -1,53 +1,143 @@
-﻿using Fusion;
+﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Firebase.Firestore;
+using Fusion;
 using UnityEngine;
 
-public class RoomInfoManager : NetworkBehaviourSingleton<RoomInfoManager>
+public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 {
-    [SerializeField] private string _persistentRoomID; // 추후 firebase 자동 id로 변경, FirestoreDocumentId
-    public RoomInfo CurrentRoomInfo { get; private set; } // 동기화 되어야 함
+    public RoomInfo CurrentRoomInfo { get; private set; }
+    public RoomInfoDTO CurrentRoomInfoDTO { get; private set; }
+    public List<RoomInfoDTO> RoomInfoList { get; private set; }
+    
     private RoomInfoRepository _roomInfoRepository;
+    private RoomInfoDTO _roomToDelete;
+    private string _userID => AuthenticationManager.Instance.User.UserId;
 
-    public override void Spawned()
+    public string InviteCode;
+    public GameMode GameMode;
+    
+    public event Action OnDataChanged;
+    public event Action OnRoomInfoUpdated;
+
+    
+    public async void Awake()
     {
-        // '상태 권한'이 있는지(즉, 내가 방장인지) 확인
-        if (Object.HasStateAuthority)
-        {
-            _roomInfoRepository = new RoomInfoRepository();
-            InitializeRoomInfo();
-        }
+        DontDestroyOnLoad(this);
+        await FirebaseManager.Instance.WaitForInitialization();
+        
+        _roomInfoRepository = new RoomInfoRepository(FirebaseFirestore.DefaultInstance);
+        AuthenticationManager.Instance.OnLogin += InitializeRoomInfos;
+    }
+
+    public void SetClientGameMode(string inviteCode)
+    {
+        InviteCode = inviteCode;
+        GameMode = GameMode.Client;
     }
     
-    private void InitializeRoomInfo()
+    public void SetCurrentRoomInfo(RoomInfo roomInfo)
     {
-        var loaded = _roomInfoRepository.TryLoad(_persistentRoomID, out var info); // 저장된 방 정보 있으면 그대로 Load
-        CurrentRoomInfo = info;
+        CurrentRoomInfo = roomInfo;
+        Debug.Log($"[RoomInfoManager] CurrentRoomInfo가 설정되었습니다. ID: {CurrentRoomInfo.ID}");
+    }
 
-        if (loaded) // 불러와짐(로드됨)
+    public void SetRoomInfoDTO(RoomInfoDTO roomInfoDTO)
+    {
+        CurrentRoomInfoDTO = roomInfoDTO;
+        // CurrentRoomInfo = roomInfoDTO.ToDomain();
+        SetCurrentRoomInfo(roomInfoDTO.ToDomain());
+        Debug.Log(CurrentRoomInfo.ID);
+        OnRoomInfoUpdated?.Invoke();
+    }
+
+    public void SetDeleteRoom(RoomInfoDTO roomInfoDTO)
+    {
+        _roomToDelete = roomInfoDTO;
+    }
+    
+    private async void InitializeRoomInfos()
+    {
+        try
         {
+            RoomInfoList = await _roomInfoRepository.GetRoomInfosByUserId(_userID);
+            OnDataChanged?.Invoke();
+            Debug.Log($"[RoomInfoManager] {RoomInfoList.Count}개의 방 정보 로드 완료");
         }
-        else
+        catch (Exception e)
         {
-            CurrentRoomInfo.RoomName = "Room" + _persistentRoomID;
+            Debug.Log($"[RoomInfoManager] 방 정보 초기화 실패: {e.Message}");
+        }
+    }
+
+    public async UniTask Save()
+    {
+        Debug.Log($"기존 RoomInfo를 수정합니다. ID: {CurrentRoomInfo.ID}");
+        await _roomInfoRepository.UpdateRoomInfo(CurrentRoomInfo.ToDTO(), RoomInfoNetworkManager.Instance.UserID);
+    }
+
+    public async UniTask CreateRoom(RoomInfoDTO roomInfoDTO)
+    {
+        Debug.Log(_roomInfoRepository);
+        try
+        {
+            await _roomInfoRepository.AddRoomInfo(roomInfoDTO, _userID);
+            InitializeRoomInfos();
+            Debug.Log("[RoomInfoManager] 현재 방 정보 저장됨.");
+        }
+        catch (Exception e)
+        {
+            Debug.Log($"[RoomInfoManager] 방 정보 저장 실패: {e.Message}");
+        }
+    }
+
+    public async UniTask DeleteRoom()
+    {
+        Debug.Log(_roomInfoRepository);
+        if (_roomToDelete == null)
+        {
+            return;
         }
 
-        Debug.Log($"[RoomInfoManager] 방 로드됨. 방 이름 : {CurrentRoomInfo.RoomName}");
+        try
+        {
+            await _roomInfoRepository.DeleteRoomInfo(_userID, _roomToDelete.RoomInfoID);
+            RoomInfoList.Remove(_roomToDelete);
+            OnDataChanged?.Invoke();
+            _roomToDelete = null;
+            Debug.Log("방이 삭제됩니다.");
+        }
+        catch (Exception e)
+        {
+            Debug.Log("방 삭제 실패");
+        }
     }
 
-    public void Save()
+    public async UniTask<string> GenerateInviteCode()
     {
-        _roomInfoRepository.Save(_persistentRoomID, CurrentRoomInfo.ToDTO());
-        Debug.Log("현재 방 정보 저장됨.");
+        if (CurrentRoomInfo == null || string.IsNullOrEmpty(CurrentRoomInfo.ID))
+        {
+            Debug.Log("초대 코드를 생성할 현재 방 정보가 없습니다.");
+            return null;
+        }
+        
+        if (string.IsNullOrEmpty(_userID))
+        {
+            Debug.Log("로그인한 사용자 정보가 없습니다.");
+            return null;
+        }
+        
+        try
+        {
+            var generatedCode = await _roomInfoRepository.CreateInviteCode(_userID, CurrentRoomInfo.ID);
+            InviteCode = generatedCode;
+            return InviteCode;
+        }
+        catch (Exception e)
+        {
+            Debug.Log($"초대 코드 생성 중 에러 발생: {e.Message}");
+            return null;
+        }
     }
-
-    // 이 RPC를 OnPlayerJoined에서 호출함
-    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-    public void RPC_SyncRoomInfoToNewPlayer(PlayerRef player, string roomInfoJson)
-    {
-        // 이 RPC는 호스트가 호출하고, 'player' 타겟에게만 전송됩니다.
-        Debug.Log("클라이언트가 호스트로부터 RoomInfo를 수신했습니다.");
-        var dto = JsonUtility.FromJson<RoomInfoDTO>(roomInfoJson);
-        CurrentRoomInfo = dto.ToDomain();
-        Debug.Log($"[RoomInfoManager] 동기화 완료. 방 이름: {CurrentRoomInfo.RoomName}");
-    }
-
 }

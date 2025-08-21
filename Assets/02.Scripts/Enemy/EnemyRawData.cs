@@ -29,11 +29,23 @@ public class EnemyRawData
     [Name("AttackSpeed")]
     public float AttackSpeed { get; set; }
     
+    [Name("DetectionRange")]
+    public float DetectionRange { get; set; }
+    
+    [Name("TriggerRange")]
+    public float TriggerRange { get; set; }
+    
+    [Name("TriggerAngle")]
+    public float TriggerAngle { get; set; }
+    
     [Name("AttackRange")]
     public float AttackRange { get; set; }
     
     [Name("AttackAngle")]
     public float AttackAngle { get; set; }
+    
+    [Name("HitCount")]
+    public int HitCount { get; set; }
     
     [Name("MeleeDefense")]
     public float MeleeDefense { get; set; }
@@ -59,6 +71,6 @@ public class EnemyRawData
     [Name("DropItem2Count")]
     public int DropItem2Count { get; set; }
     
-    [Name("PrefabPath(Addressable)")]
-    public string? PrefabPath { get; set; }
+    [Name("AttackParticleKey")]
+    public string? AttackParticleKey { get; set; }
 }
