@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿using DarkTonic.MasterAudio;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,6 +30,7 @@ public class UI_StorageSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        MasterAudio.PlaySound("ButtonClick");
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             SharedStorageManager.Instance.OnClickMouseLeft(SlotIndex);   
