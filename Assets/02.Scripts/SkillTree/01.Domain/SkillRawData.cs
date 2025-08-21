@@ -37,6 +37,9 @@ public class SkillRawData
     [Name("FixedValue")]
     public float? FixedValue { get; set; }
     
+    [Name("EPlayerState")]
+    public EPlayerState? EPlayerState { get; set; }
+    
     [Name("NValue")]
     public float NValue { get; set; }
 

@@ -12,7 +12,7 @@ public class OnEatPayload : ISkillPayload
     public readonly float HungerRatio;
 
     /// <summary>음식이 재료(수확물)인지 여부</summary>
-    public readonly bool IsIngredient;
+    public readonly bool IsHarvest;
 
     /// <summary>효과 적용 배율 (기본 1.0f)</summary>
     public float Multiplier;
@@ -27,13 +27,13 @@ public class OnEatPayload : ISkillPayload
         NetworkObject eater,
         float baseRestore,
         float hungerRatio,
-        bool isIngredient
+        bool isHarvest
     )
     {
         Eater = eater;
         BaseRestore = baseRestore;
         HungerRatio = hungerRatio;
-        IsIngredient = isIngredient;
+        IsHarvest = isHarvest;
 
         Multiplier = 1f;
         ExtraRestore = 0f;

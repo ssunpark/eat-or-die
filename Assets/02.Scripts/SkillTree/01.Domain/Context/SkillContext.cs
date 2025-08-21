@@ -6,8 +6,7 @@ public class SkillContext
     
     public float MaxHunger => Player.Resource.MaxHunger;
     public float CurrentHunger => Player.Resource.CurrentHunger;
-    public bool IsBerserk => Player.PlayerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Berserk;
-    public bool IsIdle => Player.PlayerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Idle;
+    public EPlayerState CurrentState => (EPlayerState)Player.PlayerFSM.StateMachine.ActiveStateId;
 
     public SkillContext(Player player)
     {

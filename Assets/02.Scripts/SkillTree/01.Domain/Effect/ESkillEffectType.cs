@@ -18,5 +18,8 @@
     HungerRestoreByMaxHunger,
     ManaRestore,
     NpcDeal,
-    ReturnIngredient
+    ReturnIngredient,
+    StatChangeOnState,
+    StatBuffNTime,
+    AddItem
 }
