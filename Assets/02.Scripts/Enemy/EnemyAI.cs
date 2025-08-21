@@ -143,9 +143,11 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		
 		float distance = Vector3.Distance(transform.position, closestTarget.transform.position);
 		
-		if (distance <= _raycastComponent.Radius)
+		Player closestPlayer = closestTarget.GetComponent<Player>();
+		
+		if (distance <= _raycastComponent.Radius && !closestPlayer.IsDead)
 		{
-			Context.Target = closestTarget.GetComponent<Player>();
+			Context.Target = closestPlayer;
 			_behaviourMachine.TryActivateState<MoveBehaviour>();
 			return true;
 		}
