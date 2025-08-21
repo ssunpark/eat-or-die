@@ -39,17 +39,19 @@ public class PlayerCookingState : APlayerStateBase
     }
     protected override void OnExitStateRender()
     {
+
+        _fsm.Spoon.SetActive(false);
         if (_fsm.HasInputAuthority)
         {
             if (_isCookCompleted)
             {
                 _isCookCompleted = false;
+
                 return;
             }
             CookingManager.Instance.OnCookingCompleted(false);
             _isCookCompleted = false;
         }
 
-        _fsm.Spoon.SetActive(false);
     }
 }

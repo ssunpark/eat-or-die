@@ -560,6 +560,7 @@ public class Player : CharacterBase, IAttackable
         await _teleportManager.ReviveTeleport();
         RPC_ReviveState();
 
+        GetComponent<ItemMagnet>().enabled = true;
     }
 
 
