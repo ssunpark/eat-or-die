@@ -1,4 +1,5 @@
 using System.Text;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -89,6 +90,7 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
 
         sb.Append($"<b>{itemProfile.ItemDefinition.Name}</b>");
         TooltipManager.Instance.Show(sb.ToString());
+        MasterAudio.PlaySound("ButtonClick");
     }
 
 

@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+using DarkTonic.MasterAudio;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -38,6 +38,8 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 		{
 			QuickSlotManager.Instance.OnClickMouseRight(SlotIndex);
 		}
+
+		MasterAudio.PlaySound("ButtonClick");
 	}
 
 	public void UpdateSlotUI()
