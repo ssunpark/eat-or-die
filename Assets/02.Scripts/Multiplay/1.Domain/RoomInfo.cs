@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Firebase.Firestore;
 using UnityEngine;
 
 [Serializable]
@@ -9,6 +10,7 @@ public class RoomInfo
     [Header("방 명세")]
     public string ID;
     public string RoomName;
+    public Timestamp CreatedAt;
     // public int MemberCount;
     // public List<string> MemberList;
     
@@ -22,6 +24,7 @@ public class RoomInfo
     public RoomInfo(string roomName) //, int memberCount, List<string> memberList
     {
         RoomName = roomName;
+        CreatedAt = Timestamp.GetCurrentTimestamp();
         // MemberCount = memberCount;
         // MemberList = memberList;
         _knownIngredients = new HashSet<int>();
@@ -41,8 +44,8 @@ public class RoomInfo
     public RoomInfo(RoomInfoDTO roomInfoDTO)
     {
         ID = roomInfoDTO.RoomInfoID;
-        
         RoomName = roomInfoDTO.RoomName ?? "Unnamed Room";
+        CreatedAt = roomInfoDTO.CreatedAt;
 
         // MemberCount = roomInfoDTO.MemberCount;
         // MemberList = roomInfoDTO.MemberList != null

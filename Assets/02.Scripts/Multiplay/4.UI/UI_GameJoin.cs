@@ -25,7 +25,15 @@ public class UI_GameJoin : AUI_PopupBase
 	public void OnClickJoinGame()
 	{
 		RoomInfoManager.Instance.SetClientGameMode(_inviteCodeInputField.text);
+
+		if (string.IsNullOrEmpty(_inviteCodeInputField.text))
+		{
+			UI_Notification.Notify("초대코드를 입력하세요.");
+			return;
+		}
+		
 		_characterSelectPopup.Open();
 		_characterSelectPopup.Refresh();
+		Close();
 	}
 }

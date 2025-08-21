@@ -8,8 +8,9 @@ public class RoomInfoDTO
 {
     [FirestoreDocumentId] public string RoomInfoID { get; set; }
     [FirestoreProperty] public string RoomName { get; set; }
-    [FirestoreProperty] public int MemberCount { get; set; }
-    [FirestoreProperty] public List<string> MemberList { get; set; }
+    [FirestoreProperty] public Timestamp CreatedAt { get; set; }
+    // [FirestoreProperty] public int MemberCount { get; set; }
+    // [FirestoreProperty] public List<string> MemberList { get; set; }
     [FirestoreProperty] public List<int> KnownIngredientsList { get; set; }
     [FirestoreProperty] public List<int> KnownRecipesList { get; set; }
 
@@ -25,6 +26,7 @@ public class RoomInfoDTO
             RoomInfoID = roomInfo.ID;
         }
         RoomName = roomInfo.RoomName;
+        CreatedAt = roomInfo.CreatedAt;
         // MemberCount = roomInfo.MemberCount;
         // MemberList = new List<string>(roomInfo.MemberList);
         KnownIngredientsList = roomInfo.KnownIngredients.ToList();
