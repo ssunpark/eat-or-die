@@ -162,6 +162,8 @@ public class Player : CharacterBase, IAttackable
             {
                 Debug.LogError("Fuckyou");
             }
+
+            HookLocalTraitSavesIfOwner();
         }
         _spawnInitDone = true;
     }
@@ -589,9 +591,18 @@ public class Player : CharacterBase, IAttackable
 
     public void InstantRevive()
     {
-        Trait.ResetTraits();
+        RPC_ClearLocalTraitSaves();
+
         Stat.ClearAllModifiers();
         Revive();
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_ClearLocalTraitSaves()
+    {
+        Trait.ResetTraits();
+
+        GetComponent<CharacterTraitNetworkSync>()?.SyncAllTraits();
     }
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority,
@@ -601,6 +612,7 @@ public class Player : CharacterBase, IAttackable
         if (!HasStateAuthority) return;
 
         if (!IsDead) return;
+
         InstantRevive();
     }
 
@@ -612,5 +624,38 @@ public class Player : CharacterBase, IAttackable
 
         if (!IsDead) return;
         Revive();
+    }
+
+    private bool _traitSaveHooked;
+
+    private void HookLocalTraitSavesIfOwner()
+    {
+        if (_traitSaveHooked || Trait == null || !Object.HasInputAuthority) return;
+
+        Trait.OnTraitLeveledUp += (type, delta) =>
+        {
+            var t = Trait.GetTrait(type);
+            if (t != null)
+            {
+                TraitLevelStorage.SetLevel(type, t.Level);
+                TraitLevelStorage.SetExperience(type, t.CurrentExp);
+            }
+        };
+
+        Trait.OnTraitExpGained += (type, gained) =>
+        {
+            var t = Trait.GetTrait(type);
+            if (t != null)
+            {
+                TraitLevelStorage.SetExperience(type, t.CurrentExp);
+            }
+        };
+
+        Trait.OnSkillPointChanged += (type) =>
+        {
+            TraitLevelStorage.SetSkillPoint(type, Trait.GetSkillPoints(type));
+        };
+
+        _traitSaveHooked = true;
     }
 }
