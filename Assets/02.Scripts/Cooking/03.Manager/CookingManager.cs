@@ -185,6 +185,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         UnifiedInventoryManager.Instance.AddItem(new ItemInstance(resultItem, quantity));
         RPC_BroadcastCookingResult(itemId);
         MasterAudio.PlaySound3DAtTransform("CookCompleted", _currentCookingPot.transform);
+        MasterAudio.PlaySound("CookSuccess");
         OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem, 1));
         OnItemAdded?.Invoke();
         
