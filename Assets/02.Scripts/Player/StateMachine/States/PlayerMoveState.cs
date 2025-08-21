@@ -9,6 +9,7 @@ public class PlayerMoveState : APlayerStateBase
     private float _moveSpeed;
     private float _sprintMultipler;
     private float _moveExpTimer;
+    private float _hungerConsumeReduction;
     public PlayerMoveState(PlayerFSM fsm) : base(fsm)
     {
         AnimState = "Move";
@@ -19,7 +20,6 @@ public class PlayerMoveState : APlayerStateBase
     protected override void OnEnterState()
     {
         base.OnEnterState();
-        MasterAudio.PlaySound3DFollowTransform("Running", _fsm.transform);
     }
 
     protected override void OnEnterStateRender()
@@ -27,6 +27,7 @@ public class PlayerMoveState : APlayerStateBase
         base.OnEnterStateRender();
         Anim.CrossFadeInFixedTime(AnimState, AnimTransitionLength);
         _hungerConsumptionOvertime = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.HungerConsumptionOverTime);
+        _hungerConsumeReduction = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.HungerConsumeReduction);
         _moveSpeed = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.MoveSpeed);
         _sprintMultipler = _fsm.PlayerNetworkObject.Stat.GetStat(EStatType.SprintingMultiplier);
         _fsm.CanInteract = true;
@@ -38,6 +39,12 @@ public class PlayerMoveState : APlayerStateBase
     {
         _skill?.Publish(ESkillEventType.OnMove);
         Move();
+
+        if(_fsm.CurrentInput.buttons.IsSet(EButtons.Run))
+        {
+            RequestActivateState(EPlayerState.Run);
+            return;
+        }
         if (_fsm.CurrentInput.buttons.WasPressed(_fsm.PreviousInput.buttons, EButtons.Attack))
         {
             RequestActivateState(EPlayerState.Attack);
@@ -63,8 +70,6 @@ public class PlayerMoveState : APlayerStateBase
 
     protected void Move()
     {
-        float multiplier = _fsm.CurrentInput.buttons.IsSet(EButtons.Run) ? _sprintMultipler : 1f;
-
         var moveInput = _fsm.CurrentInput.direction;
 
         if (moveInput.sqrMagnitude < 0.01f)
@@ -83,7 +88,7 @@ public class PlayerMoveState : APlayerStateBase
             KCC.SetLookRotation(Quaternion.LookRotation(movementDirection));
         }
 
-        KCC.Move(movementDirection * _moveSpeed * multiplier, 0);
+        KCC.Move(movementDirection * _moveSpeed, 0);
     }
     protected override void OnFixedUpdateState()
     {
@@ -91,7 +96,7 @@ public class PlayerMoveState : APlayerStateBase
         {
             Move();
         }
-        _resource.ConsumeHunger(_hungerConsumptionOvertime * Machine.Runner.DeltaTime);
+        _resource.ConsumeHunger((_hungerConsumptionOvertime - _hungerConsumeReduction) * Machine.Runner.DeltaTime);
         _moveExpTimer += Machine.Runner.DeltaTime;
         if (_moveExpTimer >= 1f)
         {
@@ -102,6 +107,5 @@ public class PlayerMoveState : APlayerStateBase
 
     protected override void OnExitState()
     {
-        MasterAudio.StopAllSoundsOfTransform(_fsm.transform);
     }
 }

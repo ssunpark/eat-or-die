@@ -38,6 +38,11 @@ public class PlayerIdleState : APlayerStateBase
         
         if (!Mathf.Approximately(input.sqrMagnitude, 0f))
         {
+            if(_fsm.CurrentInput.buttons.IsSet(EButtons.Run))
+            {
+                RequestActivateState(EPlayerState.Run);
+                return;
+            }
             RequestActivateState(EPlayerState.Move);
             return;
         }

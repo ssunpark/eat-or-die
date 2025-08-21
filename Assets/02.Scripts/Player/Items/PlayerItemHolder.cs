@@ -118,6 +118,8 @@ public class PlayerItemHolder: NetworkBehaviour
     private IEnumerator SetHoldItemCoroutine(ItemInstance itemInstance)
     {
         yield return new WaitUntil(CanChangeItem);
+
+        yield return new WaitForSeconds(0.05f);
         HeldItemInstance = itemInstance;
 
         if (HasInputAuthority)
@@ -141,7 +143,10 @@ public class PlayerItemHolder: NetworkBehaviour
             _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Move ||
            _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Hit ||
            _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Recover ||
-           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Cooking)
+           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Cooking ||
+           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.CookSuccess ||
+           _playerFSM.StateMachine.ActiveStateId == (int)EPlayerState.Run
+           )
         {
             return true;
         }

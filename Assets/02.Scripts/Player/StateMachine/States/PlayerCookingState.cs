@@ -21,7 +21,7 @@ public class PlayerCookingState : APlayerStateBase
         base.OnEnterStateRender();
         _isCookCompleted = false;
         _fsm.Spoon.SetActive(true);
-
+        _fsm.PlayerNetworkObject.ItemHolder.HeldItemObject?.SetActive(false);
         if (_fsm.HasInputAuthority)
         {
             _fsm.GetComponent<PlayerCookingCamCue>()?.ServerSetCamCue(true);
@@ -46,6 +46,8 @@ public class PlayerCookingState : APlayerStateBase
     {
 
         _fsm.Spoon.SetActive(false);
+
+        _fsm.PlayerNetworkObject.ItemHolder.HeldItemObject?.SetActive(true);
         if (_fsm.HasInputAuthority)
         {
             if (_fsm.HasInputAuthority)

@@ -20,6 +20,7 @@ public class FSMStateInstances
 {
     public PlayerIdleState Idle;
     public PlayerMoveState Move;
+    public PlayerRunState Run;
     public PlayerAttackState Attack;
     public PlayerUseItemState UseItem;
     public PlayerInteractState Interact;
@@ -145,6 +146,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         {
             Idle = new PlayerIdleState(this),
             Move = new PlayerMoveState(this),
+            Run = new PlayerRunState(this),
             Attack = new PlayerAttackState(this),
             UseItem = new PlayerUseItemState(this),
             Interact = new PlayerInteractState(this),
@@ -160,6 +162,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
             FSMStateInstances.Idle,
             FSMStateInstances.Move,
+            FSMStateInstances.Run,
             FSMStateInstances.Attack, 
             FSMStateInstances.Interact,
             FSMStateInstances.UseItem, 
