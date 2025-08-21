@@ -183,16 +183,20 @@ public class DragonCombat
 
     public void PerformBloodExplode(float duration, float targetSize, float remainDuration, float damage)
     {
-        var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position, Quaternion.identity,
-            onBeforeSpawned: (runner, obj) =>
+        // 권위에서만 네트워크 스폰
+        if (_controller.HasStateAuthority)
         {
-            var blood = obj.GetComponent<BloodExplosion>();
-            blood.StartPosition = _controller.transform.position;
-            blood.Duration = duration;
-            blood.TargetScale = targetSize;
-            blood.RemainDuration = remainDuration;
-            blood.SetDamage(damage);
-        });
+            var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position, Quaternion.identity,
+                onBeforeSpawned: (runner, obj) =>
+                {
+                    var blood = obj.GetComponent<BloodExplosion>();
+                    blood.StartPosition = _controller.transform.position;
+                    blood.Duration = duration;
+                    blood.TargetScale = targetSize;
+                    blood.RemainDuration = remainDuration;
+                    blood.SetDamage(damage);
+                });
+        }
     }
 
     #endregion
