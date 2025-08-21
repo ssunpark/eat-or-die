@@ -1,3 +1,4 @@
+using DarkTonic.MasterAudio;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -29,6 +30,7 @@ public class UI_InventorySlot : MonoBehaviour, IPointerDownHandler, IPointerEnte
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        MasterAudio.PlaySound("ButtonClick");
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             InventoryManager.Instance.OnClickMouseLeft(SlotIndex);   

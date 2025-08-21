@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+using DarkTonic.MasterAudio;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -30,6 +30,7 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
+		MasterAudio.PlaySound("ButtonClick");
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
 			QuickSlotManager.Instance.OnClickMouseLeft(SlotIndex);   
