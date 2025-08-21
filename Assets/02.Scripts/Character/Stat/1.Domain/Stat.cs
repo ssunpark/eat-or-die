@@ -29,10 +29,10 @@ public class Stat
 
     public void AddModifier(StatModifier modifier)
     {
-        if (_modifiers.Any(m => m.Source == modifier.Source && m.Type == modifier.Type))
+        if (_modifiers.Any(m => m.Source.ToString() == modifier.Source.ToString() && m.Type == modifier.Type))
         {
-            var existingModifier = _modifiers.First(m => m.Source == modifier.Source && m.Type == modifier.Type);
-            existingModifier.Value = modifier.Value;
+            var existingModifier = _modifiers.First(m => m.Source.ToString() == modifier.Source.ToString() && m.Type == modifier.Type);
+           existingModifier.Value = modifier.Value;
             existingModifier.Duration = modifier.Duration;
         }
         else
