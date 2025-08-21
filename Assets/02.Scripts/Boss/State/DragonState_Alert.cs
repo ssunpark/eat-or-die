@@ -45,8 +45,6 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
 
     private void HandleAlertDecision()
     {
-        Machine.TryActivateState<DragonState_MagicAttack>(true);
-        return;
         float distance = Context.Sight.Distance;
         float rand = Random.value;
 
@@ -116,7 +114,7 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
         float offsetAngle = randomSign * Random.Range(_alertParams.MinAngleRange, _alertParams.AngleRange);
         Vector3 rotatedDir = Quaternion.Euler(0f, offsetAngle, 0f) * dir;
 
-        float distance = Context.Sight.Distance + Random.Range(-_alertParams.WalkRange, _alertParams.WalkRange);
+        float distance = Context.Sight.Distance + Random.Range(-_alertParams.WalkRange, 0f);
 
         distance = Mathf.Max(_alertParams.MinDistance, distance);
 

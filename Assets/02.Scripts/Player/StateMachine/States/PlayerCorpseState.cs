@@ -19,6 +19,10 @@ public class PlayerCorpseState : APlayerStateBase
     protected override void OnEnterStateRender()
     {
         _fsm.HeadCanvas.SetActive(false);
+        if (_fsm.HasInputAuthority)
+        {
+            _fsm.PlayerNetworkObject.InvokeRevive();
+        }
     }
 
     protected override void OnExitStateRender()

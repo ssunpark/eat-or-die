@@ -113,7 +113,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public void ShowSelectPanel()
     {
         Instantiate(_reviveSelectUIPrefab, _uiParent)
-            .GetComponent<UI_RiviveSelect>()
+            .GetComponent<UI_ReviveSelect>()
             .Initialize(this,PlayerNetworkObject);
     }
 
