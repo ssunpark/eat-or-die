@@ -24,6 +24,18 @@ public class UI_StoragePanel : AUI_PopupBase
         SharedStorageManager.Instance.OnOpenStorage += Open;
         gameObject.SetActive(false);
     }
+
+    public override void Open()
+    {
+        InventoryManager.Instance.Open();
+        base.Open();
+    }
+    
+    public override void Close()
+    {
+        base.Close();
+        InventoryManager.Instance.Close();
+    }
     
     private void UpdateInventoryUI()
     {
