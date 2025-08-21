@@ -1,3 +1,4 @@
+using DarkTonic.MasterAudio;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,5 +42,6 @@ public class UI_CraftItemButton : MonoBehaviour
     public void OnClickItemButton()
     {
         CraftRecipeUIManager.Instance.SelectCraftItem(_data);
+        MasterAudio.PlaySound("ButtonClick");
     }
 }

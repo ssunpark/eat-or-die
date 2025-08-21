@@ -1,4 +1,5 @@
 using System.Text;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -89,6 +90,7 @@ public class UI_RecipeButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
         sb.Append($"{extraDescription}");
 
         TooltipManager.Instance.Show(sb.ToString());
+        MasterAudio.PlaySound("ButtonClick");
     }
 
 
