@@ -55,7 +55,7 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
             return;
         }
 
-        if (_alerted)
+        if (_alerted && Context.Sight.HasTarget)
         {
             Machine.TryActivateState<DragonState_Alert>(true);
         }

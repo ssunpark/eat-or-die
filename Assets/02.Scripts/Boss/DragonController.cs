@@ -126,7 +126,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         if (_stateMachine.Machine.ActiveState is not DragonState_Idle && (TargetPlayer == null || TargetPlayer.IsDead))
         {
-            _stateMachine.Machine.ForceActivateState<DragonState_Idle>();
+            TargetPlayer = null;
+            _stateMachine.Machine.ForceActivateState<DragonState_Idle>(true);
         }
         
         if (_hit && _context.Stats.CurrentHP <= 0 && !_isDead)
@@ -207,7 +208,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void SetTarget(GameObject target)
     {
-        TargetPlayer = target?.GetComponent<Player>();
+        if (target != null && target.TryGetComponent(out Player p) && !p.IsDead)
+            TargetPlayer = p;
     }
 
     private void OnAnimWaitIndexChanged()
