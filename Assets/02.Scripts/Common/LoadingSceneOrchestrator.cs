@@ -1,6 +1,7 @@
-﻿using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using Fusion;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -98,14 +99,14 @@ public class LoadingSceneOrchestrator : MonoBehaviour
 
             var args = new StartGameArgs
             {
-                GameMode = RoomInfoManager.Instance?.GameMode??GameMode.AutoHostOrClient,
+                GameMode = RoomInfoManager.Instance?.GameMode ?? GameMode.AutoHostOrClient,
                 SessionName = string.IsNullOrEmpty(RoomInfoManager.Instance?.InviteCode)
                               ? "WHYITISFUCKINGNULLOREMPTY"
                               : RoomInfoManager.Instance.InviteCode,
                 SceneManager = sceneMgr
             };
 
-            SetStatus("세션 연결 중...");
+            SetStatus("드래곤으로부터 도망치는 중...");
             _ = SmoothProgressTo(0.9f, 1.25f, token);
 
             // ★ 먼저 StartGame
@@ -124,7 +125,7 @@ public class LoadingSceneOrchestrator : MonoBehaviour
                 if (pim != null) _runner.AddCallbacks(pim);
             }
 
-            SetStatus("게임 씬 전환 중...");
+            SetStatus("드래곤에게 지글지글 구워지는 중...");
             _ = SmoothProgressTo(0.95f, 0.75f, token);
 
             await _runner.LoadScene(SceneRef.FromIndex(3));
@@ -157,7 +158,16 @@ public class LoadingSceneOrchestrator : MonoBehaviour
     #region UI Helpers
     private void SetStatus(string msg)
     {
-        if (_statusText) _statusText.text = msg;
+        if (_statusText)
+        {
+            _statusText.text = msg;
+            _statusText.DOKill();
+
+            _statusText.transform.DOLocalMoveY(20, 1.5f)
+               .SetRelative(true)
+               .SetLoops(-1, LoopType.Yoyo)
+               .SetEase(Ease.InOutSine);
+        }
     }
 
     // 프리로드 구간(0~0.8)에서의 누적 반영
