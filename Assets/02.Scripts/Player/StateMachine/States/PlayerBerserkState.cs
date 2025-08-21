@@ -9,10 +9,12 @@ public class PlayerBerserkState : APlayerStateBase, IAnimationActionNotify
 
     public PlayerBerserkState(PlayerFSM fsm) : base(fsm)
     {
+        _chase = new BerserkChase(fsm);
+        _attack = new BerserkAttack(fsm);
         _subFSM = new StateMachine<ABerserkSubStateBase>("Berserk FSM",
             new BerserkIdle(fsm), // 초기 상태
-            new BerserkChase(fsm),
-            new BerserkAttack(fsm)
+            _chase,
+            _attack
         );
         _subFSM.SetDefaultState(0);
 

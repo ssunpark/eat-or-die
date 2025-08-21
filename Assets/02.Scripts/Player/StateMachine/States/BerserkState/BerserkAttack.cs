@@ -18,6 +18,8 @@ public class BerserkAttack : ABerserkSubStateBase
     protected override void OnEnterState()
     {
         base.OnEnterState();
+
+        LazySet();
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         float baseClipLength = _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState];
@@ -28,6 +30,8 @@ public class BerserkAttack : ABerserkSubStateBase
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
+
+        LazySet();
         _fsm.LastAttackTime = Machine.Runner.LocalRenderTime;
 
         Anim.SetFloat("AttackSpeed", _stat.GetStat(EStatType.AttackSpeed));
