@@ -11,7 +11,7 @@ public class UI_CreateRoom : AUI_PopupBase
     {
         if (string.IsNullOrEmpty(_roomNameTextField.text))
         {
-            Debug.LogWarning("방 이름을 입력하세요.");
+            UI_Notification.Notify("방 이름을 입력하세요.");
             return;
         }
 
@@ -19,5 +19,6 @@ public class UI_CreateRoom : AUI_PopupBase
         var dto = roomInfo.ToDTO();
 
         await RoomInfoManager.Instance.CreateRoom(dto);
+        Close();
     }
 }
