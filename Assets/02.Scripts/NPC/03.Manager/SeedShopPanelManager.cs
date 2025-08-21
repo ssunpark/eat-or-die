@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 {
@@ -12,17 +13,21 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
     [SerializeField] private int npcId = 1200002; // 모종 상인 NPC ID
     public UI_SeedItemDetail SeedItemDetailUI;
     public UI_NpcDialogue NpcDialogueUI;
+
+    private void Awake()
+    {
+        SeedShopNpcInteractable.PanelOpened += HandleNpcItemListLoaded;
+    }
     
     private void Start()
     {
-        // NpcItemList가 이미 로드되어 있으면 바로 실행
         if (NpcDataManager.Instance != null && NpcDataManager.Instance.NpcItemList != null)
         {
             HandleNpcItemListLoaded();
         }
     }
 
-    private void HandleNpcItemListLoaded()
+    public void HandleNpcItemListLoaded()
     {
         LoadSeedItemsFromNpc(npcId);
         
@@ -90,7 +95,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
             return;
         }
 
-        int randomIndex = UnityEngine.Random.Range(0, dialogueList.Count);
+        int randomIndex = Random.Range(0, dialogueList.Count);
         string randomDialogue = dialogueList[randomIndex].DialogueContents;
 
         NpcDialogueUI.Setup(randomDialogue);

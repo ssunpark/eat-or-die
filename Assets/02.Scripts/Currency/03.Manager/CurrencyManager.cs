@@ -5,14 +5,15 @@ using UnityEngine;
 public class CurrencyManager : BehaviourSingleton<CurrencyManager>
 {
     private Dictionary<ECurrencyType, int> _currencies = new();
+    private readonly int _gold = 1000;
     public event Action<ECurrencyType, int> OnCurrencyChanged;
 
-    private void Start()
+    private void Awake()
     {
         Debug.Log("이니셜 호출");
         Initialize(new Dictionary<ECurrencyType, int>
         {
-            {ECurrencyType.Gold, 1000}
+            { ECurrencyType.Gold, _gold }
         });
     }
 
