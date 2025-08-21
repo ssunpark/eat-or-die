@@ -34,7 +34,7 @@ public class PlayerCookingState : APlayerStateBase
             Anim.CrossFadeInFixedTime("Cook_Success", AnimTransitionLength);
 
             GrantExpOrder("RetrieveCookedFood");
-            RequestActivateState();
+            RequestActivateState(EPlayerState.CookSuccess);
         }
     }
     protected override void OnExitStateRender()

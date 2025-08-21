@@ -85,9 +85,10 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
             Quaternion.identity,
             true);
 
-        MasterAudio.PlaySound3DAtTransform("Teleport", _localPlayer.transform);
+        MasterAudio.PlaySound3DAtTransform("TeleportPrewarm", _localPlayer.transform);
         // 3초 대기
         await UniTask.Delay(TimeSpan.FromSeconds(3));
+        MasterAudio.PlaySound3DAtTransform("Teleport", _localPlayer.transform);
         // 텔레포트 실행
         // 텔레포트 시작 이펙트
         ParticleManager.Instance.PlayByKey(
@@ -123,6 +124,7 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
         DepartureStage = -1;
         DestinationStage = -1;
 
+        MasterAudio.PlaySound3DAtTransform("Teleport", _localPlayer.transform);
         // 텔레포트 완료 이펙트
         ParticleManager.Instance.PlayByKey(
             _teleportKey + additionalKey,
