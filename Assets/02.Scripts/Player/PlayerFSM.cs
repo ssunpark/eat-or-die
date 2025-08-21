@@ -29,6 +29,7 @@ public class FSMStateInstances
     public PlayerBerserkState Berserk;
     public PlayerRecoverState Recover;
     public PlayerCorpseState Corpse;
+    public PlayerCookSuccessState CookSuccess;
 }
 [RequireComponent(typeof(StateMachineController))]
 public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
@@ -95,6 +96,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     [SerializeField] private GameObject _reviveSelectUIPrefab;
     public GameObject HeadCanvas;
     private Transform _uiParent;
+    public GameObject Spoon;
 
     [SerializeField] UI_UseOrInteract _useUI;
     [SerializeField] UI_UseOrInteract _interactUI;
@@ -109,12 +111,16 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         InitializeFSM();
         list.Add(_playerFSM);
     }
-
+    private GameObject _reviveSelectUIObj;
     public void ShowSelectPanel()
     {
-        Instantiate(_reviveSelectUIPrefab, _uiParent)
-            .GetComponent<UI_ReviveSelect>()
-            .Initialize(this,PlayerNetworkObject);
+        if (_reviveSelectUIObj != null)
+        {
+            Destroy(_reviveSelectUIObj);
+        }
+        _reviveSelectUIObj = Instantiate(_reviveSelectUIPrefab, _uiParent);
+        _reviveSelectUIObj.GetComponent<UI_ReviveSelect>()
+            .Initialize(this, PlayerNetworkObject);
     }
 
     public override void Spawned()
@@ -147,7 +153,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Cooking = new PlayerCookingState(this),
             Berserk = new PlayerBerserkState(this),
             Recover = new PlayerRecoverState(this),
-            Corpse = new PlayerCorpseState(this)
+            Corpse = new PlayerCorpseState(this),
+            CookSuccess = new PlayerCookSuccessState(this)
         };
 
         _playerFSM = new StateMachine<APlayerStateBase>("Player FSM",
@@ -161,7 +168,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             FSMStateInstances.Dead,
             FSMStateInstances.Berserk,
             FSMStateInstances.Recover,
-            FSMStateInstances.Corpse
+            FSMStateInstances.Corpse,
+            FSMStateInstances.CookSuccess
         );
     }
 
@@ -304,6 +312,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         if (interactPressed && interactable.IsImmediate)
         {
             interactable.Interact(); // 로컬 즉시형 처리
+
+            SimpleKCC.SetLookRotation(Quaternion.LookRotation(net.transform.position - transform.position));
+            RPC_TurnToInteractTarget(net);
             return false;
         }
 
@@ -319,8 +330,11 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         RPC_SetInteractTarget(net);
         return true;
     }
-
-
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_TurnToInteractTarget(NetworkObject target)
+    {
+        SimpleKCC.SetLookRotation(Quaternion.LookRotation(target.transform.position - transform.position));
+    }
 
     public void SetInput(NetworkInputData input)
     {

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5128790730284741989}
+  - component: {fileID: 2563635242527732852}
   m_Layer: 0
   m_Name: Food_Tomato_Prefab
   m_TagString: Untagged
@@ -32,6 +33,33 @@ Transform:
   - {fileID: 4235841877338403311}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2563635242527732852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8164769532431268131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windupKey: 
+  _swingKey: Swing_Default
+  _hitKey: Hit_Default
+  _useStartKey: 
+  _useLoopKey: 
+  _useEndKey: 
+  _useSuccessKey: 
+  _useFailKey: 
+  _useStartSoundEvent: Eat
+  _useLoopSoundEvent: 
+  _useEndSoundEvent: 
+  _useSuccessSoundEvent: 
+  _useFailSoundEvent: 
+  _useSpawn: {fileID: 0}
+  _mustbeChild: 0
 --- !u!1001 &4414093624703702532
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,6 +165,11 @@ MonoBehaviour:
   _useEndKey: 
   _useSuccessKey: 
   _useFailKey: 
+  _useStartSoundEvent: 
+  _useLoopSoundEvent: 
+  _useEndSoundEvent: 
+  _useSuccessSoundEvent: 
+  _useFailSoundEvent: 
   _useSpawn: {fileID: 0}
   _mustbeChild: 0
 --- !u!4 &4235841877338403311 stripped

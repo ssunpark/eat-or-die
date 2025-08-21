@@ -44,6 +44,7 @@ public class Player : CharacterBase, IAttackable
     private Dictionary<string, float> _animationClipLengths;
 
     private Animator _animator;
+    public Animator Anim => _animator;
     bool _isReset;
     public SimpleKCC SimpleKCC { get; private set; }
     public SkillManager Skill { get; private set; }
@@ -175,6 +176,11 @@ public class Player : CharacterBase, IAttackable
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="hide">true: 숨기기</param>
+    /// <param name="includeUI">UI도 숨길것인지</param>
     public void HideCharacter(bool hide, bool includeUI = true)
     {
         if (_renderObject != null)
@@ -472,21 +478,20 @@ public class Player : CharacterBase, IAttackable
             OnHitStateAuthority(attack);
         }
 
-        //Todo: 맞는 이펙트? 재생
-        _impulseSource.GenerateImpulse();
     }
 
     public void OnHitStateAuthority(AttackInfo attack)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
         {
-
             DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
             if (UnityEngine.Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
             {
                 Debug.Log("[Player] Evaded damage from " + attack.Attacker);
                 return;
             }
+
+            Rpc_OnHitInput();
             float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
             float defense = Stat.GetStat(EStatType.Defense);
             float finalDmg = amount * (100 / (100 + defense));
@@ -494,6 +499,13 @@ public class Player : CharacterBase, IAttackable
             Resource.ConsumeHunger(finalDmg);
             _takedDamage = true;
         }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void Rpc_OnHitInput()
+    {
+        _impulseSource.GenerateImpulse();
     }
 
     private Vector3 _teleportPosition;
@@ -530,25 +542,48 @@ public class Player : CharacterBase, IAttackable
     public void Revive()
     {
         SimpleKCC.enabled = true;
-        Teleport(new Vector3(0, 0.5f, 0));
-        PlayerFSM.IsDead = false;
         Resource.ResetAll();
-        _animator.Play("Idle");
-        ReviveAsync().Forget();
-        _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
+
+        RPC_ClientRevive();
     }
 
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_ClientRevive()
+    {
+        if (_teleportManager == null)
+        {
+            _teleportManager = FindAnyObjectByType<TeleportManager>();
+        }
+
+        ReviveAsync().Forget();
+    }
+
+    private TeleportManager _teleportManager;
     public async UniTask ReviveAsync()
     {
-        await UniTask.Delay(1000);
+        OnRevive?.Invoke();
+        await _teleportManager.ReviveTeleport();
+        RPC_ReviveState();
+
         GetComponent<ItemMagnet>().enabled = true;
     }
 
-    public void InvokeRevive()
+
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_ReviveState()
     {
-        OnRevive?.Invoke();
-        
+        GetComponent<ItemMagnet>().enabled = true;
+        PlayerFSM.IsDead = false;
+
+        _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
     }
+
+    //public void InvokeRevive()
+    //{
+    //    OnRevive?.Invoke();
+    //}
 
     public void InstantRevive()
     {
@@ -565,6 +600,15 @@ public class Player : CharacterBase, IAttackable
 
         if (!IsDead) return;
         InstantRevive();
+    }
 
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void RPC_RequestRevive(RpcInfo info = default)
+    {
+        if (!HasStateAuthority) return;
+
+        if (!IsDead) return;
+        Revive();
     }
 }

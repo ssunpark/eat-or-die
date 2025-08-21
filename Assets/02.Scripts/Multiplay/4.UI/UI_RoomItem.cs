@@ -1,4 +1,5 @@
 using System;
+using DarkTonic.MasterAudio;
 using TMPro;
 using UnityEngine;
 
@@ -25,6 +26,7 @@ public class UI_RoomItem : MonoBehaviour
     public void OnClickRoom()
     {
         RoomInfoManager.Instance.SetRoomInfoDTO(_roomInfoDTO);
+        MasterAudio.PlaySound("ButtonClick");
     }
 
     public async void CreateInviteCode()
@@ -47,5 +49,6 @@ public class UI_RoomItem : MonoBehaviour
     {
         RoomInfoManager.Instance.SetDeleteRoom(_roomInfoDTO);
         OnDeleteButtonClicked?.Invoke();
+        MasterAudio.PlaySound("ButtonClick");
     }
 }

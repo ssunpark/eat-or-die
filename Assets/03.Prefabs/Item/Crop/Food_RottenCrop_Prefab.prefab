@@ -107,6 +107,11 @@ MonoBehaviour:
   _useEndKey: 
   _useSuccessKey: 
   _useFailKey: 
+  _useStartSoundEvent: 
+  _useLoopSoundEvent: 
+  _useEndSoundEvent: 
+  _useSuccessSoundEvent: 
+  _useFailSoundEvent: 
   _useSpawn: {fileID: 0}
   _mustbeChild: 0
 --- !u!1 &5226359054370206503
@@ -118,6 +123,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6370528856672355431}
+  - component: {fileID: 8603533106036035847}
   m_Layer: 0
   m_Name: Food_RottenCrop_Prefab
   m_TagString: Untagged
@@ -141,3 +147,30 @@ Transform:
   - {fileID: 5421335051146578670}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8603533106036035847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5226359054370206503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebbcce303dd0804aab2be921409e438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windupKey: 
+  _swingKey: Swing_Default
+  _hitKey: Hit_Default
+  _useStartKey: 
+  _useLoopKey: 
+  _useEndKey: 
+  _useSuccessKey: 
+  _useFailKey: 
+  _useStartSoundEvent: Eat
+  _useLoopSoundEvent: 
+  _useEndSoundEvent: 
+  _useSuccessSoundEvent: 
+  _useFailSoundEvent: 
+  _useSpawn: {fileID: 0}
+  _mustbeChild: 0
