@@ -184,7 +184,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         
         UnifiedInventoryManager.Instance.AddItem(new ItemInstance(resultItem, quantity));
         RPC_BroadcastCookingResult(itemId);
-        MasterAudio.PlaySound3DAtTransform("CraftSuccess", _currentCookingPot.transform);
+        MasterAudio.PlaySound3DAtTransform("CookCompleted", _currentCookingPot.transform);
         OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem, 1));
         OnItemAdded?.Invoke();
         
@@ -211,6 +211,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     {
         _isCooking = true;
         OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
+        MasterAudio.PlaySound("Cooking");
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
