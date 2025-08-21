@@ -2,6 +2,7 @@
 using Fusion;
 using UnityEngine;
 using Fusion.Addons.FSM;
+using DarkTonic.MasterAudio;
 public enum EAnimTrigger
 {
     Attack,
@@ -22,14 +23,16 @@ public class PlayerAnimator : NetworkBehaviour
     private Animator _anim;
     private Player _player;
     private PlayerFSM _fsm;
-    private bool _shouldFinishState;
     private float _cachedWalkSpeed;
     private float _cachedRunSpeed;
     private StatManager _statManager;
     private bool _initialized;
     private bool _isMoving;
+    private MasterAudio _masterAudio;
 
-    
+    string _footstepSound = "Foot_";
+
+
     private static readonly Dictionary<EAnimTrigger, int> _triggerHash = new()
     {
         { EAnimTrigger.Attack, Animator.StringToHash("Attack") },
@@ -107,6 +110,22 @@ public class PlayerAnimator : NetworkBehaviour
         {
             notify.OnActionMoment();
         }
+    }
+
+    public void OnFootStep()
+    {
+        if (StageManager.Instance == null) return;
+
+        string postfix = StageManager.Instance.CurrentStage switch
+        {
+            0 => "Leaf",
+            1 => "Leaf",
+            2 => "Cave",
+            3 => "Cave",
+            _ => "Snow"
+        };
+
+        MasterAudio.PlaySound3DAtTransform(_footstepSound + postfix, transform);
     }
 
     public void OnAnimationFinished()
