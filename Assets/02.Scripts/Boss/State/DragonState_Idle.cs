@@ -24,7 +24,7 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
         _roared = false;
         
         Context.Movement.Unlock();
-        
+        Context.Movement.ResetNavMeshAgent();
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         Context.Combat.SetFightMode(false);

@@ -69,7 +69,7 @@ public class DragonState_Chase : DragonStateBase
         {
             if (!Context.Sight.HasTarget)
             {
-                Machine.ForceActivateState<DragonState_Idle>(true);
+                return;
             }
             
             Context.Movement.SetDestination(Context.Sight.Target.transform.position);
@@ -99,7 +99,7 @@ public class DragonState_Chase : DragonStateBase
     {
         if (!Context.Sight.HasTarget)
         {
-            Machine.ForceActivateState<DragonState_Idle>(true);
+            return;
         }
         
         Vector3 center = Context.Sight.Target.transform.position;
