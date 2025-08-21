@@ -185,6 +185,7 @@ AnimatorState:
   - {fileID: 5924560317103597465}
   m_StateMachineBehaviours:
   - {fileID: 1454347508438516795}
+  - {fileID: 8946683174657479316}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1163,17 +1164,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SoundFollowsObject: 0
   RetriggerWhenStateLoops: 0
-  playEnterSound: 1
+  playEnterSound: 0
   stopEnterSoundOnExit: 0
-  enterSoundGroup: Dragon_Swipe
+  enterSoundGroup: 
   enterVariationName: 
   playExitSound: 0
   exitSoundGroup: '[None]'
   exitVariationName: 
-  playAnimTimeSound: 0
+  playAnimTimeSound: 1
   stopAnimTimeSoundOnExit: 0
   useStopTime: 0
-  whenToStartSound: 0
+  whenToStartSound: 0.1
   whenToStopSound: 0
   TimedSoundGroup: '[None]'
   timedVariationName: 
@@ -2341,6 +2342,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f25ec02141ae2d499ff8efa75469ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8946683174657479316
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb32fdc3fb1456147b2dde532e33bfb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SoundFollowsObject: 0
+  RetriggerWhenStateLoops: 0
+  playEnterSound: 1
+  stopEnterSoundOnExit: 0
+  enterSoundGroup: BloodCasting
+  enterVariationName: 
+  playExitSound: 0
+  exitSoundGroup: '[None]'
+  exitVariationName: 
+  playAnimTimeSound: 0
+  stopAnimTimeSoundOnExit: 0
+  useStopTime: 0
+  whenToStartSound: 0
+  whenToStopSound: 0
+  TimedSoundGroup: '[None]'
+  timedVariationName: 
+  playMultiAnimTimeSounds: 0
+  StopMultiAnimTimeSoundsOnExit: 0
+  numOfMultiSoundsToPlay: 0
+  whenToStartMultiSound1: 0
+  whenToStartMultiSound2: 0
+  whenToStartMultiSound3: 0
+  whenToStartMultiSound4: 0
+  MultiSoundsTimedGroup: '[None]'
+  multiTimedVariationName: 
 --- !u!1102 &9215923198231212043
 AnimatorState:
   serializedVersion: 6
