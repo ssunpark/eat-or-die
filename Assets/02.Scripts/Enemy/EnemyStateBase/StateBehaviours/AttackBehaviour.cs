@@ -79,10 +79,11 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePl
 		Debug.Log("Attack Moment Triggered");
 	}
 
+
 	public void PlayParticle()
 	{
 		int id = Machine.Context.Owner.EnemyID;
-
+		
 		string particleKey = EnemyDataManager.Instance.EnemyRawDataDictionary[id].AttackParticleKey;
 		
 		if (string.IsNullOrEmpty(particleKey)) return;
