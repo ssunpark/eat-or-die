@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using DG.Tweening;
 using Fusion;
 using UnityEngine;
@@ -93,6 +94,7 @@ public class BloodExplosion : NetworkBehaviour
     {
         _damaged = true;
         _explosion.SetActive(true);
+        MasterAudio.PlaySound3DAtTransform("Roar", transform);
 
         if (HasStateAuthority)
             DoDamageServer();

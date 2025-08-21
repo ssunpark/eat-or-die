@@ -1,6 +1,7 @@
 ﻿// RoarExplosion.cs (핵심만)
 
 using System.Collections;
+using DarkTonic.MasterAudio;
 using Fusion;
 using UnityEngine;
 
@@ -32,6 +33,7 @@ public class RoarExplosion : NetworkBehaviour
             StopCoroutine(_spawnRoutine);
 
         _spawnRoutine = StartCoroutine(SpawnRoutine());
+        MasterAudio.PlaySound3DAtTransform("Roar", transform);
     }
 
     private IEnumerator SpawnRoutine()

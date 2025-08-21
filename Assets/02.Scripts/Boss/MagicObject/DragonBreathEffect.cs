@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DarkTonic.MasterAudio;
 using RaycastPro.Detectors;
 using UnityEngine;
 
@@ -24,9 +25,11 @@ public class DragonBreathEffect : MonoBehaviour
     private float _damage;
     private Action _onEndCallback;
 
+    private Transform _dragon;
+
     private bool _isState;
 
-    public void Init(float particleDuration, bool isState, float damage, Action onDespawnCallback = null)
+    public void Init(float particleDuration, bool isState, float damage, Transform dragon, Action onDespawnCallback = null)
     {
         _isState = isState;
         _onEndCallback = onDespawnCallback;
@@ -34,6 +37,7 @@ public class DragonBreathEffect : MonoBehaviour
         _currentRadius = 0f;
         _despawnTime = particleDuration;
         _damage = damage;
+        _dragon = dragon;
         
         // 파티클 재생
         var main1 = _mainParticle.main;
@@ -79,6 +83,7 @@ public class DragonBreathEffect : MonoBehaviour
         if (_timer > _despawnTime)
         {
             _detector.enabled = false;
+            MasterAudio.StopSoundGroupOfTransform(_dragon, "Breath");
         }
 
         if (!_detector.enabled)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DarkTonic.MasterAudio;
 using Fusion;
 using Fusion.Addons.FSM;
 using INab.Common;
@@ -165,6 +166,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         if (active)
         {
             Animator.SetTrigger("Roar");
+            MasterAudio.PlaySound3DAtTransform("Roar", transform);
         }
     }
     
