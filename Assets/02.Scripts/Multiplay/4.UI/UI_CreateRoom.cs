@@ -19,6 +19,7 @@ public class UI_CreateRoom : AUI_PopupBase
         var dto = roomInfo.ToDTO();
 
         await RoomInfoManager.Instance.CreateRoom(dto);
+        _roomNameTextField.text = null;
         Close();
     }
 }
