@@ -9,14 +9,19 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
 {
     public RoomInfo CurrentRoomInfo { get; private set; }
     public RoomInfoDTO CurrentRoomInfoDTO { get; private set; }
+    public List<RoomInfoDTO> RoomInfoList { get; private set; }
+    
     private RoomInfoRepository _roomInfoRepository;
+    private RoomInfoDTO _roomToDelete;
     private string _userID => AuthenticationManager.Instance.User.UserId;
 
-    public List<RoomInfoDTO> RoomInfoList { get; private set; }
-    public event Action OnDataChanged;
     public string InviteCode;
-    public GameMode GameMode; // 임시 코드
+    public GameMode GameMode;
+    
+    public event Action OnDataChanged;
+    public event Action OnRoomInfoUpdated;
 
+    
     public async void Awake()
     {
         DontDestroyOnLoad(this);
@@ -25,14 +30,13 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         _roomInfoRepository = new RoomInfoRepository(FirebaseFirestore.DefaultInstance);
         AuthenticationManager.Instance.OnLogin += InitializeRoomInfos;
     }
-    
-    public void SetClientGameMode(string inviteCode) // 임시코드
+
+    public void SetClientGameMode(string inviteCode)
     {
         InviteCode = inviteCode;
         GameMode = GameMode.Client;
     }
-
-    // 게스트는 이 메서드가 호출되어야 비로소 방 정보를 알게 됩니다.
+    
     public void SetCurrentRoomInfo(RoomInfo roomInfo)
     {
         CurrentRoomInfo = roomInfo;
@@ -45,7 +49,14 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         // CurrentRoomInfo = roomInfoDTO.ToDomain();
         SetCurrentRoomInfo(roomInfoDTO.ToDomain());
         Debug.Log(CurrentRoomInfo.ID);
+        OnRoomInfoUpdated?.Invoke();
     }
+
+    public void SetDeleteRoom(RoomInfoDTO roomInfoDTO)
+    {
+        _roomToDelete = roomInfoDTO;
+    }
+    
     private async void InitializeRoomInfos()
     {
         try
@@ -81,12 +92,20 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         }
     }
 
-    public async UniTask DeleteRoom(RoomInfoDTO roomInfoDTO)
+    public async UniTask DeleteRoom()
     {
         Debug.Log(_roomInfoRepository);
+        if (_roomToDelete == null)
+        {
+            return;
+        }
+
         try
         {
-            await _roomInfoRepository.DeleteRoomInfo(_userID, roomInfoDTO.RoomInfoID);
+            await _roomInfoRepository.DeleteRoomInfo(_userID, _roomToDelete.RoomInfoID);
+            RoomInfoList.Remove(_roomToDelete);
+            OnDataChanged?.Invoke();
+            _roomToDelete = null;
             Debug.Log("방이 삭제됩니다.");
         }
         catch (Exception e)

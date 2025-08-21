@@ -12,7 +12,6 @@ public class StorageInteractable : NetworkBehaviour, IInteractable
 
     public void Interact()
     {
-        Debug.Log("창고를 열어라");
         SharedStorageManager.Instance.RegisterStorage(_sharedStorage);
         MasterAudio.PlaySound3DAtTransform("ChestOpen", transform);
     }
