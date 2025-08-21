@@ -30,6 +30,7 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 
 	public void OnPointerDown(PointerEventData eventData)
 	{
+		MasterAudio.PlaySound("ButtonClick");
 		if (eventData.button == PointerEventData.InputButton.Left)
 		{
 			QuickSlotManager.Instance.OnClickMouseLeft(SlotIndex);   
@@ -38,8 +39,6 @@ public class UI_QuickSlot : MonoBehaviour, IPointerDownHandler, IPointerEnterHan
 		{
 			QuickSlotManager.Instance.OnClickMouseRight(SlotIndex);
 		}
-
-		MasterAudio.PlaySound("ButtonClick");
 	}
 
 	public void UpdateSlotUI()

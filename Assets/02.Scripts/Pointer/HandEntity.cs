@@ -13,7 +13,6 @@ public class HandEntity : BehaviourSingleton<HandEntity>
     {
         ItemInstance = itemInstance;
         OnItemPickedUp?.Invoke();
-        MasterAudio.PlaySound("ButtonClick");
     }
 
     public ItemInstance GetItem()
@@ -36,7 +35,6 @@ public class HandEntity : BehaviourSingleton<HandEntity>
         if (!ItemInstance.TryAdd(itemInstance.Quantity)) return false;
         
         OnItemPickedUp?.Invoke();
-        MasterAudio.PlaySound("ButtonClick");
         return true;
     }
     
