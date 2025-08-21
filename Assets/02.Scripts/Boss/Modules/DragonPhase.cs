@@ -1,4 +1,6 @@
 ﻿using System;
+using Unity.Mathematics;
+using Random = UnityEngine.Random;
 
 public enum EDragonPhase
 {
@@ -37,5 +39,19 @@ public class DragonPhase
         _dragonController.PhaseEffect.SetActive(true);
         _dragonController.Animator.SetTrigger("Roar");
         _dragonController.Animator.SetBool("Awakening", true);
+    }
+    
+    public void Death()
+    {
+        _dragonController.RPC_Death();
+    }
+
+    public void Dissolve()
+    {
+        _dragonController.Dissolve.PlayEffect();
+        var quantity = Random.Range(5, 10);
+        var dropPosition = _dragonController.transform.position;
+        ItemProxySpawner.Instance.RPC_CreateItemObject(200028, quantity, 1f, dropPosition, quaternion.identity);
+        _dragonController.IsDead = true;
     }
 }
