@@ -478,21 +478,20 @@ public class Player : CharacterBase, IAttackable
             OnHitStateAuthority(attack);
         }
 
-        //Todo: 맞는 이펙트? 재생
-        _impulseSource.GenerateImpulse();
     }
 
     public void OnHitStateAuthority(AttackInfo attack)
     {
         if (DamagedTimer.ExpiredOrNotRunning(Runner))
         {
-
             DamagedTimer = TickTimer.CreateFromSeconds(Runner, _damageRecoveryTime);
             if (UnityEngine.Random.Range(0, 1f) < Stat.GetStat(EStatType.EvadeChance))
             {
                 Debug.Log("[Player] Evaded damage from " + attack.Attacker);
                 return;
             }
+
+            Rpc_OnHitInput();
             float amount = (attack.MeleeDamage + attack.MagicDamage) * attack.TotalDamageMultiplier;
             float defense = Stat.GetStat(EStatType.Defense);
             float finalDmg = amount * (100 / (100 + defense));
@@ -500,6 +499,13 @@ public class Player : CharacterBase, IAttackable
             Resource.ConsumeHunger(finalDmg);
             _takedDamage = true;
         }
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    public void Rpc_OnHitInput()
+    {
+        _impulseSource.GenerateImpulse();
     }
 
     private Vector3 _teleportPosition;
