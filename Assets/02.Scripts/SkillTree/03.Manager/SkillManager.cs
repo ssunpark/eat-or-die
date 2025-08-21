@@ -193,6 +193,21 @@ public class SkillManager
 
         NotifyChangedAndAutoSave();
     }
+    
+    public void ResetAllSkills()
+    {
+        // 모든 스킬 비활성화
+        foreach (var id in _skills.Keys.ToList())
+        {
+            Inactive(id);
+        }
+
+        // 전체 데이터 저장
+        SaveToDisk();
+
+        // UI 등에 알림
+        OnDataChanged?.Invoke();
+    }
 
     public void Publish<TPayload>(ESkillEventType type, SkillContext ctx, TPayload payload)
         where TPayload : ISkillPayload

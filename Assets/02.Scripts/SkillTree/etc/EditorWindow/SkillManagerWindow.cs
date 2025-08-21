@@ -215,6 +215,9 @@ public class SkillManagerWindow : EditorWindow
 
                 if (GUILayout.Button("해제 (Inactive)", GUILayout.Height(22)))
                     CallInactive(_inputId);
+                
+                if (GUILayout.Button("모두 초기화 (Reset All)", GUILayout.Height(22)))
+                    CallResetAll();
             }
         }
     }
@@ -430,6 +433,26 @@ public class SkillManagerWindow : EditorWindow
         {
             Debug.LogException(e);
             ShowNotify("Inactive 실패 (Console 확인)");
+        }
+    }
+    
+    private void CallResetAll()
+    {
+        var mgr = GetSkillManagerInstance();
+        if (mgr == null) { ShowNotify("SkillManager 인스턴스를 찾지 못했습니다."); return; }
+
+        TryRecordUndo(mgr, "Skills Reset All");
+        try
+        {
+            mgr.ResetAllSkills();          // 전체 초기화
+            TrySetDirty(mgr);
+            ShowNotify("모든 스킬을 초기화했습니다.");
+            RefreshSnapshots(force: true); // 목록 갱신
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            ShowNotify("초기화 실패 (Console 확인)");
         }
     }
 
