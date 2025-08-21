@@ -23,7 +23,7 @@ public class ItemInstance
     
     public bool IsDepleted => _quantity <= 0 || _durability <= 0;
 
-    public ItemInstance(ItemProfile itemProfile, int initialQuantity = 0, float initialDurability = 1, string extraInfo = "")
+    public ItemInstance(ItemProfile itemProfile, int initialQuantity = 1, float initialDurability = 1, string extraInfo = "")
     {
         if (itemProfile == null)
         {
@@ -36,12 +36,12 @@ public class ItemInstance
 
         if (initialQuantity < 1 || initialQuantity > MaxQuantity)
         {
-            throw new Exception("초기 수량은 1 이상 최대 수량 이하여야 합니다.");
+            initialQuantity = Mathf.Clamp(initialQuantity, 1, MaxQuantity);
         }
 
         if (initialDurability < 1 || initialDurability > MaxDurability)
         {
-            throw new Exception("초기 내구도는 1 이상 최대 내구도 이하여야 합니다.");
+            initialDurability = Mathf.Clamp(initialDurability, 1, MaxDurability);
         }
         
         _durability = initialDurability;
