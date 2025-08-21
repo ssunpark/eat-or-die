@@ -10,10 +10,18 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public event Action<int> OnSlotUpdated;
     public event Action<bool> OnToggleInventory;
     public event Action OnInventoryUpdated;
+    
+    public void Open() => ToggleInventory(true);
+    public void Close() => ToggleInventory(false);
 
     private void Awake()
     {
         _inventory = new Inventory(InventorySize);
+    }
+
+    private void Start()
+    {
+        SharedStorageManager.Instance.OnOpenStorage += Open;
     }
 
     public void ToggleInventory(bool toggle)
