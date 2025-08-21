@@ -2,8 +2,15 @@
 {
     public override EPopupType Type => EPopupType.Default;
 
+    private void Awake()
+    {
+        UI_RoomItem.OnDeleteButtonClicked += Open;
+        gameObject.SetActive(false);
+    }
+    
     public async void DeleteRoom()
     {
-        // await RoomInfoManager.Instance.DeleteRoom(); // 삭제하려는 방의 정보를 언제 넘기느 게 좋을지 고민하고 진행
+        await RoomInfoManager.Instance.DeleteRoom();
+        Close();
     }
 }
