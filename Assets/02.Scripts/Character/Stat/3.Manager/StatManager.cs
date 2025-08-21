@@ -54,7 +54,13 @@ public class StatManager
     public void ApplyModifier(EStatType type, StatModifier modifier)
     {
         if (_stats.TryGetValue(type, out var stat))
+        {
             stat.AddModifier(modifier);
+        }
+        else
+        {
+            Debug.LogWarning($"Stat {type} not found in StatManager.");
+        }
     }
 
     public void RemoveModifiersFrom(object source)

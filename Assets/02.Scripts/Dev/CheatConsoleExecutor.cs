@@ -43,6 +43,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
                 case "mp": return Cmd_HpMp(tokens, info, isHp: false);
                 case "enemy": return Cmd_Enemy(tokens, info);
                 case "spawner": return Cmd_Spawner(tokens, info);
+                case "hide": return Cmd_Hide(tokens, info);
                 default: return $"Unknown command '{cmd}'.";
             }
         }
@@ -50,6 +51,35 @@ public class CheatConsoleExecutor : NetworkBehaviour
         {
             return "[Cheat] ERROR: " + ex.Message;
         }
+    }
+
+    private string Cmd_Hide(string[] t, RpcInfo info)
+    {
+        if (t.Length < 2) return "Usage: hide [on|off]";
+        var player = GetRequestPlayer(info);
+        if (player == null) return "Player not found.";
+
+        bool hide = t[1].ToLowerInvariant() == "on";
+
+        // 캐릭터 숨기기
+        player.HideCharacter(hide, includeUI: false);
+
+        // FSM Dead flag도 같이
+        if (player.PlayerFSM != null)
+            player.PlayerFSM.IsDead = hide;
+
+        // ✅ UI 레이어 전체 꺼주기
+        int uiLayer = LayerMask.NameToLayer("UI");
+        var allUIObjects = GameObject.FindObjectsByType<Canvas>(
+            FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+
+        foreach (var canvas in allUIObjects)
+        {
+            if (canvas.gameObject.layer == uiLayer)
+                canvas.gameObject.SetActive(!hide);
+        }
+
+        return hide ? "Character + UI hidden" : "Character + UI visible";
     }
 
     // trait [lv|exp] [TraitEnum] [Value]

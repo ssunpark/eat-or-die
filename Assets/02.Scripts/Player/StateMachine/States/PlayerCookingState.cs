@@ -20,6 +20,7 @@ public class PlayerCookingState : APlayerStateBase
     {
         base.OnEnterStateRender();
         _isCookCompleted = false;
+        _fsm.Spoon.SetActive(true);
     }
 
     protected override void OnFixedUpdateInput()
@@ -30,22 +31,27 @@ public class PlayerCookingState : APlayerStateBase
         {
             _isCookCompleted = true;
             CookingManager.Instance.OnCookingCompleted(true);
+            Anim.CrossFadeInFixedTime("Cook_Success", AnimTransitionLength);
 
             GrantExpOrder("RetrieveCookedFood");
-            RequestActivateState();
+            RequestActivateState(EPlayerState.CookSuccess);
         }
     }
     protected override void OnExitStateRender()
     {
+
+        _fsm.Spoon.SetActive(false);
         if (_fsm.HasInputAuthority)
         {
             if (_isCookCompleted)
             {
                 _isCookCompleted = false;
+
                 return;
             }
             CookingManager.Instance.OnCookingCompleted(false);
             _isCookCompleted = false;
         }
+
     }
 }

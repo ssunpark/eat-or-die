@@ -7,7 +7,7 @@ public class StageManager : BehaviourSingleton<StageManager>
 {
     [SerializeField] private List<Stage> _stages = new List<Stage>();
     private int _currentStage;
-    
+    public int CurrentStage => _currentStage;
     public event Action<string> OnStageAlert;
 
     public void Transfer(int from, int to)
