@@ -19,11 +19,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         _inventory = new Inventory(InventorySize);
     }
 
-    private void Start()
-    {
-        SharedStorageManager.Instance.OnOpenStorage += Open;
-    }
-
     public void ToggleInventory(bool toggle)
     {
         OnToggleInventory?.Invoke(toggle);
