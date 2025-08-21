@@ -49,21 +49,23 @@ public class DieBehaviour : AEnemyStateBehaviour
         if (Random.value < drop1Rate)
         {
             ItemProxySpawner.Instance.RPC_CreateItemObject(
-                drop1ID,
-                Random.Range(1, drop1Quantity),
-                ItemManager.Instance.GetItem(drop1ID).ItemDefinition.MaxDurability,
-                Machine.Context.Owner.transform.position,
-                Quaternion.identity);
+                id:drop1ID,
+                quantity:Random.Range(1, drop1Quantity),
+                durability:ItemManager.Instance.GetItem(drop1ID).ItemDefinition.MaxDurability,
+                position:Machine.Context.Owner.transform.position,
+                rotation:Quaternion.identity,
+                pickableTime:0.5f);
         }
         
         if (Random.value < drop2Rate)
         {
             ItemProxySpawner.Instance.RPC_CreateItemObject(
-                drop2ID,
-                Random.Range(1, drop2Quantity),
-                ItemManager.Instance.GetItem(drop2ID).ItemDefinition.MaxDurability,
-                Machine.Context.Owner.transform.position,
-                Quaternion.identity);
+                id:drop2ID,
+                quantity:Random.Range(1, drop2Quantity),
+                durability:ItemManager.Instance.GetItem(drop2ID).ItemDefinition.MaxDurability,
+                position:Machine.Context.Owner.transform.position,
+                rotation:Quaternion.identity,
+                pickableTime:0.5f);
         }
     }
 }
