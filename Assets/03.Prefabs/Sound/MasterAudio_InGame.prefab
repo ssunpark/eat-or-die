@@ -836,6 +836,318 @@ MonoBehaviour:
   soundPlayedCustomEvent: 
   willCleanUpDelegatesAfterStop: 1
   frames: 326
+--- !u!1 &1628309887678640419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1258890904559910397}
+  - component: {fileID: 5211787034225623793}
+  m_Layer: 2
+  m_Name: ButtonClick
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1258890904559910397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628309887678640419}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4877609090582871021}
+  m_Father: {fileID: 8291489237709604465}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5211787034225623793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628309887678640419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db10a6d491569a8419b6f5e1bffc5243, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  busIndex: -1
+  spatialBlendType: 1
+  spatialBlend: 1
+  groupPlayType: 0
+  isTemporary: 0
+  isSelected: 0
+  isExpanded: 1
+  groupMasterVolume: 1
+  retriggerPercentage: 100
+  curVariationMode: 0
+  alwaysHighestPriority: 0
+  ignoreListenerPause: 0
+  importance: 5
+  isUninterruptible: 0
+  chainLoopDelayMin: 0
+  chainLoopDelayMax: 0
+  chainLoopMode: 0
+  chainLoopNumLoops: 0
+  useDialogFadeOut: 0
+  dialogFadeOutTime: 0.5
+  curVariationSequence: 0
+  useNoRepeatRefill: 1
+  useInactivePeriodPoolRefill: 0
+  inactivePeriodSeconds: 5
+  groupVariations:
+  - {fileID: 4099255935486838895}
+  bulkVariationMode: 0
+  comments: 
+  logSound: 0
+  copySettingsExpanded: 0
+  expandLinkedGroups: 0
+  childSoundGroups: []
+  endLinkedGroups: []
+  linkedStartGroupSelectionType: 0
+  linkedStopGroupSelectionType: 0
+  limitMode: 0
+  limitPerXFrames: 1
+  minimumTimeBetween: 0.1
+  useClipAgePriority: 0
+  limitPolyphony: 0
+  voiceLimitCount: 1
+  targetDespawnedBehavior: 0
+  despawnFadeTime: 1
+  isUsingOcclusion: 0
+  willOcclusionOverrideRaycastOffset: 0
+  occlusionRayCastOffset: 0
+  willOcclusionOverrideFrequencies: 0
+  occlusionMaxCutoffFreq: 0
+  occlusionMinCutoffFreq: 22000
+  isSoloed: 0
+  isMuted: 0
+  soundPlayedEventActive: 0
+  soundPlayedCustomEvent: 
+  willCleanUpDelegatesAfterStop: 1
+  frames: 593
+--- !u!1 &1657135856459284479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4877609090582871021}
+  - component: {fileID: 7014694094235014735}
+  - component: {fileID: 4099255935486838895}
+  - component: {fileID: 6805999395202628364}
+  m_Layer: 2
+  m_Name: DM-CGS-321
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4877609090582871021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657135856459284479}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1258890904559910397}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &7014694094235014735
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657135856459284479}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  m_Resource: {fileID: 8300000, guid: 29bde6326b4c34ad8a12da475f79b50a, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 10
+  MaxDistance: 100
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: -10.0039835
+      outSlope: -10.0039835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0.5
+      inSlope: -2.5009959
+      outSlope: -2.5009959
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.4
+      value: 0.25
+      inSlope: -0.62524897
+      outSlope: -0.62524897
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.10003992
+      outSlope: -0.10003992
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &4099255935486838895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657135856459284479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 931518f9ca6c3844891dee74db8ed494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weight: 1
+  probabilityToPlay: 100
+  importance: 5
+  isUninterruptible: 0
+  useLocalization: 0
+  reReRandomizeOnLoop: 0
+  useRandomPitch: 0
+  randomPitchMode: 0
+  randomPitchMin: 0
+  randomPitchMax: 0
+  useRandomVolume: 0
+  randomVolumeMode: 0
+  randomVolumeMin: 0
+  randomVolumeMax: 0
+  clipAlias: 
+  audLocation: 0
+  resourceFileName: 
+  original_pitch: 0
+  original_volume: 0
+  isExpanded: 1
+  isChecked: 1
+  useFades: 0
+  fadeInTime: 0
+  fadeOutTime: 0
+  useCustomLooping: 0
+  minCustomLoops: 1
+  maxCustomLoops: 5
+  useRandomStartTime: 0
+  randomStartMinPercent: 0
+  randomStartMaxPercent: 0
+  randomEndPercent: 100
+  useIntroSilence: 0
+  introSilenceMin: 0
+  introSilenceMax: 0
+  fadeMaxVolume: 0
+  curFadeMode: 0
+  curPitchMode: 0
+  curDetectEndMode: 0
+  frames: 0
+--- !u!114 &6805999395202628364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657135856459284479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b7eb7dcef8b0e48a8572747ca7c64d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1763078577960088937
 GameObject:
   m_ObjectHideFlags: 0
@@ -888,7 +1200,7 @@ MonoBehaviour:
   isTemporary: 0
   isSelected: 0
   isExpanded: 1
-  groupMasterVolume: 0.05
+  groupMasterVolume: 0.31622776
   retriggerPercentage: 100
   curVariationMode: 0
   alwaysHighestPriority: 0
@@ -935,7 +1247,7 @@ MonoBehaviour:
   soundPlayedEventActive: 0
   soundPlayedCustomEvent: 
   willCleanUpDelegatesAfterStop: 1
-  frames: 5962
+  frames: 6175
 --- !u!1 &1806949673276222817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1295,6 +1607,7 @@ Transform:
   - {fileID: 8276226641012141722}
   - {fileID: 497157632891757184}
   - {fileID: 2347348772383530388}
+  - {fileID: 1258890904559910397}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4404799174740690539
@@ -1376,7 +1689,7 @@ MonoBehaviour:
   showVideoPlayerSettings: 0
   useTextPlaylistFilter: 0
   textPlaylistFilter: 
-  playListExpanded: 0
+  playListExpanded: 1
   playlistsExpanded: 1
   musicSpatialBlendType: 0
   musicSpatialBlend: 0
@@ -1387,8 +1700,8 @@ MonoBehaviour:
   newGroupSpatialType: 1
   newGroupSpatialBlend: 1
   musicPlaylists:
-  - isExpanded: 1
-    playlistName: BasecampBGM
+  - isExpanded: 0
+    playlistName: 0FloorBGM
     songTransitionType: 1
     MusicSettings:
     - alias: Basecamp1
@@ -1398,7 +1711,7 @@ MonoBehaviour:
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1425,7 +1738,7 @@ MonoBehaviour:
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1452,34 +1765,7 @@ MonoBehaviour:
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
-      isLoop: 0
-      isChecked: 1
-      metadataStringValues: []
-      metadataBoolValues: []
-      metadataIntValues: []
-      metadataFloatValues: []
-      metadataExpanded: 1
-      songStartTimeMode: 0
-      customStartTime: 0
-      customStartTimeMax: 0
-      lastKnownTimePoint: 0
-      wasLastKnownTimePointSet: 0
-      songIndex: 0
-      sectionStartTime: 0
-      sectionEndTime: 0
-      songStartedEventExpanded: 0
-      songStartedCustomEvent: 
-      songChangedEventExpanded: 0
-      songChangedCustomEvent: 
-    - alias: Basecamp4
-      audLocation: 0
-      clip: {fileID: 8300000, guid: d2ce5310591fac8488e99673aa757581, type: 3}
-      songName: Basecamp4
-      resourceFileName: 
-      volume: 1
-      pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1512,7 +1798,7 @@ MonoBehaviour:
     newMetadataPropType: 1
     newMetadataPropRequired: 1
     newMetadataPropCanHaveMult: 0
-  - isExpanded: 1
+  - isExpanded: 0
     playlistName: 1FloorBGM
     songTransitionType: 1
     MusicSettings:
@@ -1523,7 +1809,7 @@ MonoBehaviour:
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1550,7 +1836,7 @@ MonoBehaviour:
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1577,7 +1863,7 @@ MonoBehaviour:
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1599,39 +1885,12 @@ MonoBehaviour:
       songChangedCustomEvent: 
     - alias: 1Floor4
       audLocation: 0
-      clip: {fileID: 8300000, guid: d971a2d173b1d324199cc4b621e3ae3c, type: 3}
+      clip: {fileID: 8300000, guid: 68d07e3b0e41d134fb2f96cb6ea62cbd, type: 3}
       songName: 1Floor4
       resourceFileName: 
       volume: 1
       pitch: 1
-      isExpanded: 1
-      isLoop: 0
-      isChecked: 1
-      metadataStringValues: []
-      metadataBoolValues: []
-      metadataIntValues: []
-      metadataFloatValues: []
-      metadataExpanded: 1
-      songStartTimeMode: 0
-      customStartTime: 0
-      customStartTimeMax: 0
-      lastKnownTimePoint: 0
-      wasLastKnownTimePointSet: 0
-      songIndex: 0
-      sectionStartTime: 0
-      sectionEndTime: 0
-      songStartedEventExpanded: 0
-      songStartedCustomEvent: 
-      songChangedEventExpanded: 0
-      songChangedCustomEvent: 
-    - alias: 1Floor5
-      audLocation: 0
-      clip: {fileID: 8300000, guid: 6e00323df0ce1ee4e8279032835ba3e8, type: 3}
-      songName: 1Floor5
-      resourceFileName: 
-      volume: 1
-      pitch: 1
-      isExpanded: 1
+      isExpanded: 0
       isLoop: 0
       isChecked: 1
       metadataStringValues: []
@@ -1664,37 +1923,10 @@ MonoBehaviour:
     newMetadataPropType: 1
     newMetadataPropRequired: 1
     newMetadataPropCanHaveMult: 0
-  - isExpanded: 1
+  - isExpanded: 0
     playlistName: 2FloorBGM
     songTransitionType: 1
     MusicSettings:
-    - alias: 2Floor1
-      audLocation: 0
-      clip: {fileID: 8300000, guid: aad1eabe8fbce1e45acc860aa1dc2a23, type: 3}
-      songName: 2Floor1
-      resourceFileName: 
-      volume: 1
-      pitch: 1
-      isExpanded: 1
-      isLoop: 0
-      isChecked: 1
-      metadataStringValues: []
-      metadataBoolValues: []
-      metadataIntValues: []
-      metadataFloatValues: []
-      metadataExpanded: 1
-      songStartTimeMode: 0
-      customStartTime: 0
-      customStartTimeMax: 0
-      lastKnownTimePoint: 0
-      wasLastKnownTimePointSet: 0
-      songIndex: 0
-      sectionStartTime: 0
-      sectionEndTime: 0
-      songStartedEventExpanded: 0
-      songStartedCustomEvent: 
-      songChangedEventExpanded: 0
-      songChangedCustomEvent: 
     - alias: 2Floor2
       audLocation: 0
       clip: {fileID: 8300000, guid: d971a2d173b1d324199cc4b621e3ae3c, type: 3}
@@ -1735,108 +1967,10 @@ MonoBehaviour:
     newMetadataPropType: 1
     newMetadataPropRequired: 1
     newMetadataPropCanHaveMult: 0
-  - isExpanded: 1
+  - isExpanded: 0
     playlistName: 3FloorBGM
     songTransitionType: 1
     MusicSettings:
-    - alias: 3Floor1
-      audLocation: 0
-      clip: {fileID: 8300000, guid: bebb0c0f89b825545a43564714dc000d, type: 3}
-      songName: 3Floor1
-      resourceFileName: 
-      volume: 1
-      pitch: 1
-      isExpanded: 1
-      isLoop: 0
-      isChecked: 1
-      metadataStringValues: []
-      metadataBoolValues: []
-      metadataIntValues: []
-      metadataFloatValues: []
-      metadataExpanded: 1
-      songStartTimeMode: 0
-      customStartTime: 0
-      customStartTimeMax: 0
-      lastKnownTimePoint: 0
-      wasLastKnownTimePointSet: 0
-      songIndex: 0
-      sectionStartTime: 0
-      sectionEndTime: 0
-      songStartedEventExpanded: 0
-      songStartedCustomEvent: 
-      songChangedEventExpanded: 0
-      songChangedCustomEvent: 
-    - alias: 3Floor2
-      audLocation: 0
-      clip: {fileID: 8300000, guid: 68d07e3b0e41d134fb2f96cb6ea62cbd, type: 3}
-      songName: 3Floor2
-      resourceFileName: 
-      volume: 1
-      pitch: 1
-      isExpanded: 1
-      isLoop: 0
-      isChecked: 1
-      metadataStringValues: []
-      metadataBoolValues: []
-      metadataIntValues: []
-      metadataFloatValues: []
-      metadataExpanded: 1
-      songStartTimeMode: 0
-      customStartTime: 0
-      customStartTimeMax: 0
-      lastKnownTimePoint: 0
-      wasLastKnownTimePointSet: 0
-      songIndex: 0
-      sectionStartTime: 0
-      sectionEndTime: 0
-      songStartedEventExpanded: 0
-      songStartedCustomEvent: 
-      songChangedEventExpanded: 0
-      songChangedCustomEvent: 
-    bulkLocationMode: 0
-    crossfadeMode: 0
-    crossFadeTime: 1
-    fadeInFirstSong: 0
-    fadeOutLastSong: 0
-    bulkEditMode: 0
-    isTemporary: 0
-    showMetadata: 0
-    songMetadataProps: []
-    newMetadataPropName: PropertyName
-    newMetadataPropType: 1
-    newMetadataPropRequired: 1
-    newMetadataPropCanHaveMult: 0
-  - isExpanded: 1
-    playlistName: 4FloorBGM
-    songTransitionType: 1
-    MusicSettings:
-    - alias: 4Floor2
-      audLocation: 0
-      clip: {fileID: 8300000, guid: 0b8e5bc1987eeb54896c6b398776db0c, type: 3}
-      songName: 4Floor2
-      resourceFileName: 
-      volume: 1
-      pitch: 1
-      isExpanded: 1
-      isLoop: 0
-      isChecked: 1
-      metadataStringValues: []
-      metadataBoolValues: []
-      metadataIntValues: []
-      metadataFloatValues: []
-      metadataExpanded: 1
-      songStartTimeMode: 0
-      customStartTime: 0
-      customStartTimeMax: 0
-      lastKnownTimePoint: 0
-      wasLastKnownTimePointSet: 0
-      songIndex: 0
-      sectionStartTime: 0
-      sectionEndTime: 0
-      songStartedEventExpanded: 0
-      songStartedCustomEvent: 
-      songChangedEventExpanded: 0
-      songChangedCustomEvent: 
     - alias: 4Floor2
       audLocation: 0
       clip: {fileID: 8300000, guid: bebb0c0f89b825545a43564714dc000d, type: 3}
@@ -1877,7 +2011,7 @@ MonoBehaviour:
     newMetadataPropType: 1
     newMetadataPropRequired: 1
     newMetadataPropCanHaveMult: 0
-  - isExpanded: 1
+  - isExpanded: 0
     playlistName: BattleBGM
     songTransitionType: 1
     MusicSettings:
@@ -1993,7 +2127,7 @@ MonoBehaviour:
   customEvents: []
   customEventCategories:
   - CatName: '[Uncategorized]'
-    IsExpanded: 1
+    IsExpanded: 0
     IsEditing: 0
     IsTemporary: 0
     ProspectiveName: '[Uncategorized]'

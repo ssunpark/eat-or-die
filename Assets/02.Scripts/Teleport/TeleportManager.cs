@@ -151,6 +151,7 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
             _localPlayer = Room.Instance.LocalPlayer.GetComponent<Player>();
         }
         Debug.Log($"텔레포트: from {DepartureStage}, to {DestinationStage}");
+        MasterAudio.ChangePlaylistByName($"{DestinationStage}FloorBGM");
         TeleportAsync().Forget();
     }
 }
