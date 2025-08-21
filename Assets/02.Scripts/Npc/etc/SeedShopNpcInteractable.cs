@@ -1,4 +1,5 @@
-﻿using Fusion;
+﻿using DarkTonic.MasterAudio;
+using Fusion;
 using UnityEngine;
 // 수현
 public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
@@ -12,5 +13,6 @@ public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
     {
         UI_SeedShopPanel.Open();
         InputReader.Instance.ReleaseControl();
+        MasterAudio.PlaySound3DAtTransform("NpcInteract", transform);
     }
 }

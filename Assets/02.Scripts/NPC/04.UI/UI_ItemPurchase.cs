@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using DarkTonic.MasterAudio;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -136,5 +137,6 @@ public class UI_ItemPurchase : MonoBehaviour
         Debug.Log($"{_itemProfile.ItemDefinition.Name} {_selectedCount}개 구매 완료");
         var newItemInstance = new ItemInstance(_itemProfile, selectedCount);
         UnifiedInventoryManager.Instance.AddItem(newItemInstance);
+        MasterAudio.PlaySound("Buy");
     }
 }

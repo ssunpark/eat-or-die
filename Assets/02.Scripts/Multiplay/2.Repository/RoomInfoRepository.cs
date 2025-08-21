@@ -8,7 +8,6 @@ public class RoomInfoRepository
 {
     private readonly FirebaseFirestore _db;
 
-    // 의존성 주입
     public RoomInfoRepository(FirebaseFirestore db)
     {
         _db = db;
@@ -64,7 +63,7 @@ public class RoomInfoRepository
             throw;
         }
     }
-    
+
 
     // 방 추가
     public async UniTask AddRoomInfo(RoomInfoDTO roomInfoDTO, string userId)
@@ -104,7 +103,7 @@ public class RoomInfoRepository
             Debug.LogError("[UpdateRoomInfo] UserID 또는 RoomInfoID가 null이거나 비어있습니다. 업데이트를 중단합니다.");
             return;
         }
-        
+
         try
         {
             var docRef = _db.Collection("Users")
@@ -155,7 +154,6 @@ public class RoomInfoRepository
 
         var docRef = _db.Collection("inviteCodes").Document(code);
 
-        // 저장할 데이터
         var data = new
         {
             inviter = inviterId,

@@ -211,6 +211,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public void Rpc_CookingPotAlreadyUse([RpcTarget] PlayerRef player)
     {
         OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
+        MasterAudio.PlaySound("Fail");
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]

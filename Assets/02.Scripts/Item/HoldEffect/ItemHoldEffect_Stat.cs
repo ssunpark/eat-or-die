@@ -17,11 +17,15 @@ public class ItemHoldEffect_Stat : IItemHoldEffect
     
     public void Hold(GameObject target)
     {
+        if (!target.GetComponent<Player>().HasStateAuthority && !target.GetComponent<Player>().HasInputAuthority)
+            return;
         target.GetComponent<Player>().Stat.ApplyModifier(_statType, new StatModifier(_modifierType, _value, _source));
     }
 
     public void UnHold(GameObject target)
     {
+        if (!target.GetComponent<Player>().HasStateAuthority && !target.GetComponent<Player>().HasInputAuthority)
+            return;
         target.GetComponent<Player>().Stat.RemoveModifiersFrom(_source);
     }
 }

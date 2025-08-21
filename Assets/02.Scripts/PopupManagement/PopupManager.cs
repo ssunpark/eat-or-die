@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class PopupManager : BehaviourSingleton<PopupManager>
 {
@@ -33,6 +34,10 @@ public class PopupManager : BehaviourSingleton<PopupManager>
 
     public void Unregister(AUI_PopupBase popup)
     {
+        if (popup == null || !openedPopups.Contains(popup))
+        {
+            return;
+        }
         openedPopups.Remove(popup);
     }
 
@@ -65,6 +70,12 @@ public class PopupManager : BehaviourSingleton<PopupManager>
 
         for (int i = popups.Count - 1; i >= 0; --i)
         {
+            if (!popups[i].isActiveAndEnabled)
+            {
+                Unregister(popups[i]);
+                continue;
+            }
+            
             popups[i].Close();
         }
     }

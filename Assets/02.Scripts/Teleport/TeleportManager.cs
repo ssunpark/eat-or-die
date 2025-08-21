@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 
 public class TeleportManager : BehaviourSingleton<TeleportManager>
@@ -84,10 +85,9 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
             Quaternion.identity,
             true);
 
-
+        MasterAudio.PlaySound3DAtTransform("Teleport", _localPlayer.transform);
         // 3초 대기
         await UniTask.Delay(TimeSpan.FromSeconds(3));
-
         // 텔레포트 실행
         // 텔레포트 시작 이펙트
         ParticleManager.Instance.PlayByKey(
@@ -183,6 +183,7 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
             return;
         }
         Debug.Log($"텔레포트: from {DepartureStage}, to {DestinationStage}");
+        MasterAudio.ChangePlaylistByName($"{DestinationStage}FloorBGM");
         TeleportAsync().Forget();
     }
 }

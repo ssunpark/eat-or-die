@@ -10,21 +10,11 @@ public class UI_Teleport : AUI_PopupBase
 
     private void Start()
     {
-        TeleportManager.Instance.OnInteractPortal += OpenTeleportUI;
-        TeleportManager.Instance.OnExitPortal += CloseTeleportUI;
-        base.Close();
+        TeleportManager.Instance.OnInteractPortal += Open;
+        TeleportManager.Instance.OnExitPortal += Close;
+        gameObject.SetActive(false);
     }
 
-    public void OpenTeleportUI()
-    { 
-        base.Open();
-    }
-
-    public void CloseTeleportUI()
-    {
-        base.Close();
-    }
-    
     public void OnClickToggle(int index)
     {
         TeleportManager.Instance.DestinationStage = index;

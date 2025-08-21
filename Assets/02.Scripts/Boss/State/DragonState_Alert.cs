@@ -16,13 +16,13 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
         _baseParams = Context.Parameter.Base;
     }
 
-    protected override bool CanEnterState()
-    {
-        return Context.Sight.Target != null;
-    }
-
     protected override void OnEnterState()
     {
+        if (Context.Sight.Target == null)
+        {
+            Machine.TryActivateState<DragonState_Idle>(true);
+        }
+        
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         _hasDestination = false;
@@ -114,7 +114,7 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
         float offsetAngle = randomSign * Random.Range(_alertParams.MinAngleRange, _alertParams.AngleRange);
         Vector3 rotatedDir = Quaternion.Euler(0f, offsetAngle, 0f) * dir;
 
-        float distance = Context.Sight.Distance + Random.Range(-_alertParams.WalkRange, _alertParams.WalkRange);
+        float distance = Context.Sight.Distance + Random.Range(-_alertParams.WalkRange, 0f);
 
         distance = Mathf.Max(_alertParams.MinDistance, distance);
 

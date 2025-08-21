@@ -122,9 +122,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5294339794229295256, guid: 6ee1bdc31a0a1c542ad327f09357d882, type: 3}
-        m_TargetAssemblyTypeName: AUI_PopupBase, Assembly-CSharp
-        m_MethodName: Open
+      - m_Target: {fileID: 6315818850059834556}
+        m_TargetAssemblyTypeName: UI_RoomItem, Assembly-CSharp
+        m_MethodName: OnClickDeleteButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -475,7 +475,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7761585175666925225
 RectTransform:
   m_ObjectHideFlags: 0
@@ -497,7 +497,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -145, y: 0}
-  m_SizeDelta: {x: 0, y: 20}
+  m_SizeDelta: {x: 86.869995, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7652872755807670031
 MonoBehaviour:
@@ -892,10 +892,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7761585175666925225}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 20}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 58.434998, y: -10}
+  m_SizeDelta: {x: 11.67, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5474227842903526671
 CanvasRenderer:
@@ -1178,10 +1178,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7761585175666925225}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 20}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 24.3, y: -10}
+  m_SizeDelta: {x: 48.6, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2215510575098501915
 CanvasRenderer:
@@ -1314,10 +1314,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7761585175666925225}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 20}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 77.57, y: -10}
+  m_SizeDelta: {x: 18.6, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5356600217773805878
 CanvasRenderer:
@@ -1630,7 +1630,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6315818850059834556}
         m_TargetAssemblyTypeName: UI_RoomItem, Assembly-CSharp
-        m_MethodName: OnClick
+        m_MethodName: OnClickRoom
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1668,3 +1668,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _roomNameTextUI: {fileID: 3503588409925486464}
+  _currentMemberCountTextUI: {fileID: 6791385123628737714}
