@@ -71,6 +71,6 @@ public class EnemyRawData
     [Name("DropItem2Count")]
     public int DropItem2Count { get; set; }
     
-    [Name("PrefabPath(Addressable)")]
-    public string? PrefabPath { get; set; }
+    [Name("AttackParticleKey")]
+    public string? AttackParticleKey { get; set; }
 }
