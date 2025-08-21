@@ -104,7 +104,7 @@ public class TeleportManager : BehaviourSingleton<TeleportManager>
         var destination = isRevive ? new Vector3(0, 0.5f, 0) : _destinationList[DestinationStage].transform.position;
         _localPlayer.Teleport(destination);
 
-        float delay = Math.Abs(DestinationStage - DepartureStage) * 1.2f; // 목적지에 따라 딜레이 조정
+        float delay = Math.Max(Math.Abs(DestinationStage - DepartureStage) * 1.2f, 1.2f); // 목적지에 따라 딜레이 조정
         FadeOutAsync(delay).Forget();
 
         await UniTask.Delay(TimeSpan.FromSeconds(delay)); // 페이드 아웃이 시작과 동시에 텔레포트 완료

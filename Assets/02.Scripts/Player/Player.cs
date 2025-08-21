@@ -535,13 +535,23 @@ public class Player : CharacterBase, IAttackable
 
     public void Revive()
     {
+        
+        SimpleKCC.enabled = true;
+        Resource.ResetAll();
+        OnRevive?.Invoke();
+
+        RPC_ClientRevive();
+    }
+
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority,
+         HostMode = RpcHostMode.SourceIsHostPlayer)]
+    private void RPC_ClientRevive()
+    {
         if (_teleportManager == null)
         {
             _teleportManager = FindAnyObjectByType<TeleportManager>();
         }
-        SimpleKCC.enabled = true;
-        Resource.ResetAll();
-        OnRevive?.Invoke();
+
         ReviveAsync().Forget();
     }
 
@@ -549,6 +559,14 @@ public class Player : CharacterBase, IAttackable
     public async UniTask ReviveAsync()
     {
         await _teleportManager.ReviveTeleport();
+        RPC_ReviveState();
+    }
+
+
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+    private void RPC_ReviveState()
+    {
         GetComponent<ItemMagnet>().enabled = true;
         PlayerFSM.IsDead = false;
 
