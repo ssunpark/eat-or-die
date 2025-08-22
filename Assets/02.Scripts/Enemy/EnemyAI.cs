@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Fusion;
-using UnityEngine;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
@@ -37,18 +38,52 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
     private EnemyBehaviourMachine _behaviourMachine;
 
-	public override void Spawned()
-	{
+    [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private int _areaMask = NavMesh.AllAreas;
+    public override async void Spawned()
+    {
 		_raycastComponent = GetComponent<RangeDetector>();
 		_raycastComponent.Radius = Context.StatManager.GetStat(EStatType.EnemyDetectionRange);
 		_changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 		
-		Context.Agent.updatePosition = false;
-		Context.Agent.updateRotation = false;
-		Context.Agent.updateUpAxis = false;
-	}
+		if(Context.Agent != null)
+		{
+			Context.Agent.enabled = false;
+            Context.Agent.updatePosition = false;
+            Context.Agent.updateRotation = false;
+            Context.Agent.updateUpAxis = false;
+        }
+        if (Object.HasStateAuthority)
+        {
+            // 2) 유효 위치 스냅
+            var pos = transform.position;
+            if (NavMesh.SamplePosition(pos, out var hit, 2.0f, _areaMask))
+            {
+                transform.position = hit.position;
+            }
 
-	public void CollectStateMachines(List<IStateMachine> stateMachines)
+			_agent = Context.Agent;
+            // 3) 한 틱/한 프레임 대기 후 활성화 & 워프
+            await UniTask.NextFrame();
+            if (_agent != null)
+            {
+                _agent.Warp(transform.position);
+                _agent.enabled = true;
+                _agent.isStopped = false;
+                _agent.nextPosition = transform.position;
+            }
+        }
+        else
+        {
+            // 프록시: NavMeshAgent는 계속 꺼두고, 네트워크 동기화만으로 렌더
+            if (_agent != null)
+            {
+                _agent.enabled = false;
+            }
+        }
+    }
+
+    public void CollectStateMachines(List<IStateMachine> stateMachines)
 	{
 		EnemyStatManager = new EnemyStatManager(EnemyID);
 
@@ -125,7 +160,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void Move()
 	{
-		if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
+        if (!Object.HasStateAuthority || _agent == null || !_agent.enabled) return;
+        if (Context.Agent.pathPending || !Context.Agent.hasPath) return;
 		
 		Vector3 direction = Context.Agent.nextPosition - transform.position;
 		transform.forward = direction.normalized;

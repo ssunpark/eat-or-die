@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Fusion.Addons.FSM;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class MoveBehaviour : AEnemyStateBehaviour
 {

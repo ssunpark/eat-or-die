@@ -1,16 +1,22 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
+using UnityEngine.AI;
+using static UnityEditor.PlayerSettings;
 
 public class EnemySpawner : MonoBehaviour
 {
     [SerializeField] private NetworkPrefabRef _enemyPrefab;
-    
+    [SerializeField] private NavMeshAgent _agent;
+    [SerializeField] private int _areaMask = NavMesh.AllAreas;
     public float SpawnDuration = 5f; // Spawn 간격
     private float _spawnTimer = 0f;
     
     private NetworkObject _enemyInstance;
     private int _autoRemaining = 1;
+
+    
 
     private void Update()
     {
@@ -71,9 +77,20 @@ public class EnemySpawner : MonoBehaviour
     public NetworkObject SpawnOnce()
     {
         var r = Room.Instance.Runner;
-        NetworkObject enemy = r.Spawn(_enemyPrefab, transform.position, Quaternion.identity, r.LocalPlayer);
+        NetworkObject enemy;
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 1f, NavMesh.AllAreas))
+        {
+            enemy = r.Spawn(_enemyPrefab, hit.position, Quaternion.identity, r.LocalPlayer);
+            r.transform.SetPositionAndRotation(hit.position, Quaternion.identity);
+            Debug.Log($"[ObjectPoolManager] 스폰 위치: {hit.position} (NavMesh 보정)");
+        }
+        else
+        {
+            Debug.LogWarning($"[ObjectPoolManager] {gameObject.name} 위치에 NavMesh가 없습니다. 기본 위치로 스폰합니다.");
+            enemy = r.Spawn(_enemyPrefab, transform.position, Quaternion.identity, r.LocalPlayer);
+        }
 
-        return enemy;
+            return enemy;
     }
 
     // ★ 즉시 N마리 스폰(버스트)

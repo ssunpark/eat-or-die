@@ -515,6 +515,8 @@ MonoBehaviour:
   _attackBehaviour: {fileID: 3569399745674960586}
   _hitBehaviour: {fileID: 4197772425860246240}
   _dieBehaviour: {fileID: 3470618728512152487}
+  _agent: {fileID: 0}
+  _areaMask: -1
 --- !u!114 &1368972300657909421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -631,7 +633,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1317,6 +1319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _priority: 0
   _checkPriorityOnExit: 1
+  _isInTransition: 0
 --- !u!1 &6849111070871503180
 GameObject:
   m_ObjectHideFlags: 0

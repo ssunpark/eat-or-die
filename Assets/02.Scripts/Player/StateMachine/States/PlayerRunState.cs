@@ -92,7 +92,7 @@ public class PlayerRunState : APlayerStateBase
         _moveExpTimer += Machine.Runner.DeltaTime;
         if (_moveExpTimer >= 1f)
         {
-            GrantExpOrder("RunPerSecond");
+            GrantExpOrder("MovePerSecond");
             _moveExpTimer = 0f;
         }
     }

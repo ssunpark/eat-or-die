@@ -1102,6 +1102,8 @@ MonoBehaviour:
   _attackBehaviour: {fileID: 165693091407877813}
   _hitBehaviour: {fileID: 5912144478236344558}
   _dieBehaviour: {fileID: 5548221505200336598}
+  _agent: {fileID: 0}
+  _areaMask: -1
 --- !u!114 &5419383378729353496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1218,7 +1220,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

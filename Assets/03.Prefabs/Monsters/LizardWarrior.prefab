@@ -1299,7 +1299,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1441,6 +1441,8 @@ MonoBehaviour:
   _attackBehaviour: {fileID: 3944899602396651581}
   _hitBehaviour: {fileID: 7421819626396612198}
   _dieBehaviour: {fileID: 8650446921977223262}
+  _agent: {fileID: 0}
+  _areaMask: -1
 --- !u!1 &4527530870830567826
 GameObject:
   m_ObjectHideFlags: 0
