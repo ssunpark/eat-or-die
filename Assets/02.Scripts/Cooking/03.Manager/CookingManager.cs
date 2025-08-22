@@ -12,12 +12,9 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
     private Inventory _inputIngredientInventory;
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
-
-    public Action OnCookOutputUpdated;
     public event Action<string> OnAlertMessage; // 문자열 알림용
     public event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
     public event Action<ItemInstance> OnCompletedPopupStarted;
-    public event Action OnItemAdded;
     
     public bool IsSpawned => Object != null && Object.IsValid;
     private bool _isCooking;
@@ -96,6 +93,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         {
             ReturnRecipesToInventory();
             OnAlertMessage?.Invoke("요리가 취소되었습니다.");
+            MasterAudio.PlaySound3DAtTransform("CookFail", _currentCookingPot.transform);
         }
     }
     
@@ -184,10 +182,9 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         
         UnifiedInventoryManager.Instance.AddItem(new ItemInstance(resultItem, quantity));
         RPC_BroadcastCookingResult(itemId);
+        OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem));
         MasterAudio.PlaySound3DAtTransform("CookCompleted", _currentCookingPot.transform);
-        OnCompletedPopupStarted?.Invoke(new ItemInstance(resultItem, 1));
-        OnItemAdded?.Invoke();
-        
+        MasterAudio.PlaySound3DAtTransform("CookSuccess", _currentCookingPot.transform);
     }
     
     private void TransferItemToInventory(ItemInstance itemInstance)
@@ -211,14 +208,14 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     {
         _isCooking = true;
         OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
-        MasterAudio.PlaySound("Cooking");
+        MasterAudio.PlaySound3DAtTransform("Cooking", _currentCookingPot.transform);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void Rpc_CookingPotAlreadyUse([RpcTarget] PlayerRef player)
     {
         OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
-        MasterAudio.PlaySound("Fail");
+        MasterAudio.PlaySound3DAtTransform("Fail", _currentCookingPot.transform);
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -234,9 +231,5 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         var itemInstance = new ItemInstance(resultItem, 1);
 
         CookingFinished?.Invoke(itemInstance); // 레시피를 업데이트 시키는 이벤트
-    }
-
-    private void CheckOutput()
-    {
     }
 }
