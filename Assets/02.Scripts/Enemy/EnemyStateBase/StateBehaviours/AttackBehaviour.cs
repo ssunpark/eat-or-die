@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 using Fusion.Addons.FSM;
 
@@ -59,6 +60,8 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePl
 
 	public void OnActionMoment()
 	{
+		MasterAudio.PlaySound3DAtTransform("MonsterAttack01", transform);
+		
 		Collider[] hitColliders = Physics.OverlapSphere(transform.position, Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange), _attackableLayer);
 		foreach (Collider targetCollider in hitColliders)
 		{
@@ -76,7 +79,7 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePl
 				attackable.OnHitLocal(attackInfo);
 			}
 		}
-		Debug.Log("Attack Moment Triggered");
+
 	}
 
 
