@@ -43,6 +43,7 @@ public class DragonPhase
     
     public void Death()
     {
+        if(!_dragonController.HasStateAuthority) return;
         _dragonController.RPC_Death();
     }
 
