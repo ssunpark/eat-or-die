@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Fusion;
-using UnityEngine;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(StateMachineController))]
@@ -46,6 +46,8 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 		Context.Agent.updatePosition = false;
 		Context.Agent.updateRotation = false;
 		Context.Agent.updateUpAxis = false;
+		GetComponent<NavMeshAgent>().enabled = false;
+		
 	}
 
 	public void CollectStateMachines(List<IStateMachine> stateMachines)

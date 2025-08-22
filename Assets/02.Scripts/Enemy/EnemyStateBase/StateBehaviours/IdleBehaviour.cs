@@ -1,4 +1,3 @@
-using System;
 using Fusion.Addons.FSM;
 using UnityEngine;
 
@@ -11,6 +10,8 @@ public class IdleBehaviour : AEnemyStateBehaviour
 		Debug.Log("Idling...");
 		_isInTransition = false;
 		Machine.Context.Owner.AnimationState = EAnimationState.Idle;
+
+		
 	}
 
 	protected override void OnFixedUpdate()
