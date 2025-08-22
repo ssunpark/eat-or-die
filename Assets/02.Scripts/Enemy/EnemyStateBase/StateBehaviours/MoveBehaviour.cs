@@ -35,10 +35,6 @@ public class MoveBehaviour : AEnemyStateBehaviour
     protected override void OnEnterState()
     {
         Debug.Log("Moving...");
-        if (GetComponent<NavMeshAgent>().enabled == false)
-        {
-            GetComponent<NavMeshAgent>().enabled = true;
-        }
         _moveStateMachine.TryActivateState(_traceState);
     }
 }

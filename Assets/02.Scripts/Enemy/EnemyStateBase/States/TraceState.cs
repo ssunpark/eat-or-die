@@ -14,11 +14,16 @@ public class TraceState : AEnemyState
     {
         if (Context.Animator.IsInTransition(0)) return;
         
-        Context.Agent.SetDestination(Context.Target.transform.position);
+        if(Context.Agent.isOnNavMesh && Context.Target != null)
+        {
+
+            Context.Agent.SetDestination(Context.Target.transform.position);
+
+            Context.Mover.Move();
+
+            ParentBehaviour.Machine.TryActivateState<AttackBehaviour>();
+        }
         
-        Context.Mover.Move();
-        
-        ParentBehaviour.Machine.TryActivateState<AttackBehaviour>();
     }
 
     protected override void OnExitState()

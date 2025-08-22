@@ -353,7 +353,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -483,6 +483,8 @@ MonoBehaviour:
   _attackBehaviour: {fileID: 1299848746783958369}
   _hitBehaviour: {fileID: 2426779442698882848}
   _dieBehaviour: {fileID: 1824130631330967188}
+  _agent: {fileID: 0}
+  _areaMask: -1
 --- !u!114 &8268956989919771527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2915,3 +2917,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _priority: 0
   _checkPriorityOnExit: 1
+  _isInTransition: 0
