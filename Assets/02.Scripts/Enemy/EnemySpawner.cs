@@ -8,6 +8,8 @@ public class EnemySpawner : MonoBehaviour
     
     public float SpawnDuration = 5f; // Spawn 간격
     private float _spawnTimer = 0f;
+    
+    private NetworkObject _enemyInstance;
     private int _autoRemaining = 1;
 
     private void Update()
@@ -20,9 +22,14 @@ public class EnemySpawner : MonoBehaviour
             if (_spawnTimer >= SpawnDuration)
             {
                 _spawnTimer = 0f;
-                SpawnOnce();
+                _enemyInstance = SpawnOnce();
                 _autoRemaining--;
             }
+        }
+        
+        if (_autoRemaining == 0 && _enemyInstance == null)
+        {
+            _autoRemaining++;
         }
     }
 
@@ -61,10 +68,12 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnEnable() { Instances.Add(this); }
     private void OnDisable() { Instances.Remove(this); }
-    public void SpawnOnce()
+    public NetworkObject SpawnOnce()
     {
         var r = Room.Instance.Runner;
-        r.Spawn(_enemyPrefab, transform.position, Quaternion.identity, r.LocalPlayer);
+        NetworkObject enemy = r.Spawn(_enemyPrefab, transform.position, Quaternion.identity, r.LocalPlayer);
+
+        return enemy;
     }
 
     // ★ 즉시 N마리 스폰(버스트)
