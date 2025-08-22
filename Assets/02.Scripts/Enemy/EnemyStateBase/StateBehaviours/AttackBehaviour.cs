@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DarkTonic.MasterAudio;
 using UnityEngine;
 using Fusion.Addons.FSM;
 
@@ -76,7 +77,11 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePl
 				attackable.OnHitLocal(attackInfo);
 			}
 		}
-		Debug.Log("Attack Moment Triggered");
+
+		if (hitColliders.Length > 0)
+		{
+			MasterAudio.PlaySound3DAtTransform("MonsterAttack01", transform);
+		}
 	}
 
 

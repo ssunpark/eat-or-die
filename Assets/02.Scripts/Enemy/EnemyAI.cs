@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using DarkTonic.MasterAudio;
 using Fusion;
 using Fusion.Addons.FSM;
 using RaycastPro.Detectors;
@@ -193,6 +194,7 @@ public class EnemyAI : NetworkBehaviour, IStateMachineOwner, IMoveable, IDetecto
 
 	public void OnHitLocal(AttackInfo attack)
 	{
+		MasterAudio.PlaySound3DAtTransform("MonsterHit01", transform);
 		if (HasStateAuthority)
 		{
 			float meleeAmount = attack.MeleeDamage * attack.TotalDamageMultiplier;
