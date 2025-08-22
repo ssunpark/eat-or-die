@@ -148,6 +148,8 @@ public class PlayerCustomizeHandler : NetworkBehaviour
         foreach (var (category, index) in _customData.AsEnumerable())
         {
             if (index <= 0) continue;
+            if (category == "Top") continue;
+            if(category == "Bottom") continue;
             ActivatePart(root, category, index);
         }
 

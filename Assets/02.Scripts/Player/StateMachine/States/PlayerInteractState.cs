@@ -12,7 +12,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     protected override void OnEnterStateRender()
     {
         base.OnEnterStateRender();
-
+        _fsm.PlayerNetworkObject.ItemHolder.HeldItemObject?.SetActive(false);
         if (_fsm.InteractTarget == null)
         {
             return;
@@ -36,6 +36,8 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
     {
         if (Machine.StateTime >= _fsm.PlayerNetworkObject.AnimationClipLengths[AnimState])
         {
+
+            _fsm.PlayerNetworkObject.ItemHolder.HeldItemObject?.SetActive(true);
             RequestActivateState();
         }
     }
