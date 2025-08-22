@@ -174,11 +174,11 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             return;
         }
         
-        for (int i = 0; i < quantity; i++)
-        {
-            var localPlayer = PlayerInfoManager.Instance.LocalPlayer;
-            localPlayer.Skill.Publish(ESkillEventType.OnCook, new CookPayload(itemId, 1));
-        }
+        // for (int i = 0; i < quantity; i++)
+        // {
+        //     var localPlayer = PlayerInfoManager.Instance.LocalPlayer;
+        //     localPlayer.Skill.Publish(ESkillEventType.OnCook, new CookPayload(itemId, 1));
+        // }
         
         UnifiedInventoryManager.Instance.AddItem(new ItemInstance(resultItem, quantity));
         RPC_BroadcastCookingResult(itemId);
