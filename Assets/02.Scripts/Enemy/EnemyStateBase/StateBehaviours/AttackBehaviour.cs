@@ -60,6 +60,8 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePl
 
 	public void OnActionMoment()
 	{
+		MasterAudio.PlaySound3DAtTransform("MonsterAttack01", transform);
+		
 		Collider[] hitColliders = Physics.OverlapSphere(transform.position, Machine.Context.StatManager.GetStat(EStatType.EnemyAttackRange), _attackableLayer);
 		foreach (Collider targetCollider in hitColliders)
 		{
@@ -78,10 +80,6 @@ public class AttackBehaviour : AEnemyStateBehaviour, IEventReceiver, IParticlePl
 			}
 		}
 
-		if (hitColliders.Length > 0)
-		{
-			MasterAudio.PlaySound3DAtTransform("MonsterAttack01", transform);
-		}
 	}
 
 
