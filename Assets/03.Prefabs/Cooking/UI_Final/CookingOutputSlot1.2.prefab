@@ -331,7 +331,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8747451433155052661
 RectTransform:
   m_ObjectHideFlags: 0
@@ -353,7 +353,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 165, y: 0}
-  m_SizeDelta: {x: 450, y: 0}
+  m_SizeDelta: {x: 450, y: 306.35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &3977175089910355572
 CanvasRenderer:
@@ -649,10 +649,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8747451433155052661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -20}
+  m_SizeDelta: {x: 410, y: 27.01}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5055748892944347457
 CanvasRenderer:
@@ -785,10 +785,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8747451433155052661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -67.01}
+  m_SizeDelta: {x: 410, y: 145.21}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1731076801211371407
 CanvasRenderer:
@@ -927,10 +927,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8747451433155052661}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 20, y: -232.22}
+  m_SizeDelta: {x: 410, y: 54.13}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6037545003788339034
 CanvasRenderer:
@@ -1217,9 +1217,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfa1094f81491d94f8aed9217a45584d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SlotIndex: 0
   IconImage: {fileID: 5098391896822023411}
   QuantityText: {fileID: 7167551249528127587}
+  lockedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  unknownIcon: {fileID: 0}
 --- !u!1 &8391102407959345855
 GameObject:
   m_ObjectHideFlags: 0
