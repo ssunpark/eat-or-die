@@ -140,7 +140,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             return;
 
         _deadTimer += Time.deltaTime;
-        if (_deadTimer >= _dissolve.duration)
+        if (_deadTimer >= _dissolve.duration * 3f)
         {
             Runner.Despawn(Object);
         }
