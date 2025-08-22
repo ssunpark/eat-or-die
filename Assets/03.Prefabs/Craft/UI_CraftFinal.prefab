@@ -3150,9 +3150,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uACF5\uACA9\uB825   <color=#E44962>10</color>   \uB9C8\uBC95 \uACF5\uACA9\uB825  
-    <color=#E44962>0</color>   \uACF5\uACA9\uC18D\uB3C4   <color=#E44962>1.2</color>  
-    \uACF5\uACA9\uBC94\uC704   <color=#E44962>1.2</color>"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
   m_sharedMaterial: {fileID: 4605142744192945302, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
@@ -3616,6 +3614,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6304817012901751560}
+  - component: {fileID: 5114882122365025806}
   m_Layer: 5
   m_Name: Headline
   m_TagString: Untagged
@@ -3644,6 +3643,19 @@ RectTransform:
   m_AnchoredPosition: {x: 3, y: -143}
   m_SizeDelta: {x: -40, y: 70}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &5114882122365025806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3435448139019925741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52850ad912a945b78cdad8a33e5f76ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _categoryTextUI: {fileID: 1626960661226686262}
 --- !u!1 &3480374065242550604
 GameObject:
   m_ObjectHideFlags: 0
@@ -4881,6 +4893,18 @@ MonoBehaviour:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CraftRecipeUIManager, Assembly-CSharp
         m_MethodName: UpdateAllCraftItems
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5114882122365025806}
+        m_TargetAssemblyTypeName: UI_CraftCategoryText, Assembly-CSharp
+        m_MethodName: OnClickAllCategory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6880,10 +6904,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB048\uC801\uD55C \uC9C8\uAC10 \uB54C\uBB38\uC5D0 \uC0DD\uC73C\uB85C\uB294
-    \uAC70\uBD80\uAC10\uC774 \uB4E4\uC9C0\uB9CC, \uC694\uB9AC\uC5D0 \uD65C\uC6A9\uD558\uBA74
-    \uC740\uC740\uD55C \uB2E8\uB9DB\uC744 \uB354\uD558\uB294 \uD6CC\uB96D\uD55C \uC870\uBBF8\uB8CC\uAC00
-    \uB41C\uB2E4."
+  m_text: "\uC694\uB9AC\uC1A5 \uC785\uB2C8\uB2E4."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
   m_sharedMaterial: {fileID: 4605142744192945302, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
@@ -7172,6 +7193,18 @@ MonoBehaviour:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CraftRecipeUIManager, Assembly-CSharp
         m_MethodName: UpdateToolItems
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5114882122365025806}
+        m_TargetAssemblyTypeName: UI_CraftCategoryText, Assembly-CSharp
+        m_MethodName: OnClickToolCategory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7495,6 +7528,18 @@ MonoBehaviour:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CraftRecipeUIManager, Assembly-CSharp
         m_MethodName: UpdateWeaponItems
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5114882122365025806}
+        m_TargetAssemblyTypeName: UI_CraftCategoryText, Assembly-CSharp
+        m_MethodName: OnClickWeaponCategory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8749,6 +8794,18 @@ MonoBehaviour:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: CraftRecipeUIManager, Assembly-CSharp
         m_MethodName: UpdateEquipItems
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5114882122365025806}
+        m_TargetAssemblyTypeName: UI_CraftCategoryText, Assembly-CSharp
+        m_MethodName: OnClickEquipmentCategory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10191,7 +10248,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uAC11\uC637"
+  m_text: "\uC804\uCCB4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
   m_sharedMaterial: {fileID: 4605142744192945302, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
@@ -11498,7 +11555,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 90.41, y: 5.125}
-  m_SizeDelta: {x: 66.92, y: 0}
+  m_SizeDelta: {x: 17.36, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1363649254944769325
 CanvasRenderer:
@@ -11528,7 +11585,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 999+
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}
   m_sharedMaterial: {fileID: 4605142744192945302, guid: bc22906dc9b74c64093efb5cbbc13fb7, type: 2}

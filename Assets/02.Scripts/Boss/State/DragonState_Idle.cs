@@ -20,6 +20,11 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
 
     protected override void OnEnterState()
     {
+        _alerted = false;
+        _roared = false;
+        
+        Context.Movement.Unlock();
+        Context.Movement.ResetNavMeshAgent();
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         Context.Combat.SetFightMode(false);
@@ -50,7 +55,7 @@ public class DragonState_Idle : DragonStateBase, IParentState, IAnimationExitAct
             return;
         }
 
-        if (_alerted)
+        if (_alerted && Context.Sight.HasTarget)
         {
             Machine.TryActivateState<DragonState_Alert>(true);
         }

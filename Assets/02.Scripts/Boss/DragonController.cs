@@ -76,9 +76,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     private DragonStateMachine _stateMachine;
 
     public Animator Animator { get; private set; }
-    public GameObject Target { get; private set; }
-    private Player _targetPlayer;
-    private HashSet<GameObject> _targets = new HashSet<GameObject>();
+    public Player TargetPlayer { get; private set; }
     public DragonParameterLoader ParamLoader { get; private set; }
     public DragonObjectPool Pool { get; private set; }
 
@@ -126,13 +124,12 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public override void FixedUpdateNetwork()
     {
-        if (_targetPlayer?.IsDead ?? false)
+        if (_stateMachine.Machine.ActiveState is not DragonState_Idle && (TargetPlayer == null || TargetPlayer.IsDead))
         {
-            // 다른 타겟으로 변환
-            _targets.Remove(Target);
-            SetTarget(_targets.FirstOrDefault());
+            TargetPlayer = null;
+            _stateMachine.Machine.ForceActivateState<DragonState_Idle>(true);
         }
-
+        
         if (_hit && _context.Stats.CurrentHP <= 0 && !_isDead)
         {
             _stateMachine.Machine.ForceActivateState<DragonState_Death>(true);
@@ -143,7 +140,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             return;
 
         _deadTimer += Time.deltaTime;
-        if (_deadTimer >= _dissolve.duration)
+        if (_deadTimer >= _dissolve.duration * 3f)
         {
             Runner.Despawn(Object);
         }
@@ -211,8 +208,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public void SetTarget(GameObject target)
     {
-        Target = target;
-        _targetPlayer = Target.GetComponent<Player>();
+        if (target != null && target.TryGetComponent(out Player p) && !p.IsDead)
+            TargetPlayer = p;
     }
 
     private void OnAnimWaitIndexChanged()

@@ -43,7 +43,7 @@ public class CookOutputSlotUI : MonoBehaviour
         var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == resultItem.ItemDefinition.ID);
         var isKnown = RecipePanelUIManager.Instance.IsKnownRecipe(recipe.ID);
         var canMake = RecipePanelUIManager.Instance.CanMakeRecipe(recipe);
-
+        
         if (!isKnown)
         {
             IconImage.sprite = unknownIcon;
@@ -55,10 +55,19 @@ public class CookOutputSlotUI : MonoBehaviour
 
         if (resultItem != null)
         {
-            IconImage.sprite = resultItem.ItemDefinition.Icon;
-            IconImage.gameObject.SetActive(true);
+            if (recipe.ResultID == 200120 || recipe.ResultID == 200121 || recipe.ResultID == 200122)
+            {
+                IconImage.sprite = unknownIcon;
+                IconImage.gameObject.SetActive(true);
+                IconImage.color = lockedColor;
+            }
 
-            IconImage.color = lockedColor;
+            else
+            {
+                IconImage.sprite = resultItem.ItemDefinition.Icon;
+                IconImage.gameObject.SetActive(true);
+                IconImage.color = lockedColor;
+            }
         }
         
         
