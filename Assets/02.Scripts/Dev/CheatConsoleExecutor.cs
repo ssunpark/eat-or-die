@@ -214,7 +214,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
                     int count = (t.Length >= 3 && int.TryParse(t[2], out var c)) ? Mathf.Max(1, c) : 1;
                     var sp = GetNearestSpawner(info);
                     if (sp == null) return "No EnemySpawner found.";
-                    sp.SpawnBurst(count);
+                    // sp.SpawnBurst(count);
                     return $"Enemy spawned at nearest spawner x{count}";
                 }
             case "spawnhere":
@@ -225,7 +225,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
                     var pos = player.SimpleKCC ? player.SimpleKCC.Transform.position : player.transform.position;
                     var sp = GetNearestSpawner(info);
                     if (sp == null) return "No EnemySpawner found.";
-                    sp.SpawnAt(pos, count);
+                    // sp.SpawnAt(pos, count);
                     return $"Enemy spawned at player x{count}";
                 }
             case "killall":
@@ -265,18 +265,18 @@ public class CheatConsoleExecutor : NetworkBehaviour
                     if (t.Length < 4) return "Usage: spawner start [interval] [total]";
                     if (!float.TryParse(t[2], out var interval)) return "Invalid interval";
                     if (!int.TryParse(t[3], out var total)) return "Invalid total";
-                    sp.StartAuto(interval, total);
+                    // sp.StartAuto(interval, total);
                     return $"Spawner auto ON: every {interval}s, total {total}";
                 }
             case "stop":
-                sp.StopAuto();
+                // sp.StopAuto();
                 return "Spawner auto OFF";
             case "setinterval":
                 {
                     if (t.Length < 3) return "Usage: spawner setinterval [seconds]";
                     if (!float.TryParse(t[2], out var sec)) return "Invalid seconds";
-                    sp.StartAuto(sec, 0); // 카운트 0이면 타이머만 세팅, 자동은 꺼짐
-                    sp.StopAuto();
+                    // sp.StartAuto(sec, 0); // 카운트 0이면 타이머만 세팅, 자동은 꺼짐
+                    // sp.StopAuto();
                     return $"Spawner interval set to {sec}s";
                 }
             default:
@@ -286,16 +286,16 @@ public class CheatConsoleExecutor : NetworkBehaviour
 
     private EnemySpawner GetNearestSpawner(RpcInfo info)
     {
-        if (EnemySpawner.Instances.Count == 0) return null;
+        // if (EnemySpawner.Instances.Count == 0) return null;
         var player = GetRequestPlayer(info);
-        if (player == null) return EnemySpawner.Instances[0];
+        // if (player == null) return EnemySpawner.Instances[0];
         var p = player.SimpleKCC ? player.SimpleKCC.Transform.position : player.transform.position;
         EnemySpawner best = null;
         float bestDist = float.MaxValue;
-        foreach (var s in EnemySpawner.Instances)
+        // foreach (var s in EnemySpawner.Instances)
         {
-            float d = Vector3.SqrMagnitude(s.transform.position - p);
-            if (d < bestDist) { bestDist = d; best = s; }
+            // float d = Vector3.SqrMagnitude(s.transform.position - p);
+            // if (d < bestDist) { bestDist = d; best = s; }
         }
         return best;
     }
