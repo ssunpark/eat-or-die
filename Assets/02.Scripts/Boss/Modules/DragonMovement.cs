@@ -40,8 +40,8 @@ public class DragonMovement
 
         _controller.transform.position = NavMeshAgent.nextPosition;
 
-        Vector3 direction = _controller.Target != null
-            ? _controller.Target.transform.position - _controller.transform.position
+        Vector3 direction = _controller.TargetPlayer != null
+            ? _controller.TargetPlayer.transform.position - _controller.transform.position
             : NavMeshAgent.steeringTarget - _controller.transform.position;
 
         direction.y = 0f;
@@ -69,10 +69,10 @@ public class DragonMovement
 
     public void MaintainDistanceAndLookAtTarget(float dt, float desiredDistance)
     {
-        if (_isLocked || _controller.Target == null)
+        if (_isLocked || _controller.TargetPlayer == null)
             return;
 
-        Vector3 dir = _controller.transform.position - _controller.Target.transform.position;
+        Vector3 dir = _controller.transform.position - _controller.TargetPlayer.transform.position;
         dir.y = 0f;
 
         float dist = dir.magnitude;

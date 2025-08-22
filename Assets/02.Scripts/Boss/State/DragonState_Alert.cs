@@ -18,11 +18,6 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
 
     protected override void OnEnterState()
     {
-        if (Context.Sight.Target == null)
-        {
-            Machine.TryActivateState<DragonState_Idle>(true);
-        }
-        
         Context.Movement.SetNavMeshAgentMoveData(_baseParams.MoveSpeed, _baseParams.RotationSpeed);
 
         _hasDestination = false;
@@ -107,6 +102,11 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
 
     private void ChooseNewLookDestination()
     {
+        if (!Context.Sight.HasTarget)
+        {
+            return;
+        }
+        
         Vector3 center = Context.Sight.Target.transform.position;
         Vector3 dir = (Context.Transform.position - center).normalized;
 
