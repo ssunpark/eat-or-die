@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.PlayerSettings;
 
 public class EnemySpawner : MonoBehaviour
 {
