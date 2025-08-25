@@ -146,7 +146,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         _deadTimer += Time.deltaTime;
         if (_deadTimer >= _dissolve.duration * 3f)
         {
-            _delayedNetworkSpawner.Spawn();
+            _delayedNetworkSpawner.SpawnWithDelay();
             Runner.Despawn(Object);
         }
     }
