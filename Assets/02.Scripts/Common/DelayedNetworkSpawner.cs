@@ -44,6 +44,10 @@ public class DelayedNetworkSpawner : NetworkBehaviour
         Vector3 pos = spawnPoint ? spawnPoint.position : transform.position;
         Quaternion rot = spawnPoint ? spawnPoint.rotation : Quaternion.identity;
 
-        Runner.Spawn(_prefab, pos, rot);
+        var networkObject = Runner.Spawn(_prefab, pos, rot);
+        if (networkObject.TryGetComponent(out IRespawnable spawnable))
+        {
+            spawnable.SetRespawnCallback(SpawnWithDelay);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DarkTonic.MasterAudio;
 using Fusion;
@@ -8,7 +9,7 @@ using RaycastPro.Detectors;
 using UnityEngine;
 
 public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimationEntryActionNotify,
-    IAnimationExitActionNotify, IAttackable
+    IAnimationExitActionNotify, IAttackable, IRespawnable
 {
     [Header("공격 지점")]
     [SerializeField]
@@ -71,10 +72,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [SerializeField]
     private SightDetector _attackDetector;
     public SightDetector AttackDetector => _attackDetector;
-    
-    [Header("스포너")]
-    [SerializeField]
-    private DelayedNetworkSpawner _delayedNetworkSpawner;
 
     private DragonContext _context;
     private DragonStateMachine _stateMachine;
@@ -106,6 +103,13 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     private bool _isDead;
     public bool IsDead { get => _isDead; set => _isDead = value; }
     private float _deadTimer;
+    
+    private Action _respawn;
+
+    public void SetRespawnCallback(Action respawnAction)
+    {
+        _respawn = respawnAction;
+    }
 
     private void Awake()
     {
@@ -146,7 +150,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         _deadTimer += Time.deltaTime;
         if (_deadTimer >= _dissolve.duration * 3f)
         {
-            _delayedNetworkSpawner.SpawnWithDelay();
+            _respawn?.Invoke();
             Runner.Despawn(Object);
         }
     }
