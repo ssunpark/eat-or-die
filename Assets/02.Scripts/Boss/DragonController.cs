@@ -71,6 +71,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [SerializeField]
     private SightDetector _attackDetector;
     public SightDetector AttackDetector => _attackDetector;
+    
+    [Header("스포너")]
+    [SerializeField]
+    private DelayedNetworkSpawner _delayedNetworkSpawner;
 
     private DragonContext _context;
     private DragonStateMachine _stateMachine;
@@ -130,7 +134,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             _stateMachine.Machine.ForceActivateState<DragonState_Idle>(true);
         }
         
-        if (_hit && _context.Stats.CurrentHP <= 0 && !_isDead)
+        if (_stateMachine.Machine.ActiveState is not DragonState_Death && _hit && _context.Stats.CurrentHP <= 0 && !_isDead)
         {
             _stateMachine.Machine.ForceActivateState<DragonState_Death>(true);
             _hit = false;
@@ -142,6 +146,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         _deadTimer += Time.deltaTime;
         if (_deadTimer >= _dissolve.duration * 3f)
         {
+            _delayedNetworkSpawner.Spawn();
             Runner.Despawn(Object);
         }
     }
