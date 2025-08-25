@@ -51,7 +51,6 @@ public class FirebaseManager : BehaviourSingleton<FirebaseManager>
             _auth = FirebaseAuth.GetAuth(_app);
             _db = FirebaseFirestore.GetInstance(_app);
 
-            _db.Settings.PersistenceEnabled = false;
             _initTcs.TrySetResult(); // 초기화 완료 알
         }
         else
