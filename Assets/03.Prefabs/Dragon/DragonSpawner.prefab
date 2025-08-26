@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4644474769058041945}
   - component: {fileID: 2632704062020930243}
   - component: {fileID: 3207174160171240697}
+  - component: {fileID: 1222873171552586507}
   m_Layer: 0
   m_Name: DragonSpawner
   m_TagString: Untagged
@@ -69,3 +70,22 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 2632704062020930243}
   ForceRemoteRenderTimeframe: 0
+--- !u!114 &1222873171552586507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7945597742245230153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70ab8da3506f4aff974ed9f323bcf99c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dragonBreathEffectPrefab: {fileID: -6382943959616634951, guid: 2b65237db323898468800611f3e49b30, type: 3}
+  _lavaProjectilePrefab: {fileID: 1399366059635242526, guid: 2a42182c9ec7ab143a7e7ddef3056891, type: 3}
+  _lavaFloorPrefab: {fileID: 4560508798471847427, guid: 08d6dab1c42a18546b0483a4e388eed9, type: 3}
+  _bloodExplosionPrefab: {fileID: 6896231369501524761, guid: fb6e5dfb20cd8f649bf9673ca8e301ca, type: 3}
+  _directionalProjectiles:
+  - {fileID: 8671547549458620062, guid: 0fd519a179f86ca409712a9538725a44, type: 3}
+  - {fileID: 5987240822474696497, guid: a361355d1d86bcb45afd2f1a2142fd4a, type: 3}

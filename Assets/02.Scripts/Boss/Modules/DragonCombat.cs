@@ -64,12 +64,12 @@ public class DragonCombat
     {
         var spawnPoint = _controller.LeftPoint.position;
 
-        var projectile = _controller.Pool.GetDirectionalPoolObject(DarkProjectileKey);
+        var projectile = _controller.Container.GetDirectionalPoolObject(DarkProjectileKey);
 
         projectile.transform.position = spawnPoint;
         var param = _controller.ParamLoader.LeftScratch_Special;
         projectile.Fire(_controller.transform.forward, param.Speed, param.LifeTime, param.Damage,
-            () => _controller.Pool.TakeDirectionalPool(DarkProjectileKey, projectile));
+            () => _controller.Container.TakeDirectionalPool(DarkProjectileKey, projectile));
     }
 
     public void WindStormEffect()
@@ -81,12 +81,12 @@ public class DragonCombat
         var direction = spawnPoint - _controller.transform.position;
         direction.Normalize();
 
-        var projectile = _controller.Pool.GetDirectionalPoolObject(WindStormKey);
+        var projectile = _controller.Container.GetDirectionalPoolObject(WindStormKey);
 
         projectile.transform.position = spawnPoint;
         var param = _controller.ParamLoader.RightScratch_Special;
         projectile.Fire(direction, param.Speed, param.LifeTime, param.Damage,
-            () => _controller.Pool.TakeDirectionalPool(WindStormKey, projectile));
+            () => _controller.Container.TakeDirectionalPool(WindStormKey, projectile));
 
         projectile.GetComponent<EffectVisualController>().Appear(param.LifeTime, 2f, 2f);
     }
@@ -100,11 +100,11 @@ public class DragonCombat
     // 브레스
     public void PlayBreath(float duration, float damage)
     {
-        var vfx = _controller.Pool.BreathParticlePool.Get();
+        var vfx = _controller.Container.BreathParticlePool.Get();
         vfx.transform.position = _controller.BreathPoint.position;
         vfx.transform.rotation = Quaternion.LookRotation(_controller.transform.forward);
         vfx.Init(duration, _controller.HasStateAuthority, damage, _controller.transform,
-            () => _controller.Pool.BreathParticlePool.Take(vfx));
+            () => _controller.Container.BreathParticlePool.Take(vfx));
     }
 
     // Lava
@@ -131,7 +131,7 @@ public class DragonCombat
             int startTick = _controller.Runner.Tick + 2;
 
             var proj = _controller.Runner.Spawn(
-                _controller.LavaProjectile, // NetworkObject 붙은 프리팹
+                _controller.Container.LavaProjectile, // NetworkObject 붙은 프리팹
                 spawnPoint,
                 Quaternion.identity,
                 onBeforeSpawned: (runner, obj) =>
@@ -152,7 +152,7 @@ public class DragonCombat
             {
                 // 도착 위치에 네트워크 LavaFloor 스폰 (권위만)
                 _controller.Runner.Spawn(
-                    _controller.LavaFloorPrefab, targetPos, Quaternion.identity,
+                    _controller.Container.LavaFloorPrefab, targetPos, Quaternion.identity,
                     onBeforeSpawned: (runner, obj) =>
                     {
                         var floor = obj.GetComponent<LavaFloor>();
@@ -191,7 +191,7 @@ public class DragonCombat
         // 권위에서만 네트워크 스폰
         if (_controller.HasStateAuthority)
         {
-            var explosion = _controller.Runner.Spawn(_controller.BloodExplosionPrefab, _controller.transform.position,
+            var explosion = _controller.Runner.Spawn(_controller.Container.BloodExplosionPrefab, _controller.transform.position,
                 Quaternion.identity,
                 onBeforeSpawned: (runner, obj) =>
                 {

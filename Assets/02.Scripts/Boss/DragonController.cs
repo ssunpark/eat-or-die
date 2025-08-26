@@ -34,27 +34,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
 
     public GameObject RoarEffect => _roarEffect;
 
-    [Header("스킬 오브젝트 (풀링)")]
-    [SerializeField]
-    private DragonBreathEffect _dragonBreathEffectPrefab;
-    public DragonBreathEffect DragonBreathEffectPrefab => _dragonBreathEffectPrefab;
-
-    [SerializeField]
-    private LavaProjectile _lavaProjectilePrefab;
-    public LavaProjectile LavaProjectile => _lavaProjectilePrefab;
-
-    [SerializeField]
-    private LavaFloor _lavaFloorPrefab;
-    public LavaFloor LavaFloorPrefab => _lavaFloorPrefab;
-
-    [SerializeField]
-    private BloodExplosion _bloodExplosionPrefabPrefab;
-    public BloodExplosion BloodExplosionPrefab => _bloodExplosionPrefabPrefab;
-
-    [SerializeField]
-    private List<DirectionalProjectile> _directionalProjectiles;
-    public List<DirectionalProjectile> DirectionalProjectiles => _directionalProjectiles;
-
     [Header("연출 오브젝트")]
     [SerializeField]
     private GameObject _phaseEffect;
@@ -79,7 +58,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public Animator Animator { get; private set; }
     public Player TargetPlayer { get; private set; }
     public DragonParameterLoader ParamLoader { get; private set; }
-    public DragonObjectPool Pool { get; private set; }
+    public DragonObjectContainer Container { get; private set; }
 
     public NetworkObject NetworkObject => Object;
 
@@ -115,7 +94,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         Animator = GetComponent<Animator>();
         ParamLoader = new DragonParameterLoader();
-        Pool = new DragonObjectPool(this);
+        Container = DragonObjectContainer.Instance;
         _context = new DragonContext(this);
     }
 
