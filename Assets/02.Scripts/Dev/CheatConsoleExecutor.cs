@@ -44,6 +44,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
                 case "enemy": return Cmd_Enemy(tokens, info);
                 case "spawner": return Cmd_Spawner(tokens, info);
                 case "hide": return Cmd_Hide(tokens, info);
+                case "revive": return Cmd_Revive(tokens, info);
                 default: return $"Unknown command '{cmd}'.";
             }
         }
@@ -291,6 +292,38 @@ public class CheatConsoleExecutor : NetworkBehaviour
                 return "Usage: spawner [start|stop|setinterval]";
         }
     }
+
+    private string Cmd_Revive(string[] t, RpcInfo info)
+    {
+        var player = GetRequestPlayer(info);
+        if (player == null) return "Player not found.";
+
+        // 두 케이스 모두 허용: FSM 기준 or Resource 기준
+        bool isDeadFsm = player.PlayerFSM != null && player.PlayerFSM.IsDead;
+        bool isDeadRes = player.IsDead;
+
+        if (!isDeadFsm && !isDeadRes)
+            return "You are not dead.";
+
+        bool instant =
+            t.Length >= 2 &&
+            (t[1].Equals("instant", StringComparison.OrdinalIgnoreCase)
+            || t[1].Equals("i", StringComparison.OrdinalIgnoreCase));
+
+        if (instant)
+        {
+            // Trait/Modifier 초기화 포함한 즉시 부활
+            player.InstantRevive();
+            return "Instant revived (traits cleared & synced).";
+        }
+        else
+        {
+            // 일반 부활
+            player.Revive();
+            return "Revived.";
+        }
+    }
+
 
     private EnemySpawner GetNearestSpawner(RpcInfo info)
     {
