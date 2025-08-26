@@ -40,8 +40,6 @@ public class DragonState_Alert : DragonStateBase, IAnimationExitActionNotify
 
     private void HandleAlertDecision()
     {
-        Machine.TryActivateState<DragonState_MagicAttack>(true);
-        return;
         float distance = Context.Sight.Distance;
         float rand = Random.value;
 
