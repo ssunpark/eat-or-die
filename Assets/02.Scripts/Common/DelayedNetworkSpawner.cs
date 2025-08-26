@@ -15,6 +15,9 @@ public class DelayedNetworkSpawner : NetworkBehaviour
 
     public override void Spawned()
     {
+        if (!Runner.IsServer) 
+            return;
+        
         if (!_spawnWithStart)
             return;
 
