@@ -1,6 +1,4 @@
-﻿// RoarExplosion.cs (핵심만)
-
-using System.Collections;
+﻿using System.Collections;
 using DarkTonic.MasterAudio;
 using Fusion;
 using UnityEngine;
