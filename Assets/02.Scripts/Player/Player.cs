@@ -168,6 +168,12 @@ public class Player : CharacterBase, IAttackable
 
             HookLocalTraitSavesIfOwner();
         }
+
+        // 4) PlayerInfoManager에 등록
+        await UniTask.Yield(); // 한 프레임 쉬고
+                               // PlayerInfoManager 준비까지 대기 (최대 5초)
+        await UniTask.WaitUntil(() => PlayerInfoManager.Instance != null, cancellationToken: token);
+        PlayerInfoManager.Instance.RegisterLocal(this);
         _spawnInitDone = true;
     }
 
@@ -251,6 +257,7 @@ public class Player : CharacterBase, IAttackable
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         base.Despawned(runner, hasState);
+        PlayerInfoManager.Instance.UnregisterLocal(this);
     }
 
     public override void FixedUpdateNetwork()
