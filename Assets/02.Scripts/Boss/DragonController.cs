@@ -70,7 +70,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public TickTimer BreathTimer { get; set; }
 
     [Networked]
-    public float CurrentHeath { get; set; }
+    public float CurrentHealth { get; set; }
 
     private bool _hit;
     private bool _isDead;
@@ -122,7 +122,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         if (!_isDead)
             return;
 
-        _deadTimer += Time.deltaTime;
+        _deadTimer += Runner.DeltaTime;
         if (_deadTimer >= _dissolve.duration * 3f)
         {
             _respawn?.Invoke();

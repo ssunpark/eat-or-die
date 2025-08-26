@@ -5,7 +5,7 @@ public class DragonStats
 {
     private readonly DragonController _controller;
     public float MaxHP { get; private set; }
-    public float CurrentHP => _controller.CurrentHeath;
+    public float CurrentHP => _controller.CurrentHealth;
 
     public DragonStats(DragonController controller)
     {
@@ -15,12 +15,12 @@ public class DragonStats
 
     public void OnSpawned()
     {
-        _controller.CurrentHeath = MaxHP;
+        _controller.CurrentHealth = MaxHP;
     }
 
     public void TakeDamage(float amount)
     {
-        _controller.CurrentHeath = Mathf.Max(CurrentHP - amount, 0f);
+        _controller.CurrentHealth = Mathf.Max(CurrentHP - amount, 0f);
     }
     
     public bool IsDead => CurrentHP <= 0f;
