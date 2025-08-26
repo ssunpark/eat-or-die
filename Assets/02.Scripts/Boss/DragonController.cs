@@ -95,6 +95,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         Animator = GetComponent<Animator>();
         ParamLoader = new DragonParameterLoader();
         Container = DragonObjectContainer.Instance;
+        if (Container == null)
+            Debug.LogError("[Dragon] DragonObjectContainer is missing in this scene!");
         _context = new DragonContext(this);
     }
 

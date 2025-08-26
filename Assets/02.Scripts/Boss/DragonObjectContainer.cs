@@ -32,7 +32,6 @@ public class DragonObjectContainer : BehaviourSingleton<DragonObjectContainer>
 
         foreach (var proj in _directionalProjectiles)
         {
-            GameObject pool = new(proj.name);
             _dirPools.TryAdd(proj.name, Pool.Create(proj, 0, transform));
         }
     }
@@ -40,8 +39,12 @@ public class DragonObjectContainer : BehaviourSingleton<DragonObjectContainer>
     public Pool<DirectionalProjectile> GetDirectionalPool(string key)
         => _dirPools.GetValueOrDefault(key);
 
-    public DirectionalProjectile GetDirectionalPoolObject(string name)
-        => _dirPools.TryGetValue(name, out var pool) ? pool.Get() : null;
+    public DirectionalProjectile GetDirectionalPoolObject(string name) {
+        if (_dirPools.TryGetValue(name, out var pool)) 
+            return pool.Get();
+        Debug.LogWarning($"[DragonPool] Directional pool not found: {name}");
+        return null;
+    }
 
     public void TakeDirectionalPool(string name, DirectionalProjectile projectile)
     {
