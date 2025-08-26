@@ -95,21 +95,23 @@ public class FollowCamera : MonoBehaviour
     public void RebuildTargets()
     {
         _targets.Clear();
-
         var mgr = PlayerInfoManager.Instance;
         if (mgr == null) return;
 
-        // 로컬 제외 + 살아있는 대상만
-        foreach (var p in PlayerInfoManager.PlayerControllers.Values)
+        foreach (var info in mgr.Players)
         {
-            if (p == null || p == mgr.LocalPlayer) continue;
-            if (p.PlayerFSM != null && !p.PlayerFSM.IsDead)
+            if (!info.Ref.IsRealPlayer) continue;
+            if (info.Ref == mgr.LocalPlayer.Object.InputAuthority) continue;
+
+            var p = mgr.TryResolvePlayer(info.Ref);
+            if (p != null && p.PlayerFSM != null && !p.PlayerFSM.IsDead)
             {
                 _targets.Add(p);
                 TrackLast(p.transform);
             }
         }
     }
+
 
     private void TrackLast(Transform t)
     {

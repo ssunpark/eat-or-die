@@ -95,6 +95,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     [SerializeField] private GameObject _reviveSelectUIPrefab;
     public GameObject HeadCanvas;
     private Transform _uiParent;
+    private Transform _hudParent;
     public GameObject Spoon;
     [SerializeField] private GameObject _spectatorPanelPrefab;
     private GameObject _spectatorPanelObj;
@@ -132,12 +133,12 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         }
         //UI Parent의 자식들 전부 비활성화
 
-        foreach (Transform child in _uiParent)
+        foreach (Transform child in _hudParent)
         {
             child.gameObject.SetActive(false);
         }
 
-        _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _uiParent);
+        _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _hudParent);
     }
 
     public void HideSpectatorPanel()
@@ -147,7 +148,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Destroy(_spectatorPanelObj);
         }
         //UI Parent의 자식들 전부 활성화
-        foreach (Transform child in _uiParent)
+        foreach (Transform child in _hudParent)
         {
             child.gameObject.SetActive(true);
         }
@@ -164,6 +165,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         if (Object.HasInputAuthority)
         {
             _uiParent = GameObject.FindGameObjectWithTag("UIParent")?.transform;
+            _hudParent = GameObject.FindGameObjectWithTag("PlayerHUD")?.transform;
             GetComponentInChildren<OutlineController>().enabled = false;
             GetComponentInChildren<Outlinable>().enabled = false;
         }
