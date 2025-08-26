@@ -34368,7 +34368,7 @@ GameObject:
   - component: {fileID: 6844635483307235671}
   - component: {fileID: 3961343888905063070}
   m_Layer: 0
-  m_Name: Explosion
+  m_Name: Dragon_Explosion_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34424,8 +34424,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bcedf97ef900f6469e80c9f617b1195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _StartPosition: {x: 0, y: 0, z: 0}
   _StartTick: 0
   _Duration: 0
+  _appearSeconds: 1
+  _fadeSeconds: 1
+  _damage: 0
 --- !u!114 &3961343888905063070
 MonoBehaviour:
   m_ObjectHideFlags: 0

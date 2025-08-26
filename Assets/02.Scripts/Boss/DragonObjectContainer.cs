@@ -4,9 +4,14 @@ using System.Collections.Generic;
 
 public class DragonObjectContainer : BehaviourSingleton<DragonObjectContainer>
 {
+    [Header("스킬 오브젝트 (pool)")]
     [SerializeField]
     private DragonBreathEffect _dragonBreathEffectPrefab;
 
+    [SerializeField]
+    private List<DirectionalProjectile> _directionalProjectiles;
+    
+    [Header("스킬 오브젝트 (Spawn)")]
     [SerializeField]
     private LavaProjectile _lavaProjectilePrefab;
     public LavaProjectile LavaProjectile => _lavaProjectilePrefab;
@@ -18,9 +23,11 @@ public class DragonObjectContainer : BehaviourSingleton<DragonObjectContainer>
     [SerializeField]
     private BloodExplosion _bloodExplosionPrefab;
     public BloodExplosion BloodExplosionPrefab => _bloodExplosionPrefab;
-
+    
+    [Header("스킬 오브젝트")]
     [SerializeField]
-    private List<DirectionalProjectile> _directionalProjectiles;
+    private RoarExplosion _roarExplosion;
+    public RoarExplosion RoarExplosion => _roarExplosion;
     
     public Pool<DragonBreathEffect> BreathParticlePool { get; private set; }
 

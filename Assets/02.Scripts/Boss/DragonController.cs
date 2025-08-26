@@ -24,16 +24,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     private Transform _leftPoint;
     public Transform LeftPoint => _leftPoint;
 
-    [Header("스킬 오브젝트")]
-    [SerializeField]
-    private RoarExplosion _roarExplosion;
-    public RoarExplosion RoarExplosion => _roarExplosion;
-
-    [SerializeField]
-    private GameObject _roarEffect;
-
-    public GameObject RoarEffect => _roarEffect;
-
     [Header("연출 오브젝트")]
     [SerializeField]
     private GameObject _phaseEffect;
@@ -42,6 +32,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [SerializeField]
     private InteractiveEffect _dissolve;
     public InteractiveEffect Dissolve => _dissolve;
+    
+    [SerializeField]
+    private GameObject _roarEffect;
+    public GameObject RoarEffect => _roarEffect;
 
     [Header("감지기")]
     [SerializeField]
@@ -58,7 +52,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public Animator Animator { get; private set; }
     public Player TargetPlayer { get; private set; }
     public DragonParameterLoader ParamLoader { get; private set; }
-    public DragonObjectContainer Container { get; private set; }
+    public DragonObjectContainer ObjectContainer { get; private set; }
 
     public NetworkObject NetworkObject => Object;
 
@@ -94,8 +88,8 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     {
         Animator = GetComponent<Animator>();
         ParamLoader = new DragonParameterLoader();
-        Container = DragonObjectContainer.Instance;
-        if (Container == null)
+        ObjectContainer = DragonObjectContainer.Instance;
+        if (ObjectContainer == null)
             Debug.LogError("[Dragon] DragonObjectContainer is missing in this scene!");
         _context = new DragonContext(this);
     }
