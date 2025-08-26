@@ -11,8 +11,12 @@ public class FollowCamera : MonoBehaviour
 
     private PlayerInputActions _inputAction;
     private readonly List<Player> _targets = new();
-    private readonly Dictionary<Transform, Vector3> _lastPos = new(); // 텔레포트 감지
+    private readonly Dictionary<Transform, Vector3> _lastPos = new();
     private int _currentIndex = -1;
+
+
+    public event Action<Transform, Player> SpectateTargetChanged;
+    public Player CurrentSpectatedPlayer { get; private set; }
 
     [SerializeField] private float _teleportSqrThreshold = 25f;
 
@@ -83,6 +87,8 @@ public class FollowCamera : MonoBehaviour
         _currentIndex = -1;
         _targets.Clear();
         _lastPos.Clear();
+
+        RaiseTargetChanged(cmCam?.Target.TrackingTarget);
     }
 
     /// <summary>현재 실시간 상황으로 관전 후보 재구성</summary>
@@ -132,10 +138,16 @@ public class FollowCamera : MonoBehaviour
                 cmCam.OnTargetObjectWarped(target, delta);
             }
         }
+
+        if (prevTarget != target)
+            RaiseTargetChanged(target);
     }
 
     private void SwitchToNext(InputAction.CallbackContext _) => SwitchToTarget(_currentIndex + 1);
     private void SwitchToPrevious(InputAction.CallbackContext _) => SwitchToTarget(_currentIndex - 1);
+    
+    public void SpectateNext() => SwitchToTarget(_currentIndex + 1);
+    public void SpectatePrev() => SwitchToTarget(_currentIndex - 1);
 
     private void SwitchToTarget(int index)
     {
@@ -199,5 +211,18 @@ public class FollowCamera : MonoBehaviour
         {
             _lastPos[t] = t.position;
         }
+    }
+
+    private void RaiseTargetChanged(Transform trackingTarget)
+    {
+        Player player = null;
+        if (trackingTarget != null)
+        {
+            trackingTarget.TryGetComponent(out player);
+            if (player == null) player = trackingTarget.GetComponentInParent<Player>();
+        }
+
+        CurrentSpectatedPlayer = player;
+        SpectateTargetChanged?.Invoke(trackingTarget, player);
     }
 }
