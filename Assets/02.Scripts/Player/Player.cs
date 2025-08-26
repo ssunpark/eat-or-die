@@ -49,6 +49,9 @@ public class Player : CharacterBase, IAttackable
     public SimpleKCC SimpleKCC { get; private set; }
     public SkillManager Skill { get; private set; }
 
+    private FollowCamera _cameraFollow;
+    public FollowCamera CameraFollow => _cameraFollow;
+
     public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
     {
         TraitDataList = dataList;
@@ -201,14 +204,14 @@ public class Player : CharacterBase, IAttackable
             return;
         }
 
-        var follow = mainCam.GetComponent<FollowCamera>();
-        if (follow == null)
+        _cameraFollow = mainCam.GetComponent<FollowCamera>();
+        if (_cameraFollow == null)
         {
             Debug.LogWarning("[Player] FollowCamera not found on MainCamera.");
             return;
         }
 
-        follow.SetTarget(transform);
+        _cameraFollow.SetTarget(transform);
     }
 
     private void InitializePlayerHUD_Safe()

@@ -95,6 +95,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public const float MAX_RAYCAST_DISTANCE = 100f;
     private const float _useItemMaxDistance = 2.0f;
     [SerializeField] private GameObject _reviveSelectUIPrefab;
+    public GameObject RenderModel;
     public GameObject HeadCanvas;
     private Transform _uiParent;
     public GameObject Spoon;
@@ -137,6 +138,11 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             _uiParent = GameObject.FindGameObjectWithTag("UIParent")?.transform;
             GetComponentInChildren<OutlineController>().enabled = false;
             GetComponentInChildren<Outlinable>().enabled = false;
+        }
+
+        if (IsDead)
+        {
+            RenderModel.SetActive(false);
         }
     }
 
