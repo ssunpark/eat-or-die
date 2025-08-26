@@ -4,52 +4,52 @@ using UnityEngine.UI;
 public class UI_AudioSetting : MonoBehaviour
 {
     [SerializeField]
-    private Slider sfxSlider; // 0~100
+    private Slider _sfxSlider; // 0~100
     [SerializeField]
-    private Slider musicSlider; // 0~100
+    private Slider _musicSlider; // 0~100
     [SerializeField]
-    private SettingData settingData; // SettingData.asset 드래그
+    private SettingData _settingData; // SettingData.asset 드래그
 
     private void OnEnable()
     {
         // 안전 보정
-        sfxSlider.minValue = 0f;
-        sfxSlider.maxValue = 100f;
-        sfxSlider.wholeNumbers = true;
-        musicSlider.minValue = 0f;
-        musicSlider.maxValue = 100f;
-        musicSlider.wholeNumbers = true;
+        _sfxSlider.minValue = 0f;
+        _sfxSlider.maxValue = 100f;
+        _sfxSlider.wholeNumbers = true;
+        _musicSlider.minValue = 0f;
+        _musicSlider.maxValue = 100f;
+        _musicSlider.wholeNumbers = true;
 
         // 저장값 로드 & 적용
-        settingData.Load();
-        settingData.Apply();
+        _settingData.Load();
+        _settingData.Apply();
 
         // UI 초기화
-        sfxSlider.SetValueWithoutNotify(SettingData.LinearToSlider(settingData.sfxVolume));
-        musicSlider.SetValueWithoutNotify(SettingData.LinearToSlider(settingData.musicVolume));
+        _sfxSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.SfxVolume));
+        _musicSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.MusicVolume));
 
         // 리스너
-        sfxSlider.onValueChanged.AddListener(OnSfxChanged);
-        musicSlider.onValueChanged.AddListener(OnMusicChanged);
+        _sfxSlider.onValueChanged.AddListener(OnSfxChanged);
+        _musicSlider.onValueChanged.AddListener(OnMusicChanged);
     }
 
     private void OnDisable()
     {
-        sfxSlider.onValueChanged.RemoveListener(OnSfxChanged);
-        musicSlider.onValueChanged.RemoveListener(OnMusicChanged);
+        _sfxSlider.onValueChanged.RemoveListener(OnSfxChanged);
+        _musicSlider.onValueChanged.RemoveListener(OnMusicChanged);
     }
 
     private void OnSfxChanged(float value) // 0~100
     {
-        settingData.sfxVolume = SettingData.SliderToLinear(value);
-        settingData.Apply();
-        settingData.Save();
+        _settingData.SfxVolume = SettingData.SliderToLinear(value);
+        _settingData.Apply();
+        _settingData.Save();
     }
 
     private void OnMusicChanged(float value) // 0~100
     {
-        settingData.musicVolume = SettingData.SliderToLinear(value);
-        settingData.Apply();
-        settingData.Save();
+        _settingData.MusicVolume = SettingData.SliderToLinear(value);
+        _settingData.Apply();
+        _settingData.Save();
     }
 }
