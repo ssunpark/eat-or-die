@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DarkTonic.MasterAudio;
 using Fusion;
@@ -8,7 +9,7 @@ using RaycastPro.Detectors;
 using UnityEngine;
 
 public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimationEntryActionNotify,
-    IAnimationExitActionNotify, IAttackable
+    IAnimationExitActionNotify, IAttackable, IRespawnable
 {
     [Header("공격 지점")]
     [SerializeField]
@@ -23,37 +24,6 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     private Transform _leftPoint;
     public Transform LeftPoint => _leftPoint;
 
-    [Header("스킬 오브젝트")]
-    [SerializeField]
-    private RoarExplosion _roarExplosion;
-    public RoarExplosion RoarExplosion => _roarExplosion;
-
-    [SerializeField]
-    private GameObject _roarEffect;
-
-    public GameObject RoarEffect => _roarEffect;
-
-    [Header("스킬 오브젝트 (풀링)")]
-    [SerializeField]
-    private DragonBreathEffect _dragonBreathEffectPrefab;
-    public DragonBreathEffect DragonBreathEffectPrefab => _dragonBreathEffectPrefab;
-
-    [SerializeField]
-    private LavaProjectile _lavaProjectilePrefab;
-    public LavaProjectile LavaProjectile => _lavaProjectilePrefab;
-
-    [SerializeField]
-    private LavaFloor _lavaFloorPrefab;
-    public LavaFloor LavaFloorPrefab => _lavaFloorPrefab;
-
-    [SerializeField]
-    private BloodExplosion _bloodExplosionPrefabPrefab;
-    public BloodExplosion BloodExplosionPrefab => _bloodExplosionPrefabPrefab;
-
-    [SerializeField]
-    private List<DirectionalProjectile> _directionalProjectiles;
-    public List<DirectionalProjectile> DirectionalProjectiles => _directionalProjectiles;
-
     [Header("연출 오브젝트")]
     [SerializeField]
     private GameObject _phaseEffect;
@@ -62,6 +32,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     [SerializeField]
     private InteractiveEffect _dissolve;
     public InteractiveEffect Dissolve => _dissolve;
+    
+    [SerializeField]
+    private GameObject _roarEffect;
+    public GameObject RoarEffect => _roarEffect;
 
     [Header("감지기")]
     [SerializeField]
@@ -78,7 +52,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public Animator Animator { get; private set; }
     public Player TargetPlayer { get; private set; }
     public DragonParameterLoader ParamLoader { get; private set; }
-    public DragonObjectPool Pool { get; private set; }
+    public DragonObjectContainer ObjectContainer { get; private set; }
 
     public NetworkObject NetworkObject => Object;
 
@@ -96,18 +70,27 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
     public TickTimer BreathTimer { get; set; }
 
     [Networked]
-    public float CurrentHeath { get; set; }
+    public float CurrentHealth { get; set; }
 
     private bool _hit;
     private bool _isDead;
     public bool IsDead { get => _isDead; set => _isDead = value; }
     private float _deadTimer;
+    
+    private Action _respawn;
+
+    public void SetRespawnCallback(Action respawnAction)
+    {
+        _respawn = respawnAction;
+    }
 
     private void Awake()
     {
         Animator = GetComponent<Animator>();
         ParamLoader = new DragonParameterLoader();
-        Pool = new DragonObjectPool(this);
+        ObjectContainer = DragonObjectContainer.Instance;
+        if (ObjectContainer == null)
+            Debug.LogError("[Dragon] DragonObjectContainer is missing in this scene!");
         _context = new DragonContext(this);
     }
 
@@ -130,7 +113,7 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
             _stateMachine.Machine.ForceActivateState<DragonState_Idle>(true);
         }
         
-        if (_hit && _context.Stats.CurrentHP <= 0 && !_isDead)
+        if (_stateMachine.Machine.ActiveState is not DragonState_Death && _hit && _context.Stats.CurrentHP <= 0 && !_isDead)
         {
             _stateMachine.Machine.ForceActivateState<DragonState_Death>(true);
             _hit = false;
@@ -139,9 +122,10 @@ public class DragonController : NetworkBehaviour, IStateMachineOwner, IAnimation
         if (!_isDead)
             return;
 
-        _deadTimer += Time.deltaTime;
+        _deadTimer += Runner.DeltaTime;
         if (_deadTimer >= _dissolve.duration * 3f)
         {
+            _respawn?.Invoke();
             Runner.Despawn(Object);
         }
     }
