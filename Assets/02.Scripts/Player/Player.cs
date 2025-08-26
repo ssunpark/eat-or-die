@@ -182,10 +182,10 @@ public class Player : CharacterBase, IAttackable
     }
 
     /// <summary>
-    /// 
+    /// 캐릭터를 안보이게 합니다.
     /// </summary>
     /// <param name="hide">true: 숨기기</param>
-    /// <param name="includeUI">UI도 숨길것인지</param>
+    /// <param name="includeUI">UI도 포함할 것인지</param>
     public void HideCharacter(bool hide, bool includeUI = true)
     {
         if (_renderObject != null)

@@ -4,7 +4,6 @@ using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 
 #if UNITY_EDITOR
@@ -80,7 +79,6 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     [Networked]
     public NetworkObject InteractTarget { get; set; } = null;
 
-    Collider[] _testColliders = new Collider[8];
     public LayerMask InteractLayerMask;
     public LayerMask BerserkLayerMask;
     public SimpleKCC SimpleKCC;
@@ -95,10 +93,11 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public const float MAX_RAYCAST_DISTANCE = 100f;
     private const float _useItemMaxDistance = 2.0f;
     [SerializeField] private GameObject _reviveSelectUIPrefab;
-    public GameObject RenderModel;
     public GameObject HeadCanvas;
     private Transform _uiParent;
     public GameObject Spoon;
+    [SerializeField] private GameObject _spectatorPanelPrefab;
+    private GameObject _spectatorPanelObj;
 
     [SerializeField] UI_UseOrInteract _useUI;
     [SerializeField] UI_UseOrInteract _interactUI;
@@ -125,6 +124,35 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             .Initialize(this, PlayerNetworkObject);
     }
 
+    public void ShowSpectatorPanel()
+    {
+        if (_spectatorPanelObj != null)
+        {
+            Destroy(_spectatorPanelObj);
+        }
+        //UI Parent의 자식들 전부 비활성화
+
+        foreach (Transform child in _uiParent)
+        {
+            child.gameObject.SetActive(false);
+        }
+
+        _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _uiParent);
+    }
+
+    public void HideSpectatorPanel()
+    {
+        if (_spectatorPanelObj != null)
+        {
+            Destroy(_spectatorPanelObj);
+        }
+        //UI Parent의 자식들 전부 활성화
+        foreach (Transform child in _uiParent)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
     public override void Spawned()
     {
         SimpleKCC = GetComponent<SimpleKCC>();
@@ -142,7 +170,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (IsDead)
         {
-            RenderModel.SetActive(false);
+            PlayerNetworkObject.HideCharacter(true, true);
         }
     }
 

@@ -18,23 +18,22 @@ public class PlayerCorpseState : APlayerStateBase
 
     protected override void OnEnterStateRender()
     {
-        _fsm.HeadCanvas.SetActive(false);
-        _fsm.RenderModel.SetActive(false);
+        _fsm.PlayerNetworkObject.HideCharacter(true, true);
         if (_fsm.HasInputAuthority)
         {
             _fsm.PlayerNetworkObject.CameraFollow.RebuildTargets();
             _fsm.PlayerNetworkObject.CameraFollow.EnableSpectator();
+            _fsm.ShowSpectatorPanel();
         }
     }
 
     protected override void OnExitStateRender()
     {
-        _fsm.HeadCanvas.SetActive(true);
-
-        _fsm.RenderModel.SetActive(true);
+        _fsm.PlayerNetworkObject.HideCharacter(false, true);
         if (_fsm.HasInputAuthority)
         {
             _fsm.PlayerNetworkObject.CameraFollow.DisableSpectator();
+            _fsm.HideSpectatorPanel();
         }
     }
 
