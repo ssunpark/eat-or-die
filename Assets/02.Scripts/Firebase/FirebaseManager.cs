@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Auth;
 using Firebase.Firestore;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class FirebaseManager : BehaviourSingleton<FirebaseManager>
 {
@@ -41,10 +42,14 @@ public class FirebaseManager : BehaviourSingleton<FirebaseManager>
 
         if (dependencyStatus == DependencyStatus.Available)
         {
-            Debug.Log("파이어베이스 연결에 성공했습니다.");
-            _app = FirebaseApp.DefaultInstance;
-            _auth = FirebaseAuth.DefaultInstance;
-            _db = FirebaseFirestore.DefaultInstance;
+            var defaultApp = FirebaseApp.DefaultInstance;
+
+            int pid = Process.GetCurrentProcess().Id;
+            string appName = $"client-{pid}";
+            
+            _app = FirebaseApp.GetInstance(appName) ?? FirebaseApp.Create(defaultApp.Options, appName);
+            _auth = FirebaseAuth.GetAuth(_app);
+            _db = FirebaseFirestore.GetInstance(_app);
 
             _initTcs.TrySetResult(); // 초기화 완료 알
         }

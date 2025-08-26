@@ -27,7 +27,7 @@ public class RoomInfoManager : BehaviourSingleton<RoomInfoManager>
         DontDestroyOnLoad(this);
         await FirebaseManager.Instance.WaitForInitialization();
         
-        _roomInfoRepository = new RoomInfoRepository(FirebaseFirestore.DefaultInstance);
+        _roomInfoRepository = new RoomInfoRepository(FirebaseManager.Instance.DB);
         AuthenticationManager.Instance.OnLogin += InitializeRoomInfos;
     }
 
