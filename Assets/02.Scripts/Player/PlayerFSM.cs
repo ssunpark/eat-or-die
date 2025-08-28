@@ -133,12 +133,15 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         }
         //UI Parent의 자식들 전부 비활성화
 
-        foreach (Transform child in _hudParent)
+        if (_hudParent != null)
         {
-            child.gameObject.SetActive(false);
+            foreach (Transform child in _hudParent)
+            {
+                child.gameObject.SetActive(false);
+            }
         }
 
-        _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _hudParent);
+            _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _hudParent);
     }
 
     public void HideSpectatorPanel()
@@ -148,11 +151,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Destroy(_spectatorPanelObj);
         }
         //UI Parent의 자식들 전부 활성화
-        foreach (Transform child in _hudParent)
+        if (_hudParent != null)
         {
-            child.gameObject.SetActive(true);
+            foreach (Transform child in _hudParent)
+            {
+                child.gameObject.SetActive(true);
+            }
         }
-    }
+        }
 
     public override void Spawned()
     {
