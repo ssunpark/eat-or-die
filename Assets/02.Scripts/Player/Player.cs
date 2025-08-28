@@ -49,6 +49,9 @@ public class Player : CharacterBase, IAttackable
     public SimpleKCC SimpleKCC { get; private set; }
     public SkillManager Skill { get; private set; }
 
+    private FollowCamera _cameraFollow;
+    public FollowCamera CameraFollow => _cameraFollow;
+
     public void InitializeTraitSystem(List<CharacterTraitData> dataList, TraitExpHandler expHandler)
     {
         TraitDataList = dataList;
@@ -165,6 +168,12 @@ public class Player : CharacterBase, IAttackable
 
             HookLocalTraitSavesIfOwner();
         }
+
+        // 4) PlayerInfoManager에 등록
+        await UniTask.Yield(); // 한 프레임 쉬고
+                               // PlayerInfoManager 준비까지 대기 (최대 5초)
+        await UniTask.WaitUntil(() => PlayerInfoManager.Instance != null, cancellationToken: token);
+        PlayerInfoManager.Instance.RegisterLocal(this);
         _spawnInitDone = true;
     }
 
@@ -179,10 +188,10 @@ public class Player : CharacterBase, IAttackable
     }
 
     /// <summary>
-    /// 
+    /// 캐릭터를 안보이게 합니다.
     /// </summary>
     /// <param name="hide">true: 숨기기</param>
-    /// <param name="includeUI">UI도 숨길것인지</param>
+    /// <param name="includeUI">UI도 포함할 것인지</param>
     public void HideCharacter(bool hide, bool includeUI = true)
     {
         if (_renderObject != null)
@@ -201,14 +210,14 @@ public class Player : CharacterBase, IAttackable
             return;
         }
 
-        var follow = mainCam.GetComponent<FollowCamera>();
-        if (follow == null)
+        _cameraFollow = mainCam.GetComponent<FollowCamera>();
+        if (_cameraFollow == null)
         {
             Debug.LogWarning("[Player] FollowCamera not found on MainCamera.");
             return;
         }
 
-        follow.SetTarget(transform);
+        _cameraFollow.SetTarget(transform);
     }
 
     private void InitializePlayerHUD_Safe()
@@ -248,6 +257,7 @@ public class Player : CharacterBase, IAttackable
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         base.Despawned(runner, hasState);
+        PlayerInfoManager.Instance.UnregisterLocal(this);
     }
 
     public override void FixedUpdateNetwork()

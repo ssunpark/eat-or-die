@@ -44,6 +44,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
                 case "enemy": return Cmd_Enemy(tokens, info);
                 case "spawner": return Cmd_Spawner(tokens, info);
                 case "hide": return Cmd_Hide(tokens, info);
+                case "revive": return Cmd_Revive(tokens, info);
                 default: return $"Unknown command '{cmd}'.";
             }
         }
@@ -254,6 +255,7 @@ public class CheatConsoleExecutor : NetworkBehaviour
     private string Cmd_Spawner(string[] t, RpcInfo info)
     {
         if (t.Length < 2) return "Usage: spawner [start|stop|setinterval] ...";
+
         var sp = GetNearestSpawner(info);
         if (sp == null) return "No EnemySpawner found.";
 
@@ -262,41 +264,90 @@ public class CheatConsoleExecutor : NetworkBehaviour
         {
             case "start":
                 {
-                    if (t.Length < 4) return "Usage: spawner start [interval] [total]";
-                    if (!float.TryParse(t[2], out var interval)) return "Invalid interval";
-                    if (!int.TryParse(t[3], out var total)) return "Invalid total";
-                    // sp.StartAuto(interval, total);
-                    return $"Spawner auto ON: every {interval}s, total {total}";
+                    // 사용법: spawner start [intervalSeconds]
+                    float interval = sp.SpawnDuration;
+                    if (t.Length >= 3 && float.TryParse(t[2], out var i))
+                        interval = Mathf.Max(0.01f, i);
+
+                    sp.SpawnDuration = interval;
+                    sp.enabled = true; // Update 루프 재가동
+
+                    return $"Spawner enabled (interval {interval}s).";
                 }
             case "stop":
-                // sp.StopAuto();
-                return "Spawner auto OFF";
+                {
+                    // 자동 스폰 중지: 컴포넌트 비활성화
+                    sp.enabled = false;
+                    return "Spawner disabled.";
+                }
             case "setinterval":
                 {
-                    if (t.Length < 3) return "Usage: spawner setinterval [seconds]";
-                    if (!float.TryParse(t[2], out var sec)) return "Invalid seconds";
-                    // sp.StartAuto(sec, 0); // 카운트 0이면 타이머만 세팅, 자동은 꺼짐
-                    // sp.StopAuto();
-                    return $"Spawner interval set to {sec}s";
+                    if (t.Length < 3 || !float.TryParse(t[2], out var sec))
+                        return "Usage: spawner setinterval [seconds]";
+
+                    sp.SpawnDuration = Mathf.Max(0.01f, sec);
+                    return $"Spawner interval set to {sp.SpawnDuration}s.";
                 }
             default:
                 return "Usage: spawner [start|stop|setinterval]";
         }
     }
 
+    private string Cmd_Revive(string[] t, RpcInfo info)
+    {
+        var player = GetRequestPlayer(info);
+        if (player == null) return "Player not found.";
+
+        // 두 케이스 모두 허용: FSM 기준 or Resource 기준
+        bool isDeadFsm = player.PlayerFSM != null && player.PlayerFSM.IsDead;
+        bool isDeadRes = player.IsDead;
+
+        if (!isDeadFsm && !isDeadRes)
+            return "You are not dead.";
+
+        bool instant =
+            t.Length >= 2 &&
+            (t[1].Equals("instant", StringComparison.OrdinalIgnoreCase)
+            || t[1].Equals("i", StringComparison.OrdinalIgnoreCase));
+
+        if (instant)
+        {
+            // Trait/Modifier 초기화 포함한 즉시 부활
+            player.InstantRevive();
+            return "Instant revived (traits cleared & synced).";
+        }
+        else
+        {
+            // 일반 부활
+            player.Revive();
+            return "Revived.";
+        }
+    }
+
+
     private EnemySpawner GetNearestSpawner(RpcInfo info)
     {
-        // if (EnemySpawner.Instances.Count == 0) return null;
+        var spawners = FindObjectsByType<EnemySpawner>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        if (spawners == null || spawners.Length == 0) return null;
+
         var player = GetRequestPlayer(info);
-        // if (player == null) return EnemySpawner.Instances[0];
-        var p = player.SimpleKCC ? player.SimpleKCC.Transform.position : player.transform.position;
+        Vector3 p = player
+            ? (player.SimpleKCC ? player.SimpleKCC.Transform.position : player.transform.position)
+            : Vector3.zero;
+
         EnemySpawner best = null;
         float bestDist = float.MaxValue;
-        // foreach (var s in EnemySpawner.Instances)
+
+        foreach (var s in spawners)
         {
-            // float d = Vector3.SqrMagnitude(s.transform.position - p);
-            // if (d < bestDist) { bestDist = d; best = s; }
+            float d = (s.transform.position - p).sqrMagnitude;
+            if (d < bestDist)
+            {
+                bestDist = d;
+                best = s;
+            }
         }
+
         return best;
     }
 }

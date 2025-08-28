@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UI_ReviveSelect : MonoBehaviour
 {
     private float _timer;
-    private const float _maxTime = 60f;
+    private const float _maxTime = 5f;
     [SerializeField] private Button _instantRiviveBtn;
     [SerializeField] private Button _waitRiviveBtn;
     [SerializeField] private TextMeshProUGUI _timerText;
@@ -39,6 +39,8 @@ public class UI_ReviveSelect : MonoBehaviour
     private void OnWaitRevive()
     {
         _player.RequestState(EPlayerState.Corpse);
+        _player.OnRevive -= HandleRevived;
+        Destroy(gameObject);
     }
 
     private void Update()
