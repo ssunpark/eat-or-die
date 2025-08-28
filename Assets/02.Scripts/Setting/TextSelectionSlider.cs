@@ -18,6 +18,11 @@ public class TextSelectionSlider : MonoBehaviour
         ChangeSelection();
     }
 
+    public void Init(string option)
+    {
+        _selectedOption = Options.IndexOf(option);
+    }
+
     public void OnPrevButtonClicked()
     {
         _selectedOption--;

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
 // 씬 전환 시 설정을 최신화 해주는 컴포넌트
-public class AudioSettingsApplier : MonoBehaviour
+public class SettingsApplier : MonoBehaviour
 {
-    [SerializeField] private SettingData _settingData; // SettingData.asset 드래그
+    [SerializeField] private SettingData _settingData;
 
     private void Awake()
     {

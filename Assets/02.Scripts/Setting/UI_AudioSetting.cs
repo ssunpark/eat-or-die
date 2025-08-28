@@ -52,4 +52,11 @@ public class UI_AudioSetting : MonoBehaviour
         _settingData.Apply();
         _settingData.Save();
     }
+    
+    public void RefreshUIFromData()
+    {
+        if (_settingData == null) return;
+        _sfxSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.SfxVolume));
+        _musicSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.MusicVolume));
+    }
 }
