@@ -4,7 +4,6 @@ using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using UnityEngine;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 
 #if UNITY_EDITOR
@@ -80,7 +79,6 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     [Networked]
     public NetworkObject InteractTarget { get; set; } = null;
 
-    Collider[] _testColliders = new Collider[8];
     public LayerMask InteractLayerMask;
     public LayerMask BerserkLayerMask;
     public SimpleKCC SimpleKCC;
@@ -97,7 +95,10 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     [SerializeField] private GameObject _reviveSelectUIPrefab;
     public GameObject HeadCanvas;
     private Transform _uiParent;
+    private Transform _hudParent;
     public GameObject Spoon;
+    [SerializeField] private GameObject _spectatorPanelPrefab;
+    private GameObject _spectatorPanelObj;
 
     [SerializeField] UI_UseOrInteract _useUI;
     [SerializeField] UI_UseOrInteract _interactUI;
@@ -124,6 +125,35 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             .Initialize(this, PlayerNetworkObject);
     }
 
+    public void ShowSpectatorPanel()
+    {
+        if (_spectatorPanelObj != null)
+        {
+            Destroy(_spectatorPanelObj);
+        }
+        //UI Parent의 자식들 전부 비활성화
+
+        foreach (Transform child in _hudParent)
+        {
+            child.gameObject.SetActive(false);
+        }
+
+        _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _hudParent);
+    }
+
+    public void HideSpectatorPanel()
+    {
+        if (_spectatorPanelObj != null)
+        {
+            Destroy(_spectatorPanelObj);
+        }
+        //UI Parent의 자식들 전부 활성화
+        foreach (Transform child in _hudParent)
+        {
+            child.gameObject.SetActive(true);
+        }
+    }
+
     public override void Spawned()
     {
         SimpleKCC = GetComponent<SimpleKCC>();
@@ -135,8 +165,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         if (Object.HasInputAuthority)
         {
             _uiParent = GameObject.FindGameObjectWithTag("UIParent")?.transform;
+            _hudParent = GameObject.FindGameObjectWithTag("PlayerHUD")?.transform;
             GetComponentInChildren<OutlineController>().enabled = false;
             GetComponentInChildren<Outlinable>().enabled = false;
+        }
+
+        if (IsDead)
+        {
+            PlayerNetworkObject.HideCharacter(true, true);
         }
     }
 

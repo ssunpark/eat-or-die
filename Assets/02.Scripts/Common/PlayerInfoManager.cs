@@ -33,6 +33,13 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     public override void Spawned()
     {
         base.Spawned();
+        if (!Runner.IsServer)
+        {
+            Instance = this;
+            _playerControllers ??= new Dictionary<PlayerRef, Player>();
+            _destroyToken = this.GetCancellationTokenOnDestroy();
+            DontDestroyOnLoad(gameObject);
+        }
         _networkReady = true;
         InputReader.Instance?.InitPlayer();
     }
@@ -57,6 +64,35 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     private bool _networkReady;
     private bool _sceneReady;
 
+    public void RegisterLocal(Player player)
+    {
+        if (player == null) return;
+        _playerControllers[player.Object.InputAuthority] = player;
+    }
+
+    public void UnregisterLocal(Player player)
+    {
+        if (player == null) return;
+        _playerControllers.Remove(player.Object.InputAuthority);
+    }
+
+    public Player TryResolvePlayer(PlayerRef pref)
+    {
+        // 1) 캐시 먼저
+        if (_playerControllers.TryGetValue(pref, out var p) && p) return p;
+
+        // 2) Players에서 NetworkId 찾고, Runner.FindObject로 해석
+        for (int i = 0; i < Players.Length; i++)
+        {
+            if (Players[i].Ref == pref)
+            {
+                var obj = Runner.FindObject(Players[i].NetworkId);
+                if (obj && obj.TryGetComponent(out Player resolved))
+                    return _playerControllers[pref] = resolved;
+            }
+        }
+        return null;
+    }
 
     public Player GetPlayerFromNetworkId(NetworkId networkId)
     {

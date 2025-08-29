@@ -1194,6 +1194,54 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Spectator"",
+            ""id"": ""c6da3968-568d-4476-af61-6dd096a4ab79"",
+            ""actions"": [
+                {
+                    ""name"": ""NextPlayer"",
+                    ""type"": ""Button"",
+                    ""id"": ""6fc6ce51-a3a9-4b55-affb-ea66ca45237c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PrevPlayer"",
+                    ""type"": ""Button"",
+                    ""id"": ""c6714f78-6080-4892-bce5-e56a3c029f14"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5e368e27-5023-4bfe-934c-2c63959f2eda"",
+                    ""path"": ""<Keyboard>/pageUp"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""NextPlayer"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f8d5400e-a52a-48fa-b98d-b20b937b780f"",
+                    ""path"": ""<Keyboard>/pageDown"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""PrevPlayer"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1290,6 +1338,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Global_ToggleTraits = m_Global.FindAction("ToggleTraits", throwIfNotFound: true);
         m_Global_TogglePartyHud = m_Global.FindAction("TogglePartyHud", throwIfNotFound: true);
         m_Global_Newaction = m_Global.FindAction("New action", throwIfNotFound: true);
+        // Spectator
+        m_Spectator = asset.FindActionMap("Spectator", throwIfNotFound: true);
+        m_Spectator_NextPlayer = m_Spectator.FindAction("NextPlayer", throwIfNotFound: true);
+        m_Spectator_PrevPlayer = m_Spectator.FindAction("PrevPlayer", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -1297,6 +1349,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerInputActions.Global.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Spectator.enabled, "This will cause a leak and performance issues, PlayerInputActions.Spectator.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1898,6 +1951,113 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="GlobalActions" /> instance referencing this action map.
     /// </summary>
     public GlobalActions @Global => new GlobalActions(this);
+
+    // Spectator
+    private readonly InputActionMap m_Spectator;
+    private List<ISpectatorActions> m_SpectatorActionsCallbackInterfaces = new List<ISpectatorActions>();
+    private readonly InputAction m_Spectator_NextPlayer;
+    private readonly InputAction m_Spectator_PrevPlayer;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Spectator".
+    /// </summary>
+    public struct SpectatorActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public SpectatorActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Spectator/NextPlayer".
+        /// </summary>
+        public InputAction @NextPlayer => m_Wrapper.m_Spectator_NextPlayer;
+        /// <summary>
+        /// Provides access to the underlying input action "Spectator/PrevPlayer".
+        /// </summary>
+        public InputAction @PrevPlayer => m_Wrapper.m_Spectator_PrevPlayer;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Spectator; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="SpectatorActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(SpectatorActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="SpectatorActions" />
+        public void AddCallbacks(ISpectatorActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SpectatorActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SpectatorActionsCallbackInterfaces.Add(instance);
+            @NextPlayer.started += instance.OnNextPlayer;
+            @NextPlayer.performed += instance.OnNextPlayer;
+            @NextPlayer.canceled += instance.OnNextPlayer;
+            @PrevPlayer.started += instance.OnPrevPlayer;
+            @PrevPlayer.performed += instance.OnPrevPlayer;
+            @PrevPlayer.canceled += instance.OnPrevPlayer;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="SpectatorActions" />
+        private void UnregisterCallbacks(ISpectatorActions instance)
+        {
+            @NextPlayer.started -= instance.OnNextPlayer;
+            @NextPlayer.performed -= instance.OnNextPlayer;
+            @NextPlayer.canceled -= instance.OnNextPlayer;
+            @PrevPlayer.started -= instance.OnPrevPlayer;
+            @PrevPlayer.performed -= instance.OnPrevPlayer;
+            @PrevPlayer.canceled -= instance.OnPrevPlayer;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="SpectatorActions.UnregisterCallbacks(ISpectatorActions)" />.
+        /// </summary>
+        /// <seealso cref="SpectatorActions.UnregisterCallbacks(ISpectatorActions)" />
+        public void RemoveCallbacks(ISpectatorActions instance)
+        {
+            if (m_Wrapper.m_SpectatorActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="SpectatorActions.AddCallbacks(ISpectatorActions)" />
+        /// <seealso cref="SpectatorActions.RemoveCallbacks(ISpectatorActions)" />
+        /// <seealso cref="SpectatorActions.UnregisterCallbacks(ISpectatorActions)" />
+        public void SetCallbacks(ISpectatorActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SpectatorActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SpectatorActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="SpectatorActions" /> instance referencing this action map.
+    /// </summary>
+    public SpectatorActions @Spectator => new SpectatorActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2161,5 +2321,27 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnNewaction(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Spectator" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="SpectatorActions.AddCallbacks(ISpectatorActions)" />
+    /// <seealso cref="SpectatorActions.RemoveCallbacks(ISpectatorActions)" />
+    public interface ISpectatorActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "NextPlayer" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNextPlayer(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PrevPlayer" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPrevPlayer(InputAction.CallbackContext context);
     }
 }

@@ -169,6 +169,7 @@ public class CheatConsoleController : MonoBehaviour
         Log("  hp [value] / mp [value]                - 체력(허기)/마나 값 설정");
         Log("  enemy [spawn|spawnhere|killall]         - 적 관련");
         Log("  spawner [start|stop|setinterval]        - 스포너 관련");
+        Log("  revive [instant]                      - 플레이어 부활 (instant: 트레잇 초기화 포함)");
         Log("  exit                                   - 콘솔 닫기");
     }
 

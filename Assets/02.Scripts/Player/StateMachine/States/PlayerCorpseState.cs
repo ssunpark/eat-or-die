@@ -13,18 +13,28 @@ public class PlayerCorpseState : APlayerStateBase
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _fsm.IsDead = true;
-        _fsm.PlayerNetworkObject.InstantRevive();
+        //_fsm.PlayerNetworkObject.InstantRevive();
     }
 
     protected override void OnEnterStateRender()
     {
-        _fsm.HeadCanvas.SetActive(false);
-
+        _fsm.PlayerNetworkObject.HideCharacter(true, true);
+        if (_fsm.HasInputAuthority)
+        {
+            _fsm.PlayerNetworkObject.CameraFollow.RebuildTargets();
+            _fsm.PlayerNetworkObject.CameraFollow.EnableSpectator();
+            _fsm.ShowSpectatorPanel();
+        }
     }
 
     protected override void OnExitStateRender()
     {
-        _fsm.HeadCanvas.SetActive(true);
+        _fsm.PlayerNetworkObject.HideCharacter(false, true);
+        if (_fsm.HasInputAuthority)
+        {
+            _fsm.PlayerNetworkObject.CameraFollow.DisableSpectator();
+            _fsm.HideSpectatorPanel();
+        }
     }
 
     protected override void OnFixedUpdateInput()
