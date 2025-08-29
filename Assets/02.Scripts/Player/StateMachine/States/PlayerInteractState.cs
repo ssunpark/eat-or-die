@@ -64,7 +64,7 @@ public class PlayerInteractState : APlayerStateBase, IAnimationActionNotify
                 return;
             }
             GrantExpOrder("HarvestPlant");
-            _fsm.Interact.Interact(_target);
+            _fsm.Interact.Interact(_target, _fsm.PlayerNetworkObject);
         }
     }
 

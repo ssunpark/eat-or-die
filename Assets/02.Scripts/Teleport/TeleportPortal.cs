@@ -9,6 +9,9 @@ public class TeleportPortal : NetworkBehaviour, IInteractable
     public bool IsImmediate { get; } = true;
     public float InteractionDistanceOffset { get => 3f; }
 
+    Player IInteractable.InteractingPlayer => _interactingPlayer;
+    private Player _interactingPlayer;
+
     public int StageIndex;
     
     public void Interact()
@@ -21,4 +24,9 @@ public class TeleportPortal : NetworkBehaviour, IInteractable
         TeleportManager.Instance.ClosePortal();
     }
 
+    void IInteractable.Interact(Player from)
+    {
+        _interactingPlayer = from;
+        Interact();
+    }
 }

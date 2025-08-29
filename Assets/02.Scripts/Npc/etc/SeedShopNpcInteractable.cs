@@ -11,6 +11,9 @@ public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
     public bool IsImmediate => true;
     public float InteractionDistanceOffset => 0.5f;
 
+    Player IInteractable.InteractingPlayer => _interactingPlayer;
+    private Player _interactingPlayer;
+
     [Header("Cinematic")]
     public CinemachineVirtualCameraBase CineCam;
     public static event Action PanelOpened;
@@ -42,5 +45,11 @@ public class SeedShopNpcInteractable : NetworkBehaviour, IInteractable
         {
             CineCam.Priority = 10;
         }
+    }
+
+    void IInteractable.Interact(Player from)
+    {
+        _interactingPlayer = from;
+        Interact();
     }
 }

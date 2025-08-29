@@ -74,6 +74,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public NetworkBool IsDead { get; set; } = false;
 
     [Networked]
+    public NetworkBool IsInReviveProcess { get; set; } = false;
+
+    [Networked]
     public NetworkObject ItemUseTarget { get; set; } = null;
 
     [Networked]
@@ -226,6 +229,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
     }
     float _timer = 0f;
+    
+
     public override void FixedUpdateNetwork()
     {
         if (PlayerNetworkObject == null || PlayerNetworkObject.Resource == null)
@@ -356,7 +361,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (interactPressed && interactable.IsImmediate)
         {
-            interactable.Interact(); // 로컬 즉시형 처리
+            interactable.Interact(PlayerNetworkObject); // 로컬 즉시형 처리
 
             SimpleKCC.SetLookRotation(Quaternion.LookRotation(net.transform.position - transform.position));
             RPC_TurnToInteractTarget(net);
