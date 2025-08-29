@@ -8,11 +8,15 @@ public class UI_AudioSetting : MonoBehaviour
     [SerializeField]
     private Slider _musicSlider; // 0~100
     [SerializeField]
-    private SettingData _settingData; // SettingData.asset 드래그
+    private SettingData _settingData;
+
+    private SettingsFacade _facade;
 
     private void OnEnable()
     {
-        // 안전 보정
+        _facade = new SettingsFacade(_settingData);
+
+        // 슬라이더 가드
         _sfxSlider.minValue = 0f;
         _sfxSlider.maxValue = 100f;
         _sfxSlider.wholeNumbers = true;
@@ -20,11 +24,10 @@ public class UI_AudioSetting : MonoBehaviour
         _musicSlider.maxValue = 100f;
         _musicSlider.wholeNumbers = true;
 
-        // 저장값 로드 & 적용
-        _settingData.Load();
-        _settingData.Apply();
+        _facade.LoadAll();       // 저장값 로드
+        _facade.ApplyAudio(); // 먼저 적용(필요 시)
 
-        // UI 초기화
+        // UI 초기값
         _sfxSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.SfxVolume));
         _musicSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.MusicVolume));
 
@@ -42,20 +45,21 @@ public class UI_AudioSetting : MonoBehaviour
     private void OnSfxChanged(float value) // 0~100
     {
         _settingData.SfxVolume = SettingData.SliderToLinear(value);
-        _settingData.Apply();
-        _settingData.Save();
+        _facade.ApplyAudio();
+        _facade.SaveAll();
     }
 
     private void OnMusicChanged(float value) // 0~100
     {
         _settingData.MusicVolume = SettingData.SliderToLinear(value);
-        _settingData.Apply();
-        _settingData.Save();
+        _facade.ApplyAudio();
+        _facade.SaveAll();
     }
-    
+
     public void RefreshUIFromData()
     {
-        if (_settingData == null) return;
+        if (_settingData == null)
+            return;
         _sfxSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.SfxVolume));
         _musicSlider.SetValueWithoutNotify(SettingData.LinearToSlider(_settingData.MusicVolume));
     }

@@ -9,12 +9,12 @@ public class SettingsApplier : MonoBehaviour
     {
         if (_settingData == null)
         {
-            Debug.LogWarning("[AudioSettingsApplier] SettingData가 비어있습니다.");
+            Debug.LogWarning("[SettingsApplier] SettingData가 비어있습니다.");
             return;
         }
 
-        // 씬 시작할 때마다 저장값 불러와서 적용
-        _settingData.Load();
-        _settingData.Apply();
+        var facade = new SettingsFacade(_settingData);
+        facade.LoadAll();
+        facade.ApplyAll();
     }
 }
