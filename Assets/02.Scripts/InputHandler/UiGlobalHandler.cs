@@ -190,10 +190,6 @@ public class UiGlobalHandler : MonoBehaviour
 
     private void OnModalOpened(AUI_PopupBase popupBase)
     {
-        if (popupBase == _traitsPopup)
-        {
-            BindPlayer();
-        }
         _modalCount++;
         EnsureMaps(true);
     }

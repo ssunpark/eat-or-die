@@ -2,6 +2,7 @@
 {
     public static string GenerateTooltip(CharacterTraitData data)
     {
+        if (data == null) return string.Empty;
         string statName = StatNameLocalization.Get(data.StatType);
         string marker = GetSubjectMarker(statName);
 

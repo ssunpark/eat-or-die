@@ -21,7 +21,7 @@ public class TeamWipeReviver : NetworkBehaviour
         if (players == null || players.Count == 0) return;
 
         // PlayerFSM의 IsDead 상태를 검사
-        bool allDead = players.All(p => p != null && p.PlayerFSM != null && p.PlayerFSM.IsDead);
+        bool allDead = players.Where(p => p != null && p.PlayerFSM != null).All(p => p.PlayerFSM.IsDead);
 
         if (allDead && !_wasAllDead)
         {

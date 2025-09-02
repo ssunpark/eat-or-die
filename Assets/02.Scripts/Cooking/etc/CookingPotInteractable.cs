@@ -7,6 +7,11 @@ public class CookingPotInteractable : NetworkBehaviour, IInteractable
 
     public float InteractionDistanceOffset => 0f;
 
+    Player IInteractable.InteractingPlayer => _interactingPlayer;
+
+    private Player _interactingPlayer;
+
+
     public UI_CookingPanel CookingPanelUI;
 
     private bool _isCooking; //jh
@@ -16,6 +21,8 @@ public class CookingPotInteractable : NetworkBehaviour, IInteractable
         CookingPanelUI.Open();
         CookingManager.Instance.SetCurrentCookingPot(this); // 로컬의 쿠킹 매니저에 현재 CookingPot을 등록합니다.
     }
+
+
 
     //jh
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
@@ -40,5 +47,11 @@ public class CookingPotInteractable : NetworkBehaviour, IInteractable
     public void Rpc_EndCooking()
     {
         _isCooking = false;
+    }
+
+    void IInteractable.Interact(Player from)
+    {
+        _interactingPlayer = from;
+        Interact();
     }
 }
