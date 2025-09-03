@@ -87,6 +87,7 @@ public class PlayerItemHolder: NetworkBehaviour
 
         AttackType = EAttackType.MeleeWeapon;
         ProjectileKey = "DefaultProjectile";
+        InteractionTag = "Unarmed";
     }
     private void Awake()
     {
