@@ -70,8 +70,16 @@ public class FirebaseAuthenticator : IAuthenticator
                     return "존재하지 않는 계정입니다.";
                 case AuthError.WeakPassword:
                     return "보안 수준이 낮은 비밀번호입니다.";
-                default:
+                case AuthError.Failure:
                     return "아이디 또는 비밀번호가 일치하지 않습니다.";
+                case AuthError.UserDisabled:
+                    return "이 계정은 비활성화되었습니다. 관리자에게 문의하세요.";
+                case AuthError.NetworkRequestFailed:
+                    return "네트워크 연결에 실패했습니다. 인터넷 연결을 확인해주세요.";
+                case AuthError.TooManyRequests:
+                    return "로그인 시도가 너무 많습니다. 잠시 후 다시 시도하세요.";
+                default:
+                    return $"로그인 중 오류가 발생했습니다: {exception.Message}";
             }
         }
         return "인증 처리 중 오류가 발생했습니다.";
