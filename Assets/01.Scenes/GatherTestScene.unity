@@ -56614,10 +56614,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GatherPlant
       objectReference: {fileID: 0}
-    - target: {fileID: 191340, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
-      propertyPath: m_Layer
-      value: 9
-      objectReference: {fileID: 0}
     - target: {fileID: 470434, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.9190054
@@ -56658,59 +56654,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4477562360979661231, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
-      propertyPath: m_IsTrigger
+    - target: {fileID: 1152829049007935153, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
+      propertyPath: SortKey
+      value: 473113610
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580239164053773258, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
+      propertyPath: _actName
+      value: "\uCC44\uC9D1\uD558\uAE30"
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580239164053773258, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
+      propertyPath: _interactOffset.x
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7580239164053773258, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
+      propertyPath: _interactOffset.y
+      value: 2.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 191340, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 307099495}
-    - targetCorrespondingSourceObject: {fileID: 191340, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 307099494}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
---- !u!1 &307099493 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 191340, guid: 843badd48ca74f24db5bb9626a2d97fc, type: 3}
-  m_PrefabInstance: {fileID: 307099492}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &307099494
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 307099493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SortKey: 3648069335
-  ObjectInterest: 1
-  Flags: 262145
-  NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 307099495}
-  ForceRemoteRenderTimeframe: 0
---- !u!114 &307099495
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 307099493}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f8f28ab38e64bf34d815a3254c914289, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _GatherableID: 1600001
-  _gatherSound: PlantPop
 --- !u!1001 &307223522
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -289558,19 +289522,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3329431522847248738, guid: 77b5db960e22f904c84ec1018e6722e9, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3329431522847248738, guid: 77b5db960e22f904c84ec1018e6722e9, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3329431522847248738, guid: 77b5db960e22f904c84ec1018e6722e9, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3329431522847248738, guid: 77b5db960e22f904c84ec1018e6722e9, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 3444290206399313372, guid: 77b5db960e22f904c84ec1018e6722e9, type: 3}
       propertyPath: m_SizeDelta.x
