@@ -52,7 +52,7 @@ public class TraitManager
 
         if (trait.Level > prevLevel)
         {
-            ApplyTraitEffect(traitData, trait.Level - prevLevel);
+            ApplyTraitEffect(traitData, trait.Level);
             OnTraitLeveledUp?.Invoke(type, trait.Level - prevLevel);
             TraitLevelStorage.SetLevel(type, trait.Level);
             int prevPoint = prevLevel / 5;
@@ -82,9 +82,9 @@ public class TraitManager
         TraitLevelStorage.SetExperience(type, trait.CurrentExp);
     }
 
-    private void ApplyTraitEffect(CharacterTraitData data, int levelDiff)
+    private void ApplyTraitEffect(CharacterTraitData data, int level)
     {
-        float delta = data.ValuePerLevel * levelDiff;
+        float delta = data.ValuePerLevel * level;
 
         var modifier = new StatModifier(
             value: delta,
@@ -114,7 +114,7 @@ public class TraitManager
 
         if (level > oldLevel)
         {
-            ApplyTraitEffect(traitData, level - oldLevel);
+            ApplyTraitEffect(traitData, level);
         }
         else if (level < oldLevel)
         {
