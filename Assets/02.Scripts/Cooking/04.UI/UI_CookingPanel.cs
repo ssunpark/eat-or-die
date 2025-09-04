@@ -2,7 +2,6 @@
 using Fusion;
 using UnityEngine;
 
-//수현
 public class UI_CookingPanel : AUI_PopupBase
 {
     public override EPopupType Type => EPopupType.Cook;
