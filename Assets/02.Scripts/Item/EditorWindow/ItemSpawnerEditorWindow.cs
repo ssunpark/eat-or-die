@@ -89,6 +89,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
             EditorGUILayout.LabelField("ItemCategory", _lastSpawnedItemDefinition.Type.ToString());
             EditorGUILayout.LabelField("HasDurability", _lastSpawnedItemDefinition.HasDurability.ToString());
             EditorGUILayout.LabelField("IsIngredient", _lastSpawnedItemDefinition.IsIngredient.ToString());
+            EditorGUILayout.LabelField("IsRecipe", _lastSpawnedItemDefinition.IsRecipe.ToString());
             EditorGUILayout.LabelField("Max Quantity", _lastSpawnedItemDefinition.MaxQuantity.ToString());
             EditorGUILayout.LabelField("Max Durability", _lastSpawnedItemDefinition.MaxDurability.ToString());
             EditorGUILayout.LabelField("Prefab", _lastSpawnedItemDefinition.Prefab.name);

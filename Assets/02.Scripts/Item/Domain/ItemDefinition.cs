@@ -21,6 +21,9 @@ public class ItemDefinition
 
     // 요리 재료인지 여부
     public readonly bool IsIngredient;
+    
+    // 레시피인지 여부
+    public readonly bool IsRecipe;
 
     // 내구도를 가지는 아이템인지 여부
     public readonly bool HasDurability;
@@ -66,6 +69,7 @@ public class ItemDefinition
         List<string> extraDescription = null,
         EAttackType attackType = EAttackType.MeleeWeapon,
         bool isIngredient = false,
+        bool isRecipe = false,
         bool hasDurability = false,
         int maxQuantity = 1,
         float maxDurability = 1f,
@@ -81,6 +85,7 @@ public class ItemDefinition
         ExtraDescription = extraDescription ??  new List<string>();
         AttackType = attackType;
         IsIngredient = isIngredient;
+        IsRecipe = isRecipe;
         HasDurability = hasDurability;
         MaxQuantity = maxQuantity;
         MaxDurability = maxDurability;
