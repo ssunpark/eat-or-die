@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-// 수현
 public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     // public TextMeshProUGUI IngredientNameTextUI;
