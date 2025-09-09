@@ -52,8 +52,13 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     {
         _reevalUC.Handle(playerId);
     }
+    
+    public void ReevaluateAllLocalWithToasts(int playerId)
+    {
+        _reevalUC.Handle(playerId, emitToasts: true);
+    }
 
-    /// 로컬 메트릭 세팅(예: kills.total, currency.wallet 등)
+    /// 로컬 메트릭 세팅(예: kills.total, currency.gold 등)
     public void SetMetricLocal(string key, long value)
     {
         if (_progress is LocalAchievementProgressQuery query)

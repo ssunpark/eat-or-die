@@ -23,7 +23,7 @@ public class AchievementViewerWindow : EditorWindow
     private string[] _categories = new[] { "All" };
 
     // Metric Tester
-    private string _metricKey = "currency.wallet";
+    private string _metricKey = "currency.gold";
     private long _metricValue = 0;
 
     // ▶ Event Tester (HandleEventLocal 호출용)
@@ -149,10 +149,10 @@ public class AchievementViewerWindow : EditorWindow
                 _metricValue = EditorGUILayout.LongField("Value", _metricValue, GUILayout.MaxWidth(200));
 
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("Set + Re-evaluate", GUILayout.Width(160)))
+                if (GUILayout.Button("Set + Re-evaluateWithToast", GUILayout.Width(200)))
                 {
                     AchievementManager.Instance.SetMetricLocal(_metricKey, _metricValue);
-                    AchievementManager.Instance.ReevaluateAllLocal(_playerId);
+                    AchievementManager.Instance.ReevaluateAllLocalWithToasts(_playerId);
                     TryRefresh();
                 }
             }
