@@ -7,14 +7,14 @@ public class ProcessAchievementEventUseCase
     private readonly IPlayerAchievementRepository _repo;
     private readonly IAchievementProgressQuery _progress;
     private readonly AchievementEvaluator _evaluator;
-    private readonly IAchievementDtoOutbox? _outbox;
+    private readonly IAchievementPresenter? _outbox;
 
     public ProcessAchievementEventUseCase(
         IAchievementCatalog catalog,
         IPlayerAchievementRepository repo,
         IAchievementProgressQuery progress,
         Func<DateTime> utcNowProvider,
-        IAchievementDtoOutbox? outbox = null)
+        IAchievementPresenter? outbox = null)
     {
         _catalog = catalog;
         _repo = repo;
@@ -26,7 +26,16 @@ public class ProcessAchievementEventUseCase
             utcNowProvider
         );
 
-        _evaluator.OnUnlocked += e => _outbox?.PublishUnlockedToast(e.AchievementId);
+        _evaluator.OnUnlocked += OnUnlocked;
+    }
+
+    private void OnUnlocked(AchievementUnlocked unlock)
+    {
+        if (_outbox == null) return;
+        if (!_catalog.TryGet(unlock.AchievementId, out var ach)) return;
+        var pa  = _repo.Get(unlock.AchievementId);
+        var dto = AchievementDto.From(ach, pa);
+        _outbox.PublishUnlockedToast(dto);
     }
 
     public void Handle(AchievementEvent e) {
@@ -43,7 +52,7 @@ public class ProcessAchievementEventUseCase
             var list = catalog
             .Select(ach => AchievementDto.From(ach, _repo.Get(ach.Id)))
             .ToArray();
-            _outbox.PublishDto(list);
+            _outbox.PublishSnapshot(list);
         }
     }
 }

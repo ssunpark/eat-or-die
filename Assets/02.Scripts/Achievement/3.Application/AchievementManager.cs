@@ -11,7 +11,9 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     private IAchievementCatalog _catalog;
     private IPlayerAchievementRepository _repo;
     private IAchievementProgressQuery _progress;
-    private IAchievementDtoOutbox _outbox;
+    private IAchievementPresenter _presenter;
+
+    public IAchievementPresenter Presenter => _presenter;
 
     // UseCases
     private ProcessAchievementEventUseCase _processUC;
@@ -26,16 +28,15 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
         _catalog = new InMemoryAchievementCatalog(list);
         _repo = new LocalPlayerAchievementRepository();
         _progress = new LocalAchievementProgressQuery();
-
-        // 로컬 UI 전용 Outbox (토스트/리스트)
-        _outbox = new NotificationOutBox();
+        
+        _presenter = new AchievementPresenter();
 
         // UseCases
         _processUC = new ProcessAchievementEventUseCase(
-            _catalog, _repo, _progress, () => DateTime.UtcNow, _outbox);
+            _catalog, _repo, _progress, () => DateTime.Now, _presenter);
 
         _reevalUC = new ReevaluateAllAchievementsUseCase(
-            _catalog, _repo, _progress, () => DateTime.UtcNow, _outbox);
+            _catalog, _repo, _progress, () => DateTime.Now, _presenter);
 
         Debug.Log($"[AchievementManager] Catalog loaded: {_catalog.GetAll().Count} achievements");
     }
@@ -60,7 +61,7 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     }
 
     /// DTO 조회
-    public IReadOnlyList<AchievementDto> GetAchievementDTO()
+    public IReadOnlyList<AchievementDto> GetAchievementDTOList()
     {
         return _catalog.GetAll()
             .Select(ach => AchievementDto.From(ach, _repo.Get(ach.Id)))

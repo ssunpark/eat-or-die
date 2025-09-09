@@ -288,7 +288,7 @@ public class AchievementViewerWindow : EditorWindow
 
         try
         {
-            var list = AchievementManager.Instance.GetAchievementDTO();
+            var list = AchievementManager.Instance.GetAchievementDTOList();
             _cache = list?.ToList() ?? new List<AchievementDto>();
 
             var cats = _cache.Select(x => x.Category).Where(c => !string.IsNullOrEmpty(c))
