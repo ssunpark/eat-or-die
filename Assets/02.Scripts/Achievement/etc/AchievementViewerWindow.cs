@@ -13,7 +13,6 @@ public class AchievementViewerWindow : EditorWindow
         win.Show();
     }
 
-    private int _playerId = 0;               // 로컬 모드면 보통 0
     private string _search = "";
     private bool _showUnlocked = true;
     private bool _showLocked = true;
@@ -98,8 +97,6 @@ public class AchievementViewerWindow : EditorWindow
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                _playerId = EditorGUILayout.IntField("Player Id", _playerId, GUILayout.MaxWidth(250));
-
                 GUILayout.Space(10);
                 _search = EditorGUILayout.TextField(new GUIContent("Search", "제목/설명에서 검색"),
                     _search, GUILayout.MinWidth(150));
@@ -108,7 +105,7 @@ public class AchievementViewerWindow : EditorWindow
 
                 if (GUILayout.Button("Re-evaluate All", GUILayout.Width(140)))
                 {
-                    AchievementManager.Instance.ReevaluateAllLocal(_playerId);
+                    AchievementManager.Instance.ReevaluateAllLocal();
                     TryRefresh();
                 }
             }
@@ -152,7 +149,7 @@ public class AchievementViewerWindow : EditorWindow
                 if (GUILayout.Button("Set + Re-evaluateWithToast", GUILayout.Width(200)))
                 {
                     AchievementManager.Instance.SetMetricLocal(_metricKey, _metricValue);
-                    AchievementManager.Instance.ReevaluateAllLocalWithToasts(_playerId);
+                    AchievementManager.Instance.ReevaluateAllLocalWithToasts();
                     TryRefresh();
                 }
             }

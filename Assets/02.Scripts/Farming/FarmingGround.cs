@@ -110,11 +110,13 @@ public class FarmingGround : NetworkBehaviour
 
     public void Hoe()
     {
+        AchievementManager.Instance.AddMetricAndReevaluate("Hoe", 1);
         RPC_Hoe();
     }
 
     public void WateringCan()
     {
+        AchievementManager.Instance.AddMetricAndReevaluate("Water", 1);
         RPC_WateringCan();
     }
 

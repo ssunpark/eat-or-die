@@ -48,14 +48,30 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     }
 
     /// 로컬에서 메트릭 변경 후 전체 재평가
-    public void ReevaluateAllLocal(int playerId)
+    public void ReevaluateAllLocal()
     {
-        _reevalUC.Handle(playerId);
+        _reevalUC.Handle();
     }
     
-    public void ReevaluateAllLocalWithToasts(int playerId)
+    /// 모두 재평가 후 토스트
+    public void ReevaluateAllLocalWithToasts()
     {
-        _reevalUC.Handle(playerId, emitToasts: true);
+        _reevalUC.Handle(emitToasts: true);
+    }
+    
+    // 편의성 메소드 수치 추가 후 재평가
+    public void AddMetricAndReevaluate(string key, long delta, bool emitToasts = true)
+    {
+        var current = _progress.GetValue(key);
+        SetMetricLocal(key, current + delta);
+        if (emitToasts)
+        {
+            ReevaluateAllLocalWithToasts();
+        }
+        else
+        {
+            ReevaluateAllLocal();
+        }
     }
 
     /// 로컬 메트릭 세팅(예: kills.total, currency.gold 등)

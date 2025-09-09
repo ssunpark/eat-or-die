@@ -38,8 +38,7 @@ using System.Collections.Generic;
     }
 
     /// 통계 값이 바뀌었을 때(예: OnStatChanged) 전체 재평가
-    public void ReEvaluateAll(int playerId,
-                              IReadOnlyList<Achievement> catalog,
+    public void ReEvaluateAll(IReadOnlyList<Achievement> catalog,
                               Func<int, PlayerAchievement> getPlayerAch,
                               Action<PlayerAchievement> savePlayerAch) {
       var dummyEvent = new AchievementEvent("__STAT_REFRESH__", 0);

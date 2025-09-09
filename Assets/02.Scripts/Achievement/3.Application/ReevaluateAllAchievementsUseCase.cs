@@ -31,11 +31,10 @@ public class ReevaluateAllAchievementsUseCase {
         _outbox.PublishUnlockedToast(dto);
     }
 
-    public void Handle(int playerId, bool emitToasts = false) {
+    public void Handle(bool emitToasts = false) {
         _emitToasts = emitToasts;
 
         _evaluator.ReEvaluateAll(
-            playerId,
             _catalog.GetAll(),
             achId => _repo.Get(achId),
             pa => _repo.Upsert(pa)
