@@ -76,6 +76,7 @@ public class ItemFactory
         var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Food,
             extraDescription: extraDescription,
             isIngredient: rawData.IsIngredient,
+            isRecipe: rawData.IsRecipe,
             maxQuantity: rawData.MaxQuantity,
             iconAddressablePath: rawData.IconPath,
             prefabAddressablePath: rawData.PrefabPath);
