@@ -1,6 +1,7 @@
 ﻿using DarkTonic.MasterAudio;
-using UnityEngine;
 using Fusion.Addons.FSM;
+using UnityEngine;
+using System.Linq;
 public class PlayerDeadState : APlayerStateBase
 {
     private float _selectTime = 60f;
@@ -24,7 +25,13 @@ public class PlayerDeadState : APlayerStateBase
         base.OnEnterStateRender();
         if (_fsm.HasInputAuthority)
         {
-            _fsm.ShowSelectPanel();
+            var players = PlayerInfoManager.PlayerControllers.Values;
+            bool allDead = players.Where(p => p != null && p.PlayerFSM != null).All(p => p.PlayerFSM.IsDead);
+
+            if (!allDead)
+            {
+                _fsm.ShowSelectPanel();
+            }
             DropAllItems();
         }
     }
@@ -35,7 +42,7 @@ public class PlayerDeadState : APlayerStateBase
 
     protected override void OnFixedUpdateState()
     {
-        if (Machine.StateTime >= _selectTime)
+        if (Machine.StateTime >= _selectTime && !_fsm.IsInReviveProcess)
         {
             Machine.ForceActivateState<PlayerCorpseState>();
             return;

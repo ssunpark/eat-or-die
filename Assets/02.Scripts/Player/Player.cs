@@ -553,6 +553,7 @@ public class Player : CharacterBase, IAttackable
 
     public void Revive()
     {
+        PlayerFSM.IsInReviveProcess = true;
         SimpleKCC.enabled = true;
 
         RPC_ClientRevive();
@@ -591,6 +592,8 @@ public class Player : CharacterBase, IAttackable
         GetComponent<ItemMagnet>().enabled = true;
         PlayerFSM.IsDead = false;
 
+        PlayerFSM.IsInReviveProcess = false;
+
         _nextState = PlayerFSM.StateMachine.GetState<PlayerIdleState>();
     }
 
@@ -611,7 +614,7 @@ public class Player : CharacterBase, IAttackable
     private void RPC_ClearLocalTraitSaves()
     {
         Trait.ResetTraits();
-
+        Skill.ResetAllSkills();
         GetComponent<CharacterTraitNetworkSync>()?.SyncAllTraits();
     }
 
@@ -631,7 +634,6 @@ public class Player : CharacterBase, IAttackable
     public void RPC_RequestRevive(RpcInfo info = default)
     {
         if (!HasStateAuthority) return;
-
         if (!IsDead) return;
         Revive();
     }

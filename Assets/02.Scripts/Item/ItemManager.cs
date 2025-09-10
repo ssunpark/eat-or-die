@@ -105,7 +105,7 @@ public class ItemManager : NetworkBehaviour
     public List<ItemDefinition> GetFoodIngredientList()
     {
         return _itemDictionary.Values
-            .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient)
+            .Where(itemInfo => (itemInfo.ItemDefinition.IsIngredient && !itemInfo.ItemDefinition.IsRecipe) && itemInfo.ItemDefinition.Type != EItemType.Weapon)
             .Select(itemInfo => itemInfo.ItemDefinition)
             .ToList();
     }

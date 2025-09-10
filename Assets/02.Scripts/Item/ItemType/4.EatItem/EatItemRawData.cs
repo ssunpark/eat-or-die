@@ -13,6 +13,9 @@ public class EatItemRawData
 
     [Name("IsIngredient")]
     public bool IsIngredient { get; set; }
+    
+    [Name("IsRecipe")]
+    public bool IsRecipe { get; set; }
 
     [Name("MaxStack")]
     public int MaxQuantity { get; set; }

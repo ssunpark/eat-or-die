@@ -11,6 +11,7 @@ public class UI_Spectator : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _nicknameText;
 
     private FollowCamera _followCam;
+    private Camera _cachedMainCamera;
 
     private void Awake()
     {
@@ -68,8 +69,9 @@ public class UI_Spectator : MonoBehaviour
     private void TryResolveFollowCamera()
     {
         if (_followCam != null) return;
-
-        var cam = Camera.main;
+        if (_cachedMainCamera == null)
+            _cachedMainCamera = Camera.main;
+        var cam = _cachedMainCamera;
         if (cam != null) _followCam = cam.GetComponent<FollowCamera>();
 
         // 찾았으면 이벤트 구독

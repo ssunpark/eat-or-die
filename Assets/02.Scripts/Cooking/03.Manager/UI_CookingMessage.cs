@@ -8,7 +8,7 @@ public class UI_CookingMessage : MonoBehaviour
 {
     public CanvasGroup CanvasGroup;
     public TextMeshProUGUI AlertText;
-    public float displayDuration = 3.8f;
+    public float defaultDisplayDuration = 3.8f;
     public float FadeDuration = 0.4f;
     private Coroutine _coroutine;
 
@@ -23,7 +23,7 @@ public class UI_CookingMessage : MonoBehaviour
         if(CookingManager.Instance != null) CookingManager.Instance.OnAlertMessage -= ShowAlert;
     }
 
-    public void ShowAlert(string message)
+    public void ShowAlert(string message, float displayDuration)
     {
         if (_coroutine != null)
         {
@@ -40,7 +40,7 @@ public class UI_CookingMessage : MonoBehaviour
             fadeOut: true
         );
         FadeIn();
-        _coroutine = StartCoroutine(HideAfterDelay());
+        _coroutine = StartCoroutine(HideAfterDelay(displayDuration));
     }
     
     private void FadeIn()
@@ -58,9 +58,9 @@ public class UI_CookingMessage : MonoBehaviour
         CanvasGroup.DOFade(0f, FadeDuration);
     }
 
-    private IEnumerator HideAfterDelay()
+    private IEnumerator HideAfterDelay(float duration)
     {
-        yield return new WaitForSeconds(displayDuration);
+        yield return new WaitForSeconds(duration);
         FadeOut();
     }
 }
