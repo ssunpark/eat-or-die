@@ -313,6 +313,20 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         string requiredTag = ItemHolder.InteractionTag;
         if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed" || requiredTag == "Untagged")
             return false;
+        
+        if (requiredTag == "SelfOnly")
+        {
+            // 기존 타깃의 아웃라인 끄기
+            ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
+            // 자기 자신을 타깃으로 지정 + 모드 Self
+            RPC_SetItemUseTargetAndMode(PlayerNetworkObject.Object, EUseItemMode.Self);
+
+            // UI 갱신 (아웃라인은 자기 자신이므로 생략)
+            _useUI.TargetObject = PlayerNetworkObject.gameObject;
+
+            return true;
+        }
 
         // ▶ Player 대상: 기존 로직 유지(커서 우선 + 자기 자신 fallback)
         if (requiredTag == "Player")
