@@ -14,6 +14,7 @@ public class ItemManager : NetworkBehaviour
     private const string WEAPON_CSV_PATH = "/ItemCSV/Weapon.csv";
     private const string EQUIP_CSV_PATH = "/ItemCSV/Equip.csv";
     private const string CRAFT_CSV_PATH = "/ItemCSV/Craft.csv";
+    private const string EXTRA_CSV_PATH = "/ItemCSV/ExtraItem.csv";
     
     [Header("아이템 오브젝트")]
     [SerializeField]
@@ -90,6 +91,15 @@ public class ItemManager : NetworkBehaviour
         {
             var usableItem = _itemFactory.CreateItem(data);
             _itemDictionary[data.ID] = usableItem;
+        }
+        
+        // 특수 정보 아이템
+        var extraRawDataList = CSVLoader<ExtraItemRawData>.LoadCSV($"{Application.streamingAssetsPath}{EXTRA_CSV_PATH}");
+        extraRawDataList.ForEach(x => x.ItemType = EItemType.Extra);
+        foreach (var data in extraRawDataList)
+        {
+            var extraItem = _itemFactory.CreateItem(data);
+            _itemDictionary[data.ID] = extraItem;
         }
     }
 

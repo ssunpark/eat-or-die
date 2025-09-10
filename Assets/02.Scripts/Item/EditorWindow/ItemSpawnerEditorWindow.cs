@@ -9,6 +9,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
     private float _durability = 1;
     private Vector3 _spawnPosition = Vector3.zero;
     private Vector3 _spawnRotationEuler = Vector3.zero;
+    private string _extraInfo = ""; // ExtraInfo 입력 필드 추가
 
     private ItemDefinition _lastSpawnedItemDefinition;
 
@@ -27,7 +28,8 @@ public class ItemSpawnerEditorWindow : EditorWindow
         _durability = EditorGUILayout.FloatField("Durability", _durability);
         _spawnPosition = EditorGUILayout.Vector3Field("Spawn Position", _spawnPosition);
         _spawnRotationEuler = EditorGUILayout.Vector3Field("Rotation (Euler)", _spawnRotationEuler);
-        
+        _extraInfo = EditorGUILayout.TextField("Extra Info", _extraInfo); // UI 입력창 추가
+
         if (GUILayout.Button("Find Item"))
         {
             var itemManager = ItemManager.Instance;
@@ -36,8 +38,6 @@ public class ItemSpawnerEditorWindow : EditorWindow
                 Debug.LogError("ItemManager.Instance 가 존재하지 않습니다. 씬에 ItemManager가 있어야 합니다.");
                 return;
             }
-
-            Quaternion rotation = Quaternion.Euler(_spawnRotationEuler);
 
             try
             {
@@ -65,9 +65,16 @@ public class ItemSpawnerEditorWindow : EditorWindow
 
             try
             {
-                var durability = _durability == 0 ? itemManager.GetItem(_itemId).ItemDefinition.MaxDurability :  _durability;
-                ItemProxySpawner.Instance.RPC_CreateItemObject(_itemId, _quantity, durability, _spawnPosition, rotation);
-                Debug.Log($"[EditorWindow] ID {_itemId} 아이템 생성 성공");
+                var durability = _durability == 0 
+                    ? itemManager.GetItem(_itemId).ItemDefinition.MaxDurability 
+                    : _durability;
+
+                // ExtraInfo 전달
+                ItemProxySpawner.Instance.RPC_CreateItemObject(
+                    _itemId, _quantity, durability, _spawnPosition, rotation, _extraInfo
+                );
+
+                Debug.Log($"[EditorWindow] ID {_itemId} 아이템 생성 성공 (ExtraInfo: {_extraInfo})");
 
                 var item = itemManager.GetItem(_itemId);
                 _lastSpawnedItemDefinition = item?.ItemDefinition;
@@ -79,6 +86,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
             }
         }
 
+        // Spawned Item Info 표시 부분은 그대로 유지
         if (_lastSpawnedItemDefinition != null)
         {
             EditorGUILayout.Space(10);
@@ -95,6 +103,7 @@ public class ItemSpawnerEditorWindow : EditorWindow
             EditorGUILayout.LabelField("Prefab", _lastSpawnedItemDefinition.Prefab.name);
             EditorGUILayout.LabelField("Description");
             EditorGUILayout.TextArea(_lastSpawnedItemDefinition.Description, GUILayout.Height(EditorGUIUtility.singleLineHeight * 5));
+
             string extraDescription = "";
             foreach (var extra in _lastSpawnedItemDefinition.ExtraDescription)
             {

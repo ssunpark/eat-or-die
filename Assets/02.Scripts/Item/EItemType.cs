@@ -6,4 +6,5 @@
     Equip,
     Tool,
     Seed,
+    Extra
 }

@@ -5,16 +5,16 @@ using UnityEngine;
 public class ItemFactory
 {
     private const string FOOD_EFFECT_CSV_PATH = "/ItemCSV/FoodEffect.csv";
-    
+
     private readonly Transform _itemPoolParent;
 
     private readonly Dictionary<string, Pool<Transform>> _sharedPools = new();
 
     private Dictionary<EStatType, EStatModifierType> _foodEffectModifierDictionary;
-    
+
     // 아이템 효과 설명 factory
     private ItemExtraDescriptionFactory _itemExtraDescriptionFactory = new();
-    
+
     public ItemFactory(Transform itemPoolParent)
     {
         _itemPoolParent = itemPoolParent;
@@ -63,12 +63,13 @@ public class ItemFactory
                     var effect = new EatEffect_StatModifier(rawData.ID);
                     effectList.Add(effect);
                 }
-                
-                var desc = _itemExtraDescriptionFactory.GetDescription(EItemType.Food, statType, "#ffffff", statValue, buffDuration);
+
+                var desc = _itemExtraDescriptionFactory.GetDescription(EItemType.Food, statType, "#ffffff", statValue,
+                    buffDuration);
                 extraDescription.Add(desc);
             }
         }
-        
+
         // HOld 효과 정의
         holdEffectList.Add(new ItemHoldEffect_InteractionTag(rawData.InteractionTag));
         holdEffectList.Add(new ItemHoldEffect_Animator("Food"));
@@ -91,12 +92,16 @@ public class ItemFactory
     {
         var extraDescription = new List<string>()
         {
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MeleeDamage, "#ffffff", rawData.MeleeDamage),
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MagicDamage, "#ffffff", rawData.MagicDamage),
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackSpeed, "#ffffff", rawData.AttackSpeed),
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackRange, "#ffffff", rawData.AttackRange),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MeleeDamage, "#ffffff",
+                rawData.MeleeDamage),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.MagicDamage, "#ffffff",
+                rawData.MagicDamage),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackSpeed, "#ffffff",
+                rawData.AttackSpeed),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Weapon, EStatType.AttackRange, "#ffffff",
+                rawData.AttackRange),
         };
-        
+
         var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Weapon,
             extraDescription: extraDescription,
             isIngredient: rawData.IsIngredient,
@@ -125,10 +130,12 @@ public class ItemFactory
     {
         var extraDescription = new List<string>()
         {
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Equip, EStatType.MeleeDefense, "#ffffff", rawData.MeleeDefense),
-            _itemExtraDescriptionFactory.GetDescription(EItemType.Equip, EStatType.MagicDefense, "#ffffff", rawData.MagicDefense),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Equip, EStatType.MeleeDefense, "#ffffff",
+                rawData.MeleeDefense),
+            _itemExtraDescriptionFactory.GetDescription(EItemType.Equip, EStatType.MagicDefense, "#ffffff",
+                rawData.MagicDefense),
         };
-        
+
         var itemDefinition = new ItemDefinition(rawData.ID, rawData.Name, rawData.Description, EItemType.Equip,
             extraDescription: extraDescription,
             isIngredient: rawData.IsIngredient,
@@ -144,7 +151,7 @@ public class ItemFactory
             new ItemHoldEffect_Stat(rawData.ID, rawData.MeleeDefense, EStatType.MeleeDefense),
             new ItemHoldEffect_Stat(rawData.ID, rawData.MagicDefense, EStatType.MagicDefense),
         };
-        
+
         var (pool, poolParent) = GetOrCreateSharedPool(rawData.PrefabPath, itemDefinition.Prefab, _itemPoolParent);
         return new ItemProfile(itemDefinition, holdEffectList, null, pool, poolParent);
     }
@@ -155,7 +162,7 @@ public class ItemFactory
             hasDurability: rawData.HasDurability,
             maxQuantity: rawData.MaxQuantity,
             maxDurability: rawData.MaxDuration ?? 1f,
-            iconAddressablePath: rawData.IconPath, 
+            iconAddressablePath: rawData.IconPath,
             prefabAddressablePath: rawData.PrefabPath);
 
         IUseEffect useEffect = rawData.ActionName switch
@@ -177,6 +184,44 @@ public class ItemFactory
 
         var pipeline = new ItemEffectBasePipeline(effectList);
         return new ItemProfile(itemDefinition, holdEffectList, pipeline, pool, poolParent);
+    }
+
+    // 기타 아이템
+    public ItemProfile CreateItem(ExtraItemRawData rawData)
+    {
+        // 추가 설명 (CSV의 ExtraInfo를 그대로 붙여주고, 내구도 항목이 있으면 표시)
+        var extraDescription = new List<string>();
+        if (!string.IsNullOrWhiteSpace(rawData.ExtraInfo))
+            extraDescription.Add(rawData.ExtraInfo);
+        if (rawData.HasDurability)
+            extraDescription.Add($"Durability: {rawData.Duration}");
+
+        // 아이템 정의
+        var itemDefinition = new ItemDefinition(
+            rawData.ID,
+            rawData.Name,
+            rawData.Description,
+            rawData.ItemType,
+            extraDescription: extraDescription,
+            hasDurability: rawData.HasDurability,
+            maxQuantity: rawData.MaxStack,
+            maxDurability: rawData.Duration ?? 0f,
+            iconAddressablePath: rawData.IconPath,
+            prefabAddressablePath: rawData.PrefabPath
+        );
+
+        // Hold 효과: 기본적으로 없음
+        var holdEffectList = new List<IItemHoldEffect>();
+
+        // 풀 생성/가져오기
+        var (pool, poolParent) = GetOrCreateSharedPool(
+            rawData.PrefabPath,
+            itemDefinition.Prefab,
+            _itemPoolParent
+        );
+
+        // 사용 효과 X
+        return new ItemProfile(itemDefinition, holdEffectList, null, pool, poolParent);
     }
 
     private (Pool<Transform>, Transform) GetOrCreateSharedPool(string key, GameObject prefab, Transform poolParent)
