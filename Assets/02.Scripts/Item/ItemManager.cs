@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using Fusion;
 using UnityEngine;
 
 // 아이템 생성, 조회, 데이터 로딩
-public class ItemManager : NetworkBehaviour
+public class ItemManager : MonoBehaviour
 {
     public static ItemManager Instance { get; private set; }
     
@@ -15,10 +14,6 @@ public class ItemManager : NetworkBehaviour
     private const string EQUIP_CSV_PATH = "/ItemCSV/Equip.csv";
     private const string CRAFT_CSV_PATH = "/ItemCSV/Craft.csv";
     private const string EXTRA_CSV_PATH = "/ItemCSV/ExtraItem.csv";
-    
-    [Header("아이템 오브젝트")]
-    [SerializeField]
-    private NetworkPrefabRef _itemObjectPrefab;
 
     // 아이템 종류 별 딕셔너리로 구분됨. (추가 아이템 종류가 생기는 경우 딕셔너리 추가)
     private Dictionary<int, ItemProfile> _itemDictionary;
