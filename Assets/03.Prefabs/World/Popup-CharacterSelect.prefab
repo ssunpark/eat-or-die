@@ -54,6 +54,7 @@ GameObject:
   - component: {fileID: 6740521336486843392}
   - component: {fileID: 4604142800346769472}
   - component: {fileID: 3025144785634243916}
+  - component: {fileID: 2462684923824679321}
   m_Layer: 5
   m_Name: Popup-CharacterSelect
   m_TagString: Untagged
@@ -171,6 +172,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _container: {fileID: 7923239078719462286}
   _chracterInfoSlotPrefab: {fileID: 2673513703224044869, guid: 52f2db6a8bcf21a428f1a8d961b2e25b, type: 3}
+--- !u!114 &2462684923824679321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550432998203287812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29eb4a5a725ae4a07a39820fbbcc201d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scene: PlayerCreateScene_SH
+  duration: 1
+  color: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1 &974333807158186768
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,9 +1100,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: AUI_PopupBase, Assembly-CSharp
-        m_MethodName: Open
+      - m_Target: {fileID: 2462684923824679321}
+        m_TargetAssemblyTypeName: Ricimi.SceneTransition, Assembly-CSharp
+        m_MethodName: PerformTransition
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

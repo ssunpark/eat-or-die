@@ -31,6 +31,14 @@ public class CharacterInfoManager : BehaviourSingleton<CharacterInfoManager>
         _characterInfoDTOList = await _repository.LoadCharacterInfoListAsync(AuthenticationManager.Instance.User.UserId);
         Debug.Log(_characterInfoDTOList.Count + " character info loaded");
     }
+    
+    public async void CreateNewCharacter(CharacterInfoDTO characterInfoDTO)
+    {
+        await _repository.CreateNewCharacterDocument(characterInfoDTO, AuthenticationManager.Instance.User.UserId);
+        
+        _characterInfo = new CharacterInfo(characterInfoDTO);
+        SetCharacterInfo();
+    }
 
     public void SelectCharacter(int index)
     {
