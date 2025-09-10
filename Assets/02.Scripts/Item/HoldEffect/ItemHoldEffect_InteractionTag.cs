@@ -8,7 +8,7 @@ public class ItemHoldEffect_InteractionTag : IItemHoldEffect
 
     public ItemHoldEffect_InteractionTag(string interactionTag)
     {
-        _interactionTag = interactionTag;
+        _interactionTag = interactionTag ?? DEFAULT_TAG;
     }
 
     public void Hold(GameObject target)
