@@ -35,5 +35,21 @@ public class CharacterInfoManager : BehaviourSingleton<CharacterInfoManager>
     public void SelectCharacter(int index)
     {
         _characterInfo = new CharacterInfo(_characterInfoDTOList[index]);
+        SetCharacterInfo();
+    }
+
+    private void SetCharacterInfo()
+    {
+        CustomizationDataHolder data = CustomizationDataHolder.Instance;
+        CustomizationData custom = new CustomizationData();
+        
+        custom.Top = (short)_characterInfo.Top;
+        custom.Bottom = (short)_characterInfo.Bottom;
+        custom.Hair = (short)_characterInfo.Hair;
+        custom.Eye = (short)_characterInfo.Eye;
+
+        data.Nickname = _characterInfo.Name;
+        data.ClassType = _characterInfo.Class;
+        data.CustomizationData = custom;
     }
 }
