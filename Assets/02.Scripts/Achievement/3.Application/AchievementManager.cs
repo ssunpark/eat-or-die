@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fusion;
 using UnityEngine;
 
 public class AchievementManager : BehaviourSingleton<AchievementManager>
@@ -12,8 +13,10 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     private IPlayerAchievementRepository _repo;
     private IAchievementProgressQuery _progress;
     private IAchievementPresenter _presenter;
+    private IAchievementServerPort _serverPort;
 
     public IAchievementPresenter Presenter => _presenter;
+    public IAchievementServerPort ServerPort { get => _serverPort; set => _serverPort = value; }
 
     // UseCases
     private ProcessAchievementEventUseCase _processUC;
@@ -28,7 +31,7 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
         _catalog = new InMemoryAchievementCatalog(list);
         _repo = new LocalPlayerAchievementRepository();
         _progress = new LocalAchievementProgressQuery();
-        
+
         _presenter = new AchievementPresenter();
 
         // UseCases
@@ -47,20 +50,26 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
         _processUC.Handle(e);
     }
 
+    /// 서버에서 업적 이벤트 처리(즉시 평가/토스트/스냅샷)
+    public void HandleEventServer(PlayerRef player, AchievementEvent e)
+    {
+        ServerPort?.HandleEventServer(player, e);
+    }
+
     /// 로컬에서 메트릭 변경 후 전체 재평가
     public void ReevaluateAllLocal()
     {
         _reevalUC.Handle();
     }
-    
+
     /// 모두 재평가 후 토스트
     public void ReevaluateAllLocalWithToasts()
     {
         _reevalUC.Handle(emitToasts: true);
     }
-    
-    // 편의성 메소드 수치 추가 후 재평가
-    public void AddMetricAndReevaluate(string key, long delta, bool emitToasts = true)
+
+    /// 편의성 메소드 수치 추가 후 재평가
+    public void AddMetricAndReevaluateLocal(string key, long delta, bool emitToasts = true)
     {
         var current = _progress.GetValue(key);
         SetMetricLocal(key, current + delta);
@@ -72,6 +81,12 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
         {
             ReevaluateAllLocal();
         }
+    }
+
+    /// 서버에서 업적 이벤트 처리(즉시 평가/토스트/스냅샷)
+    public void AddMetricAndReevaluateServer(PlayerRef player, string key, long delta, bool emitToasts = true)
+    {
+        ServerPort?.AddMetricAndReevaluateServer(player, key, delta, emitToasts);
     }
 
     /// 로컬 메트릭 세팅(예: kills.total, currency.gold 등)

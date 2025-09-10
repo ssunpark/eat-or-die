@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -325,3 +326,4 @@ public class AchievementViewerWindow : EditorWindow
         GUILayout.Label(text ?? "-", st, GUILayout.Width(w));
     }
 }
+#endif
