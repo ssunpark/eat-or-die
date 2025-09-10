@@ -171,6 +171,7 @@ public class ItemFactory
             "WateringCan" => new UseEffect_Interact<FarmingGround>(target => target.WateringCan()),
             "Seed" => new UseEffect_Interact<SeedGround>(target => target.Plant(rawData.ID)),
             "CookingPot" => new UseEffect_Interact<UnlockableObject>(target => target.Unlock()),
+            "Food" =>  new UseEffect_Recipe(),
             _ => new UseEffectNone()
         };
         var effectList = new List<IUseEffect>() { useEffect };
@@ -194,7 +195,7 @@ public class ItemFactory
         if (!string.IsNullOrWhiteSpace(rawData.ExtraInfo))
             extraDescription.Add(rawData.ExtraInfo);
         if (rawData.HasDurability)
-            extraDescription.Add($"Durability: {rawData.Duration}");
+            extraDescription.Add($"Durability: {rawData.MaxDuration}");
 
         // 아이템 정의
         var itemDefinition = new ItemDefinition(
@@ -205,7 +206,7 @@ public class ItemFactory
             extraDescription: extraDescription,
             hasDurability: rawData.HasDurability,
             maxQuantity: rawData.MaxStack,
-            maxDurability: rawData.Duration ?? 0f,
+            maxDurability: rawData.MaxDuration ?? 0f,
             iconAddressablePath: rawData.IconPath,
             prefabAddressablePath: rawData.PrefabPath
         );

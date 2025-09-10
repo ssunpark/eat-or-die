@@ -18,7 +18,7 @@ public class ExtraItemRawData
     public int MaxStack { get; set; }
 
     [Name("Duration")]
-    public float? Duration { get; set; }
+    public float? MaxDuration { get; set; }
 
     [Name("IconPath(Addressable)")]
     public string IconPath { get; set; }
