@@ -311,7 +311,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;
-        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed")
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed" || requiredTag == "Untagged")
             return false;
 
         // ▶ Player 대상: 기존 로직 유지(커서 우선 + 자기 자신 fallback)
@@ -514,6 +514,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         var go = hit.collider.gameObject;
         // 태그 확인 (자식 콜라이더일 수 있으니 root까지 확인)
         var tagged = go.CompareTag(requiredTag) ? go : go.transform.root.gameObject;
+        if (requiredTag == "Untagged") return false;
         if (!tagged.CompareTag(requiredTag)) return false;
 
         // 거리 확인 (플레이어 기준)

@@ -28,7 +28,7 @@ public class UI_HUDPartyHP: MonoBehaviour
     private void Update()
     {
         _checkTimer += Time.deltaTime;
-        if (_checkTimer < CheckInterval || PlayerInfoManager.Instance.Object == null || !PlayerInfoManager.Instance.Object.IsValid) return;
+        if (_checkTimer < CheckInterval ||Room.Instance==null|| PlayerInfoManager.Instance.Object == null ||!PlayerInfoManager.Instance.Object.IsValid) return;
         if (!_isInitialized)
         {
             Init();
