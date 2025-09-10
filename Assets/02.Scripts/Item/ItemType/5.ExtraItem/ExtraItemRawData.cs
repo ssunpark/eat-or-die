@@ -1,8 +1,6 @@
-﻿using System;
-using CsvHelper.Configuration.Attributes;
-using JetBrains.Annotations;
+﻿using CsvHelper.Configuration.Attributes;
 
-public class UsableItemRawData
+public class ExtraItemRawData
 {
     [Name("ID")]
     public int ID { get; set; }
@@ -12,29 +10,25 @@ public class UsableItemRawData
 
     [Name("Description")]
     public string Description { get; set; }
-    
-    [Ignore]
-    public EItemType ItemType { get; set; }
-    
+
     [Name("HasDurability")]
     public bool HasDurability { get; set; }
 
     [Name("MaxStack")]
-    public int MaxQuantity { get; set; }
+    public int MaxStack { get; set; }
 
     [Name("Duration")]
     public float? MaxDuration { get; set; }
 
-    [Name("InteractionTag")]
-    [CanBeNull]
-    public string InteractionTag { get; set; }
-
-    [Name("ActionName")]
-    public string ActionName { get; set; }
-
     [Name("IconPath(Addressable)")]
     public string IconPath { get; set; }
-    
+
     [Name("PrefabPath(Addressable)")]
     public string PrefabPath { get; set; }
+
+    [Name("ExtraInfo")]
+    public string ExtraInfo { get; set; }
+    
+    [Ignore]
+    public EItemType ItemType { get; set; }
 }
