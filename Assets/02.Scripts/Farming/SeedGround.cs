@@ -26,7 +26,7 @@ public class SeedGround : NetworkBehaviour
             return;
         }
         
-        AchievementManager.Instance.AddMetricAndReevaluate("Seed", 1);
+        AchievementManager.Instance.AddMetricAndReevaluateLocal("Seed", 1);
         
         RPC_CreatePlantObject(seedID);
     }
