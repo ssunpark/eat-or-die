@@ -18,9 +18,9 @@ public class PlayerInteractions : MonoBehaviour
         InteractionLayer = LayerMask.GetMask("Interactable");
         TagName = "Untagged";
     }
-    public void Interact(NetworkObject target)
+    public void Interact(NetworkObject target, Player me)
     {
-        target.GetComponent<IInteractable>()?.Interact();
+        target.GetComponent<IInteractable>()?.Interact(me);
     }
 
 #if UNITY_EDITOR

@@ -12,7 +12,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public Inventory IngredientInventory = new Inventory(2); // 로컬 아이템이고
     private Inventory _inputIngredientInventory;
     public List<Action> OnCookingSlotUpdated = new List<Action>(new Action[2]);
-    public event Action<string> OnAlertMessage; // 문자열 알림용
+    public event Action<string, float> OnAlertMessage; // 문자열 알림용
     public event Action<ItemInstance> CookingFinished; // 결과 아이템 전체 전달용
     public event Action<ItemInstance> OnCompletedPopupStarted;
     
@@ -92,7 +92,7 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
         else
         {
             ReturnRecipesToInventory();
-            OnAlertMessage?.Invoke("요리가 취소되었습니다.");
+            OnAlertMessage?.Invoke("요리가 취소되었습니다.", 1.2f);
             MasterAudio.PlaySound3DAtTransform("CookFail", _currentCookingPot.transform);
         }
     }
@@ -199,7 +199,20 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             Debug.Log("[CookingManager] 빈 슬롯이 있어 요리를 시작할 수 없습니다.");
             return;
         }
+        
+        // 기본+강화무기/강화+강화무기는 요리 못하게 리턴
+        
+        bool isWeaponCombination
+            = (IngredientInventory.SlotList[0].ItemInstance.ItemProfile.ItemDefinition.Type == EItemType.Weapon)
+              && (IngredientInventory.SlotList[1].ItemInstance.ItemProfile.ItemDefinition.Type == EItemType.Weapon);
 
+        if (isWeaponCombination)
+        {
+            OnAlertMessage?.Invoke("무기끼리는 요리할 수 없어요!", 1.2f);
+            ReturnRecipesToInventory();
+            return;
+        }
+        
         _currentCookingPot?.Rpc_StartCooking(Runner.LocalPlayer);
     }
 
@@ -207,14 +220,14 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
     public void Rpc_StartCooking([RpcTarget] PlayerRef player)
     {
         _isCooking = true;
-        OnAlertMessage?.Invoke(("요리를 시작합니다! 재료들이 보글보글 끓고 있어요."));
+        OnAlertMessage?.Invoke("요리를 시작합니다! 재료들이 보글보글 끓고 있어요.", 3.8f);
         MasterAudio.PlaySound3DAtTransform("Cooking", _currentCookingPot.transform);
     }
 
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     public void Rpc_CookingPotAlreadyUse([RpcTarget] PlayerRef player)
     {
-        OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.");
+        OnAlertMessage?.Invoke("다른 파티원이 이미 요리중입니다.", 1.2f);
         MasterAudio.PlaySound3DAtTransform("Fail", _currentCookingPot.transform);
     }
 

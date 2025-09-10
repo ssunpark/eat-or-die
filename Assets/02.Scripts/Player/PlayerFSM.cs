@@ -74,6 +74,9 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     public NetworkBool IsDead { get; set; } = false;
 
     [Networked]
+    public NetworkBool IsInReviveProcess { get; set; } = false;
+
+    [Networked]
     public NetworkObject ItemUseTarget { get; set; } = null;
 
     [Networked]
@@ -133,12 +136,15 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         }
         //UI Parent의 자식들 전부 비활성화
 
-        foreach (Transform child in _hudParent)
+        if (_hudParent != null)
         {
-            child.gameObject.SetActive(false);
+            foreach (Transform child in _hudParent)
+            {
+                child.gameObject.SetActive(false);
+            }
         }
 
-        _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _hudParent);
+            _spectatorPanelObj = Instantiate(_spectatorPanelPrefab, _hudParent);
     }
 
     public void HideSpectatorPanel()
@@ -148,11 +154,14 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             Destroy(_spectatorPanelObj);
         }
         //UI Parent의 자식들 전부 활성화
-        foreach (Transform child in _hudParent)
+        if (_hudParent != null)
         {
-            child.gameObject.SetActive(true);
+            foreach (Transform child in _hudParent)
+            {
+                child.gameObject.SetActive(true);
+            }
         }
-    }
+        }
 
     public override void Spawned()
     {
@@ -220,6 +229,8 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
     }
     float _timer = 0f;
+    
+
     public override void FixedUpdateNetwork()
     {
         if (PlayerNetworkObject == null || PlayerNetworkObject.Resource == null)
@@ -300,7 +311,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;
-        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed")
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed" || requiredTag == "Untagged")
             return false;
 
         // ▶ Player 대상: 기존 로직 유지(커서 우선 + 자기 자신 fallback)
@@ -350,7 +361,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
 
         if (interactPressed && interactable.IsImmediate)
         {
-            interactable.Interact(); // 로컬 즉시형 처리
+            interactable.Interact(PlayerNetworkObject); // 로컬 즉시형 처리
 
             SimpleKCC.SetLookRotation(Quaternion.LookRotation(net.transform.position - transform.position));
             RPC_TurnToInteractTarget(net);
@@ -503,6 +514,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         var go = hit.collider.gameObject;
         // 태그 확인 (자식 콜라이더일 수 있으니 root까지 확인)
         var tagged = go.CompareTag(requiredTag) ? go : go.transform.root.gameObject;
+        if (requiredTag == "Untagged") return false;
         if (!tagged.CompareTag(requiredTag)) return false;
 
         // 거리 확인 (플레이어 기준)

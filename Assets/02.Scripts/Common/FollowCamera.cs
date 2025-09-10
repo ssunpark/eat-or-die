@@ -101,7 +101,7 @@ public class FollowCamera : MonoBehaviour
         foreach (var info in mgr.Players)
         {
             if (!info.Ref.IsRealPlayer) continue;
-            if (info.Ref == mgr.LocalPlayer.Object.InputAuthority) continue;
+            if (mgr.LocalPlayer != null && info.Ref == mgr.LocalPlayer.Object.InputAuthority) continue;
 
             var p = mgr.TryResolvePlayer(info.Ref);
             if (p != null && p.PlayerFSM != null && !p.PlayerFSM.IsDead)

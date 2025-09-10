@@ -100,7 +100,8 @@ public class TraitUIEntry : MonoBehaviour
     // ---- UI Update ----
     private void RefreshLevelAndExp()
     {
-        var trait = _traitManager.GetTrait(TraitType);
+        if(_traitManager == null) Debug.LogError("TraitManager is null in TraitUIEntry.RefreshLevelAndExp");
+        var trait = _traitManager?.GetTrait(TraitType);
         if (trait == null) return;
 
         _currentLvText.text = trait.Level.ToString();

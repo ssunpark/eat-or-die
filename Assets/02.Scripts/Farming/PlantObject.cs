@@ -33,6 +33,10 @@ public class PlantObject : NetworkBehaviour, IInteractable
 
     public float InteractionDistanceOffset => 0.2f;
 
+    Player IInteractable.InteractingPlayer => _interactingPlayer;
+
+    private Player _interactingPlayer;
+
     public override void Spawned()
     {
         _farmingGround = GetComponentInParent<FarmingGround>();
@@ -91,8 +95,17 @@ public class PlantObject : NetworkBehaviour, IInteractable
         // 작물 생성
         if (GrowthLevel == _seedData.MaxGrowthLevel - 1)
         {
+            int amount = 1;
+            // 보너스 작물
+            Debug.Log(_interactingPlayer?.Stat.GetStat(EStatType.HarvestBonusChance));
+            float bonusChance = _interactingPlayer?.Stat.GetStat(EStatType.HarvestBonusChance) ?? 0f;
+            if (bonusChance > Random.Range(0f, 1f))
+            {
+                amount += 1;
+            }
+
             // 작물 수확
-            ItemProxySpawner.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, 1, 1, transform.position,
+            ItemProxySpawner.Instance.RPC_CreateItemObject(_seedData.HarvestItemID, amount, 1, transform.position,
                 Quaternion.identity);
             MasterAudio.PlaySound3DAtTransform("PlantPop", transform);
         }
@@ -141,5 +154,11 @@ public class PlantObject : NetworkBehaviour, IInteractable
             gameObject.layer = Mathf.RoundToInt(Mathf.Log(InteractableLayer.value, 2));
             _outlineController.OutlineObject = _plantObject.GetComponent<Outlinable>();
         }
+    }
+
+    void IInteractable.Interact(Player from)
+    {
+        _interactingPlayer = from;
+        Interact();
     }
 }
