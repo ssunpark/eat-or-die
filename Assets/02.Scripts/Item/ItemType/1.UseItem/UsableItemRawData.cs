@@ -1,5 +1,6 @@
 ﻿using System;
 using CsvHelper.Configuration.Attributes;
+using JetBrains.Annotations;
 
 public class UsableItemRawData
 {
@@ -25,6 +26,7 @@ public class UsableItemRawData
     public float? MaxDuration { get; set; }
 
     [Name("InteractionTag")]
+    [CanBeNull]
     public string InteractionTag { get; set; }
 
     [Name("ActionName")]
