@@ -27,6 +27,7 @@ public class UI_RecipeList : MonoBehaviour
             recipeButton.Refresh(recipe);
             _recipeButtonList.Add(recipeButton);
         }
+
     }
 
 
@@ -59,16 +60,6 @@ public class UI_RecipeList : MonoBehaviour
             button.Refresh(button.GetRecipe());
         }
 
-        // UpdateRecipes() 대신 조건부로 UpdateAllRecipes() 호출
-        if (RecipePanelUIManager.Instance.CurrentIngredientID == 0)
-        {
-            // 특정 재료가 선택되지 않은 상태면 전체 레시피 표시
-            RecipePanelUIManager.Instance.UpdateAllRecipes();
-        }
-        else
-        {
-            // 특정 재료가 선택된 상태면 필터링된 레시피 표시
-            RecipePanelUIManager.Instance.UpdateRecipes();
-        }
+        RecipePanelUIManager.Instance.UpdateRecipes();
     }
 }

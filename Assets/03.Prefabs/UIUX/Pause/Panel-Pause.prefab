@@ -495,19 +495,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2562248051357393538}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 7890287597013670009}
-        m_TargetAssemblyTypeName: UI_PausePanel, Assembly-CSharp
-        m_MethodName: OnClickCopyRoomCode
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1045323951021346057
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,7 +505,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5428423619078419811}
-  - component: {fileID: 7890287597013670009}
   - component: {fileID: 3116668998471416121}
   - component: {fileID: -8769927281975674820}
   - component: {fileID: 7227728611080828401}
@@ -553,20 +540,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7890287597013670009
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1045323951021346057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a22ab268c4a4ff540b3449dfed376e4e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _roomNameText: {fileID: 2298355972461840694}
-  _roomCodeText: {fileID: 5948292000784513022}
 --- !u!114 &3116668998471416121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6160,7 +6133,6 @@ GameObject:
   - component: {fileID: 3688471623463343772}
   - component: {fileID: 6444252174958692565}
   - component: {fileID: 9160899733533506388}
-  - component: {fileID: 190514581303688570}
   m_Layer: 5
   m_Name: Button-Title
   m_TagString: Untagged
@@ -6241,9 +6213,21 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 190514581303688570}
-        m_TargetAssemblyTypeName: UI_LeaveRoom, Assembly-CSharp
-        m_MethodName: OnClickButtonLeaveRoom
+      - m_Target: {fileID: 8119728669005174453}
+        m_TargetAssemblyTypeName: AUI_PopupBase, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 9160899733533506388}
+        m_TargetAssemblyTypeName: Ricimi.SceneTransition, Assembly-CSharp
+        m_MethodName: PerformTransition
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6260,7 +6244,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9067985886557500062}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29eb4a5a725ae4a07a39820fbbcc201d, type: 3}
   m_Name: 
@@ -6268,18 +6252,6 @@ MonoBehaviour:
   scene: RoomCreateScene
   duration: 1
   color: {r: 0, g: 0, b: 0, a: 1}
---- !u!114 &190514581303688570
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9067985886557500062}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29d0199f475314242bba18f55966e3e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &9190265704342421574
 GameObject:
   m_ObjectHideFlags: 0

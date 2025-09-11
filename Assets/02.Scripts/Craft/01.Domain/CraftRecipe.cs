@@ -1,5 +1,6 @@
 using CsvHelper.Configuration.Attributes;
 
+// 수현
 public class CraftRecipe
 {
     [Name("ID")] public int ID { get; set; } // 이건 사용하지 않는다.

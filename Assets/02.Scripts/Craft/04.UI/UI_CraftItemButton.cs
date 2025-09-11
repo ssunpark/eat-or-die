@@ -7,19 +7,20 @@ public class UI_CraftItemButton : MonoBehaviour
     public Image IconImage;
 
     public Image CraftIndicatiorIcon;
-    public GameObject ItemSelectedOutline;
+    // public TextMeshProUGUI ItemNameText;
 
     private CraftRecipe _data;
     public int CraftRecipeID => _data.CraftResultID;
+    // private ItemProfile _itemProfile;
 
     public void Init(CraftRecipe data)
     {
         _data = data;
         ItemProfile itemProfile = ItemManager.Instance.GetItem(_data.CraftResultID);
         IconImage.sprite = itemProfile.ItemDefinition.Icon;
-        SetSelected(false);
     }
-    
+
+    // 이게 사실상 리프레시할때마다 호출 필요한 함수
     public void CanCraft()
     {
         var haveMat1 = UnifiedInventoryManager.Instance.GetItemCount(_data.CraftMaterial1ID);
@@ -42,13 +43,5 @@ public class UI_CraftItemButton : MonoBehaviour
     {
         CraftRecipeUIManager.Instance.SelectCraftItem(_data);
         MasterAudio.PlaySound("ButtonClick");
-    }
-
-    public void SetSelected(bool isSelected)
-    {
-        if (ItemSelectedOutline != null)
-        {
-            ItemSelectedOutline.SetActive(isSelected);
-        }
     }
 }
