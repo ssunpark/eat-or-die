@@ -31,6 +31,9 @@ public class UI_CookingPanel : AUI_PopupBase
     {
         UIRecipeIngredient.PopulateIngredients(ERecipeCategory.Food);
         UIRecipeList.Init();
+        
+        // 모든 UI 초기화 완료 후 Food 카테고리 레시피 표시
+        RecipePanelUIManager.Instance.UpdateAllRecipes();
     }
 
     public void OnClickCookingButton()

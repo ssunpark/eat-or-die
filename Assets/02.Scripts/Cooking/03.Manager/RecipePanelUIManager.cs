@@ -17,6 +17,12 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
     
     private ERecipeCategory _currentCategory;
     
+    private void Awake()
+    {
+        // 기본 카테고리를 Food로 설정
+        _currentCategory = ERecipeCategory.Food;
+    }
+    
     public void OnCategoryButtonClick(int categoryIndex)
     {
         _currentCategory = (ERecipeCategory)categoryIndex;

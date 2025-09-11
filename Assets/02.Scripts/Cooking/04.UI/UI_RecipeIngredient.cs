@@ -27,8 +27,13 @@ public class UI_RecipeIngredient : MonoBehaviour
     
     public void PopulateIngredients(ERecipeCategory category)
     {
-        foreach (Transform child in Container.transform)
+        for (int i = Container.transform.childCount - 1; i >= 0; i--)
         {
+            Transform child = Container.transform.GetChild(i);
+            if (child.name == "allcategorybutton" || child.name.Contains("CategoryButton"))
+            {
+                continue;
+            }
             Destroy(child.gameObject);
         }
         _ingredientDataList.Clear();
