@@ -553,6 +553,12 @@ public class Player : CharacterBase, IAttackable
 
     public void Revive()
     {
+        if (!HasStateAuthority)
+        {
+            Debug.LogError("[Player] Revive는 State Authority에서만 호출할 수 있습니다.");
+            Debug.Log("State에 요청을 해서 부활을 시키세요.");
+            return;
+        }
         PlayerFSM.IsInReviveProcess = true;
         SimpleKCC.enabled = true;
 
