@@ -32,13 +32,18 @@ public class TooltipManager : BehaviourSingleton<TooltipManager>
 
     public void Show(string content)
     {
+        Show(content, true); // 기본값으로 유동적 width 사용
+    }
+    
+    public void Show(string content, bool useFlexibleWidth)
+    {
         if (_fadeCoroutine != null)
         {
             StopCoroutine(_fadeCoroutine);
         }
 
         tooltipPanel.gameObject.SetActive(true);
-        tooltipPanel.SetText(content);
+        tooltipPanel.SetText(content, useFlexibleWidth);
 
         _fadeCoroutine = StartCoroutine(Fade(1f));
     }

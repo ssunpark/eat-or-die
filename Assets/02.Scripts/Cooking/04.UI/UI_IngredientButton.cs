@@ -95,7 +95,7 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
         var sb = new StringBuilder();
 
         sb.Append($"<b>{itemProfile.ItemDefinition.Name}</b>");
-        TooltipManager.Instance.Show(sb.ToString());
+        TooltipManager.Instance.Show(sb.ToString(), true); // 재료 버튼은 유동적 width 사용
         MasterAudio.PlaySound("ButtonClick");
     }
 
