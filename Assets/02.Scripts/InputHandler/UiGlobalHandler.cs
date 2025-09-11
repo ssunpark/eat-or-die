@@ -105,7 +105,8 @@ public class UiGlobalHandler : MonoBehaviour
         if (_statsPopup.gameObject.activeInHierarchy)
         {
             _statsPopup.Close();
-            yield return new WaitUntil(() => !_statsPopup.gameObject.activeInHierarchy);
+            while (_statsPopup.gameObject.activeInHierarchy)
+                yield return null;
         }
         _traitsPopup.Close();
     }
