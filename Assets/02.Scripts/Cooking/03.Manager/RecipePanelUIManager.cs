@@ -1,11 +1,53 @@
 ﻿using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+
+public enum ERecipeCategory
+{
+    Food,
+    Weapon
+}
 
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
     public UI_RecipeList RecipeListUI;
+    public UI_RecipeIngredient IngredientListUI;
     public int CurrentIngredientID;
-
+    
+    private ERecipeCategory _currentCategory;
+    private UI_CookingPanel _cookingPanel;
+    
+    private void Awake()
+    {
+        // 기본 카테고리를 Food로 설정
+        _currentCategory = ERecipeCategory.Food;
+    }
+    
+    public void OnCategoryButtonClick(int categoryIndex)
+    {
+        _currentCategory = (ERecipeCategory)categoryIndex;
+        IngredientListUI.PopulateIngredients(_currentCategory);
+        UpdateAllRecipes();
+    }
+    
+    public void SetCookingPanel(UI_CookingPanel cookingPanel)
+    {
+        _cookingPanel = cookingPanel;
+    }
+    
+    public void UpdateIngredientNameText(string text)
+    {
+        if (_cookingPanel != null && _cookingPanel.IngredientNameText != null)
+        {
+            _cookingPanel.IngredientNameText.text = text;
+        }
+    }
+    
+    private string GetCategoryDisplayName(ERecipeCategory category)
+    {
+        return category == ERecipeCategory.Food ? "음식 (전체)" : "무기 (전체)";
+    }
+    
     public void SetCurrentIngredientID(int ID)
     {
         CurrentIngredientID = ID;
@@ -13,20 +55,21 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 
     public void UpdateAllRecipes()
     {
-        var filteredRecipes = RecipeManager.Instance.RecipeList;
-
-        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {CurrentIngredientID}");
+        var filteredRecipes = RecipeManager.Instance.GetRecipesByCategory(_currentCategory);
         RecipeListUI.ShowFilteredRecipes(filteredRecipes);
+        
+        // 전체 카테고리 텍스트 업데이트
+        UpdateIngredientNameText(GetCategoryDisplayName(_currentCategory));
+        CurrentIngredientID = 0; // 전체 보기로 리셋
     }
 
     public void UpdateRecipes()
     {
-        var filteredRecipes = RecipeManager.Instance.RecipeList
+        var filteredRecipes = RecipeManager.Instance.GetRecipesByCategory(_currentCategory)
             .Where(recipe => recipe.Ingredient2ID.HasValue)
             .Where(recipe => recipe.Ingredient1ID == CurrentIngredientID || recipe.Ingredient2ID == CurrentIngredientID)
             .ToList();
 
-        Debug.Log($"[RecipePanel] Found {filteredRecipes.Count} recipes with Ingredient ID {CurrentIngredientID}");
         RecipeListUI.ShowFilteredRecipes(filteredRecipes);
     }
 
@@ -63,16 +106,6 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
             return UnifiedInventoryManager.Instance.HaveItem(ingredient1ID) &&
                    UnifiedInventoryManager.Instance.HaveItem(ingredient2ID.Value);
         }
-    }
-
-    public void ActiveHoverUI()
-    {
-        Debug.Log("ActiveHoverUI");
-    }
-
-    public void DeactiveHoverUI()
-    {
-        Debug.Log("DeactiveHoverUI");
     }
 }
 
