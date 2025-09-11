@@ -10,6 +10,7 @@ public class UI_CookingCompletedPopup : MonoBehaviour
     public Image RecipeIcon;
     public TextMeshProUGUI RecipeName;
     public TextMeshProUGUI RecipeDescription;
+    public TextMeshProUGUI RecipeExtraDescription;
 
     public float displayDuration = 2f;
     public float FadeDuration = 0.4f;
@@ -56,7 +57,25 @@ public class UI_CookingCompletedPopup : MonoBehaviour
 
         RecipeIcon.sprite = itemDefinition.Icon;
         RecipeName.text = itemDefinition.Name;
-        RecipeDescription.text = itemDefinition.Description;
+
+        // if (itemDefinition.Type == EItemType.Weapon)
+        // {
+        //     var extraDescriotion = string.Join("  ", itemDefinition.ExtraDescription);
+        //     extraDescriotion = RichTextUtil.RecolorAll(extraDescriotion, "#E44962");
+        //     RecipeExtraDescription.text = extraDescriotion;
+        //     Debug.Log("무기일 경우에는 상세 설명만 띄운다.");
+        // }
+        // else
+        {
+            RecipeDescription.text = itemDefinition.Description;
+            // Debug.Log("아닐 경우에는 기존 설명을 띄운다.");
+            
+            var extraDescriotion = string.Join("  ", itemDefinition.ExtraDescription);
+            extraDescriotion = RichTextUtil.RecolorAll(extraDescriotion, "#E44962");
+            RecipeExtraDescription.text = extraDescriotion;
+            // Debug.Log("무기일 경우에는 상세 설명만 띄운다.");
+        }
+        
     }
     
     private void FadeIn()
