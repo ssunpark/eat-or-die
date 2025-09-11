@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Collections;
 
 public class UiGlobalHandler : MonoBehaviour
 {
@@ -95,15 +96,18 @@ public class UiGlobalHandler : MonoBehaviour
         else
         {
             UnbindPlayer();
-
-            if (_statsPopup.gameObject.activeInHierarchy)
-            {
-                _statsPopup.Close();
-            }
-            _traitsPopup.Close();
-
-
+            StartCoroutine(CloseTraitCoroutine());
         }
+    }
+
+    private IEnumerator CloseTraitCoroutine()
+    {
+        if (_statsPopup.gameObject.activeInHierarchy)
+        {
+            _statsPopup.Close();
+            yield return new WaitUntil(() => !_statsPopup.gameObject.activeInHierarchy);
+        }
+        _traitsPopup.Close();
     }
 
     private void UnbindPlayer()
