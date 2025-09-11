@@ -14,7 +14,10 @@ public class UI_RecipeIngredient : MonoBehaviour
     {
         200012, // 썩은 작물
         200013, // 강철
-        200028 // 드래곤 고기
+        200028, // 드래곤 고기
+        600004, // 덤불칼
+        600005, // 환각버섯 도끼
+        600006 // 대지 뿌리봉
     };
 
     private void Start()
@@ -24,14 +27,12 @@ public class UI_RecipeIngredient : MonoBehaviour
     
     public void PopulateIngredients(ERecipeCategory category)
     {
-        // 기존 버튼들 모두 파괴
         foreach (Transform child in Container.transform)
         {
             Destroy(child.gameObject);
         }
         _ingredientDataList.Clear();
-    
-        // ★ ItemManager의 새로운 메서드를 호출하여 현재 카테고리에 맞는 재료만 가져옵니다.
+        
         var ingredients = ItemManager.Instance.GetIngredientsByCategory(category);
 
         foreach (var ingredient in ingredients)
@@ -57,7 +58,6 @@ public class UI_RecipeIngredient : MonoBehaviour
 
     private void RefreshIngredientButtons()
     {
-        // 모두 비활성화
         foreach (var button in _ingredientDataList.Values)
         {
             button.Refresh(button.GetIngredient());

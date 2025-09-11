@@ -27,7 +27,6 @@ public class UI_RecipeList : MonoBehaviour
             recipeButton.Refresh(recipe);
             _recipeButtonList.Add(recipeButton);
         }
-
     }
 
 

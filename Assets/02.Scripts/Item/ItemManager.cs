@@ -118,19 +118,21 @@ public class ItemManager : MonoBehaviour
     // [새로운 메서드 추가]
     public List<ItemDefinition> GetIngredientsByCategory(ERecipeCategory category)
     {
+        List<ItemDefinition> resultList;
         switch (category)
         {
             case ERecipeCategory.Food:
                 // 요리 카테고리일 경우: 기존 로직 사용 (음식 재료이면서 레시피가 아닌 것)
                 return _itemDictionary.Values
-                    .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient && !itemInfo.ItemDefinition.IsRecipe)
+                    .Where(itemInfo => itemInfo.ItemDefinition.Type == EItemType.Food &&
+                                       (itemInfo.ItemDefinition.IsIngredient && !itemInfo.ItemDefinition.IsRecipe))
                     .Select(itemInfo => itemInfo.ItemDefinition)
                     .ToList();
-
             case ERecipeCategory.Weapon:
                 // 무기 카테고리일 경우: 재료이면서 타입이 Weapon인 아이템 (기본 무기 등)
                 return _itemDictionary.Values
-                    .Where(itemInfo => itemInfo.ItemDefinition.IsIngredient && itemInfo.ItemDefinition.Type == EItemType.Weapon)
+                    .Where(itemInfo =>
+                        itemInfo.ItemDefinition.IsIngredient && itemInfo.ItemDefinition.Type == EItemType.Weapon)
                     .Select(itemInfo => itemInfo.ItemDefinition)
                     .ToList();
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public enum ERecipeCategory
@@ -11,22 +12,15 @@ public enum ERecipeCategory
 public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 {
     public UI_RecipeList RecipeListUI;
-    public UI_RecipeIngredient IngredientListUI; // ★ Ingredient UI 참조 추가
+    public UI_RecipeIngredient IngredientListUI;
     public int CurrentIngredientID;
-
     
-    // ★ 현재 선택된 카테고리를 저장할 변수 추가
     private ERecipeCategory _currentCategory;
-
-    // ★ UI의 카테고리 버튼 (Food, Weapon)에서 이 메서드를 호출하도록 연결합니다.
+    
     public void OnCategoryButtonClick(int categoryIndex)
     {
         _currentCategory = (ERecipeCategory)categoryIndex;
-
-        // 1. 재료 리스트를 현재 카테고리에 맞게 새로 고칩니다.
         IngredientListUI.PopulateIngredients(_currentCategory);
-
-        // 2. '전체' 버튼을 누른 것처럼 해당 카테고리의 모든 레시피를 표시합니다.
         UpdateAllRecipes();
     }
     
@@ -37,14 +31,12 @@ public class RecipePanelUIManager : BehaviourSingleton<RecipePanelUIManager>
 
     public void UpdateAllRecipes()
     {
-        // ★ 현재 카테고리에 맞는 모든 레시피를 가져옵니다. (RecipeManager에 유사한 기능이 필요)
         var filteredRecipes = RecipeManager.Instance.GetRecipesByCategory(_currentCategory);
         RecipeListUI.ShowFilteredRecipes(filteredRecipes);
     }
 
     public void UpdateRecipes()
     {
-        // ★ 현재 카테고리에 맞는 레시피 중에서 재료와 관련된 것을 필터링합니다.
         var filteredRecipes = RecipeManager.Instance.GetRecipesByCategory(_currentCategory)
             .Where(recipe => recipe.Ingredient2ID.HasValue)
             .Where(recipe => recipe.Ingredient1ID == CurrentIngredientID || recipe.Ingredient2ID == CurrentIngredientID)
