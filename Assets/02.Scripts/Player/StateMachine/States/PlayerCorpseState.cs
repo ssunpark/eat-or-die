@@ -13,17 +13,7 @@ public class PlayerCorpseState : APlayerStateBase
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _fsm.IsDead = true;
-        const int corpseItemId = 1800001;
-        var position = _fsm.transform.position;
-        var rotation = Quaternion.identity;
-        var ownerId = CharacterInfoManager.Instance.CharacterInfo.Id;
-        ItemProxySpawner.Instance.RPC_CreateItemObject(
-            corpseItemId,
-            1,
-            0f,
-            position,
-            rotation,
-            ownerId);
+        
     }
 
     protected override void OnEnterStateRender()
