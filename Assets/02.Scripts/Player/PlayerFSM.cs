@@ -101,7 +101,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     private Transform _hudParent;
     public GameObject Spoon;
     [SerializeField] private GameObject _spectatorPanelPrefab;
-    private GameObject _spectatorPanelObj;
+    [SerializeField] private GameObject _spectatorPanelObj;
 
     [SerializeField] UI_UseOrInteract _useUI;
     [SerializeField] UI_UseOrInteract _interactUI;
@@ -161,7 +161,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 child.gameObject.SetActive(true);
             }
         }
-        }
+    }
 
     public override void Spawned()
     {
@@ -311,8 +311,22 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
             return false;
 
         string requiredTag = ItemHolder.InteractionTag;
-        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed")
+        if (string.IsNullOrEmpty(requiredTag) || requiredTag == "Unarmed" || requiredTag == "Untagged")
             return false;
+        
+        if (requiredTag == "SelfOnly")
+        {
+            // 기존 타깃의 아웃라인 끄기
+            ItemUseTarget?.GetComponent<OutlineController>()?.SetOutlineActive(false);
+
+            // 자기 자신을 타깃으로 지정 + 모드 Self
+            RPC_SetItemUseTargetAndMode(PlayerNetworkObject.Object, EUseItemMode.Self);
+
+            // UI 갱신 (아웃라인은 자기 자신이므로 생략)
+            _useUI.TargetObject = PlayerNetworkObject.gameObject;
+
+            return true;
+        }
 
         // ▶ Player 대상: 기존 로직 유지(커서 우선 + 자기 자신 fallback)
         if (requiredTag == "Player")
@@ -514,6 +528,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
         var go = hit.collider.gameObject;
         // 태그 확인 (자식 콜라이더일 수 있으니 root까지 확인)
         var tagged = go.CompareTag(requiredTag) ? go : go.transform.root.gameObject;
+        if (requiredTag == "Untagged") return false;
         if (!tagged.CompareTag(requiredTag)) return false;
 
         // 거리 확인 (플레이어 기준)

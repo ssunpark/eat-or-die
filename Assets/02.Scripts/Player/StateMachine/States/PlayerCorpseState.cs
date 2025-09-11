@@ -13,7 +13,7 @@ public class PlayerCorpseState : APlayerStateBase
         _fsm.CanInteract = false;
         _fsm.CanUseItem = false;
         _fsm.IsDead = true;
-        //_fsm.PlayerNetworkObject.InstantRevive();
+        
     }
 
     protected override void OnEnterStateRender()
