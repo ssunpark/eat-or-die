@@ -1,5 +1,6 @@
 ﻿using DarkTonic.MasterAudio;
 using Fusion;
+using TMPro;
 using UnityEngine;
 
 public class UI_CookingPanel : AUI_PopupBase
@@ -8,6 +9,7 @@ public class UI_CookingPanel : AUI_PopupBase
     public GameObject CookingPanel;
     public UI_RecipeIngredient UIRecipeIngredient;
     public UI_RecipeList UIRecipeList;
+    public TextMeshProUGUI IngredientNameText;
     private bool _isInitialized;
 
     private void Start()
@@ -29,10 +31,13 @@ public class UI_CookingPanel : AUI_PopupBase
 
     private void Init()
     {
+        // RecipePanelUIManager에 CookingPanel 참조 설정
+        RecipePanelUIManager.Instance.SetCookingPanel(this);
+        
         UIRecipeIngredient.PopulateIngredients(ERecipeCategory.Food);
         UIRecipeList.Init();
         
-        // 모든 UI 초기화 완료 후 Food 카테고리 레시피 표시
+        // 모든 UI 초기화 완료 후 Food 카테고리 레시피 표시 및 텍스트 설정
         RecipePanelUIManager.Instance.UpdateAllRecipes();
     }
 

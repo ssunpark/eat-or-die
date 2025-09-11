@@ -66,6 +66,12 @@ public class UI_IngredientButton : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         RecipePanelUIManager.Instance.SetCurrentIngredientID(IngredientID);
         RecipePanelUIManager.Instance.UpdateRecipes();
+        
+        // 재료 이름으로 텍스트 업데이트
+        if (_data != null)
+        {
+            RecipePanelUIManager.Instance.UpdateIngredientNameText(_data.Name);
+        }
     }
 
     public ItemDefinition GetIngredient()
