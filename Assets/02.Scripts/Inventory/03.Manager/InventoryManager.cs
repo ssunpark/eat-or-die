@@ -145,7 +145,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
             if (!slot.IsEmpty)
             {
                 ItemInstance item = slot.GetItem();
-                ItemProxySpawner.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity);
+                ItemProxySpawner.Instance.RPC_CreateItemObject(item.ID, item.Quantity, item.Durability, position, Quaternion.identity, item.ExtraInfo);
                 slot.RemoveItem();
             }
         }
