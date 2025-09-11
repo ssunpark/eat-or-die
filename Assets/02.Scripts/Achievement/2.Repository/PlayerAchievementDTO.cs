@@ -7,7 +7,7 @@ public class PlayerAchievementDTO
     [FirestoreProperty]
     public int AchievementId { get; set; }
     [FirestoreProperty]
-    public double Current { get; set; }
+    public long Current { get; set; }
     [FirestoreProperty]
     public bool IsUnlocked { get; set; }
     [FirestoreProperty]

@@ -6,8 +6,8 @@ public class AchievementViewModel
     public string Title { get; private set; }
     public string Description { get; private set; }
     public string Category { get; private set; }
-    public double Current { get; private set; }
-    public double Target { get; private set; }
+    public long Current { get; private set; }
+    public long Target { get; private set; }
     public bool IsUnlocked { get; private set; }
     public DateTime? UnlockedAtUtc { get; private set; }
 

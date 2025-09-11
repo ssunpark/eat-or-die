@@ -1,21 +1,21 @@
 ﻿/// 업적 진행도 (값 객체)
 public class AchievementProgress
 {
-    public double Current { get; private set; }
-    public double Target { get; private set; }
+    public long Current { get; private set; }
+    public long Target { get; private set; }
 
-    public AchievementProgress(double current = 0, double target = 0)
+    public AchievementProgress(long current = 0, long target = 0)
     {
         Current = current;
         Target = target;
     }
 
-    public void Set(double current, double target)
+    public void Set(long current, long target)
     {
         Current = current;
         Target = target;
     }
 
-    public void SetCurrent(double v) => Current = v;
-    public void SetTarget(double v) => Target = v;
+    public void SetCurrent(long v) => Current = v;
+    public void SetTarget(long v) => Target = v;
 }
