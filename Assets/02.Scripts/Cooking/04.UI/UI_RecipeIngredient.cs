@@ -22,33 +22,33 @@ public class UI_RecipeIngredient : MonoBehaviour
         RoomRecipeStateManager.Instance.OnIngredientUnlocked += HandleIngredientUnlocked;
     }
     
-    public void Init()
+    public void PopulateIngredients(ERecipeCategory category)
     {
-        if (_isInitialized) return;
-        _isInitialized = true;
-
-        var allIngredients = ItemManager.Instance.GetFoodIngredientList();
-        _ingredientDataList.Clear();
-
-        foreach (var ingredientId in allIngredients)
+        // 기존 버튼들 모두 파괴
+        foreach (Transform child in Container.transform)
         {
-            if (ingredientId == null)
-            {
-                continue;
-            }
-            
-            if (_excludedIngredientIDs.Contains(ingredientId.ID))
+            Destroy(child.gameObject);
+        }
+        _ingredientDataList.Clear();
+    
+        // ★ ItemManager의 새로운 메서드를 호출하여 현재 카테고리에 맞는 재료만 가져옵니다.
+        var ingredients = ItemManager.Instance.GetIngredientsByCategory(category);
+
+        foreach (var ingredient in ingredients)
+        {
+            if (ingredient == null || _excludedIngredientIDs.Contains(ingredient.ID))
             {
                 continue;
             }
 
             var buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var button = buttonObj.GetComponent<UI_IngredientButton>();
-            button.Refresh(ingredientId);
+            button.Refresh(ingredient);
             buttonObj.SetActive(true);
-            _ingredientDataList[ingredientId.ID] = button;
+            _ingredientDataList[ingredient.ID] = button;
         }
     }
+
 
     private void HandleIngredientUnlocked(int unlockedIngredientID)
     {

@@ -29,7 +29,7 @@ public class UI_CookingPanel : AUI_PopupBase
 
     private void Init()
     {
-        UIRecipeIngredient.Init();
+        UIRecipeIngredient.PopulateIngredients(ERecipeCategory.Food);
         UIRecipeList.Init();
     }
 
