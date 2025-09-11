@@ -26,7 +26,6 @@ public class PlayerAchievementNetAgent : NetworkBehaviour, IAchievementServerPor
     /// 편의성 메소드 수치 추가 후 재평가
     public void AddMetricAndReevaluateServer(PlayerRef player, string key, long delta, bool emitToasts = true)
     {
-        Debug.Log("?????????????????????????????????????????");
         RPC_AddMetricAndReevaluate(player, key, delta, emitToasts);
     }
 
@@ -39,7 +38,6 @@ public class PlayerAchievementNetAgent : NetworkBehaviour, IAchievementServerPor
     [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
     private void RPC_AddMetricAndReevaluate([RpcTarget] PlayerRef player, string key, long delta, bool emitToasts)
     {
-        Debug.Log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         AchievementManager.Instance.AddMetricAndReevaluateLocal(key, delta, emitToasts);
     }
 }
