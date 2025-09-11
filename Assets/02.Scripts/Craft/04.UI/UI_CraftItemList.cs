@@ -9,6 +9,7 @@ public class UI_CraftItemList : MonoBehaviour
 
     private List<CraftRecipe> _craftRecipeDataList = new();
     private readonly List<UI_CraftItemButton> _craftItemButtonList = new();
+    private UI_CraftItemButton _currentSelectedButton;
 
     private void OnEnable()
     {
@@ -32,12 +33,11 @@ public class UI_CraftItemList : MonoBehaviour
         {
             var buttonObj = Instantiate(CraftItemPrefab, Container.transform);
             var craftRecipeButton = buttonObj.GetComponent<UI_CraftItemButton>();
-            craftRecipeButton.Init(craftRecipe); // 처음엔 craft가 가능한지에 대해서 리프레시, 요리솥 SetDetail 리프레시
+            craftRecipeButton.Init(craftRecipe);
             _craftItemButtonList.Add(craftRecipeButton);
         }
     }
-
-    // 카테고리 분리해서 보여주기용
+    
     public void ShowFilterCraftItems(List<CraftRecipe> craftRecips)
     {
         foreach (var button in _craftItemButtonList)
@@ -60,6 +60,20 @@ public class UI_CraftItemList : MonoBehaviour
         foreach (var button in _craftItemButtonList)
         {
             button.CanCraft();
+        }
+    }
+    
+    public void SetSelectedItem(int craftRecipeID)
+    {
+        if (_currentSelectedButton != null)
+        {
+            _currentSelectedButton.SetSelected(false);
+        }
+        
+        _currentSelectedButton = _craftItemButtonList.Find(btn => btn.CraftRecipeID == craftRecipeID);
+        if (_currentSelectedButton != null)
+        {
+            _currentSelectedButton.SetSelected(true);
         }
     }
 }

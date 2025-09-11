@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class UI_CraftPanel : AUI_PopupBase
 {
@@ -28,7 +29,13 @@ public class UI_CraftPanel : AUI_PopupBase
     private void Init()
     {
         CraftItemList.Init();
-        // UICraftDetailPanel.CreateIngredientButtons();
         UICraftDetailPanel.RefreshCraftCount();
+        
+        var cookingPotRecipe = CraftRecipeManager.Instance.CraftRecipeList
+            .FirstOrDefault(recipe => recipe.CraftResultID == 400001);
+        if (cookingPotRecipe != null)
+        {
+            CraftRecipeUIManager.Instance.SelectCraftItem(cookingPotRecipe);
+        }
     }
 }
