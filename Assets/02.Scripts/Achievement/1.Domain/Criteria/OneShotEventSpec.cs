@@ -3,7 +3,11 @@
 /// 즉시형: 특정 이벤트가 오면 단번에 충족(예: Boss 처치 1회)
 public class OneShotEventSpec : ICriteriaSpec
 {
+    private const long _target = 1;
     private readonly string _eventKey;
+    
+    public string StatKey => _eventKey;
+    public long Target => _target;
 
     public OneShotEventSpec(string eventKey)
     {
@@ -15,7 +19,7 @@ public class OneShotEventSpec : ICriteriaSpec
         if (e.Key == _eventKey)
         {
             p.SetCurrent(1);
-            p.SetTarget(1);
+            p.SetTarget(_target);
         }
     }
 

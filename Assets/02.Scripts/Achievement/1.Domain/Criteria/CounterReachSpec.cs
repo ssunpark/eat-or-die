@@ -5,6 +5,9 @@ public class CounterReachSpec : ICriteriaSpec
 {
     private readonly string _statKey; // 예: "kills.total", "currency.wallet"
     private readonly long _target;
+    
+    public string StatKey => _statKey;
+    public long Target => _target;
 
     public CounterReachSpec(string statKey, long target)
     {

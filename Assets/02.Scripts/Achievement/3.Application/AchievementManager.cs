@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Fusion;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     private IAchievementProgressQuery _progress;
     private IAchievementPresenter _presenter;
     private IAchievementServerPort _serverPort;
-
+    
     public IAchievementPresenter Presenter => _presenter;
     public IAchievementServerPort ServerPort { get => _serverPort; set => _serverPort = value; }
 
@@ -29,17 +30,8 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
         // CSV → 카탈로그
         var list = LoadAchievementsFromCsv();
         _catalog = new InMemoryAchievementCatalog(list);
-        _repo = new LocalPlayerAchievementRepository();
         _progress = new LocalAchievementProgressQuery();
-
         _presenter = new AchievementPresenter();
-
-        // UseCases
-        _processUC = new ProcessAchievementEventUseCase(
-            _catalog, _repo, _progress, () => DateTime.Now, _presenter);
-
-        _reevalUC = new ReevaluateAllAchievementsUseCase(
-            _catalog, _repo, _progress, () => DateTime.Now, _presenter);
 
         Debug.Log($"[AchievementManager] Catalog loaded: {_catalog.GetAll().Count} achievements");
     }
@@ -97,11 +89,49 @@ public class AchievementManager : BehaviourSingleton<AchievementManager>
     }
 
     /// DTO 조회
-    public IReadOnlyList<AchievementDto> GetAchievementDTOList()
+    public IReadOnlyList<AchievementViewModel> GetAchievementDTOList()
     {
         return _catalog.GetAll()
-            .Select(ach => AchievementDto.From(ach, _repo.Get(ach.Id)))
+            .Select(ach => AchievementViewModel.From(ach, _repo.Get(ach.Id)))
             .ToArray();
+    }
+
+    public async UniTask SetRepository(IPlayerAchievementRepository repository)
+    {
+        _repo = repository;
+        
+        _processUC = new ProcessAchievementEventUseCase(
+            _catalog, _repo, _progress, () => DateTime.Now, _presenter);
+
+        _reevalUC = new ReevaluateAllAchievementsUseCase(
+            _catalog, _repo, _progress, () => DateTime.Now, _presenter);
+        
+        // 로드
+        await _repo.LoadAsync();
+        InitAchievementProgress();
+        ReevaluateAllLocal();
+    }
+    
+    private void InitAchievementProgress()
+    {
+        foreach (var ach in _catalog.GetAll())
+        {
+            var pa = _repo.Get(ach.Id);
+
+            var cr = ach.Criteria;
+            
+            // 목표치 초기화
+            pa.Progress.SetTarget(cr.Target);
+
+            // 진행도 초기화
+            // 현재 메트릭이 비어 있으면(=0) 최소한 저장된 진행도/타깃 중 큰 값으로 채움
+            var curMetric = _progress.GetValue(cr.StatKey);
+            var curSaved  = (long)pa.Progress.Current;
+            var minNeeded = pa.IsUnlocked ? Math.Max(curSaved, cr.Target) : curSaved;
+
+            if (curMetric < minNeeded)
+                SetMetricLocal(cr.StatKey, minNeeded);
+        }
     }
 
     private IReadOnlyList<Achievement> LoadAchievementsFromCsv()

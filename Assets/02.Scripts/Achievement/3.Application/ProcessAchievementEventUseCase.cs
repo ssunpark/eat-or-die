@@ -34,7 +34,7 @@ public class ProcessAchievementEventUseCase
         if (_outbox == null) return;
         if (!_catalog.TryGet(unlock.AchievementId, out var ach)) return;
         var pa  = _repo.Get(unlock.AchievementId);
-        var dto = AchievementDto.From(ach, pa);
+        var dto = AchievementViewModel.From(ach, pa);
         _outbox.PublishUnlockedToast(dto);
     }
 
@@ -50,7 +50,7 @@ public class ProcessAchievementEventUseCase
 
         if (_outbox != null) {
             var list = catalog
-            .Select(ach => AchievementDto.From(ach, _repo.Get(ach.Id)))
+            .Select(ach => AchievementViewModel.From(ach, _repo.Get(ach.Id)))
             .ToArray();
             _outbox.PublishSnapshot(list);
         }

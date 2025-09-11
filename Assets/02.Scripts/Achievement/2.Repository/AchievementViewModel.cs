@@ -1,6 +1,6 @@
 ﻿using System;
 
-public class AchievementDto
+public class AchievementViewModel
 {
     public int Id { get; private set; }
     public string Title { get; private set; }
@@ -11,7 +11,7 @@ public class AchievementDto
     public bool IsUnlocked { get; private set; }
     public DateTime? UnlockedAtUtc { get; private set; }
 
-    public static AchievementDto From(Achievement ach, PlayerAchievement pa) => new()
+    public static AchievementViewModel From(Achievement ach, PlayerAchievement pa) => new()
     {
         Id = pa.AchievementId,
         Title = ach.Title,

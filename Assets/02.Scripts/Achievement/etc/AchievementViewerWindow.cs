@@ -19,7 +19,7 @@ public class AchievementViewerWindow : EditorWindow
     private bool _showLocked = true;
     private string _categoryFilter = "All";
     private Vector2 _scroll;
-    private List<AchievementDto> _cache = new();
+    private List<AchievementViewModel> _cache = new();
     private string[] _categories = new[] { "All" };
 
     // Metric Tester
@@ -255,9 +255,9 @@ public class AchievementViewerWindow : EditorWindow
         EditorGUILayout.EndScrollView();
     }
 
-    private IEnumerable<AchievementDto> Filtered(IEnumerable<AchievementDto> src)
+    private IEnumerable<AchievementViewModel> Filtered(IEnumerable<AchievementViewModel> src)
     {
-        IEnumerable<AchievementDto> q = src;
+        IEnumerable<AchievementViewModel> q = src;
 
         if (!string.IsNullOrEmpty(_search))
         {
@@ -287,7 +287,7 @@ public class AchievementViewerWindow : EditorWindow
         try
         {
             var list = AchievementManager.Instance.GetAchievementDTOList();
-            _cache = list?.ToList() ?? new List<AchievementDto>();
+            _cache = list?.ToList() ?? new List<AchievementViewModel>();
 
             var cats = _cache.Select(x => x.Category).Where(c => !string.IsNullOrEmpty(c))
                              .Distinct().OrderBy(c => c).ToList();

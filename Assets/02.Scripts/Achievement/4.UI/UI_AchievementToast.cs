@@ -13,7 +13,7 @@ public class UI_AchievementToast : MonoBehaviour
 
     private IAchievementPresenter _presenter;
     private CanvasGroup _cg;
-    private readonly Queue<AchievementDto> _queue = new();
+    private readonly Queue<AchievementViewModel> _queue = new();
     private Coroutine _runner;
 
     void Awake() {
@@ -25,8 +25,8 @@ public class UI_AchievementToast : MonoBehaviour
     void OnEnable()  => _presenter.OnToast += Enqueue;
     void OnDisable() => _presenter.OnToast -= Enqueue;
 
-    private void Enqueue(AchievementDto dto) {
-        _queue.Enqueue(dto);
+    private void Enqueue(AchievementViewModel viewModel) {
+        _queue.Enqueue(viewModel);
         if (_runner == null) _runner = StartCoroutine(RunQueue());
     }
 

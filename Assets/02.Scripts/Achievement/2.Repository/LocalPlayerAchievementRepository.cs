@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 
 /// 로컬 전용 PlayerAchievement 저장소
 public class LocalPlayerAchievementRepository : IPlayerAchievementRepository
@@ -22,4 +24,7 @@ public class LocalPlayerAchievementRepository : IPlayerAchievementRepository
     {
         return _achievementDict.Values.ToList();
     }
+    
+    public UniTask LoadAsync() => UniTask.CompletedTask;
+    public UniTask SaveAsync() => UniTask.CompletedTask;
 }

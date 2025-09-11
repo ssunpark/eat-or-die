@@ -26,8 +26,8 @@ public class ReevaluateAllAchievementsUseCase {
     private void OnUnlocked(AchievementUnlocked unlock) {
         if (!_emitToasts || _outbox == null) return;
         if (!_catalog.TryGet(unlock.AchievementId, out var ach)) return;
-        var pa  = _repo.Get(unlock.AchievementId);
-        var dto = AchievementDto.From(ach, pa);
+        var pa = _repo.Get(unlock.AchievementId);
+        var dto = AchievementViewModel.From(ach, pa);
         _outbox.PublishUnlockedToast(dto);
     }
 
@@ -43,7 +43,7 @@ public class ReevaluateAllAchievementsUseCase {
         // 스냅샷은 항상 발행(리스트 UI 업데이트용)
         if (_outbox != null) {
             var list = _catalog.GetAll()
-                .Select(ach => AchievementDto.From(ach, _repo.Get(ach.Id)))
+                .Select(ach => AchievementViewModel.From(ach, _repo.Get(ach.Id)))
                 .ToArray();
             _outbox.PublishSnapshot(list);
         }
