@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
+public class SeedShopManager : BehaviourSingleton<SeedShopManager>
 {
     private ItemProfile _itemProfile;
     private ItemProfile[] _seedItems;
