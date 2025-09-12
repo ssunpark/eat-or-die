@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class InventoryManager : BehaviourSingleton<InventoryManager>
 {
     private Inventory _inventory;
     public int InventorySize;
+
+    private InventoryRepository _repository;
     
     public event Action<int> OnSlotUpdated;
     public event Action<bool> OnToggleInventory;
@@ -14,9 +19,43 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
     public void Open() => ToggleInventory(true);
     public void Close() => ToggleInventory(false);
 
-    private void Awake()
+    private async void Awake()
     {
         _inventory = new Inventory(InventorySize);
+        
+        await FirebaseManager.Instance.WaitForInitialization();
+        _repository = new InventoryRepository(FirebaseManager.Instance.DB);
+        OnInventoryUpdated += UpdateInventoryRepository;
+        Init();
+    }
+
+    private async void Init()
+    {
+        List<SlotDTO> loadedInventory = await _repository.LoadInventoryItemList(AuthenticationManager.Instance.User.UserId, CharacterInfoManager.Instance.CharacterInfo.Id);
+        
+        foreach (SlotDTO slot in loadedInventory)
+        {
+            if (slot.ItemId == 0)
+            {
+                continue;
+            }
+            ItemInstance item = new ItemInstance(ItemManager.Instance.GetItem(slot.ItemId), slot.Quantity, slot.Durability, slot.ExtraInfo);
+            _inventory.PutItemInSlot(int.Parse(slot.SlotId), item);
+        }
+    }
+
+    private async void UpdateSlotRepository(int slotIndex)
+    {
+        SlotDTO slot = new SlotDTO(slotIndex, GetItemInSlot(slotIndex));
+        await _repository.SaveInventoryItem(AuthenticationManager.Instance.User.UserId, CharacterInfoManager.Instance.CharacterInfo.Id, slot);
+    }
+
+    private void UpdateInventoryRepository()
+    {
+        for (int i = 0; i < InventorySize; ++i)
+        {
+            UpdateSlotRepository(i);
+        }
     }
 
     public void ToggleInventory(bool toggle)
@@ -39,6 +78,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         {
             HandEntity.Instance.PickUpItem(_inventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance));
         }
+        UpdateSlotRepository(slotIndex);
         OnSlotUpdated?.Invoke(slotIndex);
         OnInventoryUpdated?.Invoke();
     }
@@ -68,7 +108,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
                 HandEntity.Instance.PickUpItem(temp);
             }
         }
-
+        UpdateSlotRepository(slotIndex);
         OnSlotUpdated?.Invoke(slotIndex);
         OnInventoryUpdated?.Invoke();
     }
