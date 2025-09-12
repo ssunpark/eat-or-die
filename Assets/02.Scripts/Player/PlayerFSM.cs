@@ -101,7 +101,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
     private Transform _hudParent;
     public GameObject Spoon;
     [SerializeField] private GameObject _spectatorPanelPrefab;
-    private GameObject _spectatorPanelObj;
+    [SerializeField] private GameObject _spectatorPanelObj;
 
     [SerializeField] UI_UseOrInteract _useUI;
     [SerializeField] UI_UseOrInteract _interactUI;
@@ -161,7 +161,7 @@ public class PlayerFSM : NetworkBehaviour, IStateMachineOwner
                 child.gameObject.SetActive(true);
             }
         }
-        }
+    }
 
     public override void Spawned()
     {

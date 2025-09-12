@@ -14,7 +14,10 @@ public class UI_RecipeIngredient : MonoBehaviour
     {
         200012, // 썩은 작물
         200013, // 강철
-        200028 // 드래곤 고기
+        200028, // 드래곤 고기
+        600004, // 덤불칼
+        600005, // 환각버섯 도끼
+        600006 // 대지 뿌리봉
     };
 
     private void Start()
@@ -22,33 +25,36 @@ public class UI_RecipeIngredient : MonoBehaviour
         RoomRecipeStateManager.Instance.OnIngredientUnlocked += HandleIngredientUnlocked;
     }
     
-    public void Init()
+    public void PopulateIngredients(ERecipeCategory category)
     {
-        if (_isInitialized) return;
-        _isInitialized = true;
-
-        var allIngredients = ItemManager.Instance.GetFoodIngredientList();
-        _ingredientDataList.Clear();
-
-        foreach (var ingredientId in allIngredients)
+        for (int i = Container.transform.childCount - 1; i >= 0; i--)
         {
-            if (ingredientId == null)
+            Transform child = Container.transform.GetChild(i);
+            if (child.name == "allcategorybutton" || child.name.Contains("CategoryButton"))
             {
                 continue;
             }
-            
-            if (_excludedIngredientIDs.Contains(ingredientId.ID))
+            Destroy(child.gameObject);
+        }
+        _ingredientDataList.Clear();
+        
+        var ingredients = ItemManager.Instance.GetIngredientsByCategory(category);
+
+        foreach (var ingredient in ingredients)
+        {
+            if (ingredient == null || _excludedIngredientIDs.Contains(ingredient.ID))
             {
                 continue;
             }
 
             var buttonObj = Instantiate(ButtonPrefab, Container.transform);
             var button = buttonObj.GetComponent<UI_IngredientButton>();
-            button.Refresh(ingredientId);
+            button.Refresh(ingredient);
             buttonObj.SetActive(true);
-            _ingredientDataList[ingredientId.ID] = button;
+            _ingredientDataList[ingredient.ID] = button;
         }
     }
+
 
     private void HandleIngredientUnlocked(int unlockedIngredientID)
     {
@@ -57,7 +63,6 @@ public class UI_RecipeIngredient : MonoBehaviour
 
     private void RefreshIngredientButtons()
     {
-        // 모두 비활성화
         foreach (var button in _ingredientDataList.Values)
         {
             button.Refresh(button.GetIngredient());

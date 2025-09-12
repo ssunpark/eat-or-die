@@ -21,8 +21,9 @@ public abstract class AUI_PopupBase : MonoBehaviour
 	public virtual void Close()
 	{
         PopupManager.Instance.Unregister(this);
-        
-		if (!gameObject.activeInHierarchy) return;
+
+        Closed?.Invoke(this);
+        if (!gameObject.activeInHierarchy) return;
 		
 		if (_animatePopup == null)
 		{
@@ -32,7 +33,6 @@ public abstract class AUI_PopupBase : MonoBehaviour
 		{
 			_animatePopup?.Close();
 		}
-        Closed?.Invoke(this);
     }
 
 	protected virtual void Awake()
