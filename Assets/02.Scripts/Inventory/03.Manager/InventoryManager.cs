@@ -162,6 +162,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         if (result)
         {
             OnInventoryUpdated?.Invoke();
+            UpdateInventoryRepository();
         }
         return result;
     }
@@ -189,6 +190,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
                 slot.RemoveItem();
             }
         }
+        UpdateInventoryRepository();
         OnInventoryUpdated?.Invoke();
     }
 }

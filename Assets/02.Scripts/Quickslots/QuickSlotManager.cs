@@ -7,16 +7,52 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 	private Inventory _quickSlots;
     public int QuickSlotSize;
 
+    private QuickSlotRepository _repository;
+
 	private int _selectedSlotIndex;
 	
 	public event Action OnEntireQuickSlotUpdated;
 	public event Action<int> OnQuickSlotUpdated;
 	public event Action OnUseItem;
 	
-	private void Awake()
+	private async void Awake()
 	{
 		_quickSlots = new Inventory(QuickSlotSize);
+
+		await FirebaseManager.Instance.WaitForInitialization();
+		_repository = new QuickSlotRepository(FirebaseManager.Instance.DB);
+		OnEntireQuickSlotUpdated += UpdateEntireQuickSlotRepository;
+		Init();
 	}
+	
+	private async void Init()
+	{
+		List<SlotDTO> loadedQuickSlots = await _repository.LoadQuickSlotItemList(AuthenticationManager.Instance.User.UserId, CharacterInfoManager.Instance.CharacterInfo.Id);
+        
+		foreach (SlotDTO slot in loadedQuickSlots)
+		{
+			if (slot.ItemId == 0)
+			{
+				continue;
+			}
+			ItemInstance item = new ItemInstance(ItemManager.Instance.GetItem(slot.ItemId), slot.Quantity, slot.Durability, slot.ExtraInfo);
+			_quickSlots.PutItemInSlot(int.Parse(slot.SlotId), item);
+		}
+	}
+
+	private async void UpdateQuickSlotRepository(int slotIndex)
+	{
+		SlotDTO slot = new SlotDTO(slotIndex, GetItemInSlot(slotIndex));
+		await _repository.SaveQuickSlotItem(AuthenticationManager.Instance.User.UserId, CharacterInfoManager.Instance.CharacterInfo.Id, slot);
+	}
+
+	private void UpdateEntireQuickSlotRepository()
+	{
+		for (int i = 0; i < QuickSlotSize; ++i)
+		{
+			UpdateQuickSlotRepository(i);
+		}
+	}	
 
 	private void SetSelectedSlot(int slotIndex)
 	{
@@ -38,6 +74,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         
         OnUseItem?.Invoke();
         OnQuickSlotUpdated?.Invoke(_selectedSlotIndex);
+        UpdateQuickSlotRepository(_selectedSlotIndex);
     }
     
     public int RequestConsumeItem(int itemID, int amount)
@@ -60,6 +97,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         
 	    if (result)
 	    {
+		    UpdateEntireQuickSlotRepository();
 		    OnEntireQuickSlotUpdated?.Invoke();
 	    }
 	    return result;
@@ -103,6 +141,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		if (PopupManager.Instance.IsOpen(EPopupType.Inventory) || PopupManager.Instance.IsOpen(EPopupType.Storage))
 		{
 			HandSwap();
+			UpdateQuickSlotRepository(slotIndex);
 		}
 		
 		SendItemToPlayer();
@@ -113,6 +152,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		ItemInstance remain = _quickSlots.AddItemToInventory(itemInstance);
         
 		OnEntireQuickSlotUpdated?.Invoke();
+		UpdateEntireQuickSlotRepository();
 
 		return remain;
 	}
@@ -122,6 +162,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		ItemInstance remain = _quickSlots.AddItemToEmptySlot(itemInstance);
         
 		OnEntireQuickSlotUpdated?.Invoke();
+		UpdateEntireQuickSlotRepository();
 
 		return remain;
 	}
@@ -155,6 +196,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		}
 
 		OnQuickSlotUpdated?.Invoke(slotIndex);
+		UpdateQuickSlotRepository(slotIndex);
 	}
 
 	public List<Slot> GetAllSlots()
@@ -175,6 +217,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 				slot.RemoveItem();
 			}
 		}
+		UpdateEntireQuickSlotRepository();
 		OnEntireQuickSlotUpdated?.Invoke();
 	}
 	
