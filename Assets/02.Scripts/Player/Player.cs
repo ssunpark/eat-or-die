@@ -86,7 +86,7 @@ public class Player : CharacterBase, IAttackable
         ItemHolder = GetComponent<PlayerItemHolder>();
         SimpleKCC = GetComponent<SimpleKCC>();
         _impulseSource = GetComponent<CinemachineImpulseSource>();
-        Skill = new SkillManager(this);
+        Skill = new SkillManager(this, AuthenticationManager.Instance.User.UserId, CharacterInfoManager.Instance.CharacterInfo.Id);
     }
 
     private bool _spawnInitDone;

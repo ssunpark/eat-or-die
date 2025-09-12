@@ -63,7 +63,11 @@ public class Room : BehaviourSingleton<Room>, INetworkRunnerCallbacks
     
     public void OnInput(NetworkRunner runner, NetworkInput input) { }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
+    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) 
+    {
+        Debug.Log($"NetworkRunner 종료됨: {shutdownReason}");
+        SceneManager.LoadScene(0);
+    }
     public void OnConnectedToServer(NetworkRunner runner) {
     
     }

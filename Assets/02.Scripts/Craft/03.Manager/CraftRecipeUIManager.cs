@@ -45,5 +45,6 @@ public class CraftRecipeUIManager : BehaviourSingleton<CraftRecipeUIManager>
     {
         CraftDetailPanelUI.UpdateDetails(craftRecipe);
         CraftDetailPanelUI.RefreshCraftCount();
+        CraftItemListUI.SetSelectedItem(craftRecipe.CraftResultID);
     }
 }

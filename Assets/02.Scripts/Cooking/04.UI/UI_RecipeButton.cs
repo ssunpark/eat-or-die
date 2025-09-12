@@ -89,7 +89,7 @@ public class UI_RecipeButton : MonoBehaviour, IPointerEnterHandler, IPointerExit
         extraDescription = RichTextUtil.RecolorAll(extraDescription, "#E44962");
         sb.Append($"{extraDescription}");
 
-        TooltipManager.Instance.Show(sb.ToString());
+        TooltipManager.Instance.Show(sb.ToString(), false); // 레시피 버튼은 고정 width 사용
         MasterAudio.PlaySound("ButtonClick");
     }
 
