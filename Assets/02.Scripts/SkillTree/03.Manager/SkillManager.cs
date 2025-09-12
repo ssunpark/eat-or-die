@@ -7,8 +7,8 @@ public class SkillManager
 {
     private readonly ISkillEventHub _hub;
     private readonly SkillHandlerFactory _factory;
-    private readonly SkillRepository _repository;
     private readonly TraitManager _traitManager;
+    private SkillRepository _repository;
 
     // 데이터 전부(레벨 0부터)
     private readonly Dictionary<int, Skill> _skills = new();
@@ -21,23 +21,22 @@ public class SkillManager
 
     private bool _isRestoring;
 
-    public SkillManager(Player player)
+    public SkillManager(Player player, string userId, string characterId)
     {
-        // PlayerPrefs.DeleteAll();
-
         _traitManager = player.Trait;
         _hub = new SkillEventHub();
         _factory = new SkillHandlerFactory();
-        _repository = new SkillRepository();
         Context = new SkillContext(player);
-
+        
+        _repository = new SkillRepository(FirebaseManager.Instance.DB, userId, characterId);
+        
         foreach (var skill in _repository.LoadSkillRawDataList())
         {
             _skills[skill.Meta.Id] = skill;
         }
-
+        
         SetSkillTree();
-        LoadFromDisk();
+        LoadFromRepo();
     }
 
     private void SetSkillTree()
@@ -150,7 +149,7 @@ public class SkillManager
 
         NotifyChangedAndAutoSave();
 
-        SaveToDisk();
+        SaveToRepo();
     }
 
     public bool TryUpgrade(int id)
@@ -203,7 +202,7 @@ public class SkillManager
         }
 
         // 전체 데이터 저장
-        SaveToDisk();
+        SaveToRepo();
 
         // UI 등에 알림
         OnDataChanged?.Invoke();
@@ -225,17 +224,17 @@ public class SkillManager
         if (_isRestoring)
             return; // 로드 중이면 아무 것도 안 함
         OnDataChanged?.Invoke();
-        SaveToDisk();
+        SaveToRepo();
     }
 
-    public void SaveToDisk()
+    public void SaveToRepo()
     {
-        _repository.SaveSkillDataList(_skills.Values);
+        _repository.SaveSkillDataListAsync(_skills.Values);
     }
 
-    public void LoadFromDisk()
+    public async void LoadFromRepo()
     {
-        var list = _repository.LoadSkillDataList();
+        var list = await _repository.LoadSkillDataListAsync();
 
         _isRestoring = true;
 
@@ -258,7 +257,7 @@ public class SkillManager
 
         OnDataChanged?.Invoke();
 
-        SaveToDisk();
+        SaveToRepo();
     }
 
     // 조회 헬퍼

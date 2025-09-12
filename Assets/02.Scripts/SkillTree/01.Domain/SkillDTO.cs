@@ -1,18 +1,26 @@
 ﻿using System;
-using UnityEngine;
+using Firebase.Firestore;
 
-[Serializable]
+// Firestore 문서 ↔ DTO 직렬화용
+[Serializable, FirestoreData]
 public class SkillDTO
 {
-    [SerializeField] private int id;
-    [SerializeField] private int level;
+    // Firestore 문서 ID를 담는 필드(예: "12")
+    [FirestoreDocumentId]
+    public string DocId { get; set; }
 
-    public int Id => id;
-    public int Level => level;
+    // 실제 저장되는 필드(필요한 건 레벨뿐)
+    [FirestoreProperty]
+    public int Level { get; set; }
+
+    // 기존 코드 호환용: int Id (DocId에서 파생)
+    public int Id => int.TryParse(DocId, out var id) ? id : 0;
+
+    public SkillDTO() { } // Firestore 역직렬화용
 
     public SkillDTO(int id, int level)
     {
-        this.id = id;
-        this.level = level;
+        DocId = id.ToString();
+        Level = level;
     }
 }
