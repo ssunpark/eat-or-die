@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class UI_RecipeItemButton : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private ItemProfile _itemProfile;
+
+    public void Setup(ItemProfile itemProfile)
     {
-        
+        _itemProfile = itemProfile;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnClick()
     {
-        
+        RecipeShopManager.Instance.UpdateRecipeDetail(_itemProfile.ItemDefinition.ID);
     }
 }

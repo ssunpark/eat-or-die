@@ -1,16 +1,20 @@
+using System;
 using UnityEngine;
 
-public class UI_RecipeShopPanel : MonoBehaviour
+public class UI_RecipeShopPanel : AUI_PopupBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override EPopupType Type => EPopupType.Shop;
+
+    public event Action OnClose;
+
+    public override void Close()
     {
-        
+        base.Close();
+        OnClose?.Invoke();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        gameObject.SetActive(false);
     }
 }
