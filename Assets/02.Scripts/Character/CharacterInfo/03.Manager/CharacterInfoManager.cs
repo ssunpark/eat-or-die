@@ -59,5 +59,15 @@ public class CharacterInfoManager : BehaviourSingleton<CharacterInfoManager>
         data.Nickname = _characterInfo.Name;
         data.ClassType = _characterInfo.Class;
         data.CustomizationData = custom;
+
+        if (AchievementManager.Instance == null)
+        {
+            Debug.LogError("No AchievementManager found");
+        }
+        else
+        {
+            var achievementRepo = new FirestorePlayerAchievementRepository(FirebaseManager.Instance.DB, AuthenticationManager.Instance.User.UserId, _characterInfo.Id);
+            AchievementManager.Instance.SetRepository(achievementRepo);
+        }
     }
 }
