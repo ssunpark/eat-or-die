@@ -20,21 +20,41 @@ public class RecipeShopManager : BehaviourSingleton<RecipeShopManager>
         RecipeShopNpcInteractable.PanelOpened += OpenRecipeShopUI;
     }
 
+    private void Start()
+    {
+        // 레시피 해금 이벤트 구독
+        if (RoomRecipeStateManager.Instance != null)
+        {
+            RoomRecipeStateManager.Instance.OnRecipeUnlocked += OnRecipeUnlockedHandler;
+        }
+    }
+
+    private void OnRecipeUnlockedHandler(Recipe unlockedRecipe)
+    {
+        Debug.Log($"[RecipeShop] 레시피 해금됨: {unlockedRecipe.ID} - 상점 목록 업데이트");
+        UpdateRecipeShopList();
+    }
+
     public void OpenRecipeShopUI()
     {
+        Debug.Log("[RecipeShop] OpenRecipeShopUI 호출됨");
         UpdateRecipeShopList();
-        
+
         if (_recipeItems != null && _recipeItems.Length > 0)
         {
             _itemProfile = _recipeItems[0];
             UpdateRecipeDetail(_itemProfile.ItemDefinition.ID);
+            Debug.Log($"[RecipeShop] {_recipeItems.Length}개의 레시피 아이템 로드 완료");
         }
         else
         {
             Debug.Log("[RecipeShop] 레시피 아이템이 비어 있어 초기화 실패");
         }
-        
+
         UpdateNpcDialogue(npcId);
+
+        // UI 업데이트를 위해 이벤트 발생
+        OnRecipeListUpdated?.Invoke();
     }
 
     public void UpdateRecipeShopList()

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UI_RecipeItemList : MonoBehaviour
@@ -7,17 +8,11 @@ public class UI_RecipeItemList : MonoBehaviour
     public GameObject ButtonPrefab;
     private ItemProfile[] _recipeItems;
 
-    private Dictionary<int, UI_RecipeItemButton> _buttonDict = new Dictionary<int, UI_RecipeItemButton>();
-    private bool _isInitialized = false;
+    private List<UI_RecipeItemButton> _buttons = new List<UI_RecipeItemButton>();
     private bool _isSubscribed = false;
 
     private void OnEnable()
     {
-        if (!_isInitialized)
-        {
-            Init();
-        }
-
         RefreshButtons();
     }
 
@@ -26,66 +21,67 @@ public class UI_RecipeItemList : MonoBehaviour
         if (RecipeShopManager.Instance == null) return;
         if (_isSubscribed)
         {
-            RecipeShopManager.Instance.OnRecipeListUpdated -= Init;
+            RecipeShopManager.Instance.OnRecipeListUpdated -= RefreshButtons;
             _isSubscribed = false;
         }
-    }
-
-    public void Init()
-    {
-        _recipeItems = RecipeShopManager.Instance.RecipeItems;
-        if (_recipeItems == null || _recipeItems.Length == 0)
-        {
-            if (!_isSubscribed)
-            {
-                RecipeShopManager.Instance.OnRecipeListUpdated += Init;
-                _isSubscribed = true;
-            }
-            
-            Debug.Log("[RecipeItemList] RecipeItems가 비어 있습니다.");
-            return;
-        }
-
-        if (_isSubscribed)
-        {
-            RecipeShopManager.Instance.OnRecipeListUpdated -= Init;
-            _isSubscribed = false;
-        }
-
-        _isInitialized = true;
-        _buttonDict.Clear();
-
-        foreach (ItemProfile itemInfo in _recipeItems)
-        {
-            GameObject obj = Instantiate(ButtonPrefab, Container.transform);
-            UI_RecipeItemButton button = obj.GetComponent<UI_RecipeItemButton>();
-            button.Setup(itemInfo);
-            obj.SetActive(false);
-
-            _buttonDict[itemInfo.ItemDefinition.ID] = button;
-        }
-
-        RefreshButtons();
     }
 
     private void RefreshButtons()
     {
-        if (!_isInitialized) return;
-
-        foreach (var button in _buttonDict.Values)
+        if (RecipeShopManager.Instance == null)
         {
-            button.gameObject.SetActive(false);
+            Debug.Log("[RecipeItemList] RecipeShopManager.Instance가 null입니다.");
+            return;
         }
 
-        ItemProfile[] recipeItems = RecipeShopManager.Instance.RecipeItems;
-        if (recipeItems == null) return;
-
-        foreach (var item in recipeItems)
+        if (!_isSubscribed)
         {
-            if (_buttonDict.TryGetValue(item.ItemDefinition.ID, out var button))
+            RecipeShopManager.Instance.OnRecipeListUpdated += RefreshButtons;
+            _isSubscribed = true;
+        }
+
+        _recipeItems = RecipeShopManager.Instance.RecipeItems;
+
+        if (_recipeItems == null || _recipeItems.Length == 0)
+        {
+            Debug.Log("[RecipeItemList] RecipeItems가 비어 있습니다. UpdateRecipeShopList가 먼저 호출되어야 합니다.");
+            ClearAllButtons();
+            return;
+        }
+
+        // 이벤트 구독 해제
+        if (_isSubscribed)
+        {
+            RecipeShopManager.Instance.OnRecipeListUpdated -= RefreshButtons;
+            _isSubscribed = false;
+        }
+
+        // 기존 버튼들을 모두 삭제
+        ClearAllButtons();
+
+        // 새로운 미해금 레시피 버튼들을 생성 (최대 8개)
+        for (int i = 0; i < _recipeItems.Length; i++)
+        {
+            GameObject obj = Instantiate(ButtonPrefab, Container.transform);
+            UI_RecipeItemButton button = obj.GetComponent<UI_RecipeItemButton>();
+            button.Setup(_recipeItems[i]);
+            obj.SetActive(true);
+
+            _buttons.Add(button);
+        }
+
+        Debug.Log($"[RecipeItemList] {_buttons.Count}개의 새로운 레시피 버튼이 생성되었습니다.");
+    }
+
+    private void ClearAllButtons()
+    {
+        foreach (var button in _buttons)
+        {
+            if (button != null && button.gameObject != null)
             {
-                button.gameObject.SetActive(true);
+                DestroyImmediate(button.gameObject);
             }
         }
+        _buttons.Clear();
     }
 }
