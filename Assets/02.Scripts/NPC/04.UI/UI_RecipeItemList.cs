@@ -6,38 +6,58 @@ public class UI_RecipeItemList : MonoBehaviour
 {
     public GameObject Container;
     public GameObject ButtonPrefab;
-    private ItemProfile[] _recipeItems;
 
+    private ItemProfile[] _recipeItems;
     private List<UI_RecipeItemButton> _buttons = new List<UI_RecipeItemButton>();
     private bool _isSubscribed = false;
 
     private void OnEnable()
     {
+        SubscribeToEvents();
         RefreshButtons();
     }
 
     private void OnDisable()
     {
-        if (RecipeShopManager.Instance == null) return;
-        if (_isSubscribed)
+        UnsubscribeFromEvents();
+    }
+
+    private void SubscribeToEvents()
+    {
+        if (RecipeShopManager.Instance != null && !_isSubscribed)
         {
-            RecipeShopManager.Instance.OnRecipeListUpdated -= RefreshButtons;
+            RecipeShopManager.Instance.OnRecipeListUpdated += OnRecipeListUpdated;
+            _isSubscribed = true;
+        }
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        if (RecipeShopManager.Instance != null && _isSubscribed)
+        {
+            RecipeShopManager.Instance.OnRecipeListUpdated -= OnRecipeListUpdated;
             _isSubscribed = false;
         }
     }
 
-    private void RefreshButtons()
+    private void OnRecipeListUpdated()
+    {
+        // 레시피 목록이 업데이트되면 즉시 새로고침
+        RefreshButtonsInternal();
+        Debug.Log("[RecipeItemList] 레시피 목록 업데이트로 인한 즉시 새로고침");
+    }
+
+    public void RefreshButtons()
+    {
+        RefreshButtonsInternal();
+    }
+
+    private void RefreshButtonsInternal()
     {
         if (RecipeShopManager.Instance == null)
         {
             Debug.Log("[RecipeItemList] RecipeShopManager.Instance가 null입니다.");
             return;
-        }
-
-        if (!_isSubscribed)
-        {
-            RecipeShopManager.Instance.OnRecipeListUpdated += RefreshButtons;
-            _isSubscribed = true;
         }
 
         _recipeItems = RecipeShopManager.Instance.RecipeItems;
@@ -47,13 +67,6 @@ public class UI_RecipeItemList : MonoBehaviour
             Debug.Log("[RecipeItemList] RecipeItems가 비어 있습니다. UpdateRecipeShopList가 먼저 호출되어야 합니다.");
             ClearAllButtons();
             return;
-        }
-
-        // 이벤트 구독 해제
-        if (_isSubscribed)
-        {
-            RecipeShopManager.Instance.OnRecipeListUpdated -= RefreshButtons;
-            _isSubscribed = false;
         }
 
         // 기존 버튼들을 모두 삭제
