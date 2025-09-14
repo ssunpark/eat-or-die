@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using DarkTonic.MasterAudio;
 using Fusion;
 using UnityEngine;
 using Unity.Cinemachine;
 
-public class RecipeShopNpcInteractable : NetworkBehaviour, IInteractable
+public class ReviveShopNpcInteractable : MonoBehaviour, IInteractable
 {
     public bool IsImmediate => true;
     public float InteractionDistanceOffset => 0.5f;
@@ -16,21 +16,21 @@ public class RecipeShopNpcInteractable : NetworkBehaviour, IInteractable
     public CinemachineVirtualCameraBase CineCam;
     public static event Action PanelOpened;
 
-    public UI_RecipeShopPanel UI_RecipeShopPanel;
+    public UI_ReviveShopPanel UI_ReviveShopPanel;
 
     private void OnEnable()
     {
-        UI_RecipeShopPanel.OnClose += OnCloseShopPanel;
+        UI_ReviveShopPanel.OnClose += OnCloseShopPanel;
     }
 
     private void OnDisable()
     {
-        UI_RecipeShopPanel.OnClose -= OnCloseShopPanel;
+        UI_ReviveShopPanel.OnClose -= OnCloseShopPanel;
     }
 
     public void Interact()
     {
-        UI_RecipeShopPanel.Open();
+        UI_ReviveShopPanel.Open();
         MasterAudio.PlaySound3DAtTransform("NpcInteract", transform);
 
         CineCam.Priority = 200;
