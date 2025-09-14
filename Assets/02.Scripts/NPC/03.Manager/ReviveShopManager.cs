@@ -27,7 +27,7 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
 
             if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.Type != EItemType.Extra)
             {
-                UI_Notification.Notify("시체 아이템만 넣을 수 있습니다.");
+                UI_Notification.Notify("플레이어의 시체만 부활시킬 수 있습니다.");
                 return;
             }
 
@@ -58,7 +58,7 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
             {
                 if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.Type != EItemType.Extra)
                 {
-                    UI_Notification.Notify("시체 아이템만 넣을 수 있습니다.");
+                    UI_Notification.Notify("플레이어의 시체만 부활시킬 수 있습니다.");
                     return;
                 }
                 
