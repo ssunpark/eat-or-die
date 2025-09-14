@@ -18,27 +18,14 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
 
     private void HandleRecipeScrollUsed(int recipeID)
     {
-        
-        Debug.Log($"Recipe Scroll Used - 전달받은 recipeID: {recipeID}");
-        Debug.Log($"RecipeList 개수: {RecipeManager.Instance.RecipeList.Count}");
-
-        // 모든 레시피 ID 출력해서 비교
-        foreach(var r in RecipeManager.Instance.RecipeList)
-        {
-            Debug.Log($"기존 레시피 ID: {r.ResultID}");
-        }
-        
-        Debug.Log("Recipe Scroll Used");
         var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == recipeID);
         if (recipe == null)
         {
-            Debug.Log("recipe이 널이다.");
             return;
         }
 
         if (TryUnlockRecipe(recipeID))
         {
-            Debug.Log("레시피 업데이트 호출");
             OnRecipeUnlocked?.Invoke(recipe);
         }
     }

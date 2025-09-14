@@ -10,5 +10,4 @@ public static class RecipeShopEvents
         Debug.Log("RecipeShopEvents.InvokeRecipeScrollUsed");
         OnRecipeScrollUsed?.Invoke(recipeID);
     }
-        
 }
