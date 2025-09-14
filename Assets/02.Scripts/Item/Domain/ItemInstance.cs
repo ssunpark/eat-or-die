@@ -51,11 +51,20 @@ public class ItemInstance
 
     public void Use(GameObject target, float amount = 1)
     {
-        // Recipe_Prefab 사용 시 현재 아이템 정보 설정
         if (ID == 500003)
         {
-            UseEffect_Recipe.SetCurrentItem(this);
-            Debug.Log($"[ItemInstance] Recipe_Prefab 사용, ExtraInfo: '{_extraInfo}'");
+            var useEffect = new UseEffect_Recipe();
+            useEffect.Use(target, this);
+            
+            if (ItemProfile.ItemDefinition.HasDurability)
+            {
+                TryReduceDurability(amount);
+            }
+            else
+            {
+                TryRemove((int)amount);
+            }
+            return;
         }
 
         if (!ItemProfile.TryUseItem(target))

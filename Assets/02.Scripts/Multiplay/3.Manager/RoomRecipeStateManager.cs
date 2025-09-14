@@ -131,4 +131,33 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
     {
         TryUnlockIngredient(ingredientID);
     }
+
+    /// <summary>
+    /// 외부에서 안전하게 레시피를 해금하고 이벤트를 발생시키는 메서드
+    /// </summary>
+    public void UnlockRecipeWithEvent(int recipeID)
+    {
+        // 첫 번째 시도: ResultID로 레시피 찾기
+        var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == recipeID);
+
+        // 두 번째 시도: 레시피 ID 자체로 찾기 (백업 로직)
+        if (recipe == null)
+        {
+            recipe = RecipeManager.Instance.RecipeList.Find(r => r.ID == recipeID);
+        }
+
+        if (recipe == null)
+        {
+            Debug.LogWarning($"[RoomRecipeState] 레시피를 찾을 수 없습니다: recipeID={recipeID}");
+            return;
+        }
+
+        Debug.Log($"[RoomRecipeState] 레시피 해금 시도: ID={recipe.ID}, ResultID={recipe.ResultID}");
+
+        if (TryUnlockRecipe(recipe.ID))
+        {
+            OnRecipeUnlocked?.Invoke(recipe);
+            Debug.Log($"[RoomRecipeState] 레시피 해금 및 이벤트 발생 완료: {recipe.ID}");
+        }
+    }
 }
