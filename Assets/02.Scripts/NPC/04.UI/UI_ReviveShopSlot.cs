@@ -3,15 +3,15 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UI_ReviveShopSlot : MonoBehaviour
+public class UI_ReviveShopSlot : MonoBehaviour, IPointerDownHandler
 {
     public int SlotIndex;
     public Image IconImage;
 
     public void Start()
     {
-        IconImage.gameObject.SetActive(false);
         ReviveShopManager.Instance.OnReviveSlotUpdated[SlotIndex] += UpdateSlotUI;
+        IconImage.gameObject.SetActive(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)
