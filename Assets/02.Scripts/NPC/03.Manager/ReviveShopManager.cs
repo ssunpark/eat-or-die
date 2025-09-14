@@ -20,12 +20,17 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
         }
         else
         {
-            if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.ID != 1800001)
+            if (HandEntity.Instance.GetItem()?.ItemProfile?.ItemDefinition == null)
+            {
+                return;
+            }
+
+            if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.Type != EItemType.Extra)
             {
                 UI_Notification.Notify("시체 아이템만 넣을 수 있습니다.");
                 return;
             }
-            
+
             HandEntity.Instance.PickUpItem(ReviveShopInventory.PutItemInSlot(slotIndex, HandEntity.Instance.ItemInstance));
         }
         OnReviveSlotUpdated[slotIndex]?.Invoke();
@@ -51,7 +56,7 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
             }
             else
             {
-                if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.ID != 1800001)
+                if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.Type != EItemType.Extra)
                 {
                     UI_Notification.Notify("시체 아이템만 넣을 수 있습니다.");
                     return;
