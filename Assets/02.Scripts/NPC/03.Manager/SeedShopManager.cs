@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
+public class SeedShopManager : BehaviourSingleton<SeedShopManager>
 {
     private ItemProfile _itemProfile;
     private ItemProfile[] _seedItems;
@@ -16,12 +16,12 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
 
     private void Awake()
     {
-        SeedShopNpcInteractable.PanelOpened += HandleNpcItemListLoaded;
+        SeedShopNpcInteractable.PanelOpened += OpenSeedShopUI;
     }
 
-    public void HandleNpcItemListLoaded()
+    public void OpenSeedShopUI()
     {
-        LoadSeedItemsFromNpc(npcId);
+        UpdateSeedShopList(npcId);
         
         if (_seedItems != null && _seedItems.Length > 0)
         {
@@ -35,7 +35,7 @@ public class SeedShopPanelManager : BehaviourSingleton<SeedShopPanelManager>
         }
     }
     
-    public void LoadSeedItemsFromNpc(int npcId)
+    public void UpdateSeedShopList(int npcId)
     {
         if (NpcDataManager.Instance == null || NpcDataManager.Instance.NpcItemList == null)
         {

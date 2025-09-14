@@ -245,4 +245,42 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
 
         CookingFinished?.Invoke(itemInstance); // 레시피를 업데이트 시키는 이벤트
     }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_BroadcastRecipeUnlockSync(int recipeID, RpcInfo info = default)
+    {
+        Debug.Log($"[CookingManager] RPC로 레시피 해금 상태만 동기화: recipeID={recipeID}");
+
+        // RoomRecipeStateManager의 안전한 메서드를 통해 해금 처리
+        if (RoomRecipeStateManager.Instance != null)
+        {
+            RoomRecipeStateManager.Instance.UnlockRecipeWithEvent(recipeID);
+
+            // RecipeShopManager에 해금 알림 (구매 리스트에서 제거용)
+            if (RecipeShopManager.Instance != null)
+            {
+                RecipeShopManager.Instance.OnRecipeUnlocked(recipeID);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[CookingManager] RoomRecipeStateManager.Instance가 null입니다.");
+        }
+    }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_BroadcastRecipePurchase(int recipeItemID, RpcInfo info = default)
+    {
+        Debug.Log($"[CookingManager] RPC로 레시피 구매 정보 동기화: recipeItemID={recipeItemID}");
+
+        // 모든 클라이언트의 RecipeShopManager에서 구매 처리
+        if (RecipeShopManager.Instance != null)
+        {
+            RecipeShopManager.Instance.OnRecipeItemPurchasedFromNetwork(recipeItemID);
+        }
+        else
+        {
+            Debug.LogWarning("[CookingManager] RecipeShopManager.Instance가 null입니다.");
+        }
+    }
 }

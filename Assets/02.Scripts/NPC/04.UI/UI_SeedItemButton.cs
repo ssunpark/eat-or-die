@@ -1,9 +1,7 @@
 using DarkTonic.MasterAudio;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// 수현
 public class UI_SeedItemButton : MonoBehaviour
 {
     public Image IconImage;
@@ -17,7 +15,7 @@ public class UI_SeedItemButton : MonoBehaviour
 
     public void OnClick()
     {
-        SeedShopPanelManager.Instance.UpdateSeedDetail(_itemProfile.ItemDefinition.ID);
+        SeedShopManager.Instance.UpdateSeedDetail(_itemProfile.ItemDefinition.ID);
         MasterAudio.PlaySound("ButtonClick");
     }
 }

@@ -51,6 +51,22 @@ public class ItemInstance
 
     public void Use(GameObject target, float amount = 1)
     {
+        if (ID == 500003)
+        {
+            var useEffect = new UseEffect_Recipe();
+            useEffect.Use(target, this);
+            
+            if (ItemProfile.ItemDefinition.HasDurability)
+            {
+                TryReduceDurability(amount);
+            }
+            else
+            {
+                TryRemove((int)amount);
+            }
+            return;
+        }
+
         if (!ItemProfile.TryUseItem(target))
         {
             return;

@@ -23,22 +23,22 @@ public class UI_SeedItemList : MonoBehaviour
 
     private void OnDisable()
     {
-        if (SeedShopPanelManager.Instance == null) return;
+        if (SeedShopManager.Instance == null) return;
         if (_isSubscribed)
         {
-            SeedShopPanelManager.Instance.OnSeedListUpdated -= Init;
+            SeedShopManager.Instance.OnSeedListUpdated -= Init;
             _isSubscribed = false;
         }
     }
 
     public void Init()
     {
-        _seedItems = SeedShopPanelManager.Instance.SeedItems;
+        _seedItems = SeedShopManager.Instance.SeedItems;
         if (_seedItems == null || _seedItems.Length == 0)
         {
             if (!_isSubscribed)
             {
-                SeedShopPanelManager.Instance.OnSeedListUpdated += Init;
+                SeedShopManager.Instance.OnSeedListUpdated += Init;
                 _isSubscribed = true;
             }
             
@@ -48,7 +48,7 @@ public class UI_SeedItemList : MonoBehaviour
 
         if (_isSubscribed)
         {
-            SeedShopPanelManager.Instance.OnSeedListUpdated -= Init;
+            SeedShopManager.Instance.OnSeedListUpdated -= Init;
             _isSubscribed = false;
         }
 
@@ -77,7 +77,7 @@ public class UI_SeedItemList : MonoBehaviour
             button.gameObject.SetActive(false);
         }
 
-        ItemProfile[] seedItems = SeedShopPanelManager.Instance.SeedItems;
+        ItemProfile[] seedItems = SeedShopManager.Instance.SeedItems;
         if (seedItems == null) return;
 
         foreach (var item in seedItems)
