@@ -1,3 +1,4 @@
+using System;
 using DarkTonic.MasterAudio;
 using TMPro;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.UI;
 
 public class UI_RecipeItemDetail : MonoBehaviour
 {
+    public static event Action OnItemPurchased; // 구매 완료 이벤트
     [Header("Item Info")]
     public TextMeshProUGUI NameText;
     public TextMeshProUGUI DescriptionText;
@@ -112,6 +114,9 @@ public class UI_RecipeItemDetail : MonoBehaviour
 
         // 5. 구매된 레시피 아이템을 RecipeShopManager에 추가
         RecipeShopManager.Instance.OnRecipeItemPurchased(recipeToUnlockID);
+
+        // 6. 구매 완료 이벤트 발생 (BlockPopup 활성화용)
+        OnItemPurchased?.Invoke();
 
         Debug.Log($"[RecipeDetail] 레시피 스크롤 구매 완료: 아이템ID={recipeToUnlockID}, 가격={price}");
     }
