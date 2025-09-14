@@ -11,6 +11,9 @@ public class RecipeShopManager : BehaviourSingleton<RecipeShopManager>
     public ItemProfile[] RecipeItems => _recipeItems;
     public event Action OnRecipeListUpdated;
 
+    // 구매된 레시피 아이템 ID들을 추적하는 리스트
+    private HashSet<int> _purchasedRecipeItemIds = new HashSet<int>();
+
     private int npcId = 1200003;
     public UI_RecipeItemDetail RecipeItemDetailUI;
     public UI_NpcDialogue NpcDialogueUI;
@@ -67,15 +70,16 @@ public class RecipeShopManager : BehaviourSingleton<RecipeShopManager>
 
         // 1. 모든 음식 레시피 가져오기
         var allRecipes = RecipeManager.Instance.GetRecipesByCategory(ERecipeCategory.Food);
-        
-        // 2. 해금되지 않은 레시피만 필터링
-        var unlockedRecipes = allRecipes.Where(recipe => 
-            !RoomRecipeStateManager.Instance.IsUnlockedRecipes(recipe.ID))
+
+        // 2. 해금되지 않고 구매하지도 않은 레시피만 필터링
+        var availableRecipes = allRecipes.Where(recipe =>
+            !RoomRecipeStateManager.Instance.IsUnlockedRecipes(recipe.ID) &&
+            !_purchasedRecipeItemIds.Contains(recipe.ResultID))
             .ToList();
-        
+
         // 3. 최대 8개로 제한
-        var selectedRecipes = unlockedRecipes.Take(8).ToList();
-        
+        var selectedRecipes = availableRecipes.Take(8).ToList();
+
         // 4. ItemProfile 배열로 변환
         _recipeItems = selectedRecipes
             .Select(recipe => ItemManager.Instance.GetItem(recipe.ResultID))
@@ -115,5 +119,28 @@ public class RecipeShopManager : BehaviourSingleton<RecipeShopManager>
         string randomDialogue = dialogueList[randomIndex].DialogueContents;
 
         NpcDialogueUI.Setup(randomDialogue);
+    }
+
+    /// <summary>
+    /// 레시피 아이템 구매 시 호출되는 메서드
+    /// </summary>
+    public void OnRecipeItemPurchased(int recipeItemId)
+    {
+        _purchasedRecipeItemIds.Add(recipeItemId);
+        Debug.Log($"[RecipeShop] 레시피 아이템 구매됨: {recipeItemId}");
+
+        // 상점 목록 즉시 업데이트
+        UpdateRecipeShopList();
+    }
+
+    /// <summary>
+    /// 레시피가 해금되었을 때 구매 리스트에서 제거 (선택사항)
+    /// </summary>
+    public void OnRecipeUnlocked(int recipeItemId)
+    {
+        if (_purchasedRecipeItemIds.Remove(recipeItemId))
+        {
+            Debug.Log($"[RecipeShop] 구매 목록에서 해금된 레시피 제거: {recipeItemId}");
+        }
     }
 }

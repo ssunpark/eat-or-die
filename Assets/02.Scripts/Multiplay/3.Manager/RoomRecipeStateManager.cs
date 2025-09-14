@@ -18,15 +18,33 @@ public class RoomRecipeStateManager : NetworkBehaviourSingleton<RoomRecipeStateM
 
     private void HandleRecipeScrollUsed(int recipeID)
     {
+        // 첫 번째 시도: ResultID로 레시피 찾기 (현재 로직)
         var recipe = RecipeManager.Instance.RecipeList.Find(r => r.ResultID == recipeID);
+
+        // 두 번째 시도: 레시피 ID 자체로 찾기 (백업 로직)
         if (recipe == null)
         {
+            recipe = RecipeManager.Instance.RecipeList.Find(r => r.ID == recipeID);
+            Debug.Log($"[RoomRecipeState] ResultID로 못 찾아서 레시피 ID로 찾기 시도: {recipeID}");
+        }
+
+        if (recipe == null)
+        {
+            Debug.LogWarning($"[RoomRecipeState] 레시피를 찾을 수 없습니다: recipeID={recipeID}");
             return;
         }
 
-        if (TryUnlockRecipe(recipeID))
+        Debug.Log($"[RoomRecipeState] 레시피 스크롤 사용 - 찾은 레시피: ID={recipe.ID}, ResultID={recipe.ResultID}");
+
+        if (TryUnlockRecipe(recipe.ID))
         {
             OnRecipeUnlocked?.Invoke(recipe);
+
+            // RecipeShopManager에 해금 알림 (구매 리스트에서 제거용)
+            if (RecipeShopManager.Instance != null)
+            {
+                RecipeShopManager.Instance.OnRecipeUnlocked(recipe.ResultID);
+            }
         }
     }
 

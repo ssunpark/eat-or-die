@@ -109,7 +109,10 @@ public class UI_RecipeItemDetail : MonoBehaviour
 
         // 4. 생성된 ItemInstance를 통합 인벤토리 매니저에 추가합니다.
         UnifiedInventoryManager.Instance.AddItem(scrollInstance);
-        
-        RecipeShopManager.Instance.UpdateRecipeShopList();
+
+        // 5. 구매된 레시피 아이템을 RecipeShopManager에 추가
+        RecipeShopManager.Instance.OnRecipeItemPurchased(recipeToUnlockID);
+
+        Debug.Log($"[RecipeDetail] 레시피 스크롤 구매 완료: 아이템ID={recipeToUnlockID}, 가격={price}");
     }
 }
