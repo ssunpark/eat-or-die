@@ -112,10 +112,16 @@ public class UI_RecipeItemDetail : MonoBehaviour
         // 4. 생성된 ItemInstance를 통합 인벤토리 매니저에 추가합니다.
         UnifiedInventoryManager.Instance.AddItem(scrollInstance);
 
-        // 5. 구매된 레시피 아이템을 RecipeShopManager에 추가
+        // 5. 구매된 레시피 아이템을 로컬 RecipeShopManager에 추가
         RecipeShopManager.Instance.OnRecipeItemPurchased(recipeToUnlockID);
 
-        // 6. 구매 완료 이벤트 발생 (BlockPopup 활성화용)
+        // 6. RPC로 모든 클라이언트에 구매 정보 동기화
+        if (CookingManager.Instance != null && CookingManager.Instance.IsSpawned)
+        {
+            CookingManager.Instance.RPC_BroadcastRecipePurchase(recipeToUnlockID);
+        }
+
+        // 7. 구매 완료 이벤트 발생 (BlockPopup 활성화용)
         OnItemPurchased?.Invoke();
 
         Debug.Log($"[RecipeDetail] 레시피 스크롤 구매 완료: 아이템ID={recipeToUnlockID}, 가격={price}");

@@ -122,12 +122,24 @@ public class RecipeShopManager : BehaviourSingleton<RecipeShopManager>
     }
 
     /// <summary>
-    /// 레시피 아이템 구매 시 호출되는 메서드
+    /// 레시피 아이템 구매 시 호출되는 메서드 (로컬 구매)
     /// </summary>
     public void OnRecipeItemPurchased(int recipeItemId)
     {
         _purchasedRecipeItemIds.Add(recipeItemId);
-        Debug.Log($"[RecipeShop] 레시피 아이템 구매됨: {recipeItemId}");
+        Debug.Log($"[RecipeShop] 레시피 아이템 구매됨 (로컬): {recipeItemId}");
+
+        // 상점 목록 즉시 업데이트
+        UpdateRecipeShopList();
+    }
+
+    /// <summary>
+    /// 네트워크에서 레시피 아이템 구매 정보 동기화 시 호출되는 메서드
+    /// </summary>
+    public void OnRecipeItemPurchasedFromNetwork(int recipeItemId)
+    {
+        _purchasedRecipeItemIds.Add(recipeItemId);
+        Debug.Log($"[RecipeShop] 레시피 아이템 구매됨 (네트워크): {recipeItemId}");
 
         // 상점 목록 즉시 업데이트
         UpdateRecipeShopList();

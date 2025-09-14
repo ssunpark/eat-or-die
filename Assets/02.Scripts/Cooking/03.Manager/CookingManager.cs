@@ -267,4 +267,20 @@ public class CookingManager : NetworkBehaviourSingleton<CookingManager>
             Debug.LogWarning("[CookingManager] RoomRecipeStateManager.Instance가 null입니다.");
         }
     }
+
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void RPC_BroadcastRecipePurchase(int recipeItemID, RpcInfo info = default)
+    {
+        Debug.Log($"[CookingManager] RPC로 레시피 구매 정보 동기화: recipeItemID={recipeItemID}");
+
+        // 모든 클라이언트의 RecipeShopManager에서 구매 처리
+        if (RecipeShopManager.Instance != null)
+        {
+            RecipeShopManager.Instance.OnRecipeItemPurchasedFromNetwork(recipeItemID);
+        }
+        else
+        {
+            Debug.LogWarning("[CookingManager] RecipeShopManager.Instance가 null입니다.");
+        }
+    }
 }
