@@ -25,7 +25,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         
         await FirebaseManager.Instance.WaitForInitialization();
         _repository = new InventoryRepository(FirebaseManager.Instance.DB);
-        OnInventoryUpdated += UpdateInventoryRepository;
+        // OnInventoryUpdated += UpdateInventoryRepository;
         Init();
     }
 
@@ -162,7 +162,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         if (result)
         {
             OnInventoryUpdated?.Invoke();
-            UpdateInventoryRepository();
         }
         return result;
     }
@@ -190,7 +189,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
                 slot.RemoveItem();
             }
         }
-        UpdateInventoryRepository();
         OnInventoryUpdated?.Invoke();
     }
 }
