@@ -21,7 +21,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 
 		await FirebaseManager.Instance.WaitForInitialization();
 		_repository = new QuickSlotRepository(FirebaseManager.Instance.DB);
-		OnEntireQuickSlotUpdated += UpdateEntireQuickSlotRepository;
+		//OnEntireQuickSlotUpdated += UpdateEntireQuickSlotRepository;
 		Init();
 	}
 	
@@ -97,7 +97,6 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
         
 	    if (result)
 	    {
-		    UpdateEntireQuickSlotRepository();
 		    OnEntireQuickSlotUpdated?.Invoke();
 	    }
 	    return result;
@@ -152,7 +151,6 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		ItemInstance remain = _quickSlots.AddItemToInventory(itemInstance);
         
 		OnEntireQuickSlotUpdated?.Invoke();
-		UpdateEntireQuickSlotRepository();
 
 		return remain;
 	}
@@ -162,7 +160,6 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 		ItemInstance remain = _quickSlots.AddItemToEmptySlot(itemInstance);
         
 		OnEntireQuickSlotUpdated?.Invoke();
-		UpdateEntireQuickSlotRepository();
 
 		return remain;
 	}
@@ -217,7 +214,6 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 				slot.RemoveItem();
 			}
 		}
-		UpdateEntireQuickSlotRepository();
 		OnEntireQuickSlotUpdated?.Invoke();
 	}
 	
