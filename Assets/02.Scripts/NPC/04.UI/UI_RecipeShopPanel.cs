@@ -7,21 +7,8 @@ public class UI_RecipeShopPanel : AUI_PopupBase
 
     public GameObject BlockPopup;
     public event Action OnClose;
-
-    public override void Open()
-    {
-        base.Open();
-        BlockPopup.SetActive(false);
-        
-    }
-
-    public override void Close()
-    {
-        base.Close();
-        OnClose?.Invoke();
-        BlockPopup.SetActive(false);
-    }
-
+    private bool _isBlocked = false;
+                                                                                                                                                                                                   
     private void Start()
     {
         gameObject.SetActive(false);
@@ -29,21 +16,34 @@ public class UI_RecipeShopPanel : AUI_PopupBase
         RecipeShopEvents.OnRecipeScrollUsed += OnRecipeUnlocked;
     }
 
+    public override void Open()
+    {                              
+        base.Open();
+        UpdateBlockVisibility();
+    }
+    public override void Close()                             
+    {                   
+        base.Close();
+        OnClose?.Invoke();
+    }
+    
     private void OnItemPurchased()
     {
-        if (BlockPopup != null)
-        {
-            BlockPopup.SetActive(true);
-            Debug.Log("[RecipeShopPanel] 구매로 인한 블록 활성화");
-        }
+        _isBlocked = true;
+        UpdateBlockVisibility();
     }
 
     private void OnRecipeUnlocked(int recipeID)
     {
-        Debug.Log($"[RecipeShopPanel] 레시피 해금 완료로 인한 블록 해제: {recipeID}");
+        _isBlocked = false;
+        UpdateBlockVisibility();
+    }
+    
+    private void UpdateBlockVisibility()
+    {
         if (BlockPopup != null)
         {
-            BlockPopup.SetActive(false);
+            BlockPopup.SetActive(_isBlocked);
         }
     }
 }
