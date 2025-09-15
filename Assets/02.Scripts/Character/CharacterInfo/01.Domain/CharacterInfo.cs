@@ -8,6 +8,7 @@ public class CharacterInfo
     [Header("캐릭터 정보")]
     public string Id { get; private set; }
     public string Name { get; private set; }
+    public bool IsInit { get; private set; }
     public ECharacterType Class { get; private set; }
     public Timestamp CreatedAt { get; private set; }
     public Timestamp LastLoginAt { get; private set; }
@@ -20,6 +21,7 @@ public class CharacterInfo
     {
         Id = characterInfoDTO.Id;
         Name = characterInfoDTO.Name;
+        IsInit = characterInfoDTO.IsInit;
         Class = (ECharacterType)characterInfoDTO.Class;
         CreatedAt = characterInfoDTO.CreatedAt;
         LastLoginAt = characterInfoDTO.LastLoginAt;
@@ -27,5 +29,15 @@ public class CharacterInfo
         Bottom = characterInfoDTO.Bottom;
         Hair = characterInfoDTO.Hair;
         Eye = characterInfoDTO.Eye;
+    }
+
+    public void SetLastLoginAt()
+    {
+        LastLoginAt = Timestamp.GetCurrentTimestamp();
+    }
+
+    public void SetIsInit()
+    {
+        IsInit = true;
     }
 }
