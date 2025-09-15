@@ -25,7 +25,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         
         await FirebaseManager.Instance.WaitForInitialization();
         _repository = new InventoryRepository(FirebaseManager.Instance.DB);
-        // OnInventoryUpdated += UpdateInventoryRepository;
         Init();
     }
 
@@ -39,8 +38,11 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
             {
                 continue;
             }
+
+            int slotId = int.Parse(slot.SlotId);
             ItemInstance item = new ItemInstance(ItemManager.Instance.GetItem(slot.ItemId), slot.Quantity, slot.Durability, slot.ExtraInfo);
-            _inventory.PutItemInSlot(int.Parse(slot.SlotId), item);
+            _inventory.PutItemInSlot(slotId, item);
+            OnSlotUpdated?.Invoke(slotId);
         }
     }
 
@@ -118,6 +120,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         ItemInstance remain = _inventory.AddItemToInventory(itemInstance);
         
         OnInventoryUpdated?.Invoke();
+        UpdateInventoryRepository();
         
         return remain;
     }
@@ -127,6 +130,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         ItemInstance remain = _inventory.AddItemToEmptySlot(itemInstance);
         
         OnInventoryUpdated?.Invoke();
+        UpdateInventoryRepository();
 
         return remain;
     }
@@ -162,6 +166,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         if (result)
         {
             OnInventoryUpdated?.Invoke();
+            UpdateInventoryRepository();
         }
         return result;
     }
@@ -190,5 +195,6 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
             }
         }
         OnInventoryUpdated?.Invoke();
+        UpdateInventoryRepository();
     }
 }

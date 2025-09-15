@@ -40,9 +40,17 @@ public class CharacterInfoManager : BehaviourSingleton<CharacterInfoManager>
         SetCharacterInfo();
     }
 
-    public void SelectCharacter(int index)
+    public async void UpdateCharacterInfo()
+    {
+        CharacterInfoDTO characterInfoDTO = new CharacterInfoDTO(_characterInfo);
+        await _repository.UpdateCharacterDocument(characterInfoDTO, AuthenticationManager.Instance.User.UserId);
+    }
+
+    public async void SelectCharacter(int index)
     {
         _characterInfo = new CharacterInfo(_characterInfoDTOList[index]);
+        _characterInfo.SetLastLoginAt();
+        await _repository.UpdateCharacterDocument(new CharacterInfoDTO(_characterInfo), AuthenticationManager.Instance.User.UserId);
         SetCharacterInfo();
     }
 
