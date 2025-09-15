@@ -21,7 +21,7 @@ public class QuickSlotManager : BehaviourSingleton<QuickSlotManager>
 
 		await FirebaseManager.Instance.WaitForInitialization();
 		_repository = new QuickSlotRepository(FirebaseManager.Instance.DB);
-		//OnEntireQuickSlotUpdated += UpdateEntireQuickSlotRepository;
+		OnEntireQuickSlotUpdated += UpdateEntireQuickSlotRepository;
 		Init();
 	}
 	

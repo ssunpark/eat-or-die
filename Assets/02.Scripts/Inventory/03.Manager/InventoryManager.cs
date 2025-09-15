@@ -25,7 +25,7 @@ public class InventoryManager : BehaviourSingleton<InventoryManager>
         
         await FirebaseManager.Instance.WaitForInitialization();
         _repository = new InventoryRepository(FirebaseManager.Instance.DB);
-        // OnInventoryUpdated += UpdateInventoryRepository;
+        OnInventoryUpdated += UpdateInventoryRepository;
         Init();
     }
 
