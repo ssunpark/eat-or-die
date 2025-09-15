@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.CompilerServices;
 using Fusion;
 using Fusion.Addons.FSM;
 using Fusion.Addons.SimpleKCC;
 using RaycastPro.Detectors;
 using Unity.Cinemachine;
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(RangeDetector))]
 public class Player : CharacterBase, IAttackable
@@ -127,7 +129,7 @@ public class Player : CharacterBase, IAttackable
                 return cam != null && cam.GetComponent<FollowCamera>() != null;
             }, cancellationToken: token).Timeout(TimeSpan.FromSeconds(3)).SuppressCancellationThrow();
 
-            TryBindFollowCamera(); // 가드 포함
+            TryBindFollowCamera();
         }
 
         // 3) Trait/HUD 초기화
@@ -140,7 +142,7 @@ public class Player : CharacterBase, IAttackable
             }
             else
             {
-                // 기존 코루틴 대신 UniTask 대기(최대 5초)
+                // 최대 5초 대기
                 await UniTask.WaitUntil(
                     () => ExpHandler != null && TraitDataList != null,
                     cancellationToken: token
@@ -163,7 +165,7 @@ public class Player : CharacterBase, IAttackable
                 GetInitialItem();
             else
             {
-                Debug.LogError("Fuckyou");
+                Debug.LogError("말도 안돼");
             }
 
             HookLocalTraitSavesIfOwner();
@@ -173,7 +175,12 @@ public class Player : CharacterBase, IAttackable
         await UniTask.Yield(); // 한 프레임 쉬고
                                // PlayerInfoManager 준비까지 대기 (최대 5초)
         await UniTask.WaitUntil(() => PlayerInfoManager.Instance != null, cancellationToken: token);
-        PlayerInfoManager.Instance.RegisterLocal(this);
+
+        if (HasInputAuthority)
+        {
+            string characterId = CharacterInfoManager.Instance.CharacterInfo.Id;
+            PlayerInfoManager.Instance.RegisterLocal(this, characterId);
+        }
         _spawnInitDone = true;
     }
 
@@ -556,6 +563,13 @@ public class Player : CharacterBase, IAttackable
         _teleportPosition = pos;
     }
 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void Rpc_RequestRevive()
+    {
+        Debug.Log("[Client] Requesting Revive");
+        Revive();
+    }
+
     public void Revive()
     {
         if (!HasStateAuthority)
@@ -564,9 +578,21 @@ public class Player : CharacterBase, IAttackable
             Debug.Log("State에 요청을 해서 부활을 시키세요.");
             return;
         }
+        if (!IsDead)
+        {
+            Debug.Log("Not Dead");
+            return;
+        }
         PlayerFSM.IsInReviveProcess = true;
         SimpleKCC.enabled = true;
 
+        StartCoroutine(DelayedRevive());
+    }
+
+    IEnumerator DelayedRevive()
+    {
+        yield return new WaitForFixedUpdate();
+        Debug.Log("[Host] Reviving player..");
         RPC_ClientRevive();
     }
 
@@ -574,6 +600,7 @@ public class Player : CharacterBase, IAttackable
          HostMode = RpcHostMode.SourceIsHostPlayer)]
     private void RPC_ClientRevive()
     {
+        Debug.Log("[Client] Revive started.");
         if (_teleportManager == null)
         {
             _teleportManager = FindAnyObjectByType<TeleportManager>();

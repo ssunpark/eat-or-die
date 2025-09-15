@@ -27,7 +27,7 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
 
             if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.Type != EItemType.Extra)
             {
-                UI_Notification.Notify("시체 아이템만 넣을 수 있습니다.");
+                UI_Notification.Notify("플레이어의 시체만 부활시킬 수 있습니다.");
                 return;
             }
 
@@ -58,7 +58,7 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
             {
                 if (HandEntity.Instance.GetItem().ItemProfile.ItemDefinition.Type != EItemType.Extra)
                 {
-                    UI_Notification.Notify("시체 아이템만 넣을 수 있습니다.");
+                    UI_Notification.Notify("플레이어의 시체만 부활시킬 수 있습니다.");
                     return;
                 }
                 
@@ -73,5 +73,47 @@ public class ReviveShopManager : NetworkBehaviourSingleton<ReviveShopManager>
     public bool HasEmptySlot()
     {
         return ReviveShopInventory.SlotList.Exists(slot => slot.IsEmpty);
+    }
+
+    public void TryRevive()
+    {
+        if (ReviveShopInventory.SlotList[0].IsEmpty)
+        {
+            UI_Notification.Notify("부활시킬 플레이어가 없습니다.");
+            return;
+        }
+        var reviveItem = ReviveShopInventory.SlotList[0].ItemInstance;
+        string extraInfo = reviveItem.ExtraInfo;
+
+        if (string.IsNullOrEmpty(extraInfo))
+        {
+            Debug.LogError("부활 아이템에 플레이어 정보가 없습니다.");
+            return;
+        }
+        Debug.Log(extraInfo);
+        var foundedPlayer = PlayerInfoManager.Instance.GetPlayerFromCharacterId(extraInfo);
+
+        if(foundedPlayer == null)
+        {
+            UI_Notification.Notify("해당 플레이어를 찾을 수 없습니다.");
+            ReviveShopInventory.PopItemInSlot(0);
+            OnReviveSlotUpdated[0]?.Invoke();
+            return;
+        }
+
+        if (!foundedPlayer.IsDead)
+        {
+            UI_Notification.Notify("이미 부활한 플레이어입니다.");
+            ReviveShopInventory.PopItemInSlot(0);
+            OnReviveSlotUpdated[0]?.Invoke();
+            return;
+        }
+
+        Debug.Log($"[ReviveShopManager] Reviving player: {foundedPlayer.NetworkObject.InputAuthority}");
+        foundedPlayer.Rpc_RequestRevive();
+        ReviveShopInventory.PopItemInSlot(0);
+
+        OnReviveSlotUpdated[0]?.Invoke();
+
     }
 }

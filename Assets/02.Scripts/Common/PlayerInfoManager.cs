@@ -12,9 +12,12 @@ public struct PlayerInfo : INetworkStruct
     public PlayerRef Ref;
     public NetworkString<_16> Nickname;
     public NetworkId NetworkId;
+    public NetworkString<_16> CharacterId;
+
 }
 public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
 {
+    public bool EnableDebugLogs = false;
     public static PlayerInfoManager Instance { get; private set; }
     private void Awake()
     {
@@ -56,6 +59,8 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
 
     [Networked, Capacity(8)]
     public NetworkArray<PlayerInfo> Players => default;
+    [Networked, Capacity(20)]
+    public NetworkArray<string> CharacterIds => default;
     private readonly Dictionary<PlayerRef, string> _pendingNicknames = new();
     private readonly Queue<(PlayerRef playerRef, string nickname, NetworkId netId)> _registerQueue = new();
     private bool _isProcessingRegister;
@@ -64,16 +69,47 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     private bool _networkReady;
     private bool _sceneReady;
 
-    public void RegisterLocal(Player player)
+    public void RegisterLocal(Player player, string id)
     {
         if (player == null) return;
-        _playerControllers[player.Object.InputAuthority] = player;
+
+        SyncPlayerControllers();
+
+        Rpc_UpdateCharacterId(player.NetworkObject.InputAuthority, id);
     }
+
+    private void SyncPlayerControllers()
+    {
+        FindObjectsByType<Player>(FindObjectsSortMode.None).ToList().ForEach(p =>
+        {
+            if (p == null || !p.Object.IsValid) return;
+            _playerControllers[p.Object.InputAuthority] = p;
+        });
+    }
+
+
+    // 캐릭터 id 해제 RPC
+    public void Rpc_UnregisterCharacterId(RpcInfo info = default)
+    {
+        if (Object == null || !Object.HasStateAuthority) return;
+        var playerRef = info.Source;
+        for (int i = 0; i < CharacterIds.Length; i++)
+        {
+            if (Players[i].Ref == playerRef)
+            {
+                CharacterIds.Set(i, string.Empty);
+                return;
+            }
+        }
+    }
+
+    
 
     public void UnregisterLocal(Player player)
     {
         if (player == null) return;
         _playerControllers.Remove(player.Object.InputAuthority);
+
     }
 
     public Player TryResolvePlayer(PlayerRef pref)
@@ -100,13 +136,31 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
 
         if (obj == null)
         {
-            Debug.LogWarning($"No object found with NetworkId: {networkId}");
+                Debug.LogWarning($"No object found with NetworkId: {networkId}");
             return null;
         }
         if (obj.TryGetComponent(out Player player))
         {
             return player;
         }
+        return null;
+    }
+
+    public Player GetPlayerFromCharacterId(string characterId)
+    {
+        for (int i = 0; i < Players.Length; i++)
+        {
+            if (EnableDebugLogs)
+                Debug.Log($"Checking player at index {i}: CharacterId = {Players[i].CharacterId}, NetworkId = {Players[i].NetworkId}, Nickname = {Players[i].Nickname}");
+            if (Players[i].CharacterId.ToString() == characterId)
+            {
+                if (EnableDebugLogs)
+                    Debug.Log($"Found player with CharacterId: {characterId} at index {i}, {Players[i].Nickname}");
+                return GetPlayerFromNetworkId(Players[i].NetworkId);
+            }
+        }
+        if (EnableDebugLogs)
+            Debug.Log("No player found with CharacterId: " + characterId);
         return null;
     }
     public void UnregisterPlayer(NetworkRunner runner, PlayerRef playerRef)
@@ -119,7 +173,8 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
         {
             if (Players[i].Ref == playerRef)
             {
-                Debug.Log($"Unregistering player: {playerRef} at index {i}");
+                if (EnableDebugLogs)
+                    Debug.Log($"Unregistering player: {playerRef} at index {i}");
                 Players.Set(i, default);
                 Rpc_InvokeUnregistered(playerRef, i);
                 break;
@@ -178,7 +233,7 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
         catch (OperationCanceledException) { /* 정상 취소 */ }
         catch (TimeoutException)
         {
-            Debug.LogWarning("[PIM] Queue processing timeout. Flags => " +
+           Debug.LogWarning("[PIM] Queue processing timeout. Flags => " +
                              $"sceneReady:{_sceneReady}, networkReady:{_networkReady}, isServer:{runner.IsServer}");
             // 실패 시: 큐를 유지하고 다음 OnSceneLoadDone에서 다시 시도하도록 그냥 반환
         }
@@ -189,19 +244,6 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     }
 
 
-    // Players 준비 확인 (네트워크 컨테이너 특성에 맞게 구현)
-    private bool IsPlayersReady()
-    {
-        try
-        {
-            var len = Players.Length; // 여기에 접근해도 터지지 않으면 OK
-            return len > 0 || len == 0; // 접근 자체가 성공하면 준비된 것
-        }
-        catch
-        {
-            return false;
-        }
-    }
 
     // 실제 등록 로직: 기존 RegisterPlayer 본문을 옮김
     private void RegisterPlayerInternal(PlayerRef playerRef, string nickname, NetworkId networkId)
@@ -229,6 +271,27 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void Rpc_UpdateCharacterId(PlayerRef playerRef, string characterId)
+    {
+        if (Object == null || !Object.HasStateAuthority) return;
+        for (int i = 0; i < Players.Length; i++)
+        {
+            if (Players[i].Ref == playerRef)
+            {
+                var prev = Players[i];
+                Players.Set(i, new PlayerInfo
+                {
+                    Ref = playerRef,
+                    Nickname = prev.Nickname,
+                    NetworkId = prev.NetworkId,
+                    CharacterId = characterId.Substring(0, 16)
+                });
+                return;
+            }
+        }
+    }
+
     // 기존 UpdateNickname은 NetworkId 보존해서 덮어쓰기 (이미 적용했다면 그대로 유지)
     public void UpdateNickname(PlayerRef playerRef, string nickname)
     {
@@ -243,7 +306,8 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
                 {
                     Ref = playerRef,
                     Nickname = nickname,
-                    NetworkId = prev.NetworkId // 보존 중요
+                    NetworkId = prev.NetworkId,
+                    CharacterId = prev.CharacterId
                 });
                 return;
             }
@@ -319,7 +383,8 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
                 return;
             }
 
-            Debug.Log($"[OnPlayerLeft] {player} Despawn 시도.");
+            if (EnableDebugLogs)
+                Debug.Log($"[OnPlayerLeft] {player} Despawn 시도.");
             _playerControllers.Remove(player);
             runner.Despawn(playerController.Object);
         }
@@ -380,7 +445,11 @@ void INetworkRunnerCallbacks.OnHostMigration(NetworkRunner runner, HostMigration
 void INetworkRunnerCallbacks.OnSceneLoadDone(NetworkRunner runner)
     {
         if (SceneManager.GetActiveScene().buildIndex != 3)
+        {
+            Debug.Log($"PlayerInfoManager: Not in the main game scene, skipping player spawn. Current SceneIndex: {SceneManager.GetActiveScene().buildIndex}");
             return;
+        }
+        Debug.Log($"PlayerInfoManager: Scene load done, processing pending joins. Current SceneIndex: {SceneManager.GetActiveScene().buildIndex}");
         _sceneReady = true; 
         TryProcessPendingJoins(runner);
     }
