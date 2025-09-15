@@ -56,6 +56,8 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
 
     [Networked, Capacity(8)]
     public NetworkArray<PlayerInfo> Players => default;
+    [Networked, Capacity(20)]
+    public NetworkArray<string> CharacterIds => default;
     private readonly Dictionary<PlayerRef, string> _pendingNicknames = new();
     private readonly Queue<(PlayerRef playerRef, string nickname, NetworkId netId)> _registerQueue = new();
     private bool _isProcessingRegister;
@@ -64,16 +66,82 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     private bool _networkReady;
     private bool _sceneReady;
 
-    public void RegisterLocal(Player player)
+    public void RegisterLocal(Player player, string id)
     {
         if (player == null) return;
-        _playerControllers[player.Object.InputAuthority] = player;
+
+        SyncPlayerControllers();
+
+        Rpc_RegisterCharacterId(id);
+    }
+
+    private void SyncPlayerControllers()
+    {
+        FindObjectsByType<Player>(FindObjectsSortMode.None).ToList().ForEach(p =>
+        {
+            if (p == null || !p.Object.IsValid) return;
+            _playerControllers[p.Object.InputAuthority] = p;
+        });
+    }
+
+    // 캐릭터 id 등록 RPC
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void Rpc_RegisterCharacterId(string characterId, RpcInfo info = default)
+    {
+        if (Object == null || !Object.HasStateAuthority) return;
+        var playerRef = info.Source;
+        for (int i = 0; i < CharacterIds.Length; i++)
+        {
+            if (Players[i].Ref == playerRef)
+            {
+                CharacterIds.Set(i, characterId);
+                return;
+            }
+        }
+    }
+
+    // 캐릭터 id 해제 RPC
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void Rpc_UnregisterCharacterId(RpcInfo info = default)
+    {
+        if (Object == null || !Object.HasStateAuthority) return;
+        var playerRef = info.Source;
+        for (int i = 0; i < CharacterIds.Length; i++)
+        {
+            if (Players[i].Ref == playerRef)
+            {
+                CharacterIds.Set(i, string.Empty);
+                return;
+            }
+        }
+    }
+
+    public Player FindPlayerFromId(string id)
+    {
+        for (int i = 0; i < CharacterIds.Length; i++)
+        {
+            Debug.Log($"[FindPlayerFromId] Checking index {i}: {CharacterIds[i]} vs {id}");
+            if (CharacterIds[i] == id)
+            {
+                Debug.Log($"[FindPlayerFromId] Match found at index {i} for ID {id}");
+                var playerRef = Players[i].Ref;
+                if (_playerControllers.TryGetValue(playerRef, out var player) && player)
+                    return player;
+                Debug.Log($"[FindPlayerFromId] No cached player for {playerRef}, attempting to resolve.");
+                var obj = Runner.FindObject(Players[i].NetworkId);
+                if (obj && obj.TryGetComponent(out Player resolved))
+                    return _playerControllers[playerRef] = resolved;
+            }
+        }
+        return null;
     }
 
     public void UnregisterLocal(Player player)
     {
         if (player == null) return;
         _playerControllers.Remove(player.Object.InputAuthority);
+
+        Rpc_UnregisterCharacterId();
     }
 
     public Player TryResolvePlayer(PlayerRef pref)
@@ -189,19 +257,6 @@ public class PlayerInfoManager : NetworkBehaviour, INetworkRunnerCallbacks
     }
 
 
-    // Players 준비 확인 (네트워크 컨테이너 특성에 맞게 구현)
-    private bool IsPlayersReady()
-    {
-        try
-        {
-            var len = Players.Length; // 여기에 접근해도 터지지 않으면 OK
-            return len > 0 || len == 0; // 접근 자체가 성공하면 준비된 것
-        }
-        catch
-        {
-            return false;
-        }
-    }
 
     // 실제 등록 로직: 기존 RegisterPlayer 본문을 옮김
     private void RegisterPlayerInternal(PlayerRef playerRef, string nickname, NetworkId networkId)
