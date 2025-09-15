@@ -29,13 +29,14 @@ public class PlayerDeadState : APlayerStateBase
             var position = _fsm.transform.position;
             var rotation = Quaternion.identity;
             var ownerId = CharacterInfoManager.Instance.CharacterInfo.Id;
+            var shortenId = ownerId.Length > 16 ? ownerId.Substring(0, 16) : ownerId;
             ItemProxySpawner.Instance.RPC_CreateItemObject(
                 corpseItemId,
                 1,
                 0f,
                 position,
                 rotation,
-                ownerId);
+                shortenId);
 
             var players = PlayerInfoManager.PlayerControllers.Values;
             bool allDead = players.Where(p => p != null && p.PlayerFSM != null).All(p => p.PlayerFSM.IsDead);
