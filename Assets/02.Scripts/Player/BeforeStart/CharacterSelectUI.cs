@@ -14,6 +14,7 @@ public class CharacterSelectUI : MonoBehaviour
         CharacterInfoDTO newCharacterInfo = new CharacterInfoDTO();
         
         newCharacterInfo.Name = NicknameInput.text;
+        newCharacterInfo.IsInit = false;
         newCharacterInfo.Class = ClassSelector.CurrentIndex;
         
         newCharacterInfo.CreatedAt = Timestamp.GetCurrentTimestamp();

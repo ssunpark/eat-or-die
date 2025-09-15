@@ -33,6 +33,23 @@ public class CharacterInfoRepository
         }
     }
 
+    public async UniTask UpdateCharacterDocument(CharacterInfoDTO characterInfoDTO, string userId)
+    {
+        try
+        {
+            DocumentReference docRef = _db.Collection("Users")
+                .Document(userId)
+                .Collection("Characters")
+                .Document(characterInfoDTO.Id);
+            
+            await docRef.SetAsync(characterInfoDTO);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+    }
+
     public async UniTask<List<CharacterInfoDTO>> LoadCharacterInfoListAsync(string userId)
     {
         List<CharacterInfoDTO> characterInfoList = new List<CharacterInfoDTO>();

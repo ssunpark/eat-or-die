@@ -5,6 +5,7 @@ public class CharacterInfoDTO
 {
     [FirestoreDocumentId] public string Id { get; set; }
     [FirestoreProperty] public string Name { get; set; }
+    [FirestoreProperty] public bool IsInit { get; set; }
     [FirestoreProperty] public int Class { get; set; }
     [FirestoreProperty] public Timestamp CreatedAt { get; set; }
     [FirestoreProperty] public Timestamp LastLoginAt { get; set; }
@@ -22,6 +23,7 @@ public class CharacterInfoDTO
     {
         Id = characterInfo.Id;
         Name = characterInfo.Name;
+        IsInit = characterInfo.IsInit;
         Class = (int)characterInfo.Class;
         CreatedAt = characterInfo.CreatedAt;
         LastLoginAt = characterInfo.LastLoginAt;

@@ -186,12 +186,17 @@ public class Player : CharacterBase, IAttackable
 
     public void GetInitialItem()
     {
+        if (CharacterInfoManager.Instance.CharacterInfo.IsInit) return;
+        
         foreach(var itemData in InitialItems)
         {
             var item = ItemManager.Instance.GetItem(itemData.itemId);
             var inst = new ItemInstance(item, itemData.quantity, itemData.durability);
             UnifiedInventoryManager.Instance.AddItem(inst);
         }
+        
+        CharacterInfoManager.Instance.CharacterInfo.SetIsInit();
+        CharacterInfoManager.Instance.UpdateCharacterInfo();
     }
 
     /// <summary>
